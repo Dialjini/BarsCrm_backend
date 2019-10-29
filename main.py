@@ -1,0 +1,1 @@
+from BARS import app
