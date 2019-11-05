@@ -19,11 +19,11 @@ class Order(db.Model):
     Cost = db.Column(db.Float)
 
 class Item(db.Model):
-    Item_id = db.Column(db.String)
+    Item_id = db.Column(db.Integer, primary_key=True)
     Properties_json = db.Column(db.String)
 
 class EmptyClients(db.Model):
-    id = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
 
 class Client(db.Model):
     Client_id = db.Column(db.Integer, primary_key=True)
@@ -70,7 +70,7 @@ class Debt(db.Model):
     Maneger_id = db.Column(db.Integer)
 
 class Account(db.Model):
-    id = db.Column(db.Integer, privary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     Type = db.Column(db.String)
     Date = db.Column(db.Date)
     Name = db.Column(db.String)
@@ -78,16 +78,31 @@ class Account(db.Model):
     Status = db.Column(db.String)
     Manger_id = db.Column(db.Integer)
 
-class Delivery(db.Model):
+class DeliveryCar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
     Contact_Number = db.Column(db.String)
     Contact_Name = db.Column(db.String)
     Adress = db.Column(db.String)
     Segment = db.Column(db.String)
-    Active = db.Column(db.Bool)
+    Active = db.Column(db.Boolean)
     Debt_Credit = db.Column(db.String)
-    Type = db.relationship('Type', backref='Delivery', lazy='dynamic')
+    Tonnaj = db.Column(db.Float)
+    ExactCar = db.Column(db.String)
+    Comment = db.Column(db.String)
+    DoneContract = db.Column(db.String)
+
+class DeliveryTrain(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String)
+    Contact_Number = db.Column(db.String)
+    Contact_Name = db.Column(db.String)
+    Adress = db.Column(db.String)
+    Segment = db.Column(db.String)
+    Active = db.Column(db.Boolean)
+    Debt_Credit = db.Column(db.String)
+    Station = db.Column(db.String)
+    Price = db.Column(db.Float)
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -96,24 +111,11 @@ class Stock(db.Model):
     Items = db.relationship('Item', backref='Stock', lazy='dynamic')
     Type = db.Column(db.String) # ?
     Size = db.Column(db.String)
-    Packing =  db.Column(db.String)
+    Packing = db.Column(db.String)
     NDS = db.Column(db.String)
     Cost_Price = db.Column(db.Float)
 
-class Types(db.Model):
-    Car = db.relationship('Car', backref='Types', lazy='dynamic')
-    Train = db.relationship('Train', backref='Types', lazy='dynamic')
-
-class Train(db.Model):
-    Station = db.Column(db.String)
-    Price = db.Column(db.Float)
-
-class Car(db.Model):
-    Tonnaj = db.Column(db.Float)
-    ExactCar = db.Column(String)
-    Comment = db.Column(db.String)
-    DoneContract = db.Column(db.String)
-
 class Driver(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
     Contact = db.Column(db.String)

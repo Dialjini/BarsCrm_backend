@@ -25,7 +25,6 @@ function start() {
 }
 
 function anime() {
-    console.log(document.getElementById("field"));
     var element = document.getElementById('field');
     element.setAttribute('src', '/static/img/s' + gifCount.toString() + '.gif');
     if (gifCount != 12) {
