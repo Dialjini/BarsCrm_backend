@@ -1,11 +1,38 @@
 from app import db
+import json
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String)
     email = db.Column(db.String, unique=True)
+    role = db.Column(db.String)
     password = db.Column(db.String)
     avatar = db.Column(db.String)
+    tasks = db.relationship('Tasks', backref='manager', lazy='dynamic')
+
+    def login(self, login, password):
+        if self.query.filter_by(login=login).first():
+            user = self.query.filter_by(login=login).first()
+            if user.password == password:
+                return json.dumps({'role': user.role, 'success': True})
+            return json.dumps({'role': 'Неверный пароль', 'success': False})
+
+        elif self.query.filter_by(email=login).first():
+            user = self.query.filter_by(email=login).first()
+            if user.password == password:
+                return json.dumps({'role': user.role, 'success': True})
+            return json.dumps({'role': 'Неверный пароль', 'success': False})
+        return json.dumps({'role': 'Неверный логин/email', 'success': False})
+
+
+    def get_task_by_login(self, login):
+        user = self.query.filter_by(login=login).first()
+        result = []
+
+        for i in user.tasks:
+            result.append(i.__dict__)
+
+        return result
 
 class Order(db.Model):
     Client_id = db.Column(db.Integer, primary_key=True)
@@ -39,11 +66,16 @@ class Client(db.Model):
     UHH = db.Column(db.Integer)
     Adress = db.Column(db.String)
 
+    def get_table(self):
+        return json.dumps(self.__dict__)
+
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
     Task = db.Column(db.String)
     Type = db.Column(db.String)
     Visibility = db.Column(db.String)
+    def get_table(self, id):
+        return json.dumps(self.__dict__)
 
 class Provider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +90,9 @@ class Provider(db.Model):
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.Integer)
     Adress = db.Column(db.String)
+
+    def get_table(self):
+        return json.dumps(self.__dict__)
 
 class Debt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -92,6 +127,9 @@ class DeliveryCar(db.Model):
     Comment = db.Column(db.String)
     DoneContract = db.Column(db.String)
 
+    def get_table(self):
+        return json.dumps(self.__dict__)
+
 class DeliveryTrain(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
@@ -103,6 +141,9 @@ class DeliveryTrain(db.Model):
     Debt_Credit = db.Column(db.String)
     Station = db.Column(db.String)
     Price = db.Column(db.Float)
+
+    def get_table(self):
+        return json.dumps(self.__dict__)
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
