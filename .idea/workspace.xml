@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="add ajax for db methods">
+    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s1.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s10.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s11.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s12.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s2.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s3.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s4.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s5.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s6.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s7.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s8.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/img/s9.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/script/script.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/style/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -336,12 +321,18 @@
       <option name="project" value="LOCAL" />
       <updated>1573294229877</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="merge frontend and backend">
+      <created>1573377945070</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1573377945070</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16380449" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -387,7 +378,8 @@
     <MESSAGE value="refactoring one more time" />
     <MESSAGE value="add first methods to work with database: login, get_task_by_login and getTable ones" />
     <MESSAGE value="add ajax for db methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="add ajax for db methods" />
+    <MESSAGE value="merge frontend and backend" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge frontend and backend" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main" />
