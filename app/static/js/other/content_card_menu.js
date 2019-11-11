@@ -1060,11 +1060,29 @@ function unfastenCard(element) {
     $('.drop_menu').click(function() {
         closeCardMenu();
         // Добавить карточку в список Карточки клиентов
+        let nameOrganization = saveTableAndCard[1][element.id.split('-')[1]][1]; // Название орги из объекта (Только для Клиентов)
+
+        $('#empty_customer_cards').append($('<div>', {
+            class: 'fieldInfo padd',
+            id: 'empty_card', // Number
+            append: $('<div>', { class: 'name', html: nameOrganization })
+            .add($('<div>', {
+                class: 'row',
+                append: $('<div>', {
+                    class: 'descr',
+                    html: `Снято с ${username}`
+                }).add($('<div>', {
+                    class: 'time',
+                    html: `Свободна с <span class="bold">20.09</span>`
+                }))
+            }))
+        }));
     })
+    // Делать запрос на сохранение открепленной карточки 
 }
 // Сохранение изменений в карточке
 function saveCard() {
-    // Айди полей карточки (Доделать)
+    // Айди полей карточки
     const idCardFields = [
         {   
             name: 'client', ids:
@@ -1080,6 +1098,11 @@ function saveCard() {
             name: 'carrier', ids:
             ['carrier_organization_name', 'carrier_area_one', 'carrier_area_two', 'carrier_region', 'carrier_address', 'carrier_inn',
             'carrier_capacity', 'carrier_view']
+        },
+        {   
+            name: 'delivery', ids:
+            ['delivery_customer', 'delivery_shipment', 'delivery_unloading', 'delivery_way', 'delivery_carrier', 'delivery_driver',
+            'delivery_view', 'delivery_comment', 'delivery_client', 'delivery_contact']
         },
     ]
     saveTableAndCard[0].lastCard[0] = $('#card_menu');

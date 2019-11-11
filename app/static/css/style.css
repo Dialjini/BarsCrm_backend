@@ -321,6 +321,17 @@ body {
   font-weight: 700;
 }
 
+.page .centerBlock .container .info .table th .manager {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-left: 8px;
+}
+
+.page .centerBlock .container .info .table th .manager:hover {
+  cursor: pointer;
+}
+
 .page .centerBlock .container .info .card_menu {
   width: 100%;
   background-color: #fff;
@@ -985,6 +996,25 @@ body {
 
 .page .rightBlock .sidebar .infoblock .item .fieldInfo .name {
   font-size: 12px;
+}
+
+.page .rightBlock .sidebar .infoblock .item .padd {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 5px 15px 5px 15px;
+  margin-left: 0;
+}
+
+.page .rightBlock .sidebar .infoblock .item .padd:hover {
+  cursor: pointer;
+  background-color: #f1f1f1;
+}
+
+.page .rightBlock .sidebar .infoblock .empty_cards {
+  margin: 10px 0;
+  padding: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .page .rightBlock .sidebar .infoblock .drop_down_search {

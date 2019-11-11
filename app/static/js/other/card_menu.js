@@ -260,6 +260,7 @@ function getTitleInfo(element) {
                     }).add($('<div>', {
                         onclick: 'unfastenCard(this)',
                         class: 'hover',
+                        id: `${element.id}-${element.status}`,
                         append: $('<img>', {
                             src: 'static/images/dropmenu_black.svg',
                             class: 'drop_down_img padl',

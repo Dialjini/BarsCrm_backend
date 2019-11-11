@@ -13,8 +13,8 @@ const categoryInListClient = [
             { name: 'Менеджер', width: 10 }
         ],
         ['46011', 'OOO Лютик', 'Новосибирская', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Сидоров'],
-        ['46012', 'OOO Лютик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Петров'],
-        ['46013', 'OOO Лютик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Кустов'],
+        ['46012', 'OOO Цветик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Петров'],
+        ['46013', 'OOO Семицветик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Кустов'],
         ['46014', 'OOO Лютик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Ершов'],
         ['46015', 'OOO Лютик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Ерманенко'],
         ['46016', 'OOO Лютик', 'Xxxxx xxxxxx', 'ул. Пушкина, д. Колотушкина', 'Xxxxx xxxxxxxxx', 'Мухамеднурова'],
@@ -305,11 +305,11 @@ const regions = [
 
 // Данные по кнопкам меню, для перехода на соответствующую категорию
 const linkCategoryInfo = [
-    { id: 'category-0', src: 'static/images/list.png', name: 'Рабочий стол', subcategories: [categoryInListClient, categoryInListProvider, categoryInListCarrier], number: 0, subid: ['client', 'provider', 'carrier'] }, // name: getName() { if (.active) input else break}
-    { id: 'category-1', src: 'static/images/fin.png', name: 'Финансы', subcategories: [categoryInFinanceDebit, categoryInFinanceAccount], number: 1, subid: ['debit', 'account'] },
-    { id: 'category-2', src: 'static/images/delivery.png', name: 'Доставка', subcategories: [categoryInDelivery], number: 2, subid: ['delivery'] },
-    { id: 'category-3', src: 'static/images/stock.png', name: 'Склад', subcategories: [categoryInStock], number: 3, subid: ['stock'] },
-    { id: 'category-4', src: 'static/images/analytics.png', name: 'Аналитика', subcategories: [categoryInAnalytics], number: 4, subid: ['analytics'] },
+    { id: 'category-0', src: 'images/list.png', name: 'Рабочий стол', subcategories: [categoryInListClient, categoryInListProvider, categoryInListCarrier], number: 0, subid: ['client', 'provider', 'carrier'] }, // name: getName() { if (.active) input else break}
+    { id: 'category-1', src: 'images/fin.png', name: 'Финансы', subcategories: [categoryInFinanceDebit, categoryInFinanceAccount], number: 1, subid: ['debit', 'account'] },
+    { id: 'category-2', src: 'images/delivery.png', name: 'Доставка', subcategories: [categoryInDelivery], number: 2, subid: ['delivery'] },
+    { id: 'category-3', src: 'images/stock.png', name: 'Склад', subcategories: [categoryInStock], number: 3, subid: ['stock'] },
+    { id: 'category-4', src: 'images/analytics.png', name: 'Аналитика', subcategories: [categoryInAnalytics], number: 4, subid: ['analytics'] },
 ];
 
 // Данные по вкладке "Добавить контакт"

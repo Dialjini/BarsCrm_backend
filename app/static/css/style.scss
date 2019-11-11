@@ -208,6 +208,13 @@ body {
                     }
                     th {
                         font-weight: 700;
+                        .manager {
+                            align-self: center;
+                            margin-left: 8px;
+                            &:hover {
+                                cursor: pointer;
+                            }
+                        }
                     }
                 }
                 // Стили карточки клиента
@@ -676,6 +683,20 @@ body {
                             font-size: 12px;
                         }
                     }
+                    .padd {
+                        box-sizing: border-box;
+                        padding: 5px 15px 5px 15px;
+                        margin-left: 0;
+                        &:hover {
+                            cursor: pointer;
+                            background-color: rgb(241, 241, 241);
+                        }
+                    }
+                }
+                .empty_cards {
+                    margin: 10px 0;
+                    padding: 0;
+                    box-shadow: none;
                 }
                 .drop_down_search {
                     display: flex;
