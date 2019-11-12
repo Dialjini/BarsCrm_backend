@@ -1059,8 +1059,9 @@ function unfastenCard(element) {
     $('.drop_menu').fadeIn(200);
     $('.drop_menu').click(function() {
         closeCardMenu();
+        let idName = element.id.replace(/remove-/g, '');
         // Добавить карточку в список Карточки клиентов
-        let nameOrganization = saveTableAndCard[1][element.id.split('-')[1]][1]; // Название орги из объекта (Только для Клиентов)
+        let nameOrganization = saveTableAndCard[1][idName.split('-')[1]][1]; // Название орги из объекта (Только для Клиентов)
 
         $('#empty_customer_cards').append($('<div>', {
             class: 'fieldInfo padd',
@@ -1077,6 +1078,9 @@ function unfastenCard(element) {
                 }))
             }))
         }));
+        console.log(idName.split('-')[1], $(`#${idName}`));
+        saveTableAndCard[1].splice(idName.split('-')[1], 1);
+        $(`#${idName}`).remove();
     })
     // Делать запрос на сохранение открепленной карточки 
 }
