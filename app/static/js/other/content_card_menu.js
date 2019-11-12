@@ -4,46 +4,46 @@ function clientContentCard(selectedLine) {
                         <table class="table_block">
                             <tr>
                                 <td>Наименование</td>
-                                <td><input id="client_organization_name" value="${selectedLine[1]}"></td>
+                                <td><input type="text" id="client_organization_name" value="${selectedLine[1]}"></td>
                             </tr>
                             <tr>
-                                <td>Районе</td>
-                                <td><input id="client_area_one" class="numbers" value="${selectedLine[2]}">
-                                    <input id="client_area_two" class="string" value="${selectedLine[2]}"></td>
+                                <td>Район</td>
+                                <td><input type="text" id="client_area_one" class="numbers" value="${selectedLine[2]}">
+                                    <input type="text" id="client_area_two" class="string" value="${selectedLine[2]}"></td>
                             </tr>
                             <tr>
                                 <td>Область/Край</td>
-                                <td><input id="client_region" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_region" value="${selectedLine[2]}"></td>
                             </tr>
                             <tr>
                                 <td>Адрес</td>
-                                <td><input id="client_address" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_address" value="${selectedLine[2]}"></td>
                             </tr>
                             <tr>
                                 <td>ИНН</td>
-                                <td><input id="client_inn" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_inn" value="${selectedLine[2]}"></td>
                             </tr>
                         </table>
                         <table class="table_block">
                             <tr>
                                 <td>Тег</td>
-                                <td><input id="client_tag" class="string" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_tag" class="string" value="${selectedLine[2]}"></td>
                             </tr>
                             <tr>
                                 <td>Категория</td>
-                                <td><input id="client_category" class="string" value="${selectedLine[selectedLine.length - 2]}"></td>
+                                <td><input type="text" id="client_category" class="string" value="${selectedLine[selectedLine.length - 2]}"></td>
                             </tr>
                             <tr>
                                 <td>Ж/Д Станция</td>
-                                <td> <input id="client_station" class="string" value="${selectedLine[2]}"></td>
+                                <td> <input type="text" id="client_station" class="string" value="${selectedLine[2]}"></td>
                             </tr>
                             <tr>
                                 <td>Цена вагона</td>
-                                <td><input id="client_price" class="string" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_price" class="string" value="${selectedLine[2]}"></td>
                             </tr>
                             <tr>
                                 <td>км от НСК</td>
-                                <td><input id="client_distance" class="string" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_distance" class="string" value="${selectedLine[2]}"></td>
                             </tr>
                         </table>
                         <div class="info_block">
@@ -67,12 +67,12 @@ function clientContentCard(selectedLine) {
                                 <div id="client_member_1" class="member">
                                     <div class="top">
                                         <div class="role" id="role">Директор</div>
-                                        <input class="phone" id="phone" value="${selectedLine[2]}">
+                                        <input type="phone" class="phone" id="phone" value="${selectedLine[2]}">
                                     </div>
                                     <div class="bottom">
-                                        <input class="surname" id="surname" value="${selectedLine[2]}">
-                                        <input class="fullname" id="fullname" value="${selectedLine[2]}">
-                                        <input class="email" id="email" value="${selectedLine[2]}">
+                                        <input type="text" class="surname" id="surname" value="${selectedLine[2]}">
+                                        <input type="text" class="fullname" id="fullname" value="${selectedLine[2]}">
+                                        <input type="email" class="email" id="email" value="${selectedLine[2]}">
                                     </div>
                                 </div>
                             </div>
@@ -142,32 +142,32 @@ function providerContentCard(selectedLine) {
                             <tr>
                                 <td>Наименование</td>
                                 <td>
-                                    <input id="provider_organization_name" value="${selectedLine[1]}">
+                                    <input type="text" id="provider_organization_name" value="${selectedLine[1]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Районе</td>
                                 <td>
-                                    <input id="provider_area_one" class="numbers" value="${selectedLine[2]}">
-                                    <input id="provider_area_two" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_area_one" class="numbers" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_area_two" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Область/Край</td>
                                 <td>
-                                    <input id="provider_region" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_region" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Адрес</td>
                                 <td>
-                                    <input id="provider_address" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_address" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>ИНН</td>
                                 <td>
-                                    <input id="provider_inn" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_inn" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                         </table>
@@ -175,31 +175,31 @@ function providerContentCard(selectedLine) {
                             <tr>
                                 <td>Тег</td>
                                 <td>
-                                    <input id="provider_tag" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_tag" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Категория</td>
                                 <td>
-                                    <input id="provider_category" class="string" value="${selectedLine[selectedLine.length - 2]}">
+                                    <input type="text" id="provider_category" class="string" value="${selectedLine[selectedLine.length - 2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Ж/Д Станция</td>
                                 <td>
-                                    <input id="provider_station" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_station" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Цена вагона</td>
                                 <td>
-                                    <input id="provider_price" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_price" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>км от НСК</td>
                                 <td>
-                                    <input id="provider_distance" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_distance" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                         </table>
@@ -207,19 +207,19 @@ function providerContentCard(selectedLine) {
                             <tr>
                                 <td>Объем про-ва</td>
                                 <td>
-                                    <input id="provider_volume" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_volume" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>НДС</td>
                                 <td>
-                                    <input id="provider_vat" class="string" value="${selectedLine[selectedLine.length - 2]}">
+                                    <input type="number" id="provider_vat" class="string" value="${selectedLine[selectedLine.length - 2]}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Мерекурий</td>
                                 <td>
-                                    <input id="provider_merc" class="string" value="${selectedLine[2]}">
+                                    <input type="text" id="provider_merc" class="string" value="${selectedLine[2]}">
                                 </td>
                             </tr>
                         </table>
@@ -230,12 +230,12 @@ function providerContentCard(selectedLine) {
                                 <div id="provider_member_1" class="member">
                                     <div class="top">
                                         <div class="role" id="role">Директор</div>
-                                        <input class="phone" id="phone" value="${selectedLine[2]}">
+                                        <input type="phone" class="phone" id="phone" value="${selectedLine[2]}">
                                     </div>
                                     <div class="bottom">
-                                        <input class="surname" id="surname" value="${selectedLine[2]}">
-                                        <input class="fullname" id="fullname" value="${selectedLine[2]}">
-                                        <input class="email" id="email" value="${selectedLine[2]}">
+                                        <input type="text" class="surname" id="surname" value="${selectedLine[2]}">
+                                        <input type="text" class="fullname" id="fullname" value="${selectedLine[2]}">
+                                        <input type="email" class="email" id="email" value="${selectedLine[2]}">
                                     </div>
                                 </div>
                             </div>
@@ -301,26 +301,26 @@ function carrierContentCard(selectedLine) {
                     <tr>
                         <td>Наименование</td>
                         <td>
-                            <input id="carrier_organization_name" value="${selectedLine[2]}">
+                            <input type="text" id="carrier_organization_name" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Районе</td>
                         <td>
-                            <input id="carrier_area_one" value="${selectedLine[2]}" class="numbers">
-                            <input id="carrier_area_two" value="${selectedLine[2]}" class="string">
+                            <input type="text" id="carrier_area_one" value="${selectedLine[2]}" class="numbers">
+                            <input type="text" id="carrier_area_two" value="${selectedLine[2]}" class="string">
                         </td>
                     </tr>
                     <tr>
                         <td>Область/Край</td>
                         <td>
-                            <input id="carrier_region" value="${selectedLine[2]}">
+                            <input type="text" id="carrier_region" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Адрес</td>
                         <td>
-                            <input id="carrier_address" value="${selectedLine[2]}">
+                            <input type="text" id="carrier_address" value="${selectedLine[2]}">
                         </td>
                     </tr>
                 </table>
@@ -328,19 +328,19 @@ function carrierContentCard(selectedLine) {
                     <tr>
                         <td>ИНН</td>
                         <td>
-                            <input id="carrier_inn" value="${selectedLine[2]}">
+                            <input type="text" id="carrier_inn" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Грузоподъемность</td>
                         <td>
-                            <input id="carrier_capacity" value="${selectedLine[2]}" class="string">
+                            <input type="text" id="carrier_capacity" value="${selectedLine[2]}" class="string">
                         </td>
                     </tr>
                     <tr>
                         <td>Вид перевозки</td>
                         <td>
-                            <input id="carrier_view" value="${selectedLine[2]}" class="string">
+                            <input type="text" id="carrier_view" value="${selectedLine[2]}" class="string">
                         </td>
                     </tr>
                 </table>
@@ -351,12 +351,12 @@ function carrierContentCard(selectedLine) {
                         <div id="carrier_member_1" class="member delivery">
                             <div class="top">
                                 <div class="role" id="role">Водитель</div>
-                                <input value="${selectedLine[2]}" class="car" id="car">
+                                <input type="text" value="${selectedLine[2]}" class="car" id="car">
                             </div>
                             <div class="bottom">
-                                <input value="${selectedLine[2]}" class="surname" id="surname">
-                                <input value="${selectedLine[2]}" class="fullname" id="fullname">
-                                <input value="${selectedLine[2]}" class="email" id="email">
+                                <input type="text" value="${selectedLine[2]}" class="surname" id="surname">
+                                <input type="text" value="${selectedLine[2]}" class="fullname" id="fullname">
+                                <input type="email" value="${selectedLine[2]}" class="email" id="email">
                             </div>
                         </div>
                     </div>
@@ -559,25 +559,25 @@ function deliveryContentCard(selectedLine) {
                     <tr>
                         <td>Заказчик</td>
                         <td>
-                            <input id="delivery_customer" value="${selectedLine[1]}">
+                            <input type="text" id="delivery_customer" value="${selectedLine[1]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Дата отгрузки</td>
                         <td>
-                            <input id="delivery_shipment" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_shipment" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Дата разгрузки</td>
                         <td>
-                            <input id="delivery_unloading" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_unloading" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Способ погрузки</td>
                         <td>
-                            <input id="delivery_way" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_way" value="${selectedLine[2]}">
                         </td>
                     </tr>
                 </table>
@@ -585,25 +585,25 @@ function deliveryContentCard(selectedLine) {
                     <tr>
                         <td>Перевозчик</td>
                         <td>
-                            <input id="delivery_carrier" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_carrier" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Водитель</td>
                         <td>
-                            <input id="delivery_driver" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_driver" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Вид перевозки</td>
                         <td>
-                            <input id="delivery_view" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_view" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Комментарий</td>
                         <td>
-                            <input id="delivery_comment" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_comment" value="${selectedLine[2]}">
                         </td>
                     </tr>
                 </table>
@@ -611,13 +611,13 @@ function deliveryContentCard(selectedLine) {
                     <tr>
                         <td>Клиент</td>
                         <td>
-                            <input id="delivery_client" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_client" value="${selectedLine[2]}">
                         </td>
                     </tr>
                     <tr>
                         <td>Контакт на выгрузке</td>
                         <td>
-                            <input id="delivery_contact" value="${selectedLine[2]}">
+                            <input type="text" id="delivery_contact" value="${selectedLine[2]}">
                         </td>
                     </tr>
                 </table>
