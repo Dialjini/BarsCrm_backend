@@ -1,6 +1,12 @@
 from app import db
 import json
-
+from xhtml2pdf import pisa
+from io import StringIO, BytesIO
+from xhtml2pdf.config.httpconfig import httpConfig
+import xlsxwriter
+import xlrd
+import openpyxl
+from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORDER_MEDIUM, DEFAULT_BORDER
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -47,6 +53,7 @@ class EmptyClients(db.Model):
 class Client(db.Model):
     Client_id = db.Column(db.Integer, primary_key=True)
     Status = db.Column(db.String)
+    Number = db.Column(db.String)
     Faks = db.Column(db.String)
     Source = db.Column(db.String)
     Source2 = db.Column(db.String)
@@ -63,7 +70,8 @@ class Client(db.Model):
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
     Adress = db.Column(db.String)
-    History = db.relationship('Notes', backref='Author', lazy='dynamic')
+    Notes = db.relationship('Notes', backref='Author', lazy='dynamic')
+
 
 class Contacts(db.Model):
     Contact_id = db.Column(db.Integer, primary_key=True)
@@ -81,6 +89,7 @@ class Contacts(db.Model):
 class Notes(db.Model):
     NoteId = db.Column(db.Integer, primary_key=True)
     Done = db.Column(db.Boolean)
+    Type = db.Column(db.String)
     Date = db.Column(db.Date)
     Note = db.Column(db.String)
     Manager = db.Column(db.String)
