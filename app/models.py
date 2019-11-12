@@ -32,15 +32,28 @@ class Order(db.Model):
 
 class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
-    Properties_json = db.Column(db.String)
+    Name = db.Column(db.String)
+    Creator = db.Column(db.String)
+    Bags = db.Column(db.Float)
+    MKR = db.Column(db.Float)
+    Pile = db.Column(db.Float)
+    Cost = db.Column(db.Float)
+    NDS = db.Column(db.String)
+
 
 class EmptyClients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
 class Client(db.Model):
     Client_id = db.Column(db.Integer, primary_key=True)
+    Status = db.Column(db.String)
+    Faks = db.Column(db.String)
+    Source = db.Column(db.String)
+    Source2 = db.Column(db.String)
+    Segment = db.Column(db.String)
+    Segment2 = db.Column(db.String)
     Description = db.Column(db.String)
-    Contacts = db.Column(db.String)
+    Contacts = db.relationship('Contacts', backref='Owner', lazy='dynamic')
     Code = db.Column(db.String)
     Name = db.Column(db.String)
     Oblast = db.Column(db.String)
@@ -48,9 +61,30 @@ class Client(db.Model):
     Category = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
     UTC = db.Column(db.Integer)
-    UHH = db.Column(db.Integer)
+    UHH = db.Column(db.String)
     Adress = db.Column(db.String)
+    History = db.relationship('Notes', backref='Author', lazy='dynamic')
 
+class Contacts(db.Model):
+    Contact_id = db.Column(db.Integer, primary_key=True)
+    Position = db.Column(db.String)
+    Name = db.Column(db.String)
+    Number = db.Column(db.String)
+    Email = db.Column(db.String)
+    Comment = db.Column(db.String)
+    Department = db.Column(db.String)
+    Group = db.Column(db.String)
+    Manager = db.Column(db.String)
+    Date = db.Column(db.Date)
+    Birthday = db.Column(db.Date)
+
+class Notes(db.Model):
+    NoteId = db.Column(db.Integer, primary_key=True)
+    Done = db.Column(db.Boolean)
+    Date = db.Column(db.Date)
+    Note = db.Column(db.String)
+    Manager = db.Column(db.String)
+    File_Path = db.Column(db.String)
 
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
@@ -61,6 +95,11 @@ class Tasks(db.Model):
 
 class Provider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    Pods = db.Column(db.String)
+    Raps = db.Column(db.String)
+    Len = db.Column(db.String)
+    Vets = db.Column(db.String)
+    Train = db.Column(db.String)
     Oblast = db.Column(db.String)
     Rayon = db.Column(db.String)
     Name = db.Column(db.String)
@@ -70,7 +109,7 @@ class Provider(db.Model):
     Items = db.relationship('Item', backref='Stock', lazy='dynamic')
     Driver = db.relationship('Driver', backref='Provider', lazy='dynamic')
     UTC = db.Column(db.Integer)
-    UHH = db.Column(db.Integer)
+    UHH = db.Column(db.String)
     Adress = db.Column(db.String)
 
 
