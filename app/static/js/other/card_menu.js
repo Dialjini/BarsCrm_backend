@@ -17,10 +17,15 @@ function getCurrentTime() {
     return `${hour}:${minute}`
 }
 // Получение текущей даты в формате dd.mm
-function getCurrentDate() {
+function getCurrentDate(year = 'none') {
     let time = new Date();
     let month = time.getMonth();
     let day = time.getDay() < 10 ? '0' + time.getDay() : time.getDay();
+    if (year !== 'none') {
+        let year = time.getFullYear();
+        year = String(year).substring(2, 4);
+        return `${day}.${month}.${year}`;
+    }
     return `${day}.${month}`;
 }
 // Создание карточки

@@ -755,7 +755,7 @@ function contractContentCard(elem) {
     return `
         <div class="row_card column">
             <table class="fit gray">
-                <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate()}.19</td></tr>
+                <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
                 <tr><td class="bold">Менеджер</td><td>${username}</td></tr>
             </table>
             <div class="list" id="list_contract">
