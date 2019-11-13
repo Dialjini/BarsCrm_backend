@@ -755,7 +755,7 @@ function contractContentCard(elem) {
     return `
         <div class="row_card column">
             <table class="fit gray">
-                <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>10.10.18</td></tr>
+                <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate()}.19</td></tr>
                 <tr><td class="bold">Менеджер</td><td>${username}</td></tr>
             </table>
             <div class="list" id="list_contract">
@@ -1054,6 +1054,7 @@ function addRow(element) {
     }
     saveCard();
 }
+
 // Открепление карточки от менеджера
 function unfastenCard(element) {
     $('.drop_menu').fadeIn(200);
@@ -1074,11 +1075,11 @@ function unfastenCard(element) {
                     html: `Снято с ${username}`
                 }).add($('<div>', {
                     class: 'time',
-                    html: `Свободна с <span class="bold">20.09</span>`
+                    html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDate()}</span>`
                 }))
             }))
         }));
-        console.log(idName.split('-')[1], $(`#${idName}`));
+        // Делать запрос на удаление карточки из общей таблицы
         saveTableAndCard[1].splice(idName.split('-')[1], 1);
         $(`#${idName}`).remove();
     })

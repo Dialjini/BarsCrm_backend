@@ -1,6 +1,7 @@
 // Смущают глобальные переменные
 let saveTableAndCard;
 let selectedLine = '';
+
 // Отслеживание нажатия для всплывающей карточки "Открепить менеджера..."
 $(document).mouseup(function(e) {
     let container = $('.drop_menu');
@@ -8,12 +9,19 @@ $(document).mouseup(function(e) {
         container.fadeOut(200);
     }
 });
-// Получение текущего времени
-function getTime() {
+// Получение текущего времени в формате hh:mm
+function getCurrentTime() {
     let time = new Date();
-    let hour = time.getHours() > 12 ? time.getHours() : (time.getHours() < 10 ? "0" + time.getHours() : time.getHours());
-    let minute = time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes();
+    let hour = time.getHours() > 12 ? time.getHours() : (time.getHours() < 10 ? '0' + time.getHours() : time.getHours());
+    let minute = time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes();
     return `${hour}:${minute}`
+}
+// Получение текущей даты в формате dd.mm
+function getCurrentDate() {
+    let time = new Date();
+    let month = time.getMonth();
+    let day = time.getDay() < 10 ? '0' + time.getDay() : time.getDay();
+    return `${day}.${month}`;
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
@@ -28,7 +36,7 @@ function createCardMenu(element, index = 0) {
     $('.card_menu').remove();
     let getInfo = element.id.split('-');
 
-    // Получаем данные
+    // Делаем запрос в бд
     if (getInfo[1] !== 'clear') {
         for (let element of dataName) {
             if (element.name === getInfo[0]) {
@@ -41,13 +49,13 @@ function createCardMenu(element, index = 0) {
     // Информация по всем карточкам подкатегорий
     const titleObject = [{
             id: 'client',
-            list: [`Код: ${selectedLine[0]}`, `Местное время: ${getTime()}`, `Какой-то их сайт`, `Холдинг`],
+            list: [`Код: ${selectedLine[0]}`, `Местное время: ${getCurrentTime()}`, `Какой-то их сайт`, `Холдинг`],
             link: clientContentCard,
             status: getInfo[1]
         },
         {
             id: 'provider',
-            list: [`Код: ${selectedLine[0]}`, `Местное время: ${getTime()}`, `Холдинг`],
+            list: [`Код: ${selectedLine[0]}`, `Местное время: ${getCurrentTime()}`, `Холдинг`],
             link: providerContentCard,
             status: getInfo[1]
         },
@@ -234,6 +242,7 @@ function getTitleInfo(element) {
             html: element.list[i]
         }));
     }
+    
     function getRightSide() {
         function closeButton()  {
             return $('<div>', {
