@@ -36,8 +36,9 @@ class Order(db.Model):
     Props = db.Column(db.String)
     Cost = db.Column(db.Float)
 
-class Item(db.Model):
+class Provide_Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Name = db.Column(db.String)
     Creator = db.Column(db.String)
     Bags = db.Column(db.Float)
@@ -46,6 +47,17 @@ class Item(db.Model):
     Cost = db.Column(db.Float)
     NDS = db.Column(db.String)
 
+
+class Item(db.Model):
+    Item_id = db.Column(db.Integer, primary_key=True)
+    Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
+    Name = db.Column(db.String)
+    Creator = db.Column(db.String)
+    Bags = db.Column(db.Float)
+    MKR = db.Column(db.Float)
+    Pile = db.Column(db.Float)
+    Cost = db.Column(db.Float)
+    NDS = db.Column(db.String)
 
 class EmptyClients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,6 +87,7 @@ class Client(db.Model):
 
 class Contacts(db.Model):
     Contact_id = db.Column(db.Integer, primary_key=True)
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.Client_id'))
     Position = db.Column(db.String)
     Name = db.Column(db.String)
     Number = db.Column(db.String)
@@ -88,6 +101,7 @@ class Contacts(db.Model):
 
 class Notes(db.Model):
     NoteId = db.Column(db.Integer, primary_key=True)
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.Client_id'))
     Done = db.Column(db.Boolean)
     Type = db.Column(db.String)
     Date = db.Column(db.Date)
@@ -97,6 +111,7 @@ class Notes(db.Model):
 
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
+    User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     Task = db.Column(db.String)
     Type = db.Column(db.String)
     Visibility = db.Column(db.String)
@@ -115,7 +130,7 @@ class Provider(db.Model):
     Group = db.Column(db.String)
     Price = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
-    Items = db.relationship('Item', backref='Stock', lazy='dynamic')
+    Items = db.relationship('Provide_Item', backref='Stock', lazy='dynamic')
     Driver = db.relationship('Driver', backref='Provider', lazy='dynamic')
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
@@ -182,5 +197,6 @@ class Stock(db.Model):
 
 class Driver(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Name = db.Column(db.String)
     Contact = db.Column(db.String)

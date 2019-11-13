@@ -10,73 +10,104 @@ from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORD
 
 
 def get_clients_contacts(sheet, parent_table, col):
-    table = parent_table.Contacts
     i = col + 1
-    while(sheet['A' + str(i)] == None):
-        table.Position = sheet['B' + str(i)]
-        table.Name = sheet['C' + str(i)]
-        table.Number = sheet['D' + str(i)]
-        table.Email = sheet['E' + str(i)]
-        table.Comment = sheet['F' + str(i)]
-        table.Department = sheet['G' + str(i)]
-        table.Group = sheet['H' + str(i)]
-        table.Manager = sheet['I' + str(i)]
-        table.Date = sheet['J' + str(i)]
-        table.Birthday = sheet['K' + str(i)]
-
+    while(sheet['A' + str(i)].value == None):
+        table = models.Contacts()
+        table.Position = sheet['B' + str(i)].value
+        table.Name = sheet['C' + str(i)].value
+        table.Number = sheet['D' + str(i)].value
+        table.Email = sheet['E' + str(i)].value
+        table.Comment = sheet['F' + str(i)].value
+        table.Department = sheet['G' + str(i)].value
+        table.Group = sheet['H' + str(i)].value
+        table.Manager = sheet['I' + str(i)].value
+        table.Date = sheet['J' + str(i)].value
+        table.Birthday = sheet['K' + str(i)].value
+        table.Owner = parent_table
         i = i + 1
-        db.session.add(table)
-        db.session.commit()
+
+        parent_table.Contacts.append(table)
+
+    return parent_table.Contacts
 
 def get_clients_notes(sheet, parent_table, col):
+
     i = col + 1
-    table = parent_table.Notes
-    while(sheet['A' + str(i)] == None):
-        if sheet['B' + str(i)] == '+':
+    while(sheet['A' + str(i)].value == None):
+        table = models.Notes()
+        if sheet['B' + str(i)].value == '+':
             table.Done = True
         else:
             table.Done = False
 
-        table.Type = sheet['C' + str(i)]
-        table.Date = sheet['D' + str(i)]
-        table.Note = sheet['E' + str(i)]
-        table.Manager = sheet['F' + str(i)]
-        table.File_Path = sheet['H' + str(i)]
-
+        table.Type = sheet['C' + str(i)].value
+        table.Date = sheet['D' + str(i)].value
+        table.Note = sheet['E' + str(i)].value
+        table.Manager = sheet['F' + str(i)].value
+        table.File_Path = sheet['H' + str(i)].value
+        table.Author = parent_table
         i = i + 1
-        db.session.add(table)
-        db.session.commit()
+        parent_table.Notes.append(table)
 
     if(sheet['A' + str(i)] == 'Контактные лица'):
-        get_clients_contacts(sheet=sheet, parent_table=table, col=i)
+        parent_table.Contacts = get_clients_contacts(sheet=sheet, parent_table=parent_table, col=i)
 
-def get_client_from_xlsx(sheet, table, col=1):
-    for i in range(col, 495):
-        if(sheet['A'+str(i)] == 'Компания'):
-            table.Date = sheet['B'+str(i + 1)]
-            table.Name = sheet['C'+str(i + 1)]
-            table.Number = sheet['D'+str(i + 1)]
-            table.Faks = sheet['E' + str(i + 1)]
-            table.Adress = sheet['F'+str(i + 1)]
-            table.Manager = sheet['I' + str(i + 1)]
-            table.Oblast = sheet['J' + str(i + 1)]
-            table.Rayon = sheet['K' + str(i + 1)]
-            table.Source = sheet['L' + str(i + 1)]
-            table.Source2 = sheet['M' + str(i + 1)]
-            table.Segment = sheet['N' + str(i + 1)]
-            table.Segment2 = sheet['O' + str(i + 1)]
-            table.Status = sheet['P' + str(i + 1)]
-            table.Description = sheet['Q' + str(i + 1)]
+    return {'notes': parent_table.Notes, 'contacts': parent_table.Contacts}
 
-            if (sheet['A'+str(i + 2)] == 'История'):
-                get_clients_notes(sheet=sheet, parent_table=table, col= i + 2)
-            if (sheet['A' + str(i + 2)] == 'Контактные лица'):
-                get_clients_contacts(sheet=sheet, parent_table=table, col = i + 2)
+def get_client_from_xlsx(sheet, parent_table, col=1):
+    for i in range(col, sheet.max_row):
+        if(sheet['A'+str(i)].value == 'Компания'):
+            table = parent_table()
+            table.Date = sheet['B'+str(i + 1)].value
+            table.Name = sheet['C'+str(i + 1)].value
+            table.Number = sheet['D'+str(i + 1)].value
+            table.Faks = sheet['E' + str(i + 1)].value
+            table.Adress = sheet['F'+str(i + 1)].value
+            table.Manager = sheet['I' + str(i + 1)].value
+            table.Oblast = sheet['J' + str(i + 1)].value
+            table.Rayon = sheet['K' + str(i + 1)].value
+            table.Source = sheet['L' + str(i + 1)].value
+            table.Source2 = sheet['M' + str(i + 1)].value
+            table.Segment = sheet['N' + str(i + 1)].value
+            table.Segment2 = sheet['O' + str(i + 1)].value
+            table.Status = sheet['P' + str(i + 1)].value
+            table.Description = sheet['Q' + str(i + 1)].value
+
+            print(table.__dict__)
+
+            if (sheet['A'+str(i + 2)].value == 'История'):
+                result = get_clients_notes(sheet=sheet, parent_table=table, col=i + 2)
+                print(result)
+                table.Notes = result['notes']
+                if str(result['contacts']) != '[]':
+                    table.contacts = result['contacts']
+
+            if (sheet['A' + str(i + 2)].value == 'Контактные лица'):
+                table.contacts = get_clients_contacts(sheet=sheet, parent_table=table, col=i + 2)
+
+            print(table)
+            db.session.add(table)
+            db.session.commit()
 
 def add_client_from_xlsx():
     sheet = openpyxl.load_workbook('app/files/book2Irkutsk.xlsx').active
     table = models.Client
-    table = get_client_from_xlsx(col=1,sheet=sheet, table=table)
-    db.session.add(table)
-    db.session.commit()
-get_client_from_xlsx()
+    get_client_from_xlsx(col=1,sheet=sheet, parent_table=table)
+
+
+
+def table_to_json(query):
+    result = []
+    for i in query:
+        subres = i.__dict__
+        subres.pop('_sa_instance_state', None)
+        result.append(subres)
+    return result
+
+# add_client_from_xlsx()
+
+# print(models.Client.query.all()[0].Notes.query.all()[0].__dict__)
+print(table_to_json(models.Client.query.all()))
+
+
+#print(models.Client().Notes.all())
