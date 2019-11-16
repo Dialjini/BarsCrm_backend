@@ -104,10 +104,10 @@ def table_to_json(query):
         result.append(subres)
     return result
 
-# add_client_from_xlsx()
+add_client_from_xlsx()
 
 # print(models.Client.query.all()[0].Notes.query.all()[0].__dict__)
-print(table_to_json(models.Client.query.all()))
+# print(table_to_json(models.Client.query.all()))
 
 
 #print(models.Client().Notes.all())

@@ -4,10 +4,12 @@ from app import models
 import json
 
 
-def table_to_json(table):
+def table_to_json(query):
     result = []
-    for i in table:
-        result.append(i.__dict__)
+    for i in query:
+        subres = i.__dict__
+        subres.pop('_sa_instance_state', None)
+        result.append(subres)
     return json.dumps(result)
 
 @app.route('/')
@@ -40,12 +42,12 @@ def auth(login, password):
 
 @app.route('/getClients', methods=['GET'])
 def getClients():
-    return table_to_json(models.Client.query)
+    return table_to_json(models.Client.query.all())
 
 
 @app.route('/getProviders', methods=['GET'])
 def getProviders():
-    return table_to_json(models.Provider.query)
+    return table_to_json(models.Provider.query.all())
 
 
 @app.route('/getDeliverersByTrain', methods=['GET'])
@@ -55,7 +57,7 @@ def getDeliverersByTrain():
 
 @app.route('/getDeliverersByCar', methods=['GET'])
 def getDeliverersByCar():
-    return table_to_json(models.DeliveryCar.query)
+    return table_to_json(models.DeliveryCar.query.all())
 
 
 @app.route('/getTasks', methods=['GET'])
