@@ -229,7 +229,7 @@ body {
 }
 
 .page .centerBlock .container .info .row .fields .field,
-.page .centerBlock .container .info .row .fields .fieldStock {
+.page .centerBlock .container .info .row .fields .field_with_modal {
   padding: 5px;
   height: -webkit-fit-content;
   height: -moz-fit-content;
@@ -242,12 +242,12 @@ body {
 }
 
 .page .centerBlock .container .info .row .fields .field:hover,
-.page .centerBlock .container .info .row .fields .fieldStock:hover {
+.page .centerBlock .container .info .row .fields .field_with_modal:hover {
   cursor: pointer;
 }
 
 .page .centerBlock .container .info .row .fields .field:not(:last-child),
-.page .centerBlock .container .info .row .fields .fieldStock:not(:last-child) {
+.page .centerBlock .container .info .row .fields .field_with_modal:not(:last-child) {
   margin-right: 20px;
 }
 
@@ -257,18 +257,18 @@ body {
   transition: 0.3s all;
 }
 
-.page .centerBlock .container .info .row .fields .fieldStock {
+.page .centerBlock .container .info .row .fields .field_with_modal {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   padding: 5px 10px 5px 15px;
 }
 
-.page .centerBlock .container .info .row .fields .fieldStock span {
+.page .centerBlock .container .info .row .fields .field_with_modal span {
   margin-right: 10px;
 }
 
-.page .centerBlock .container .info .row .fields .fieldStock img {
+.page .centerBlock .container .info .row .fields .field_with_modal img {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
@@ -330,6 +330,18 @@ body {
 
 .page .centerBlock .container .info .table th .manager:hover {
   cursor: pointer;
+}
+
+.page .centerBlock .container .info .analytics tr:not(:first-child) {
+  -webkit-transition: none;
+  transition: none;
+}
+
+.page .centerBlock .container .info .analytics tr:not(:first-child):hover {
+  -webkit-transition: none;
+  transition: none;
+  cursor: default;
+  background-color: #fff;
 }
 
 .page .centerBlock .container .info .card_menu {
@@ -567,6 +579,15 @@ body {
   width: 30px;
 }
 
+.page .centerBlock .container .info .card_menu .content .row_card .events {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
 .page .centerBlock .container .info .card_menu .content .row_card .info_block {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -711,8 +732,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .area .history {
-  -ms-flex-preferred-size: 340px;
-      flex-basis: 340px;
+  width: 340px;
   border-right: 1px solid lightgray;
   padding: 5px 10px;
   overflow-x: hidden;

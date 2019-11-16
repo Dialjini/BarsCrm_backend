@@ -254,7 +254,7 @@ const categoryInStock = [
 
 // Данные по категории 'Аналитика' (Название, Таблица с данными)
 const categoryInAnalytics = [
-    { id: 'analytics', name: 'Аналитика', active: true },
+    { id: 'analytics', name: 'Аналитика', active: true, lastCard: [] },
 ]
 
 const dataName = [
@@ -287,13 +287,16 @@ const subcategoryButtons = [
     ],
     [
         'Склад',
-        { id: 'unknown', objectName: categoryInStock, name: 'Товар', class: 'fieldStock' },
-        { id: 'unknown', objectName: categoryInStock, name: 'Фасовка', class: 'fieldStock' },
-        { id: 'unknown', objectName: categoryInStock, name: 'Объем', class: 'fieldStock' },
-        { id: 'unknown', objectName: categoryInStock, name: 'Склад', class: 'fieldStock' },
+        { id: 'unknown', objectName: categoryInStock, name: 'Товар', class: 'field_with_modal' },
+        { id: 'unknown', objectName: categoryInStock, name: 'Фасовка', class: 'field_with_modal' },
+        { id: 'unknown', objectName: categoryInStock, name: 'Объем', class: 'field_with_modal' },
+        { id: 'unknown', objectName: categoryInStock, name: 'Склад', class: 'field_with_modal' },
     ],
     [
-        'Аналитика'
+        'Аналитика',
+        { id: 'unknown', objectName: categoryInAnalytics, name: 'Прибыль по клиентам', class: 'field_with_modal' },
+        { id: 'unknown', objectName: categoryInAnalytics, name: 'Период', class: 'field_with_modal' },
+
     ]
 ];
 

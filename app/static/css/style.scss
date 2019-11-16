@@ -141,7 +141,7 @@ body {
                             }
                         }
                         .field,
-                        .fieldStock {
+                        .field_with_modal {
                             padding: 5px;
                             height: fit-content;
                             color: $main_color;
@@ -159,7 +159,7 @@ body {
                             opacity: 1;
                             transition: 0.3s all;
                         }
-                        .fieldStock {
+                        .field_with_modal {
                             display: flex;
                             padding: 5px 10px 5px 15px;
                             span {
@@ -214,6 +214,16 @@ body {
                             &:hover {
                                 cursor: pointer;
                             }
+                        }
+                    }
+                }
+                .analytics {
+                    tr:not(:first-child) {
+                        transition: none;
+                        &:hover {
+                            transition: none;
+                            cursor: default;
+                            background-color: #fff;
                         }
                     }
                 }
@@ -375,6 +385,10 @@ body {
                                     width: 30px;
                                 }
                             }
+                            .events {
+                                display: flex;
+                                justify-content: space-between;
+                            }
                             .info_block {
                                 display: flex;
                                 flex-direction: column;
@@ -495,7 +509,7 @@ body {
                             display: flex;
                             border: 1px solid lightgray;
                             .history {
-                                flex-basis: 340px;
+                                width: 340px;
                                 border-right: 1px solid lightgray;
                                 padding: 5px 10px;
                                 overflow-x: hidden;

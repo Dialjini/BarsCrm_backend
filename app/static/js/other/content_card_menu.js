@@ -4,7 +4,7 @@ function clientContentCard(selectedLine) {
                         <table class="table_block">
                             <tr>
                                 <td>Наименование</td>
-                                <td><input type="text" id="client_organization_name" value="${selectedLine[1]}"></td>
+                                <td><input type="text" id="client_organization_name" onchange="saveCard()" value="${selectedLine[1]}"></td>
                             </tr>
                             <tr>
                                 <td>Район</td>
@@ -59,6 +59,16 @@ function clientContentCard(selectedLine) {
 
                                 </tbody>
                             </table>
+                            <span class="lightgray" style="margin-top: 17px;">Спрос</span>
+                            <table>
+                                <tr>
+                                    <td>Товар</td>
+                                    <td>Объем</td>
+                                </tr>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="row_card">
@@ -76,7 +86,10 @@ function clientContentCard(selectedLine) {
                                     </div>
                                 </div>
                             </div>
-                            <img class="add_something" src="static/images/add.png" onclick="addMember()">
+                            <div class="events">
+                                <img class="add_something" src="static/images/add.png" onclick="addMember()">
+                                <img class="add_something" src="static/images/add.png" onclick="removeMember()">
+                            </div>
                         </div>
                         <div class="info_block">
                             <span class="lightgray">Группа товаров</span>
@@ -86,13 +99,17 @@ function clientContentCard(selectedLine) {
                                         <td>Товар</td>
                                         <td>Объем</td>
                                         <td>У кого</td>
+                                        <td>Цена</td>
                                     </tr>
                                     <tbody id="group">
 
                                     </tbody>
                                 </table>
                             </div>
-                            <img class="add_something" id="client-table" src="static/images/add.png" onclick="addRow(this)">
+                            <div class="events">
+                                <img class="add_something" id="client-table" src="static/images/add.png" onclick="addRow(this)">
+                                <img class="add_something" id="client-table" src="static/images/add.png" onclick="removeRow(this)">
+                            </div>
                         </div>
                     </div>
                     <div class="area">
@@ -239,7 +256,10 @@ function providerContentCard(selectedLine) {
                                     </div>
                                 </div>
                             </div>
-                            <img class="add_something" src="static/images/add.png" onclick="addMember()">
+                            <div class="events">
+                                <img class="add_something" src="static/images/add.png" onclick="addMember()">
+                                <img class="add_something" src="static/images/add.png" onclick="removeMember()">
+                            </div>
                         </div>
                         <div class="info_block">
                             <span class="lightgray">Группа товаров</span>
@@ -251,7 +271,10 @@ function providerContentCard(selectedLine) {
                                     </tbody>
                                 </table>
                             </div>
-                            <img class="add_something" id="provider-table" src="static/images/add.png" onclick="addRow(this)">
+                            <div class="events">
+                                <img class="add_something" id="provider-table" src="static/images/add.png" onclick="addRow(this)">
+                                <img class="add_something" id="provider-table" src="static/images/add.png" onclick="removeRow(this)">
+                            </div>
                         </div>
                     </div>
                     <div class="area">
@@ -360,7 +383,10 @@ function carrierContentCard(selectedLine) {
                             </div>
                         </div>
                     </div>
-                    <img class="add_something" src="static/images/add.png" onclick="addMemberDelivery()">
+                    <div class="events">
+                        <img class="add_something" src="static/images/add.png" onclick="addMemberDelivery()">
+                        <img class="add_something" src="static/images/add.png" onclick="removeMember()">
+                    </div>
                 </div>
                 <div class="info_block" style="width: fit-content">
                     <span class="lightgray">Рейсы</span>
@@ -384,7 +410,10 @@ function carrierContentCard(selectedLine) {
                             </tbody>
                         </table>
                     </div>
-                    <img class="add_something" id="carrier-table" src="static/images/add.png" onclick="addRow(this)">
+                    <div class="events">
+                        <img class="add_something" id="carrier-table" src="static/images/add.png" onclick="addRow(this)">
+                        <img class="add_something" id="carrier-table" src="static/images/add.png" onclick="removeRow(this)">
+                    </div>
                 </div>
             </div>
             <div class="area">
@@ -541,7 +570,10 @@ function accountContentCard(selectedLine) {
                             </tbody>
                         </table>
                     </div>
-                    <img class="add_something" id="account-table" src="static/images/add.png" onclick="addRow(this)">
+                    <div class="events">
+                        <img class="add_something" id="account-table" src="static/images/add.png" onclick="addRow(this)">
+                        <img class="add_something" id="account-table" src="static/images/add.png" onclick="removeRow(this)">
+                    </div>
                 </div>
             </div>
             <div class="next">
@@ -653,7 +685,10 @@ function deliveryContentCard(selectedLine) {
                                 </tbody>
                             </table>
                         </div>
-                        <img class="add_something" id="delivery-table" src="static/images/add.png" onclick="addRow(this)">
+                        <div class="events">
+                            <img class="add_something" id="delivery-table" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="delivery-table" src="static/images/add.png" onclick="removeRow(this)">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -661,6 +696,87 @@ function deliveryContentCard(selectedLine) {
                 <button class="btn" style="margin-right: 10px" onclick="closeCardMenu()">Забирает сам</button>
                 <button class="btn btn-main" id="delivery" onclick="closeCardMenu()">Оформить Заявку</button>
             </div>`
+}
+// Контентная часть Аналитики
+function analyticsContent() {
+    // Получить данные, чтобы заполнить таблицу(-ы)
+    return `
+        <table class="table analytics">
+            <tr>
+                <th>Товар</th>
+                <th>Клиент</th>
+                <th>Объем</th>
+                <th>Цена</th>
+                <th>Доставка</th>
+                <th>Привет</th>
+                <th>Себестоимость</th>
+                <th>Купили</th>
+                <th>Заработали</th>
+                <th>Прибыль</th>
+            </tr>
+            <tr>
+                <td rowspan="2">Жмых</td>
+                <td>Лютик</td>
+                <td>7904</td>
+                <td>109</td>
+                <td>2</td>
+                <td>6</td>
+                <td>101</td>
+                <td>80</td>
+                <td>21</td>
+                <td>166000</td>
+            </tr>
+            <tr>
+                <td>Ромашка</td>
+                <td>7904</td>
+                <td>89</td>
+                <td>3</td>
+                <td>8</td>
+                <td>104</td>
+                <td>65</td>
+                <td>43</td>
+                <td>122300</td>
+            </tr>
+        </table>
+
+        <table class="table analytics">
+            <tr>
+                <th>Товар</th>
+                <th>Клиент</th>
+                <th>Объем</th>
+                <th>Цена</th>
+                <th>Доставка</th>
+                <th>Привет</th>
+                <th>Себестоимость</th>
+                <th>Купили</th>
+                <th>Заработали</th>
+                <th>Прибыль</th>
+            </tr>
+            <tr>
+                <td rowspan="2">Барда</td>
+                <td>Лютик</td>
+                <td>7904</td>
+                <td>109</td>
+                <td>2</td>
+                <td>6</td>
+                <td>101</td>
+                <td>80</td>
+                <td>21</td>
+                <td>166000</td>
+            </tr>
+            <tr>
+                <td>Ромашка</td>
+                <td>7904</td>
+                <td>89</td>
+                <td>3</td>
+                <td>8</td>
+                <td>104</td>
+                <td>65</td>
+                <td>43</td>
+                <td>122300</td>
+            </tr>
+        </table>
+    `
 }
 // Оформление доставки из карточки Счета
 function arrangeDelivery(element) {
@@ -1006,6 +1122,10 @@ function addMember() {
     }));
     saveCard();
 }
+// Удаление последнего контакта в карточках
+function removeMember() {
+    $('#members').children().last().remove();
+}
 // Добавление контакта в карточках Поставщик
 function addMemberDelivery() {
     $('#members').append($('<div>', {
@@ -1028,7 +1148,7 @@ function addMemberDelivery() {
 // Добавление строк в таблицах карточек
 function addRow(element) {
     const tableInfo = [
-        { id: 'client-table', count: 3, widthInput: [57, 43, 104] },
+        { id: 'client-table', count: 4, widthInput: [57, 43, 104, 43] },
         { id: 'provider-table', count: 6, widthInput: [57, 33, 28, 59, 24, 57] },
         { id: 'carrier-table', count: 5, widthInput: [50, 100, 160, 90, 33] },
         { id: 'account-table', count: 3, widthInput: [58, 42, 43] },
@@ -1054,7 +1174,10 @@ function addRow(element) {
     }
     saveCard();
 }
-
+// Удаление последней строки в таблицах карточек
+function removeRow(element) {
+    $('#group').children().last().remove();
+}
 // Открепление карточки от менеджера
 function unfastenCard(element) {
     $('.drop_menu').fadeIn(200);
@@ -1066,7 +1189,7 @@ function unfastenCard(element) {
 
         $('#empty_customer_cards').append($('<div>', {
             class: 'fieldInfo padd',
-            id: 'empty_card', // Number
+            id: `detached_card_${idName.split('-')[1]}`, // Number
             append: $('<div>', { class: 'name', html: nameOrganization })
             .add($('<div>', {
                 class: 'row',
@@ -1080,8 +1203,6 @@ function unfastenCard(element) {
             }))
         }));
         // Делать запрос на удаление карточки из общей таблицы
-        saveTableAndCard[1].splice(idName.split('-')[1], 1);
-        $(`#${idName}`).remove();
     })
     // Делать запрос на сохранение открепленной карточки 
 }

@@ -88,6 +88,10 @@ function fillingTables(object) {
         }
     }
 
+    if (object[0].id === 'analytics') {
+        return analyticsContent();
+    }
+
     let table = $('<table />', {
         class: 'table',
         id: object[0].id,

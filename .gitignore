@@ -1,2 +1,3 @@
 __pycache__
 *.scss
+.DS_Store
