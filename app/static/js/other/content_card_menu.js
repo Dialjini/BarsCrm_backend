@@ -88,7 +88,7 @@ function clientContentCard(selectedLine) {
                             </div>
                             <div class="events">
                                 <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                                <img class="add_something" src="static/images/add.png" onclick="removeMember()">
+                                <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
                             </div>
                         </div>
                         <div class="info_block">
@@ -108,7 +108,7 @@ function clientContentCard(selectedLine) {
                             </div>
                             <div class="events">
                                 <img class="add_something" id="client-table" src="static/images/add.png" onclick="addRow(this)">
-                                <img class="add_something" id="client-table" src="static/images/add.png" onclick="removeRow(this)">
+                                <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
                             </div>
                         </div>
                     </div>
@@ -258,7 +258,7 @@ function providerContentCard(selectedLine) {
                             </div>
                             <div class="events">
                                 <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                                <img class="add_something" src="static/images/add.png" onclick="removeMember()">
+                                <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
                             </div>
                         </div>
                         <div class="info_block">
@@ -273,7 +273,7 @@ function providerContentCard(selectedLine) {
                             </div>
                             <div class="events">
                                 <img class="add_something" id="provider-table" src="static/images/add.png" onclick="addRow(this)">
-                                <img class="add_something" id="provider-table" src="static/images/add.png" onclick="removeRow(this)">
+                                <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
                             </div>
                         </div>
                     </div>
@@ -385,7 +385,7 @@ function carrierContentCard(selectedLine) {
                     </div>
                     <div class="events">
                         <img class="add_something" src="static/images/add.png" onclick="addMemberDelivery()">
-                        <img class="add_something" src="static/images/add.png" onclick="removeMember()">
+                        <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
                     </div>
                 </div>
                 <div class="info_block" style="width: fit-content">
@@ -412,7 +412,7 @@ function carrierContentCard(selectedLine) {
                     </div>
                     <div class="events">
                         <img class="add_something" id="carrier-table" src="static/images/add.png" onclick="addRow(this)">
-                        <img class="add_something" id="carrier-table" src="static/images/add.png" onclick="removeRow(this)">
+                        <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
                     </div>
                 </div>
             </div>
@@ -572,7 +572,7 @@ function accountContentCard(selectedLine) {
                     </div>
                     <div class="events">
                         <img class="add_something" id="account-table" src="static/images/add.png" onclick="addRow(this)">
-                        <img class="add_something" id="account-table" src="static/images/add.png" onclick="removeRow(this)">
+                        <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
                     </div>
                 </div>
             </div>
@@ -687,7 +687,7 @@ function deliveryContentCard(selectedLine) {
                         </div>
                         <div class="events">
                             <img class="add_something" id="delivery-table" src="static/images/add.png" onclick="addRow(this)">
-                            <img class="add_something" id="delivery-table" src="static/images/add.png" onclick="removeRow(this)">
+                            <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
                         </div>
                     </div>
                 </div>
@@ -1120,11 +1120,15 @@ function addMember() {
             })
         }))
     }));
+    $('#remove_last_member').fadeIn(100);
     saveCard();
 }
 // Удаление последнего контакта в карточках
 function removeMember() {
     $('#members').children().last().remove();
+    if ($('#members').html().trim() === '') {
+        $('#remove_last_member').fadeOut(0);
+    }
 }
 // Добавление контакта в карточках Поставщик
 function addMemberDelivery() {
@@ -1172,11 +1176,15 @@ function addRow(element) {
             $('#group').append(trFill(tableInfo[i]));
         }
     }
+    $('#remove_last_row').fadeIn(100);
     saveCard();
 }
 // Удаление последней строки в таблицах карточек
-function removeRow(element) {
+function removeRow() {
     $('#group').children().last().remove();
+    if ($('#group').html().trim() === '') {
+        $('#remove_last_row').fadeOut(0);
+    }
 }
 // Открепление карточки от менеджера
 function unfastenCard(element) {

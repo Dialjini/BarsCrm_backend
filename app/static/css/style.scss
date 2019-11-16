@@ -892,6 +892,9 @@ body {
     line-height: 30px;
     font-size: 11px;
 }
+#remove_last_row, #remove_last_member {
+    display: none;
+}
 .add_something {
     width: 15px;
     height: 15px;

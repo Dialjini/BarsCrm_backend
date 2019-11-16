@@ -135,9 +135,19 @@ function createCardMenu(element, index = 0) {
     }
 
     $('.info').append(cardMenu());
+
+    // Проверка на заполненность Контактов и строк таблиц
+    if ($('#members').html().trim() !== '') {
+        $('#remove_last_member').fadeIn(0);
+    }
+    if ($('#group').html().trim() !== '') {
+        $('#remove_last_row').fadeIn(0);
+    }
+
+    // Модальное окно для Склада
     if (getInfo[0] === 'stock') {
-        $('.info').prepend($('<div>', {class: 'overflow'}))
-        $('#card_menu').addClass('modal')
+        $('.info').prepend($('<div>', {class: 'overflow'}));
+        $('#card_menu').addClass('modal');
     }
 }
 // Переход на предыдущую вкладку карточки
