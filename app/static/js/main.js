@@ -41,6 +41,7 @@ function linkField() {
                 }
             }
         }
+        requestData();
     });
 }
 
@@ -61,17 +62,21 @@ function linkCategory(element) {
             }
         }
     }
-    ajaxRequest();
     linkField();
 }
 
-function ajaxRequest() {
+function gettingData(data) {
+    saveTableAndCard.push(data);
+    console.log(saveTableAndCard);
+}
+
+function requestData() {
     $.ajax({
         url: '/getClients',
         type: 'GET',
         dataType: 'html',
         success: function(data){
-            console.log( "Полученные данные: " + data );
+            gettingData(JSON.parse(data));
         }
     });
 }
