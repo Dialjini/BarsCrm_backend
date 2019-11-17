@@ -43,11 +43,7 @@ function createCardMenu(element, index = 0) {
 
     // Делаем запрос в бд
     if (getInfo[1] !== 'clear') {
-        for (let element of dataName) {
-            if (element.name === getInfo[0]) {
-                selectedLine = element.link[1][getInfo[1]];
-            }
-        }
+        selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
     } else {
         selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
     }
@@ -136,18 +132,18 @@ function createCardMenu(element, index = 0) {
 
     $('.info').append(cardMenu());
 
-    // Проверка на заполненность Контактов и строк таблиц
-    if ($('#members').html().trim() !== '') {
-        $('#remove_last_member').fadeIn(0);
-    }
-    if ($('#group').html().trim() !== '') {
-        $('#remove_last_row').fadeIn(0);
-    }
-
     // Модальное окно для Склада
     if (getInfo[0] === 'stock') {
         $('.info').prepend($('<div>', {class: 'overflow'}));
         $('#card_menu').addClass('modal');
+    // Проверка на заполненность Контактов и строк таблиц (Не у Склада)
+    } else { 
+        if ($('#members').html().trim() !== '') {
+            $('#remove_last_member').fadeIn(0);
+        }
+        if ($('#group').html().trim() !== '') {
+            $('#remove_last_row').fadeIn(0);
+        }
     }
 }
 // Переход на предыдущую вкладку карточки

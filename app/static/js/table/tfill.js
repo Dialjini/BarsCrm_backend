@@ -3,36 +3,39 @@
  */
 
 var rowFilling = (object, id, table) => {
+    let getTitleTable = () => {
+        let element = $('<tr>');
+        for (let i = 0; i < object[0].length - 1; i++) {
+            elementTr = `<th width="${object[0][i].width}%">${object[0][i].name}</th>`;
+            element.append(elementTr);
+        }
+        if (id !== 'delivery' && id !== 'stock') {
+            element.append(`
+            <th width="${object[0][object[0].length - 1].width}%">
+                <div class="flex">
+                    <span>${object[0][object[0].length - 1].name}</span>
+                    <img src="static/images/dropmenu_black.svg" class="drop_down_img manager" onclick="">
+                </div>
+            </th>`);
+        } else {
+            element.append(`<th width="${object[0][object[0].length - 1].width}%">${object[0][object[0].length - 1].name}</th>`);
+        }
+        return element;
+    }
 
     let rowFillingDefault = () => {
-        for (let i = 0; i < object.length; i++) {
-            i === 0 ? element = $('<tr>') : element = $('<tr>', {id: `${id}-${i}`, onclick: 'createCardMenu(this)'});
-            for (let j = 0; j < object[i].length; j++) {
-                let elementTr;
-                if (i == 0) {
-                    if (j == object[i].length - 1 && id !== 'delivery') {
-                        elementTr = $('<th>', { 
-                            width: `${object[0][j].width}%`,
-                            append: $('<div>', {
-                                class: 'flex',
-                                append: $('<span>', {
-                                    html: object[0][j].name
-                                }).add($('<img>', { 
-                                    src: 'static/images/dropmenu_black.svg',
-                                    class: 'drop_down_img manager',
-                                    onclick: ''
-                                }))
-                            })
-                        })
-                        element.append(elementTr);
-                        continue;
-                    }
-                    elementTr = $('<th>', { width: `${object[0][j].width}%`, html: object[0][j].name })
-                    element.append(elementTr);
-                    continue;
-                } else {
-                    elementTr = $('<td>', { html: object[i][j] });
+        table.append(getTitleTable());
+        for (let i = 0; i < object[1].length; i++) {
+            let element = $('<tr>', {id: `${id}-${i + 1}`, onclick: 'createCardMenu(this)'});
+            const name = [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
+
+            for (let j = 0; j < name.length; j++) {
+                let currentInfo = name[j];
+                if (currentInfo === null) {
+                    currentInfo = 'Не указано';
                 }
+
+                let elementTr = $('<td>', { html: currentInfo });
                 element.append(elementTr);
             }
             table.append(element);
@@ -41,21 +44,17 @@ var rowFilling = (object, id, table) => {
     }
 
     let rowFillingStock = () => {
-        for (let i = 0; i < object.length; i++) {
-            i === 0 ? element = $('<tr>') : element = $('<tr>', {id: `${id}-${i}`, onclick: 'createCardMenu(this, 1)'});
-            for (let j = 0; j < object[i].length; j++) {
-                let elementTr;
-                if (i == 0) {
-                    elementTr = $('<th>', { width: `${object[0][j].width}%`, html: object[0][j].name });
-                    element.append(elementTr);
-                    continue;
-                }
-                j == object[i].length - 1
-                    ? elementTr = $('<td>', { class: 'pos-rel', append: $('<span>', { html: object[i][j] })
-                        .add($('<img>', { src: 'static/images/transit.png', class: 'transit_img' }))}) 
-                    : elementTr = $('<td>', { html: object[i][j] });
+        table.append(getTitleTable());
+        for (let i = 0; i < object[1].length; i++) {
+            let element = $('<tr>', {id: `${id}-${i + 1}`, onclick: 'createCardMenu(this, 1)'});
+            const name = [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
+
+            for (let j = 0; j < name.length; j++) {
+                let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
             }
+            element.append($('<td>', { class: 'pos-rel', append: $('<span>', { html: name[name.length - 1] })
+                        .add($('<img>', { src: 'static/images/transit.png', class: 'transit_img' }))}));
             table.append(element);
         }
         return table;
@@ -81,6 +80,7 @@ var rowFilling = (object, id, table) => {
 function fillingTables(object) {
     object[0].active = true;
     saveTableAndCard = object;
+    console.log(object);
 
     for (let i = object[0].lastCard.length - 1; i >= 0; i--) {
         if (object[0].lastCard[i] != null) {

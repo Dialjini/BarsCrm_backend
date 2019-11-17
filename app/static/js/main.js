@@ -8,14 +8,13 @@
  */
 
 $(document).ready(function() {
-    $('.info').append(fillingTables(categoryInListClient));
+    requestData.getRequest();
     createCategoryMenu();
     createCTButtons();
     linkField();
+    addButtonsSubcategory(0);
     $('#clientButton, #category-0').addClass('active');
 });
-
-addButtonsSubcategory(0);
 
 // Нажатие на подкатегорию
 function linkField() {
@@ -41,7 +40,6 @@ function linkField() {
                 }
             }
         }
-        requestData();
     });
 }
 
@@ -66,20 +64,24 @@ function linkCategory(element) {
 }
 
 function gettingData(data) {
-    saveTableAndCard.push(data);
-    console.log(saveTableAndCard);
+    categoryInListClient[1].push(data);
+    $('.info').append(fillingTables(categoryInListClient));
 }
 
-function requestData() {
-    $.ajax({
-        url: '/getClients',
-        type: 'GET',
-        dataType: 'html',
-        success: function(data){
-            gettingData(JSON.parse(data));
+let requestData = (function() {
+    return {
+        getRequest: function () {
+            $.ajax({
+                url: '/getClients',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data){
+                    gettingData(JSON.parse(data));
+                }
+            });
         }
-    });
-}
+    }
+})();
 
 // Выпадающее меню "Поиска по региону"
 $('#search_dropMenu').click(function() {
