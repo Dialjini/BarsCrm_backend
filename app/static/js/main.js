@@ -61,7 +61,19 @@ function linkCategory(element) {
             }
         }
     }
+    ajaxRequest();
     linkField();
+}
+
+function ajaxRequest() {
+    $.ajax({
+        url: '/getClients',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data){
+            console.log( "Полученные данные: " + data );
+        }
+    });
 }
 
 // Выпадающее меню "Поиска по региону"

@@ -21,7 +21,6 @@ function getCurrentDate(year = 'none') {
     let time = new Date();
     let month = time.getMonth() + 1;
     let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
-    console.log(time.getDate());
     if (year !== 'none') {
         let year = time.getFullYear();
         year = String(year).substring(2, 4);
