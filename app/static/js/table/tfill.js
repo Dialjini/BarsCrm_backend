@@ -27,6 +27,7 @@ var rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = 0; i < object[1].length; i++) {
             let element = $('<tr>', {id: `${id}-${i + 1}`, onclick: 'createCardMenu(this)'});
+            // Получать для разных таблиц - разные переменные
             const name = [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
 
             for (let j = 0; j < name.length; j++) {
@@ -80,7 +81,6 @@ var rowFilling = (object, id, table) => {
 function fillingTables(object) {
     object[0].active = true;
     saveTableAndCard = object;
-    console.log(object);
 
     for (let i = object[0].lastCard.length - 1; i >= 0; i--) {
         if (object[0].lastCard[i] != null) {

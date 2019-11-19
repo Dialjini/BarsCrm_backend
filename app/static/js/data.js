@@ -251,16 +251,15 @@ const subcategoryButtons = [
     ],
     [
         'Склад',
-        { id: 'unknown', objectName: categoryInStock, name: 'Товар', class: 'field_with_modal' },
-        { id: 'unknown', objectName: categoryInStock, name: 'Фасовка', class: 'field_with_modal' },
-        { id: 'unknown', objectName: categoryInStock, name: 'Объем', class: 'field_with_modal' },
-        { id: 'unknown', objectName: categoryInStock, name: 'Склад', class: 'field_with_modal' },
+        { id: 'stock_product', objectName: categoryInStock, name: 'Товар', class: 'field_with_modal' },
+        { id: 'stock_packing', objectName: categoryInStock, name: 'Фасовка', class: 'field_with_modal' },
+        { id: 'stock_volume', objectName: categoryInStock, name: 'Объем', class: 'field_with_modal' },
+        { id: 'stock_stock', objectName: categoryInStock, name: 'Склад', class: 'field_with_modal' },
     ],
     [
         'Аналитика',
-        { id: 'unknown', objectName: categoryInAnalytics, name: 'Прибыль по клиентам', class: 'field_with_modal' },
-        { id: 'unknown', objectName: categoryInAnalytics, name: 'Период', class: 'field_with_modal' },
-
+        { id: 'analytics_reports', objectName: categoryInAnalytics, name: 'Прибыль по клиентам', class: 'field_with_modal' },
+        { id: 'analytics_period', objectName: categoryInAnalytics, name: 'Период', class: 'field_with_modal' },
     ]
 ];
 

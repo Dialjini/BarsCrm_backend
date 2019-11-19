@@ -16,24 +16,27 @@ function addButtonsSubcategory(idCategory) {
     for (let i = 1; i < subcategoryButtons[idCategory].length; i++) {
         let element;
         $('.fields').append(() => {
-            if (subcategoryButtons[idCategory][0] == 'Склад') {
-                return element = $('<div>', {
-                    class: subcategoryButtons[idCategory][i].class,
+            if (subcategoryButtons[idCategory][0] === 'Склад' || subcategoryButtons[idCategory][0] === 'Аналитика') {
+                return $('<div>', {
+                    class: 'list',
                     id: subcategoryButtons[idCategory][i].id,
-                    append: $('<span>', {
-                        html: subcategoryButtons[idCategory][i].name
-                    }).add($('<img>', {
-                        src: 'static/images/dropmenu_black.svg',
-                        class: 'drop_down_img'
-                    }))
-                });
+                    append: $('<div>', {
+                        class: subcategoryButtons[idCategory][i].class,
+                        append: $('<span>', {
+                            html: subcategoryButtons[idCategory][i].name
+                        }).add($('<img>', {
+                            src: 'static/images/dropmenu_black.svg',
+                            class: 'drop_down_img'
+                        }))
+                    })
+                })
             }
             return element = $('<div>', {
                 class: subcategoryButtons[idCategory][i].class,
                 html: subcategoryButtons[idCategory][i].name,
                 id: subcategoryButtons[idCategory][i].id
             });
-        });
+        })
         $('#delivery-clear').attr('onclick', 'createCardMenu(this)');
     }
 }

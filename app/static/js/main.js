@@ -41,6 +41,35 @@ function linkField() {
             }
         }
     });
+    // Подкатегория с вызовом модального окна
+    $('.list').click(function() {
+        // const list = [
+        //     { id: 'stock_product', list: ['1231', '123', '123'] },
+        //     { id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
+        // ]
+
+        if ($(`#${this.id} .drop_down_img`).hasClass('drop_active')) {
+            $(`#${this.id} .drop_down_img`).removeClass('drop_active');
+            $(`#${this.id} .field_with_modal`).removeClass('active');
+            $(`#${this.id} .report_list`).fadeOut(200);
+            setTimeout(() => {
+                $(`#${this.id} .report_list`).remove();
+            }, 300);
+            return;
+        }
+
+        $('.report_list').remove();
+        $('.drop_down_img').removeClass('drop_active');
+        $('.field_with_modal').removeClass('active');
+        $(this).append($('<div>', { class: 'report_list', id: this.id }));
+
+        $('.report_list').fadeIn(400);
+        function fillingReportList() {
+            
+        }
+        $(`#${this.id} .field_with_modal`).addClass('active');
+        $(`#${this.id} .drop_down_img`).addClass('drop_active');
+    });
 }
 
 // Нажатие на категорию
