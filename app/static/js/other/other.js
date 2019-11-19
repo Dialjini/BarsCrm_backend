@@ -166,6 +166,17 @@ function createCategoryMenu() {
     }
 }
 
+// Выпадающее меню "Поиска по региону"
+$('#search_dropMenu').click(function() {
+    if (this.classList.contains('active')) {
+        $(`.drop-down, #search_dropMenu`).removeClass('active');
+        $('.drop_down_search').remove();
+    } else {
+        $(`.drop-down, #search_dropMenu`).addClass('active');
+        createDropMenu();
+    }
+});
+
 $('input, textarea').focus(function() {
     $(this).data('placeholder', $(this).attr('placeholder'));
     $(this).attr('placeholder', '');
