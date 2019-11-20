@@ -9,6 +9,18 @@ import openpyxl
 from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORDER_MEDIUM, DEFAULT_BORDER
 
 
+def add_user(login, password, email, role, name, avatar='default'):
+    table = models.User()
+    table.login = login
+    table.password = password
+    table.email = email
+    table.role = role
+    table.avatar = avatar
+    table.name = name
+
+    db.session.add(table)
+    db.session.commit()
+
 def get_clients_contacts(sheet, parent_table, col):
     i = col + 1
     while(sheet['A' + str(i)].value == None):
@@ -104,8 +116,8 @@ def table_to_json(query):
         result.append(subres)
     return result
 
-add_client_from_xlsx()
-
+# add_client_from_xlsx()
+# add_user(login='Василий Пупкин', password='qwerzy132', email='kustovdanil2@gmail.com', role='admin', name='Василий Пупкин')
 # print(models.Client.query.all()[0].Notes.query.all()[0].__dict__)
 # print(table_to_json(models.Client.query.all()))
 

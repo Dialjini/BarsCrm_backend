@@ -64,3 +64,8 @@ def getDeliverersByCar():
 def getTasks(login):
     user = models.User.query.filter_by(login=login).first()
     return user.get_task_by_login()
+
+
+@app.route('/getUsers', methods=['GET'])
+def getUsers():
+    return table_to_json(models.User.query.all())

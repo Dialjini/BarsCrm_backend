@@ -12,6 +12,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String)
     email = db.Column(db.String, unique=True)
+    name = db.Column(db.String)
     role = db.Column(db.String)
     password = db.Column(db.String)
     avatar = db.Column(db.String)
