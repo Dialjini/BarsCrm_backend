@@ -48,10 +48,15 @@ class Provide_Item(db.Model):
     Cost = db.Column(db.Float)
     NDS = db.Column(db.String)
 
+class Item_groups(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Group = db.Column(db.String)
+    Item = db.relationship('Item', backref='Group', lazy='dynamic')
 
 class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
     Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
+    Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
     Name = db.Column(db.String)
     Creator = db.Column(db.String)
     Bags = db.Column(db.Float)

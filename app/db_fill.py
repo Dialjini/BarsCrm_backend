@@ -87,11 +87,9 @@ def get_client_from_xlsx(sheet, parent_table, col=1):
             table.Status = sheet['P' + str(i + 1)].value
             table.Description = sheet['Q' + str(i + 1)].value
 
-            print(table.__dict__)
 
             if (sheet['A'+str(i + 2)].value == 'История'):
                 result = get_clients_notes(sheet=sheet, parent_table=table, col=i + 2)
-                print(result)
                 table.Notes = result['notes']
                 if str(result['contacts']) != '[]':
                     table.contacts = result['contacts']
@@ -99,7 +97,6 @@ def get_client_from_xlsx(sheet, parent_table, col=1):
             if (sheet['A' + str(i + 2)].value == 'Контактные лица'):
                 table.contacts = get_clients_contacts(sheet=sheet, parent_table=table, col=i + 2)
 
-            print(table)
             db.session.add(table)
             db.session.commit()
 
@@ -129,6 +126,58 @@ def add_provider_from_xlsx():
     table = models.Provider
     get_providers_from_xlsx(col=1, sheet=sheet, parent_table=table)
 
+
+# ------------------------------------------------------Provider--------------------------------------------------------
+def get_items_from_xlsx(col, sheet, parent_table, child_table):
+    table = child_table()
+    table.Name = sheet['B' + str(col)].value
+    table.Creator = sheet['C' + str(col)].value
+    table.Bags = sheet['D' + str(col)].value
+    table.MKR = sheet['E' + str(col)].value
+    table.Pile = sheet['F' + str(col)].value
+    table.Cost = sheet['G' + str(col)].value
+    table.NDS = sheet['H' + str(col)].value
+    table.Group = parent_table
+    parent_table.Item.append(table)
+    col = col + 1
+
+    while not sheet['A'+str(col)].value:
+        table = child_table()
+        table.Name = sheet['B'+str(col)].value
+        table.Creator = sheet['C'+str(col)].value
+        table.Bags = sheet['D'+str(col)].value
+        table.MKR = sheet['E'+str(col)].value
+        table.Pile = sheet['F'+str(col)].value
+        table.Cost = sheet['G'+str(col)].value
+        table.NDS = sheet['H'+str(col)].value
+        table.Group = parent_table
+        parent_table.Item.append(table)
+        if col == sheet.max_row:
+            break
+        col = col + 1
+
+    return parent_table.Item
+
+
+def get_groups_from_xlsx(col, sheet, parent_table, child_table):
+    for i in range(col+2, sheet.max_row):
+        if not sheet['A'+str(i)].value:
+            continue
+
+        groupTable = parent_table()
+        groupTable.Group = sheet['A'+str(i)].value
+        groupTable.Item = get_items_from_xlsx(col=i, sheet=sheet, parent_table=groupTable, child_table=child_table)
+        db.session.add(groupTable)
+        db.session.commit()
+
+
+
+def add_items_from_xlsx():
+    sheet = openpyxl.load_workbook('app/files/Items.xlsx').active
+    table = models.Item
+    get_groups_from_xlsx(col=1, sheet=sheet, parent_table=models.Item_groups, child_table=table)
+
+
 # ----------------------------------------------------Testing_Room------------------------------------------------------
 def table_to_json(query):
     result = []
@@ -143,3 +192,4 @@ def table_to_json(query):
 # add_client_from_xlsx()
 # add_user(login='Василий Пупкин', password='qwerzy132', email='kustovdanil2@gmail.com', role='admin', name='Василий Пупкин')
 # add_provider_from_xlsx()
+add_items_from_xlsx()
