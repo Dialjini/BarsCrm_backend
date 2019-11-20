@@ -44,7 +44,6 @@ function linkField() {
 
         if ($(`#${idList} .drop_down_img`).hasClass('drop_active')) {
             $(`#${idList} .drop_down_img`).removeClass('drop_active');
-            $(`#${idList} .field_with_modal`).removeClass('active');
             $(`#${idList} .report_list`).fadeOut(200);
             setTimeout(() => {
                 $(`#${idList} .report_list`).remove();
@@ -88,16 +87,19 @@ function linkField() {
         $('li').click(function() {
             $('table').remove();
             $(`#${idList} #active_field`).html(namesList[this.id.split('_')[2]]);
+            $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
-                let functions = [
-                    analyticsFilterTable_0,
-                    analyticsFilterTable_1,
-                    analyticsFilterTable_2,
-                    analyticsFilterTable_3,
-                    analyticsFilterTable_4
-                ]
-                return functions[this.id.split('_')[2]]();
+                if (this.id.includes('analytics')) {
+                    let functions = [
+                        analyticsFilterTable_0,
+                        analyticsFilterTable_1,
+                        analyticsFilterTable_2,
+                        analyticsFilterTable_3,
+                        analyticsFilterTable_4
+                    ]
+                    return functions[this.id.split('_')[2]]();
+                }
             };
 
             $('.info').append(createFilterTable());

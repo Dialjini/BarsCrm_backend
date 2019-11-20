@@ -317,7 +317,9 @@ body {
 .page .centerBlock .container .info .row .fields .list .report_list ul li {
   color: #595959;
   width: 100%;
-  text-align: center;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   vertical-align: middle;
   height: 30px;
   line-height: 30px;
@@ -329,6 +331,10 @@ body {
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
   cursor: pointer;
+  background-color: #f7f7f7;
+}
+
+.page .centerBlock .container .info .row .fields .list .report_list ul .active {
   background-color: #f7f7f7;
 }
 

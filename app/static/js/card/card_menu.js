@@ -41,13 +41,14 @@ function createCardMenu(element, index = 0) {
     $('.card_menu').remove();
     let getInfo = element.id.split('-');
 
-    // Делаем запрос в бд
+    // Вытягиваем данные по Айди карточки и поставляем в поля
     if (getInfo[1] !== 'clear') {
         selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
     } else {
         selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
     }
     // Информация по всем карточкам подкатегорий
+    // Подставить актуальные данные
     const titleObject = [{
             id: 'client',
             list: [`Код: ${selectedLine[0]}`, `Местное время: ${getCurrentTime()}`, `Какой-то их сайт`, `Холдинг`],
