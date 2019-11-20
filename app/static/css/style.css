@@ -261,6 +261,9 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
@@ -301,12 +304,32 @@ body {
   top: 33px;
   left: 0;
   background-color: #fff;
-  display: block;
-  width: 100px;
-  height: 20px;
+  display: none;
   border-radius: 0 0 5px 5px;
   -webkit-box-shadow: 0 1px 2px lightgray;
           box-shadow: 0 1px 2px lightgray;
+}
+
+.page .centerBlock .container .info .row .fields .list .report_list ul {
+  margin: 5px 0;
+}
+
+.page .centerBlock .container .info .row .fields .list .report_list ul li {
+  color: #595959;
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+  height: 30px;
+  line-height: 30px;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .row .fields .list .report_list ul li:hover {
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  cursor: pointer;
+  background-color: #f7f7f7;
 }
 
 .page .centerBlock .container .info .row .category {

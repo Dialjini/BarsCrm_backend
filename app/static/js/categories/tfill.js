@@ -89,7 +89,7 @@ function fillingTables(object) {
     }
 
     if (object[0].id === 'analytics') {
-        return analyticsContent();
+        return analyticsFilterTable_0();
     }
 
     let table = $('<table />', {
