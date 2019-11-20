@@ -9,6 +9,7 @@ import openpyxl
 from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORDER_MEDIUM, DEFAULT_BORDER
 
 
+# -------------------------------------------------------User-----------------------------------------------------------
 def add_user(login, password, email, role, name, avatar='default'):
     table = models.User()
     table.login = login
@@ -20,6 +21,7 @@ def add_user(login, password, email, role, name, avatar='default'):
 
     db.session.add(table)
     db.session.commit()
+# -------------------------------------------------------Client---------------------------------------------------------
 
 def get_clients_contacts(sheet, parent_table, col):
     i = col + 1
@@ -104,10 +106,30 @@ def get_client_from_xlsx(sheet, parent_table, col=1):
 def add_client_from_xlsx():
     sheet = openpyxl.load_workbook('app/files/book2Irkutsk.xlsx').active
     table = models.Client
-    get_client_from_xlsx(col=1,sheet=sheet, parent_table=table)
+    get_client_from_xlsx(col=1, sheet=sheet, parent_table=table)
+
+# ------------------------------------------------------Provider--------------------------------------------------------
+
+def get_providers_from_xlsx(col, sheet, parent_table):
+    for i in range(14, 18):
+        table = parent_table()
+        table.Name = sheet['A'+str(i)].value
+        table.Adress = sheet['B'+str(i)].value
+        table.Raps = sheet['E'+str(i)].value
+        table.Train = sheet['I'+str(i)].value
+        table.Vets = sheet['J'+str(i)].value
+        db.session.add(table)
+
+    db.session.commit()
 
 
 
+def add_provider_from_xlsx():
+    sheet = openpyxl.load_workbook('app/files/Providers.xlsx').active
+    table = models.Provider
+    get_providers_from_xlsx(col=1, sheet=sheet, parent_table=table)
+
+# ----------------------------------------------------Testing_Room------------------------------------------------------
 def table_to_json(query):
     result = []
     for i in query:
@@ -116,10 +138,8 @@ def table_to_json(query):
         result.append(subres)
     return result
 
+# -------------------------------------------------------Usage----------------------------------------------------------
+
 # add_client_from_xlsx()
 # add_user(login='Василий Пупкин', password='qwerzy132', email='kustovdanil2@gmail.com', role='admin', name='Василий Пупкин')
-# print(models.Client.query.all()[0].Notes.query.all()[0].__dict__)
-# print(table_to_json(models.Client.query.all()))
-
-
-#print(models.Client().Notes.all())
+# add_provider_from_xlsx()
