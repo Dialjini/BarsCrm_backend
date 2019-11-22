@@ -41,42 +41,37 @@ function createCardMenu(element, index = 0) {
     $('.card_menu').remove();
     let getInfo = element.id.split('-');
 
-    // Вытягиваем данные по Айди карточки и поставляем в поля
-    if (getInfo[1] !== 'clear') {
-        selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
-    } else {
-        selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
-    }
     // Информация по всем карточкам подкатегорий
     // Подставить актуальные данные
-    const titleObject = [{
+    const titleObject = [
+        {
             id: 'client',
-            list: [`Код: ${selectedLine[0]}`, `Местное время: ${getCurrentTime()}`, `Какой-то их сайт`, `Холдинг`],
+            list: [`Местное время: ${getCurrentTime()}`, `Какой-то их сайт`, `Холдинг`],
             link: clientContentCard,
             status: getInfo[1]
         },
         {
             id: 'provider',
-            list: [`Код: ${selectedLine[0]}`, `Местное время: ${getCurrentTime()}`, `Холдинг`],
+            list: [`Местное время: ${getCurrentTime()}`, `Холдинг`],
             link: providerContentCard,
             status: getInfo[1]
         },
         {
             id: 'carrier',
-            list: [`Код: 1`, `Местное время: 14:42`],
+            list: [`Местное время: 14:42`],
             link: carrierContentCard,
-            status: getInfo[1]
-        },
-        {
-            id: 'account',
-            list: [`Счета от ${selectedLine[0]}`],
-            link: accountContentCard,
             status: getInfo[1]
         },
         {
             id: 'debit',
             list: [''],
             link: debitContentCard,
+            status: getInfo[1]
+        },
+        {
+            id: 'account',
+            list: [`Счета от ${selectedLine[0]}`],
+            link: accountContentCard,
             status: getInfo[1]
         },
         {
@@ -92,12 +87,21 @@ function createCardMenu(element, index = 0) {
             status: getInfo[1]
         }
     ]
+
     // Получаем нужную информацию по карточке
     for (let i = 0; i < titleObject.length; i++) {
         if (titleObject[i].id.includes(getInfo[0])) {
             element = titleObject[i];
+            // Вытягиваем данные по Айди карточки и поставляем в поля
+            if (getInfo[1] !== 'clear') {
+                selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
+                titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
+            } else {
+                selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
+            }
         }
     }
+
     // Собираем саму карточку
     function cardMenu() {
         let container = $('<div>', {
@@ -132,6 +136,7 @@ function createCardMenu(element, index = 0) {
     }
 
     $('.info').append(cardMenu());
+    $('#client_organization_name').val(selectedLine.Name);
 
     // Модальное окно для Склада
     if (getInfo[0] === 'stock') {

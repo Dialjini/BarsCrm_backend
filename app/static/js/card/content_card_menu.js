@@ -4,24 +4,23 @@ function clientContentCard(selectedLine) {
                         <table class="table_block">
                             <tr>
                                 <td>Наименование</td>
-                                <td><input type="text" id="client_organization_name" onchange="saveCard()" value="${selectedLine[1]}"></td>
+                                <td><input type="text" id="client_organization_name" onchange="saveCard()" value=""></td>
                             </tr>
                             <tr>
                                 <td>Район</td>
-                                <td><input type="text" id="client_area_one" class="numbers" value="${selectedLine[2]}">
-                                    <input type="text" id="client_area_two" class="string" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_area_two" value="${selectedLine.Rayon}"></td>
                             </tr>
                             <tr>
                                 <td>Область/Край</td>
-                                <td><input type="text" id="client_region" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_region" value="${selectedLine.Oblast}"></td>
                             </tr>
                             <tr>
                                 <td>Адрес</td>
-                                <td><input type="text" id="client_address" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_address" value="${selectedLine.Adress}"></td>
                             </tr>
                             <tr>
                                 <td>ИНН</td>
-                                <td><input type="text" id="client_inn" value="${selectedLine[2]}"></td>
+                                <td><input type="text" id="client_inn" value="${selectedLine.UHH}"></td>
                             </tr>
                         </table>
                         <table class="table_block">
@@ -31,7 +30,7 @@ function clientContentCard(selectedLine) {
                             </tr>
                             <tr>
                                 <td>Категория</td>
-                                <td><input type="text" id="client_category" class="string" value="${selectedLine[selectedLine.length - 2]}"></td>
+                                <td><input type="text" id="client_category" class="string" value="${selectedLine.Category}"></td>
                             </tr>
                             <tr>
                                 <td>Ж/Д Станция</td>
@@ -47,7 +46,7 @@ function clientContentCard(selectedLine) {
                             </tr>
                         </table>
                         <div class="info_block">
-                            <span class="lightgray">Отрасль</span><input id="client_industry" class="string" value="${selectedLine[2]}">
+                            <span class="lightgray">Отрасль</span><input id="client_industry" class="string" value="${selectedLine.Segment}">
                             <span class="lightgray" style="margin-top: 17px;">Поголовье</span>
                             <table>
                                 <tr>
@@ -1193,7 +1192,7 @@ function unfastenCard(element) {
         closeCardMenu();
         let idName = element.id.replace(/remove-/g, '');
         // Добавить карточку в список Карточки клиентов
-        let nameOrganization = saveTableAndCard[1][idName.split('-')[1]][1]; // Название орги из объекта (Только для Клиентов)
+        let nameOrganization = selectedLine.Name; // Название орги из объекта (Только для Клиентов)
 
         $('#empty_customer_cards').append($('<div>', {
             class: 'fieldInfo padd',
