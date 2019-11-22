@@ -1,6 +1,5 @@
 // Смущают глобальные переменные
 let saveTableAndCard;
-let selectedLine = '';
 
 // Отслеживание нажатия для всплывающей карточки "Открепить менеджера..."
 $(document).mouseup(function(e) {
@@ -40,6 +39,7 @@ function createCardMenu(element, index = 0) {
 
     $('.card_menu').remove();
     let getInfo = element.id.split('-');
+    let selectedLine = new Object();
 
     // Информация по всем карточкам подкатегорий
     // Подставить актуальные данные
@@ -133,6 +133,13 @@ function createCardMenu(element, index = 0) {
             }
             break;
         }
+    }
+
+    // Получаем контент карточки
+    function getContentInfo(element) {
+        let content = $('<div>', { class: 'content' });
+        content.append(element.link(selectedLine));
+        return content;
     }
 
     $('.info').append(cardMenu());
@@ -1068,12 +1075,6 @@ function getTitleInfo(element) {
     title.append(getRightSide());
 
     return title;
-}
-// Получаем контент карточки
-function getContentInfo(element) {
-    let content = $('<div>', { class: 'content' });
-    content.append(element.link(selectedLine));
-    return content;
 }
 // Смена режима в Выставлении счета (показатели)
 let enteredValues = 0;

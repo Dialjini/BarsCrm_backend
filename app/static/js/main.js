@@ -13,6 +13,8 @@ let requestTableData = (function() {
             const requests = [
                 { table: categoryInListClient, request: '/getClients' },
                 { table: categoryInListProvider, request: '/getProviders' },
+                { table: categoryInListCarrier, request: '/getProviders' },
+                { table: categoryInFinanceAccount, request: '/getProviders' },
             ]
 
             for (let i = 0; i < requests.length; i++) {
