@@ -23,12 +23,21 @@ var rowFilling = (object, id, table) => {
         return element;
     }
 
-    let rowFillingDefault = () => {
+    let rowFillingDefault = (id) => {
         table.append(getTitleTable());
         for (let i = 0; i < object[1].length; i++) {
             let element = $('<tr>', {id: `${id}-${i + 1}`, onclick: 'createCardMenu(this)'});
             // Получать для разных таблиц - разные переменные
-            const name = [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
+            let name, data = [
+                { id: 'client', list: [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id]},
+                { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
+            ]
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id === id) {
+                    name = data[i].list;
+                    break;
+                }
+            }
 
             for (let j = 0; j < name.length; j++) {
                 let currentInfo = name[j];
@@ -44,7 +53,7 @@ var rowFilling = (object, id, table) => {
         return table;
     }
 
-    let rowFillingStock = () => {
+    let rowFillingStock = (id) => {
         table.append(getTitleTable());
         for (let i = 0; i < object[1].length; i++) {
             let element = $('<tr>', {id: `${id}-${i + 1}`, onclick: 'createCardMenu(this, 1)'});
@@ -73,7 +82,7 @@ var rowFilling = (object, id, table) => {
 
     for (let element of tableFunctiouns) {
         if (element.id === id) {
-            return element.function();
+            return element.function(id);
         }
     }
 }

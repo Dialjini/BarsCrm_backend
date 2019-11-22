@@ -96,77 +96,6 @@ function fillVolume(value) {
     if (spaceIndex > 0) { value = value.substring(0, spaceIndex) }
     $('#volume_goods').html(value + ' т');
 }
-// Контентная часть Склада
-function stockContentCard(selectedLine) {
-    return `<div class="row_card">
-                <div class="info_block">
-                    <div class="mb">
-                        <span class="bold">Транзит со склада</span>
-                        <input value="${selectedLine[selectedLine.length - 1]}">
-                    </div>
-                    <div>
-                        <table>
-                            <tr>
-                                <td>Группа товаров</td>
-                                <td>Товар</td>
-                                <td>Юр. лицо</td>
-                                <td>Объем</td>
-                                <td>Фасовка</td>
-                                <td>Цена прайса</td>
-                            </tr>
-                            <tbody>
-                                <tr>
-                                    <td>${selectedLine[0]}</td>
-                                    <td>${selectedLine[1]}</td>
-                                    <td>${selectedLine[2]}</td>
-                                    <td id="from">${selectedLine[3]}</td>
-                                    <td>${selectedLine[4]}</td>
-                                    <td>${selectedLine[6]}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> 
-                </div>
-            </div>
-            <div class="row_card">
-                <div class="info_block">
-                    <div>
-                        <span class="bold">На склад</span>
-                        <input value="">
-                    </div>
-                    <div class="mb">
-                        <span class="bold">Объем</span>
-                        <input oninput="fillVolume(this.value)">
-                    </div>
-                    <div>
-                        <table>
-                            <tr>
-                                <td>Группа товаров</td>
-                                <td>Товар</td>
-                                <td>Юр. лицо</td>
-                                <td>Объем</td>
-                                <td>Фасовка</td>
-                                <td>Цена прайса</td>
-                            </tr>
-                            <tbody>
-                                <tr>
-                                    <td>${selectedLine[0]}</td>
-                                    <td>${selectedLine[1]}</td>
-                                    <td>${selectedLine[2]}</td>
-                                    <td id="volume_goods">т</td>
-                                    <td>${selectedLine[4]}</td>
-                                    <td>${selectedLine[6]}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>     
-            </div>
-            <div class="next">
-                <button class="btn btn-main" onclick="closeCardMenu()">Оформить</button>
-            </div>
-            `
-}
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
     return `
@@ -522,18 +451,17 @@ function saveCard() {
     const idCardFields = [
         {   
             name: 'client', ids:
-            ['client_organization_name', 'client_area_one', 'client_area_two', 'client_region', 'client_address', 'client_inn',
+            ['client_organization_name', 'client_area', 'client_region', 'client_address', 'client_inn',
             'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry']
         },
         {   
             name: 'provider', ids:
-            ['provider_organization_name', 'provider_area_one', 'provider_area_two', 'provider_region', 'provider_address', 'provider_inn',
+            ['provider_organization_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
             'provider_tag', 'provider_category', 'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_vat', 'provider_merc']
         },
         {   
             name: 'carrier', ids:
-            ['carrier_organization_name', 'carrier_area_one', 'carrier_area_two', 'carrier_region', 'carrier_address', 'carrier_inn',
-            'carrier_capacity', 'carrier_view']
+            ['carrier_organization_name', 'carrier_area', 'carrier_region', 'carrier_address', 'carrier_inn', 'carrier_capacity', 'carrier_view']
         },
         {   
             name: 'delivery', ids:

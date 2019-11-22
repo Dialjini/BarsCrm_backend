@@ -160,7 +160,7 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tr>
                                     <td>Район</td>
-                                    <td><input type="text" id="client_area_two" value="${selectedLine.Rayon}"></td>
+                                    <td><input type="text" id="client_area" value="${selectedLine.Rayon}"></td>
                                 </tr>
                                 <tr>
                                     <td>Область/Край</td>
@@ -311,32 +311,31 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Наименование</td>
                                     <td>
-                                        <input type="text" id="provider_organization_name" value="${selectedLine[1]}">
+                                        <input type="text" id="provider_organization_name" value="${selectedLine.Name}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Районе</td>
                                     <td>
-                                        <input type="text" id="provider_area_one" class="numbers" value="${selectedLine[2]}">
-                                        <input type="text" id="provider_area_two" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_area" value="${selectedLine.Rayon}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Область/Край</td>
                                     <td>
-                                        <input type="text" id="provider_region" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_region" value="${selectedLine.Oblast}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Адрес</td>
                                     <td>
-                                        <input type="text" id="provider_address" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_address" value="${selectedLine.Adress}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>ИНН</td>
                                     <td>
-                                        <input type="text" id="provider_inn" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_inn" value="${selectedLine.UHH}">
                                     </td>
                                 </tr>
                             </table>
@@ -350,7 +349,7 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Категория</td>
                                     <td>
-                                        <input type="text" id="provider_category" class="string" value="${selectedLine[selectedLine.length - 2]}">
+                                        <input type="text" id="provider_category" class="string" value="${selectedLine.Category}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -482,8 +481,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Районе</td>
                             <td>
-                                <input type="text" id="carrier_area_one" value="${selectedLine[2]}" class="numbers">
-                                <input type="text" id="carrier_area_two" value="${selectedLine[2]}" class="string">
+                                <input type="text" id="carrier_area" value="${selectedLine[2]}">
                             </td>
                         </tr>
                         <tr>
@@ -848,6 +846,77 @@ function createCardMenu(element, index = 0) {
                     <button class="btn" style="margin-right: 10px" onclick="closeCardMenu()">Забирает сам</button>
                     <button class="btn btn-main" id="delivery" onclick="closeCardMenu()">Оформить Заявку</button>
                 </div>`
+    }
+    // Контентная часть Склада
+    function stockContentCard(selectedLine) {
+        return `<div class="row_card">
+                    <div class="info_block">
+                        <div class="mb">
+                            <span class="bold">Транзит со склада</span>
+                            <input value="${selectedLine[selectedLine.length - 1]}">
+                        </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>Группа товаров</td>
+                                    <td>Товар</td>
+                                    <td>Юр. лицо</td>
+                                    <td>Объем</td>
+                                    <td>Фасовка</td>
+                                    <td>Цена прайса</td>
+                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td>${selectedLine[0]}</td>
+                                        <td>${selectedLine[1]}</td>
+                                        <td>${selectedLine[2]}</td>
+                                        <td id="from">${selectedLine[3]}</td>
+                                        <td>${selectedLine[4]}</td>
+                                        <td>${selectedLine[6]}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div>
+                </div>
+                <div class="row_card">
+                    <div class="info_block">
+                        <div>
+                            <span class="bold">На склад</span>
+                            <input value="">
+                        </div>
+                        <div class="mb">
+                            <span class="bold">Объем</span>
+                            <input oninput="fillVolume(this.value)">
+                        </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>Группа товаров</td>
+                                    <td>Товар</td>
+                                    <td>Юр. лицо</td>
+                                    <td>Объем</td>
+                                    <td>Фасовка</td>
+                                    <td>Цена прайса</td>
+                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td>${selectedLine[0]}</td>
+                                        <td>${selectedLine[1]}</td>
+                                        <td>${selectedLine[2]}</td>
+                                        <td id="volume_goods">т</td>
+                                        <td>${selectedLine[4]}</td>
+                                        <td>${selectedLine[6]}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>     
+                </div>
+                <div class="next">
+                    <button class="btn btn-main" onclick="closeCardMenu()">Оформить</button>
+                </div>
+                `
     }
 }
 // Переход на предыдущую вкладку карточки
