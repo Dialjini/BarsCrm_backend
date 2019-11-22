@@ -422,14 +422,13 @@ function unfastenCard(element) {
     $('.drop_menu').click(function() {
         let idName = element.id.replace(/remove-/g, '');
         // Добавить карточку в список Карточки клиентов
-        let nameOrganization = selectedLine.Name;
         closeCardMenu();
 
 
         $('#empty_customer_cards').append($('<div>', {
             class: 'fieldInfo padd',
             id: `detached_card_${idName.split('-')[1]}`, // Number
-            append: $('<div>', { class: 'name', html: nameOrganization })
+            append: $('<div>', { class: 'name', html: $('#client_organization_name').val() })
             .add($('<div>', {
                 class: 'row',
                 append: $('<div>', {
