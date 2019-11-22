@@ -22,7 +22,7 @@ function linkField() {
             for (let j = 1; j < subcategoryButtons[i].length; j++) {
                 if (this.id == subcategoryButtons[i][j].id) {
                     activityReassignment(subcategoryButtons[i]);
-                    $('.info').append(fillingTables(subcategoryButtons[i][j].objectName));
+                    requestTableData.getRequest(subcategoryButtons[i][j].objectName);
                     break;
                 }
             }
@@ -90,7 +90,7 @@ function linkField() {
             $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
-                if (this.id.includes('analytics')) {
+                if (this.id.includes('analytics_reports')) {
                     let functions = [
                         analyticsFilterTable_0,
                         analyticsFilterTable_1,
@@ -117,7 +117,7 @@ function linkCategory(element) {
             for (let j = 0; j < linkCategoryInfo[i].subcategories.length; j++) {
                 if (linkCategoryInfo[i].subcategories[j][0].active) {
                     addButtonsSubcategory(i);
-                    $('.info').append(fillingTables(linkCategoryInfo[i].subcategories[j]));
+                    requestTableData.getRequest(linkCategoryInfo[i].subcategories[j]);
                     i <= 1 ? $(`#${linkCategoryInfo[i].subcategories[j][0].id}Button`).addClass('active') : '';
                     break;
                 }

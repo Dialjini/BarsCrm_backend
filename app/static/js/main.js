@@ -1,37 +1,37 @@
-/**
- * Category:
- * id: category-0 = List
- * id: category-1 = Finance
- * id: category-2 = Delivery
- * id: category-3 = Stock
- * id: category-4 = Analytics 
- */
-
 $(document).ready(function() {
     addButtonsSubcategory(0);
-    requestData.getRequest();
+    requestTableData.getRequest(categoryInListClient);
     createCategoryMenu();
     createCTButtons();
     linkField();
     $('#clientButton, #category-0').addClass('active');
 });
 
-function gettingData(data) {
-    categoryInListClient[1].push(data);
-    $('.info').append(fillingTables(categoryInListClient));
-}
-
-let requestData = (function() {
+let requestTableData = (function() {
     return {
-        getRequest: function () {
-            $.ajax({
-                url: '/getClients',
-                type: 'GET',
-                dataType: 'html',
-                success: function(data){
-                    gettingData(JSON.parse(data));
+        getRequest: function (table) {
+            const requests = [
+                { table: categoryInListClient, request: '/getClients' },
+                { table: categoryInListProvider, request: '/getProviders' },
+            ]
+
+            for (let i = 0; i < requests.length; i++) {
+                if (requests[i].table === table) {
+                    $.ajax({
+                        url: requests[i].request,
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function(data){
+                            gettingData(JSON.parse(data));
+                        }
+                    });
                 }
-            });
+            }
+
+            function gettingData(data) {
+                table[1].push(data);
+                $('.info').append(fillingTables(table));
+            }
         }
     }
 })();
