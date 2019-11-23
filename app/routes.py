@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template
+from flask import render_template, redirect, session, request
 from app import models
 import json
 
@@ -12,32 +12,47 @@ def table_to_json(query):
         result.append(subres)
     return json.dumps(result)
 
+
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    if 'username' in session:
+        return render_template('index.html')
+    else:
+        return render_template('login.html')
 
 
 @app.route('/auth', methods=['GET'])
-def auth(login, password):
+def auth():
+    if 'login' in request.form:
+        login = request.form['login']
+    else:
+        return 'ERROR 400 BAD REQUEST'
+
+    if 'password' in request.form:
+        password = request.form['password']
+    else:
+        return 'ERROR 400 BAD REQUEST'
 
     if models.User.query.filter_by(login=login).first():
         user = models.User.query.filter_by(login=login).first()
 
         if user.password == password:
-            return json.dumps({'role': user.role, 'success': True})
+            session['username'] = login
+            return redirect('/', code=302)
 
-        return json.dumps({'role': 'Неверный пароль', 'success': False})
+        return json.dumps({'message': 'Неверный пароль', 'success': False})
 
     elif models.User.query.filter_by(email=login).first():
         user = models.User.query.filter_by(email=login).first()
 
         if user.password == password:
-            return json.dumps({'role': user.role, 'success': True})
+            session['username'] = login
+            return redirect('/', code=302)
 
-        return json.dumps({'role': 'Неверный пароль', 'success': False})
+        return json.dumps({'message': 'Неверный пароль', 'success': False})
 
-    return json.dumps({'role': 'Неверный логин/email', 'success': False})
+    return json.dumps({'message': 'Неверный логин/email', 'success': False})
 
 
 @app.route('/getClients', methods=['GET'])
