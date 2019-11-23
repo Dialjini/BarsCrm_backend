@@ -125,6 +125,7 @@ const dataName = [
     { name: 'account', link: categoryInFinanceAccount },
     { name: 'delivery', link: categoryInDelivery },
     { name: 'stock', link: categoryInStock },
+    { name: 'analytics', link: categoryInAnalytics },
 ]
 
 // Данные по подкатегориям, для генерации соответствующей таблицы и перехода по нужным подкатегориям

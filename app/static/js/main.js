@@ -7,6 +7,7 @@ $(document).ready(function() {
     $('#clientButton, #category-0').addClass('active');
 });
 
+// Отсылаем данные для получения данных по таблице
 let requestTableData = (function() {
     return {
         getRequest: function (table) {
@@ -18,6 +19,7 @@ let requestTableData = (function() {
                 { table: categoryInFinanceAccount, request: '/getClients' },
                 { table: categoryInDelivery, request: '/getClients' },
                 { table: categoryInStock, request: '/getClients' },
+                { table: categoryInAnalytics, request: '/getClients' },
             ]
 
             for (let i = 0; i < requests.length; i++) {
@@ -34,7 +36,7 @@ let requestTableData = (function() {
             }
 
             function gettingData(data) {
-                table[1].push(data);
+                if (table[0].id !== 'analytics') table[1].push(data);
                 $('.info').append(fillingTables(table));
             }
         }
