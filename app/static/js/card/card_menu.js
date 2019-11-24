@@ -97,7 +97,7 @@ function createCardMenu(element, index = 0) {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
                 titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
             } else {
-                selectedLine = ['', '', '', '', '', '', '', '', '', '', ''];
+                selectedLine = {};
             }
         }
     }
@@ -160,355 +160,371 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
-        console.log(selectedLine);
-        let content = ` <div class="row_card">
-                            <table class="table_block">
+        let content = $('<div>', { 
+            class: 'row_card',
+            append: $('<table>', {
+                class: 'table_block',
+                append: $('<tr>', {
+                    append: $('<td>', {
+                        html: 'Наименование'
+                    }).add($('<td>', {
+                        append: $('<input>', {
+                            type: 'text',
+                            id: 'client_name',
+                            onchange: 'saveCard()',
+                            value: selectedLine.Name
+                        })
+                    }))
+                }).add(`<tr>
+                            <td>Район</td>
+                            <td><input type="text" id="client_area" onchange="saveCard()" value="${selectedLine.Rayon}"></td>
+                        </tr>
+                        <tr>
+                            <td>Область/Край</td>
+                            <td><input type="text" id="client_region" onchange="saveCard()" value="${selectedLine.Oblast}"></td>
+                        </tr>
+                        <tr>
+                            <td>Адрес</td>
+                            <td><input type="text" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
+                        </tr>
+                        <tr>
+                            <td>ИНН</td>
+                            <td><input type="text" id="client_inn" onchange="saveCard()" value="${selectedLine.UHH}"></td>
+                        </tr>`)
+            }).add(`<table class="table_block">
+                        <tr>
+                            <td>Тег</td>
+                            <td><input type="text" id="client_tag" onchange="saveCard()" class="string" value="${selectedLine.Tag}"></td>
+                        </tr>
+                        <tr>
+                            <td>Категория</td>
+                            <td><input type="text" id="client_category" onchange="saveCard()" class="string" value="${selectedLine.Category}"></td>
+                        </tr>
+                        <tr>
+                            <td>Ж/Д Станция</td>
+                            <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
+                        </tr>
+                        <tr>
+                            <td>Цена вагона</td>
+                            <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
+                        </tr>
+                        <tr>
+                            <td>км от НСК</td>
+                            <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
+                        </tr>
+                    </table>
+                    <div class="info_block">
+                        <span class="lightgray">Отрасль</span><input id="client_industry" onchange="saveCard()" class="string" value="${selectedLine.Segment}">
+                        <span class="lightgray" style="margin-top: 17px;">Поголовье</span>
+                        <table>
+                            <tr>
+                                <td>Общее</td>
+                                <td>Дойного</td>
+                                <td>Надои</td>
+                            </tr>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                        <span class="lightgray" style="margin-top: 17px;">Спрос</span>
+                        <table>
+                            <tr>
+                                <td>Товар</td>
+                                <td>Объем</td>
+                            </tr>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>`)
+        }).add(`<div class="row_card">
+                    <div class="left_side">
+                        <div class="hmax" id="members">
+                            <div id="client_member_1" class="member">
+                                <div class="top">
+                                    <div class="role" id="role">Директор</div>
+                                    <input type="phone" onchange="saveCard()" class="phone" id="phone" value="${selectedLine[2]}">
+                                </div>
+                                <div class="bottom">
+                                    <input type="text" onchange="saveCard()" class="surname" id="surname" value="${selectedLine[2]}">
+                                    <input type="text" onchange="saveCard()" class="fullname" id="fullname" value="${selectedLine[2]}">
+                                    <input type="email" onchange="saveCard()" class="email" id="email" value="${selectedLine[2]}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="events">
+                            <img class="add_something" src="static/images/add.png" onclick="addMember()">
+                            <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
+                        </div>
+                    </div>
+                    <div class="info_block">
+                        <span class="lightgray">Группа товаров</span>
+                        <div class="hmax">
+                            <table>
                                 <tr>
-                                    <td>Наименование</td>
-                                    <td><input type="text" id="client_name" onchange="saveCard()" value="${selectedLine.Name}"></td>
+                                    <td>Товар</td>
+                                    <td>Объем</td>
+                                    <td>У кого</td>
+                                    <td>Цена</td>
+                                </tr>
+                                <tbody id="group">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="events">
+                            <img class="add_something" id="client-table" src="static/images/add.png" onclick="addRow(this)">
+                            <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
+                        </div>
+                    </div>
+                </div>
+                <div class="area">
+                    <div class="history">
+                        <div class="title">
+                            <div>История обращений</div>
+                            <img class="add_something" src="static/images/add.png">
+                        </div>
+                        <div class="messages">
+                            <table class="message">
+                                <tr>
+                                    <td>10.10.18</td>
+                                    <td>Директор</td>
+                                    <td>Начали переговоры</td>
                                 </tr>
                                 <tr>
-                                    <td>Район</td>
-                                    <td><input type="text" id="client_area" onchange="saveCard()" value="${selectedLine.Rayon}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Область/Край</td>
-                                    <td><input type="text" id="client_region" onchange="saveCard()" value="${selectedLine.Oblast}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Адрес</td>
-                                    <td><input type="text" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
-                                </tr>
-                                <tr>
-                                    <td>ИНН</td>
-                                    <td><input type="text" id="client_inn" onchange="saveCard()" value="${selectedLine.UHH}"></td>
+                                    <td>10.10.18</td>
+                                    <td>Менеждер</td>
+                                    <td>Начали переговоры</td>
                                 </tr>
                             </table>
-                            <table class="table_block">
+                        </div>
+                    </div>
+                    <div class="last_comment">
+                        <div class="title">Последний комментарий</div>
+                        <div class="messages">
+                            <table class="message">
                                 <tr>
-                                    <td>Тег</td>
-                                    <td><input type="text" id="client_tag" onchange="saveCard()" class="string" value="${selectedLine.Tag}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Категория</td>
-                                    <td><input type="text" id="client_category" onchange="saveCard()" class="string" value="${selectedLine.Category}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Ж/Д Станция</td>
-                                    <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
-                                </tr>
-                                <tr>
-                                    <td>Цена вагона</td>
-                                    <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
-                                </tr>
-                                <tr>
-                                    <td>км от НСК</td>
-                                    <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
+                                    <td style="width: 15%">10.10.18</td>
+                                    <td style="width: 20%">Менеджер</td>
+                                    <td style="width: 65%">Товар получен, счет оплачен</td>
+                                    <td style="width: 10%" class="lightgray">Иванова</td>
                                 </tr>
                             </table>
-                            <div class="info_block">
-                                <span class="lightgray">Отрасль</span><input id="client_industry" onchange="saveCard()" class="string" value="${selectedLine.Segment}">
-                                <span class="lightgray" style="margin-top: 17px;">Поголовье</span>
-                                <table>
-                                    <tr>
-                                        <td>Общее</td>
-                                        <td>Дойного</td>
-                                        <td>Надои</td>
-                                    </tr>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                                <span class="lightgray" style="margin-top: 17px;">Спрос</span>
-                                <table>
-                                    <tr>
-                                        <td>Товар</td>
-                                        <td>Объем</td>
-                                    </tr>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
-                        <div class="row_card">
-                            <div class="left_side">
-                                <div class="hmax" id="members">
-                                    <div id="client_member_1" class="member">
-                                        <div class="top">
-                                            <div class="role" id="role">Директор</div>
-                                            <input type="phone" onchange="saveCard()" class="phone" id="phone" value="${selectedLine[2]}">
-                                        </div>
-                                        <div class="bottom">
-                                            <input type="text" onchange="saveCard()" class="surname" id="surname" value="${selectedLine[2]}">
-                                            <input type="text" onchange="saveCard()" class="fullname" id="fullname" value="${selectedLine[2]}">
-                                            <input type="email" onchange="saveCard()" class="email" id="email" value="${selectedLine[2]}">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="events">
-                                    <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                                    <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
-                                </div>
-                            </div>
-                            <div class="info_block">
-                                <span class="lightgray">Группа товаров</span>
-                                <div class="hmax">
-                                    <table>
-                                        <tr>
-                                            <td>Товар</td>
-                                            <td>Объем</td>
-                                            <td>У кого</td>
-                                            <td>Цена</td>
-                                        </tr>
-                                        <tbody id="group">
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="events">
-                                    <img class="add_something" id="client-table" src="static/images/add.png" onclick="addRow(this)">
-                                    <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="area">
-                            <div class="history">
-                                <div class="title">
-                                    <div>История обращений</div>
-                                    <img class="add_something" src="static/images/add.png">
-                                </div>
-                                <div class="messages">
-                                    <table class="message">
-                                        <tr>
-                                            <td>10.10.18</td>
-                                            <td>Директор</td>
-                                            <td>Начали переговоры</td>
-                                        </tr>
-                                        <tr>
-                                            <td>10.10.18</td>
-                                            <td>Менеждер</td>
-                                            <td>Начали переговоры</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="last_comment">
-                                <div class="title">Последний комментарий</div>
-                                <div class="messages">
-                                    <table class="message">
-                                        <tr>
-                                            <td style="width: 15%">10.10.18</td>
-                                            <td style="width: 20%">Менеджер</td>
-                                            <td style="width: 65%">Товар получен, счет оплачен</td>
-                                            <td style="width: 10%" class="lightgray">Иванова</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="next">
-                            <button class="btn btn-main" id="client" onclick="contractNext(this)">Оформить Договор</button>
-                        </div>
-                        `
+                    </div>
+                </div>
+                <div class="next">
+                    <button class="btn btn-main" id="client" onclick="contractNext(this)">Оформить Договор</button>
+                </div>`)
         return content;
     }
     // Контентная часть Поставщиков
     function providerContentCard(selectedLine) {
-        console.log(selectedLine);
-        return `         <div class="row_card">
-                            <table class="table_block">
-                                <tr>
-                                    <td>Наименование</td>
-                                    <td>
-                                        <input type="text" id="provider_name" value="${selectedLine.Name}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Районе</td>
-                                    <td>
-                                        <input type="text" id="provider_area" value="${selectedLine.Rayon}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Область/Край</td>
-                                    <td>
-                                        <input type="text" id="provider_region" value="${selectedLine.Oblast}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Адрес</td>
-                                    <td>
-                                        <input type="text" id="provider_address" value="${selectedLine.Adress}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>ИНН</td>
-                                    <td>
-                                        <input type="text" id="provider_inn" value="${selectedLine.UHH}">
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="table_block">
-                                <tr>
-                                    <td>Тег</td>
-                                    <td>
-                                        <input type="text" id="provider_tag" class="string" value="${selectedLine.Tag}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Категория</td>
-                                    <td>
-                                        <input type="text" id="provider_category" class="string" value="${selectedLine.Category}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Ж/Д Станция</td>
-                                    <td>
-                                        <input type="text" id="provider_station" class="string" value="${selectedLine.Train}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Цена вагона</td>
-                                    <td>
-                                        <input type="text" id="provider_price" class="string" value="${selectedLine.Price}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>км от НСК</td>
-                                    <td>
-                                        <input type="text" id="provider_distance" class="string" value="${selectedLine.Distance}">
-                                    </td>
-                                </tr>
-                            </table>
-                            <table class="table_block">
-                                <tr>
-                                    <td>Объем про-ва</td>
-                                    <td>
-                                        <input type="text" id="provider_volume" class="string" value="${selectedLine.Volume}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>НДС</td>
-                                    <td>
-                                        <input type="number" id="provider_vat" class="string" value="${selectedLine.NDS}">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Мерекурий</td>
-                                    <td>
-                                        <input type="text" id="provider_merc" class="string" value="${selectedLine.Merc}">
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="row_card">
-                            <div class="left_side">
-                                <div class="hmax" id="members">
-                                    <div id="provider_member_1" class="member">
-                                        <div class="top">
-                                            <div class="role" id="role">Директор</div>
-                                            <input type="phone" class="phone" id="phone" value="${selectedLine[2]}">
-                                        </div>
-                                        <div class="bottom">
-                                            <input type="text" class="surname" id="surname" value="${selectedLine[2]}">
-                                            <input type="text" class="fullname" id="fullname" value="${selectedLine[2]}">
-                                            <input type="email" class="email" id="email" value="${selectedLine[2]}">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="events">
-                                    <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                                    <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
-                                </div>
-                            </div>
-                            <div class="info_block">
-                                <span class="lightgray">Группа товаров</span>
-                                <div class="hmax">
-                                    <table>
-                                        <tr><td>Товар</td><td>Цена</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
-                                        <tbody id="group">
-                                            
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="events">
-                                    <img class="add_something" id="provider-table" src="static/images/add.png" onclick="addRow(this)">
-                                    <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="area">
-                            <div class="history">
-                                <div class="title">
-                                    <div>История обращений</div>
-                                    <img class="add_something" src="static/images/add.png">
-                                </div>
-                                <div class="messages">
-                                    <table class="message">
-                                        <tr>
-                                            <td>10.10.18</td>
-                                            <td>Директор</td>
-                                            <td>Начали переговоры</td>
-                                        </tr>
-                                        <tr>
-                                            <td>10.10.18</td>
-                                            <td>Менеждер</td>
-                                            <td>Начали переговоры</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="last_comment">
-                                <div class="title">Последний комментарий</div>
-                                <div class="messages">
-                                    <table class="message">
-                                        <tr>
-                                            <td style="width: 15%">10.10.18</td>
-                                            <td style="width: 20%">Менеджер</td>
-                                            <td style="width: 65%">Товар получен, счет оплачен</td>
-                                            <td style="width: 10%" class="lightgray">Иванова</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="next">
-                            <button class="btn btn-main" id="provider" onclick="contractNext(this)">Оформить Договор</button> 
-                        </div>
-                        `
-    }
-    // Контентная часть Перевозчиков
-    function carrierContentCard(selectedLine) {
-        console.log(selectedLine);
-        return ` <div class="row_card" style="justify-content: flex-start">
-                    <table class="table_block" style="margin-right: 50px;">
-                        <tr>
-                            <td>Наименование</td>
-                            <td>
-                                <input type="text" id="carrier_name" value="${selectedLine.Name}">
-                            </td>
-                        </tr>
-                        <tr>
+        let content = $('<div>', {
+            class: 'row_card',
+            append: $('<table>', {
+                class: 'table_block',
+                append: $('<tr>', {
+                    append: $('<td>', {
+                        html: 'Наименование'
+                    }).add($('<td>', {
+                        append: $('<input>', {
+                            type: 'text',
+                            id: 'provider_name',
+                            value: selectedLine.Name,
+                            onchange: 'saveCard()'
+                        })
+                    }))
+                }).add(`<tr>
                             <td>Районе</td>
                             <td>
-                                <input type="text" id="carrier_area" value="${selectedLine.Rayon}">
+                                <input type="text" id="provider_area" value="${selectedLine.Rayon}">
                             </td>
                         </tr>
                         <tr>
                             <td>Область/Край</td>
                             <td>
-                                <input type="text" id="carrier_region" value="${selectedLine.Oblast}">
+                                <input type="text" id="provider_region" value="${selectedLine.Oblast}">
                             </td>
                         </tr>
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="carrier_address" value="${selectedLine.Adress}">
+                                <input type="text" id="provider_address" value="${selectedLine.Adress}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ИНН</td>
+                            <td>
+                                <input type="text" id="provider_inn" value="${selectedLine.UHH}">
+                            </td>
+                        </tr>`)
+            }).add(`<table class="table_block">
+                        <tr>
+                            <td>Тег</td>
+                            <td>
+                                <input type="text" id="provider_tag" class="string" value="${selectedLine.Tag}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Категория</td>
+                            <td>
+                                <input type="text" id="provider_category" class="string" value="${selectedLine.Category}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ж/Д Станция</td>
+                            <td>
+                                <input type="text" id="provider_station" class="string" value="${selectedLine.Train}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Цена вагона</td>
+                            <td>
+                                <input type="text" id="provider_price" class="string" value="${selectedLine.Price}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>км от НСК</td>
+                            <td>
+                                <input type="text" id="provider_distance" class="string" value="${selectedLine.Distance}">
                             </td>
                         </tr>
                     </table>
                     <table class="table_block">
+                        <tr>
+                            <td>Объем про-ва</td>
+                            <td>
+                                <input type="text" id="provider_volume" class="string" value="${selectedLine.Volume}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>НДС</td>
+                            <td>
+                                <input type="text" id="provider_vat" class="string" value="${selectedLine.NDS}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Мерекурий</td>
+                            <td>
+                                <input type="text" id="provider_merc" class="string" value="${selectedLine.Merc}">
+                            </td>
+                        </tr>
+                    </table>`)
+        }).add(`<div class="row_card">
+                    <div class="left_side">
+                        <div class="hmax" id="members">
+                            <div id="provider_member_1" class="member">
+                                <div class="top">
+                                    <div class="role" id="role">Директор</div>
+                                    <input type="phone" class="phone" id="phone" value="${selectedLine[2]}">
+                                </div>
+                                <div class="bottom">
+                                    <input type="text" class="surname" id="surname" value="${selectedLine[2]}">
+                                    <input type="text" class="fullname" id="fullname" value="${selectedLine[2]}">
+                                    <input type="email" class="email" id="email" value="${selectedLine[2]}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="events">
+                            <img class="add_something" src="static/images/add.png" onclick="addMember()">
+                            <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
+                        </div>
+                    </div>
+                    <div class="info_block">
+                        <span class="lightgray">Группа товаров</span>
+                        <div class="hmax">
+                            <table>
+                                <tr><td>Товар</td><td>Цена</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
+                                <tbody id="group">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="events">
+                            <img class="add_something" id="provider-table" src="static/images/add.png" onclick="addRow(this)">
+                            <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
+                        </div>
+                    </div>
+                </div>
+                <div class="area">
+                    <div class="history">
+                        <div class="title">
+                            <div>История обращений</div>
+                            <img class="add_something" src="static/images/add.png">
+                        </div>
+                        <div class="messages">
+                            <table class="message">
+                                <tr>
+                                    <td>10.10.18</td>
+                                    <td>Директор</td>
+                                    <td>Начали переговоры</td>
+                                </tr>
+                                <tr>
+                                    <td>10.10.18</td>
+                                    <td>Менеждер</td>
+                                    <td>Начали переговоры</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="last_comment">
+                        <div class="title">Последний комментарий</div>
+                        <div class="messages">
+                            <table class="message">
+                                <tr>
+                                    <td style="width: 15%">10.10.18</td>
+                                    <td style="width: 20%">Менеджер</td>
+                                    <td style="width: 65%">Товар получен, счет оплачен</td>
+                                    <td style="width: 10%" class="lightgray">Иванова</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="next">
+                    <button class="btn btn-main" id="provider" onclick="contractNext(this)">Оформить Договор</button> 
+                </div>`)
+        return content;
+    }
+    // Контентная часть Перевозчиков
+    function carrierContentCard(selectedLine) {
+        let content = $('<div>', {
+            class: 'row_card',
+            css: { 'justify-content': 'flex-start' },
+            append: $('<table>', {
+                class: 'table_block',
+                css: {'margin-right': '50px'},
+                append: $('<tr>', {
+                    append: $('<td>', {
+                        html: 'Наименование'
+                    }).add($('<td>', {
+                        append: $('<input>', {
+                            type: 'text',
+                            id: 'carrier_name',
+                            value: selectedLine.Name,
+                            onchange: 'saveCard()'
+                        })
+                    }))
+                }).add(`<tr>
+                            <td>Районе</td>
+                            <td>
+                                <input type="text" id="carrier_area" value="${selectedLine.Area}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Область/Край</td>
+                            <td>
+                                <input type="text" id="carrier_region" value="${selectedLine.Region}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Адрес</td>
+                            <td>
+                                <input type="text" id="carrier_address" value="${selectedLine.Address}">
+                            </td>
+                        </tr>`)
+            }).add(`<table class="table_block">
                         <tr>
                             <td>ИНН</td>
                             <td>
@@ -518,7 +534,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Грузоподъемность</td>
                             <td>
-                                <input type="text" id="carrier_capacity" value="${selectedLine[2]}" class="string">
+                                <input type="text" id="carrier_capacity" value="${selectedLine.Capacity}" class="string">
                             </td>
                         </tr>
                         <tr>
@@ -527,9 +543,8 @@ function createCardMenu(element, index = 0) {
                                 <input type="text" id="carrier_view" value="${selectedLine.View}" class="string">
                             </td>
                         </tr>
-                    </table>
-                </div>
-                <div class="row_card" id="media">
+                    </table>`)
+        }).add(`<div class="row_card" id="media">
                     <div class="left_side">
                         <div class="hmax" id="members">
                             <div id="carrier_member_1" class="member delivery">
@@ -605,7 +620,8 @@ function createCardMenu(element, index = 0) {
                 </div>
                 <div class="next">
                     <button class="btn btn-main" id="carrier" onclick="contractNext(this)">Оформить Договор</button>
-                </div>`
+                </div>`)
+        return content;
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
@@ -930,6 +946,7 @@ function createCardMenu(element, index = 0) {
                 `
     }
 }
+
 // Переход на предыдущую вкладку карточки
 function comeBack(elem) {
     for (let i = 0; i < dataName.length; i++) {
@@ -1052,8 +1069,10 @@ function closeCardMenu(id = '') {
             saveTableAndCard[0].lastCard[i] = null;
         }
     }
+    saveTableAndCard[1].pop();
     selectedLine = {};
-    $('.info').append(fillingTables(saveTableAndCard));
+    requestTableData.getRequest(saveTableAndCard);
+
     setTimeout(() => {
         $('.card_menu, .overflow').remove();
     }, 0);
