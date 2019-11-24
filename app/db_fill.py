@@ -190,6 +190,7 @@ def table_to_json(query):
 # -------------------------------------------------------Usage----------------------------------------------------------
 
 # add_client_from_xlsx()
+# add_user(login='Dialjini', password='DaniLKA210', email='kustovdanil2@gmail.com', role='admin', name='Василий Пупкин')
 # add_user(login='admin', password='qwerzy132', email='лысый', role='admin', name='Василий Пупкин')
 # add_provider_from_xlsx()
 # add_items_from_xlsx()

@@ -8,6 +8,7 @@ import xlrd
 import openpyxl
 from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORDER_MEDIUM, DEFAULT_BORDER
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String)
@@ -26,6 +27,7 @@ class User(db.Model):
 
         return result
 
+
 class Order(db.Model):
     Client_id = db.Column(db.Integer, primary_key=True)
     Contact_Num = db.Column(db.String)
@@ -36,6 +38,7 @@ class Order(db.Model):
     Item_id = db.Column(db.String)
     Props = db.Column(db.String)
     Cost = db.Column(db.Float)
+
 
 class Provide_Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
@@ -48,10 +51,12 @@ class Provide_Item(db.Model):
     Cost = db.Column(db.Float)
     NDS = db.Column(db.String)
 
+
 class Item_groups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Group = db.Column(db.String)
     Item = db.relationship('Item', backref='Group', lazy='dynamic')
+
 
 class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
@@ -65,8 +70,10 @@ class Item(db.Model):
     Cost = db.Column(db.Float)
     NDS = db.Column(db.String)
 
+
 class EmptyClients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
 
 class Client(db.Model):
     Client_id = db.Column(db.Integer, primary_key=True)
@@ -89,6 +96,10 @@ class Client(db.Model):
     UHH = db.Column(db.String)
     Adress = db.Column(db.String)
     Notes = db.relationship('Notes', backref='Author', lazy='dynamic')
+    Tag = db.Column(db.String)
+    Station = db.Column(db.String)
+    Distance = db.Column(db.String)
+    Price = db.Column(db.String)
 
 
 class Contacts(db.Model):
@@ -105,6 +116,7 @@ class Contacts(db.Model):
     Date = db.Column(db.Date)
     Birthday = db.Column(db.Date)
 
+
 class Notes(db.Model):
     NoteId = db.Column(db.Integer, primary_key=True)
     Client_id = db.Column(db.Integer, db.ForeignKey('client.Client_id'))
@@ -114,6 +126,7 @@ class Notes(db.Model):
     Note = db.Column(db.String)
     Manager = db.Column(db.String)
     File_Path = db.Column(db.String)
+
 
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
@@ -125,10 +138,6 @@ class Tasks(db.Model):
 
 class Provider(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Pods = db.Column(db.String)
-    Raps = db.Column(db.String)
-    Len = db.Column(db.String)
-    Vets = db.Column(db.String)
     Train = db.Column(db.String)
     Oblast = db.Column(db.String)
     Rayon = db.Column(db.String)
@@ -140,7 +149,14 @@ class Provider(db.Model):
     Driver = db.relationship('Driver', backref='Provider', lazy='dynamic')
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
+    NDS = db.Column(db.String)
     Adress = db.Column(db.String)
+    Tag = db.Column(db.String)
+    Distance = db.Column(db.String)
+    Category = db.Column(db.String)
+    Merc = db.Column(db.String)
+    Volume = db.Column(db.String)
+
 
 
 class Debt(db.Model):
@@ -153,6 +169,7 @@ class Debt(db.Model):
     Payed = db.Column(db.Float)
     Maneger_id = db.Column(db.Integer)
 
+
 class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Type = db.Column(db.String)
@@ -161,6 +178,7 @@ class Account(db.Model):
     Sum = db.Column(db.Float)
     Status = db.Column(db.String)
     Manger_id = db.Column(db.Integer)
+
 
 class DeliveryCar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -190,19 +208,32 @@ class DeliveryTrain(db.Model):
     Price = db.Column(db.Float)
 
 
+class Carrier(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Address = db.Column(db.String)
+    Area = db.Column(db.String)
+    Capacity = db.Column(db.String)
+    UHH = db.Column(db.String)
+    Name = db.Column(db.String)
+    Region = db.Column(db.String)
+    View = db.Column(db.String)
+
+
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
     Product_Type = db.Column(db.String)
     Items = db.relationship('Item', backref='Stock', lazy='dynamic')
-    Type = db.Column(db.String) # ?
+    Type = db.Column(db.String)
     Size = db.Column(db.String)
     Packing = db.Column(db.String)
     NDS = db.Column(db.String)
     Cost_Price = db.Column(db.Float)
+
 
 class Driver(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Name = db.Column(db.String)
     Contact = db.Column(db.String)
+
