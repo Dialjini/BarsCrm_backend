@@ -16,21 +16,26 @@ def table_to_json(query):
 @app.route('/')
 @app.route('/index')
 def index():
+    try:
+        print(session['username'])
+    except Exception:
+        print("Not logged in")
+
     if 'username' in session:
         return render_template('index.html')
     else:
-        return render_template('index.html')
+        return render_template('login.html')
 
 
 @app.route('/auth', methods=['GET'])
 def auth():
-    if 'login' in request.form:
-        login = request.form['login']
+    if 'login' in request.args:
+        login = request.args['login']
     else:
         return 'ERROR 400 BAD REQUEST'
 
-    if 'password' in request.form:
-        password = request.form['password']
+    if 'password' in request.args:
+        password = request.args['password']
     else:
         return 'ERROR 400 BAD REQUEST'
 
@@ -54,6 +59,12 @@ def auth():
 
     return json.dumps({'message': 'Неверный логин/email', 'success': False})
 
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    if 'username' in session:
+        session.pop('username', None)
+    return redirect('/', code=302)
 
 @app.route('/getClients', methods=['GET'])
 def getClients():

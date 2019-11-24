@@ -7,8 +7,13 @@ $('#auth').click(function() {
         type: 'GET',
         data: {'login': login, 'password': password},
         dataType: 'html',
-        success: function(data){
-            console.log(data);
+        success: function(data) {
+        try {
+                console.log(JSON.parse(data).message)
         }
+        catch {
+            location.reload()
+        }
+    }
     });
 })
