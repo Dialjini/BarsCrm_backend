@@ -160,6 +160,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
+        console.log(selectedLine);
         let content = ` <div class="row_card">
                             <table class="table_block">
                                 <tr>
@@ -186,7 +187,7 @@ function createCardMenu(element, index = 0) {
                             <table class="table_block">
                                 <tr>
                                     <td>Тег</td>
-                                    <td><input type="text" id="client_tag" onchange="saveCard()" class="string" value="${selectedLine[2]}"></td>
+                                    <td><input type="text" id="client_tag" onchange="saveCard()" class="string" value="${selectedLine.Tag}"></td>
                                 </tr>
                                 <tr>
                                     <td>Категория</td>
@@ -194,15 +195,15 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tr>
                                     <td>Ж/Д Станция</td>
-                                    <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine[2]}"></td>
+                                    <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
                                 </tr>
                                 <tr>
                                     <td>Цена вагона</td>
-                                    <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine[2]}"></td>
+                                    <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
                                 </tr>
                                 <tr>
                                     <td>км от НСК</td>
-                                    <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine[2]}"></td>
+                                    <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
                                 </tr>
                             </table>
                             <div class="info_block">
@@ -314,6 +315,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Поставщиков
     function providerContentCard(selectedLine) {
+        console.log(selectedLine);
         return `         <div class="row_card">
                             <table class="table_block">
                                 <tr>
@@ -351,7 +353,7 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Тег</td>
                                     <td>
-                                        <input type="text" id="provider_tag" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_tag" class="string" value="${selectedLine.Tag}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -363,19 +365,19 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Ж/Д Станция</td>
                                     <td>
-                                        <input type="text" id="provider_station" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_station" class="string" value="${selectedLine.Train}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Цена вагона</td>
                                     <td>
-                                        <input type="text" id="provider_price" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_price" class="string" value="${selectedLine.Price}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>км от НСК</td>
                                     <td>
-                                        <input type="text" id="provider_distance" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_distance" class="string" value="${selectedLine.Distance}">
                                     </td>
                                 </tr>
                             </table>
@@ -383,19 +385,19 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Объем про-ва</td>
                                     <td>
-                                        <input type="text" id="provider_volume" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_volume" class="string" value="${selectedLine.Volume}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>НДС</td>
                                     <td>
-                                        <input type="number" id="provider_vat" class="string" value="${selectedLine[selectedLine.length - 2]}">
+                                        <input type="number" id="provider_vat" class="string" value="${selectedLine.NDS}">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Мерекурий</td>
                                     <td>
-                                        <input type="text" id="provider_merc" class="string" value="${selectedLine[2]}">
+                                        <input type="text" id="provider_merc" class="string" value="${selectedLine.Merc}">
                                     </td>
                                 </tr>
                             </table>
@@ -478,30 +480,31 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Перевозчиков
     function carrierContentCard(selectedLine) {
+        console.log(selectedLine);
         return ` <div class="row_card" style="justify-content: flex-start">
                     <table class="table_block" style="margin-right: 50px;">
                         <tr>
                             <td>Наименование</td>
                             <td>
-                                <input type="text" id="carrier_name" value="${selectedLine[2]}">
+                                <input type="text" id="carrier_name" value="${selectedLine.Name}">
                             </td>
                         </tr>
                         <tr>
                             <td>Районе</td>
                             <td>
-                                <input type="text" id="carrier_area" value="${selectedLine[2]}">
+                                <input type="text" id="carrier_area" value="${selectedLine.Rayon}">
                             </td>
                         </tr>
                         <tr>
                             <td>Область/Край</td>
                             <td>
-                                <input type="text" id="carrier_region" value="${selectedLine[2]}">
+                                <input type="text" id="carrier_region" value="${selectedLine.Oblast}">
                             </td>
                         </tr>
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="carrier_address" value="${selectedLine[2]}">
+                                <input type="text" id="carrier_address" value="${selectedLine.Adress}">
                             </td>
                         </tr>
                     </table>
@@ -509,7 +512,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" id="carrier_inn" value="${selectedLine[2]}">
+                                <input type="text" id="carrier_inn" value="${selectedLine.UHH}">
                             </td>
                         </tr>
                         <tr>
@@ -521,7 +524,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Вид перевозки</td>
                             <td>
-                                <input type="text" id="carrier_view" value="${selectedLine[2]}" class="string">
+                                <input type="text" id="carrier_view" value="${selectedLine.View}" class="string">
                             </td>
                         </tr>
                     </table>
@@ -956,32 +959,33 @@ function comeBack(elem) {
 function contractNext(elem) {
     let createOrSaveCard = (function() {
         return {
-            getRequest: function (idData) {
+            getRequest: function (idData, request) {
                 $.ajax({
-                    url: '/addClient',
+                    url: request,
                     type: 'GET',
                     data: idData,
                     dataType: 'html',
-                    success: function(data){
-                        console.log(data);
-                    }
+                    success: function(){}
                 });
             }
         }
     })();
 
-    const data = elem.name.split('-');
-    let idData = {};
     // Отсылаем данные для создания/сохранения карточки
+    let idData = {};
+    const data = elem.name.split('-');
+
     for (let i = 0; i < idCardFields.length; i++) {
         if (data[0] == idCardFields[i].name) {
+            const request = idCardFields[i].request;
             for (let j = 0; j < idCardFields[i].ids.length; j++) {
                 idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
             }
+            console.log(request);
+            createOrSaveCard.getRequest(idData, request);
+            break;
         }
     }
-    console.log(idData);
-    createOrSaveCard.getRequest(idData);
 
     saveCard();
     $('.card_menu').remove();

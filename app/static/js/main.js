@@ -14,7 +14,7 @@ let requestTableData = (function() {
             const requests = [
                 { table: categoryInListClient, request: '/getClients' },
                 { table: categoryInListProvider, request: '/getProviders' },
-                { table: categoryInListCarrier, request: '/getClients' },
+                { table: categoryInListCarrier, request: '/getCarriers' },
                 { table: categoryInFinanceDebit, request: '/getClients' },
                 { table: categoryInFinanceAccount, request: '/getClients' },
                 { table: categoryInDelivery, request: '/getClients' },

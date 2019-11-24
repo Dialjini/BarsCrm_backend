@@ -186,16 +186,19 @@ const idCardFields = [
     {   
         name: 'client', ids:
         ['client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
-        'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry']
+        'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry'],
+        request: '/addClient'
     },
     {   
         name: 'provider', ids:
         ['provider_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
-        'provider_tag', 'provider_category', 'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_vat', 'provider_merc']
+        'provider_tag', 'provider_category', 'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_vat', 'provider_merc'],
+        request: '/addProvider'
     },
     {   
         name: 'carrier', ids:
-        ['carrier_name', 'carrier_area', 'carrier_region', 'carrier_address', 'carrier_inn', 'carrier_capacity', 'carrier_view']
+        ['carrier_name', 'carrier_area', 'carrier_region', 'carrier_address', 'carrier_inn', 'carrier_capacity', 'carrier_view'],
+        request: '/addCarrier'
     },
     {   
         name: 'delivery', ids:
