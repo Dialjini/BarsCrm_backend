@@ -195,6 +195,7 @@ def addClient():
     Client.Oblast = data['client_region']
     Client.Station = data['client_station']
     Client.Tag = data['client_tag']
+    Client.Adress = data['client_address']
 
     if new:
         db.session.add(Client)
