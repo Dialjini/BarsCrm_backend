@@ -116,9 +116,9 @@ def getUsers():
 def addProviders():
     new = True
     data = request.args
-    if models.Client.query.filter_by(Name=data['provider_name']).first():
+    if models.Provider.query.filter_by(Name=data['provider_name']).first():
         new = False
-        Provider = models.Client.query.filter_by(Name=data['provider_name']).first()
+        Provider = models.Provider.query.filter_by(Name=data['provider_name']).first()
     else:
         Provider = models.Client()
 
@@ -150,9 +150,9 @@ def addProviders():
 def addCarier():
     new = True
     data = request.args
-    if models.Client.query.filter_by(Name=data['carrier_name']).first():
+    if models.Carrier.query.filter_by(Name=data['carrier_name']).first():
         new = False
-        Carrier = models.Client.query.filter_by(Name=data['carrier_name']).first()
+        Carrier = models.Carrier.query.filter_by(Name=data['carrier_name']).first()
     else:
         Carrier = models.Client()
 
