@@ -963,7 +963,7 @@ function contractNext(elem) {
                     data: {'table': table[0], 'type': table[1]},
                     dataType: 'html',
                     success: function(data){
-                        gettingData(JSON.parse(data));
+                        console.log(data);
                     }
                 });
             }
