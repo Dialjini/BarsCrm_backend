@@ -181,3 +181,25 @@ const contactsFormInfo = [
     { id: 'provider-clear', name: 'Поставщик' },
     { id: 'carrier-clear', name: 'Перевозчик' }
 ];
+
+const idCardFields = [
+    {   
+        name: 'client', ids:
+        ['client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
+        'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry']
+    },
+    {   
+        name: 'provider', ids:
+        ['provider_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
+        'provider_tag', 'provider_category', 'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_vat', 'provider_merc']
+    },
+    {   
+        name: 'carrier', ids:
+        ['carrier_name', 'carrier_area', 'carrier_region', 'carrier_address', 'carrier_inn', 'carrier_capacity', 'carrier_view']
+    },
+    {   
+        name: 'delivery', ids:
+        ['delivery_customer', 'delivery_shipment', 'delivery_unloading', 'delivery_way', 'delivery_carrier', 'delivery_driver',
+        'delivery_view', 'delivery_comment', 'delivery_client', 'delivery_contact']
+    },
+]

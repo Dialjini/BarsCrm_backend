@@ -164,7 +164,7 @@ function createCardMenu(element, index = 0) {
                             <table class="table_block">
                                 <tr>
                                     <td>Наименование</td>
-                                    <td><input type="text" id="client_organization_name" onchange="saveCard()" value="${selectedLine.Name}"></td>
+                                    <td><input type="text" id="client_name" onchange="saveCard()" value="${selectedLine.Name}"></td>
                                 </tr>
                                 <tr>
                                     <td>Район</td>
@@ -319,7 +319,7 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Наименование</td>
                                     <td>
-                                        <input type="text" id="provider_organization_name" value="${selectedLine.Name}">
+                                        <input type="text" id="provider_name" value="${selectedLine.Name}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -483,7 +483,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Наименование</td>
                             <td>
-                                <input type="text" id="carrier_organization_name" value="${selectedLine[2]}">
+                                <input type="text" id="carrier_name" value="${selectedLine[2]}">
                             </td>
                         </tr>
                         <tr>
@@ -969,8 +969,18 @@ function contractNext(elem) {
             }
         }
     })();
-    // Отсылаем данные для создания/сохранения карточки
+
     const data = elem.name.split('-');
+    let test = {};
+    // Отсылаем данные для создания/сохранения карточки
+    for (let i = 0; i < idCardFields.length; i++) {
+        if (data[0] == idCardFields[i].name) {
+            for (let j = 0; j < idCardFields[i].ids.length; j++) {
+                test[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
+            }
+        }
+    }
+    console.log(test);
     createOrSaveCard.getRequest(data);
 
     saveCard();
