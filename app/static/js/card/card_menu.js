@@ -956,11 +956,11 @@ function comeBack(elem) {
 function contractNext(elem) {
     let createOrSaveCard = (function() {
         return {
-            getRequest: function (table) {
+            getRequest: function (idData) {
                 $.ajax({
                     url: '',
                     type: 'GET',
-                    data: {'table': table[0], 'type': table[1]},
+                    data: idData,
                     dataType: 'html',
                     success: function(data){
                         console.log(data);
@@ -971,17 +971,17 @@ function contractNext(elem) {
     })();
 
     const data = elem.name.split('-');
-    let test = {};
+    let idData = {};
     // Отсылаем данные для создания/сохранения карточки
     for (let i = 0; i < idCardFields.length; i++) {
         if (data[0] == idCardFields[i].name) {
             for (let j = 0; j < idCardFields[i].ids.length; j++) {
-                test[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
+                idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
             }
         }
     }
-    console.log(test);
-    createOrSaveCard.getRequest(data);
+    console.log(idData);
+    createOrSaveCard.getRequest(idData);
 
     saveCard();
     $('.card_menu').remove();

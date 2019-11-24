@@ -19,6 +19,7 @@ function loginRequest() {
         dataType: 'html',
         success: function(data) {
             try {
+                $('.error_message').empty();
                 $('.error_message').fadeIn(200).append(JSON.parse(data).message);
             } catch {
                 $('.error_message').remove();
