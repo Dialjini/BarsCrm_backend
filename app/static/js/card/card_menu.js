@@ -958,7 +958,7 @@ function contractNext(elem) {
         return {
             getRequest: function (idData) {
                 $.ajax({
-                    url: '',
+                    url: '/addClient',
                     type: 'GET',
                     data: idData,
                     dataType: 'html',
