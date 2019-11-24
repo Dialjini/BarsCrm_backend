@@ -124,7 +124,7 @@ def addProvider():
         new = False
         Provider = models.Provider.query.filter_by(Name=data['provider_name']).first()
     else:
-        Provider = models.Carrier()
+        Provider = models.Provider()
 
     Provider.Name = data['provider_name']
     Provider.Rayon = data['provider_area']
