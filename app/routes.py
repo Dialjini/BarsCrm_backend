@@ -111,6 +111,10 @@ def getTasks(login):
 def getUsers():
     return table_to_json(models.User.query.all())
 
+@app.route('/getCarriers', methods=['GET'])
+def getCarriers():
+    return table_to_json(models.Carrier.query.all())
+
 
 @app.route('/addProvider', methods=['GET'])
 def addProvider():
@@ -126,7 +130,6 @@ def addProvider():
     Provider.Rayon = data['provider_area']
     Provider.Category = data['provider_category']
     Provider.Distance = data['provider_distance']
-    Provider.Segment = data['provider_industry']
     Provider.UHH = data['provider_inn']
     Provider.Price = data['provider_price']
     Provider.Oblast = data['provider_region']
