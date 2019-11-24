@@ -31,7 +31,7 @@ var rowFilling = (object, id, table) => {
             let name, data = [
                 { id: 'client', list: [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id]},
                 { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
-                { id: 'carrier', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
+                { id: 'carrier', list: [object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Capacity, object[1][i].View, object[1][i].Manager_id]},
                 { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
                 { id: 'account', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
                 { id: 'delivery', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
