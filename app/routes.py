@@ -112,8 +112,8 @@ def getUsers():
     return table_to_json(models.User.query.all())
 
 
-@app.route('/addProviders', methods=['GET'])
-def addProviders():
+@app.route('/addProvider', methods=['GET'])
+def addProvider():
     new = True
     data = request.args
     if models.Provider.query.filter_by(Name=data['provider_name']).first():
