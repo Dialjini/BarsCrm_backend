@@ -382,11 +382,11 @@ function addMemberDelivery() {
 // Добавление строк в таблицах карточек
 function addRow(element) {
     const tableInfo = [
-        { id: 'client-table', count: 4, widthInput: [57, 43, 104, 43] },
-        { id: 'provider-table', count: 6, widthInput: [57, 33, 28, 59, 24, 57] },
-        { id: 'carrier-table', count: 5, widthInput: [50, 100, 160, 90, 33] },
-        { id: 'account-table', count: 3, widthInput: [58, 42, 43] },
-        { id: 'delivery-table', count: 2, widthInput: [45, 43] },
+        { id: 'client-group', count: 4, widthInput: [57, 43, 104, 43], tbody: 'group', remove: 'remove_last_group' },
+        { id: 'provider-group', count: 6, widthInput: [57, 33, 28, 59, 24, 57], tbody: 'group', remove: 'remove_last_group' },
+        { id: 'carrier-group', count: 5, widthInput: [50, 100, 160, 90, 33], tbody: 'group', remove: 'remove_last_group' },
+        { id: 'account-group', count: 3, widthInput: [58, 42, 43], tbody: 'group', remove: 'remove_last_group' },
+        { id: 'delivery-group', count: 2, widthInput: [45, 43], tbody: 'group', remove: 'remove_last_group' },
     ]
 
     function trFill(table) {
@@ -403,18 +403,39 @@ function addRow(element) {
 
     for (let i = 0; i < tableInfo.length; i++) {
         if (element.id == tableInfo[i].id) {
-            $('#group').append(trFill(tableInfo[i]));
+            $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
+            $(`#${tableInfo[i].remove}`).fadeIn(100);
         }
     }
-    $('#remove_last_row').fadeIn(100);
     saveCard();
 }
 // Удаление последней строки в таблицах карточек
-function removeRow() {
-    $('#group').children().last().remove();
-    if ($('#group').html().trim() === '') {
-        $('#remove_last_row').fadeOut(0);
+function removeRow(id) {
+    let tbody = id.split('_')[2];
+    $(`#${tbody}`).children().last().remove();
+    if ($(`#${tbody}`).html().trim() === '') {
+        $(`#${id}`).fadeOut(0);
     }
+}
+function itemSelection(element, select) {
+    if (element === 'client' || element === 'provider') {
+        if (select.Category == '') {
+            $(`#${element}_category option:contains('Выбрать')`).attr('selected', true)
+        } else {
+            $(`#${element}_category option:contains('${select.Category}')`).attr('selected', true)
+            $(`#${element}_category :selected`).val($(`#${element}_category :selected`).html());       
+        }
+        if (select.Segment == '') {
+            $(`#${element}_industry option:contains('Выбрать')`).attr('selected', true)
+        } else {
+            $(`#${element}_industry option:contains('${select.Segment}')`).attr('selected', true)
+            $(`#${element}_industry :selected`).val($(`#${element}_industry :selected`).html());
+        }
+    } else {
+        let option = $(`#${element.id} :selected`);
+        option.val(option.html());
+    }
+    saveCard();
 }
 // Открепление карточки от менеджера
 function unfastenCard(element) {

@@ -160,6 +160,7 @@ function createCardMenu(element, index = 0) {
 
     $('.info').append(cardMenu());
     $('.next .btn').attr('name', getInfo.join('_'));
+    itemSelection(getInfo[0], selectedLine);
 
     // Модальное окно для Склада
     if (getInfo[0] === 'stock') {
@@ -216,7 +217,15 @@ function createCardMenu(element, index = 0) {
                         </tr>
                         <tr>
                             <td>Категория</td>
-                            <td><input type="text" id="client_category" onchange="saveCard()" class="string" value="${selectedLine.Category}"></td>
+                            <td>
+                                <select id="client_category" onchange="itemSelection(this)">
+                                    <option value="disabled" selected disabled>Выбрать</option>
+                                    <option value="category_0">Клиент</option>
+                                    <option value="category_1">Потенциальный клиент</option>
+                                    <option value="category_2">Лидер</option>
+                                    <option value="category_3">Неперспективный клиент</option>
+                                </select>
+                            </td>
                         </tr>
                         <tr>
                             <td>Ж/Д Станция</td>
@@ -232,7 +241,16 @@ function createCardMenu(element, index = 0) {
                         </tr>
                     </table>
                     <div class="info_block">
-                        <span class="lightgray">Отрасль</span><input id="client_industry" onchange="saveCard()" class="string" value="${selectedLine.Segment}">
+                        <span class="lightgray">Отрасль</span>
+                        <select id="client_industry" onchange="itemSelection(this)">
+                            <option value="disabled" selected disabled>Выбрать</option>
+                            <option value="industry_0">Животноводство</option>
+                            <option value="industry_1">Птицеводство</option>
+                            <option value="industry_2">Свиноводство</option>
+                            <option value="industry_3">Растениеводство</option>
+                            <option value="industry_4">Рыбоводство</option>
+                            <option value="industry_5">Комбикормовый</option>
+                        </select>
                         <span class="lightgray" style="margin-top: 17px;">Поголовье</span>
                         <table>
                             <tr>
@@ -241,7 +259,11 @@ function createCardMenu(element, index = 0) {
                                 <td>Надои</td>
                             </tr>
                             <tbody>
-
+                                <tr>
+                                    <td><input type="text" style="width: 75px"></td>
+                                    <td><input type="text" style="width: 75px"></td>
+                                    <td><input type="text" style="width: 75px"></td>
+                                </tr>
                             </tbody>
                         </table>
                         <span class="lightgray" style="margin-top: 17px;">Спрос</span>
@@ -250,8 +272,11 @@ function createCardMenu(element, index = 0) {
                                 <td>Товар</td>
                                 <td>Объем</td>
                             </tr>
-                            <tbody>
-
+                            <tbody id="demand">
+                                <tr>
+                                    <td><input type="text" style="width: 196px"></td>
+                                    <td><input type="text" style="width: 50px"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>`)
@@ -291,8 +316,8 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="client-table" src="static/images/add.png" onclick="addRow(this)">
-                            <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
+                            <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this)">
+                            <img id="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeRow(this.id)">
                         </div>
                     </div>
                 </div>
@@ -387,7 +412,13 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Категория</td>
                             <td>
-                                <input type="text" id="provider_category" class="string" onchange="saveCard()" value="${selectedLine.Category}">
+                                <select id="provider_category" onchange="itemSelection(this)">
+                                    <option value="disabled" selected disabled>Выбрать</option>
+                                    <option value="category_0">Клиент</option>
+                                    <option value="category_1">Потенциальный клиент</option>
+                                    <option value="category_2">Лидер</option>
+                                    <option value="category_3">Неперспективный клиент</option>
+                                </select>
                             </td>
                         </tr>
                         <tr>
@@ -460,7 +491,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="provider-table" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="provider-group" src="static/images/add.png" onclick="addRow(this)">
                             <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
                         </div>
                     </div>
@@ -605,7 +636,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="carrier-table" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="carrier-group" src="static/images/add.png" onclick="addRow(this)">
                             <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
                         </div>
                     </div>
@@ -766,7 +797,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="account-table" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this)">
                             <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
                         </div>
                     </div>
@@ -881,7 +912,7 @@ function createCardMenu(element, index = 0) {
                                 </table>
                             </div>
                             <div class="events">
-                                <img class="add_something" id="delivery-table" src="static/images/add.png" onclick="addRow(this)">
+                                <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this)">
                                 <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
                             </div>
                         </div>
