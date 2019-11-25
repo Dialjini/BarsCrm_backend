@@ -56,7 +56,6 @@ function saveInfoCard(id) {
                     data: idData,
                     dataType: 'html',
                     success: function() {
-                        console.log(idData);
                         getTableData(saveTableAndCard);
                     }
                 });
@@ -68,7 +67,6 @@ function saveInfoCard(id) {
     let idData = {};
     const data = id.split('_');
     const card = data[data.length - 1];
-    console.log(data);
 
     if (card === 'contract') {
         getTableData(saveTableAndCard);

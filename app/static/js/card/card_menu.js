@@ -167,12 +167,14 @@ function createCardMenu(element, index = 0) {
         $('#card_menu').addClass('modal');
     // Проверка на заполненность Контактов и строк таблиц (Не у Склада)
     } else { 
-        if ($('#members').html().trim() !== '') {
-            $('#remove_last_member').fadeIn(0);
-        }
-        if ($('#group').html().trim() !== '') {
-            $('#remove_last_row').fadeIn(0);
-        }
+        try {
+            if ($('#members').html().trim() !== '') {
+                $('#remove_last_member').fadeIn(0);
+            }
+            if ($('#group').html().trim() !== '') {
+                $('#remove_last_row').fadeIn(0);
+            }
+        } catch {}
     }
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
@@ -770,7 +772,7 @@ function createCardMenu(element, index = 0) {
                     </div>
                 </div>
                 <div class="next">
-                    <button class="btn btn-main" id="delivery-1" onclick="arrangeDelivery(this)">Оформить Доставку</button>
+                    <button class="btn btn-main" id="delivery_new" onclick="arrangeDelivery(this)">Оформить Доставку</button>
                 </div>`
     }
     // Контентная часть Дебеторки
@@ -886,8 +888,8 @@ function createCardMenu(element, index = 0) {
                     </div>
                 </div>
                 <div class="next">
-                    <button class="btn" style="margin-right: 10px" onclick="closeCardMenu()">Забирает сам</button>
-                    <button class="btn btn-main" id="delivery" onclick="closeCardMenu()">Оформить Заявку</button>
+                    <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
+                    <button class="btn btn-main" id="delivery_new" onclick="closeCardMenu(this.id)">Оформить Заявку</button>
                 </div>`
     }
     // Контентная часть Склада
@@ -1040,16 +1042,10 @@ function completionCard(element) {
             dataName[i].link[0].lastCard = [null, null];
         }
     }
-    closeCardMenu();
+    closeCardMenu('account_new');
 }
 // Закрытие карточки
 function closeCardMenu(id = '') {
-    $('.table').remove();
-    for (let i = saveTableAndCard[0].lastCard.length - 1; i >= 0; i--) {
-        if (saveTableAndCard[0].lastCard[i] != null) {
-            saveTableAndCard[0].lastCard[i] = null;
-        }
-    }
     // Сохраняет данные на сервер
     if (!id.includes('new')) saveInfoCard(id);
     else getTableData(saveTableAndCard);
@@ -1060,6 +1056,14 @@ function closeCardMenu(id = '') {
             categoryInFinanceAccount[0].lastCard[0] = null;
         }
     }
+
+    $('.table').remove();
+    for (let i = saveTableAndCard[0].lastCard.length - 1; i >= 0; i--) {
+        if (saveTableAndCard[0].lastCard[i] != null) {
+            saveTableAndCard[0].lastCard[i] = null;
+        }
+    }
+
     saveTableAndCard[1].pop();
     selectedLine = {};
 
