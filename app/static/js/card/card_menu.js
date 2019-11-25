@@ -98,9 +98,22 @@ function createCardMenu(element, index = 0) {
                 if (getInfo[0] == 'client') titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
                 else if (getInfo[0] == 'provider') titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
             } else {
-                if (dataName[i].link[1][1] === undefined) requestTableData.getRequest(dataName[i].link, true);
+                const emptyData = [
+                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress'] },
+                    { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume'] },
+                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] }
+                ]
+
+                if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, true);
                 titleObject[i].list.unshift(`Код: 0`);
-                selectedLine = {};
+                
+                for (let i = 0; i < emptyData.length; i++) {
+                    if (getInfo[0] == emptyData[i].id) {
+                        for (let j = 0; j < emptyData[i].list.length; j++) {
+                            selectedLine[emptyData[i].list[j]] = '';
+                        }
+                    }
+                }
             }
         }
     }
@@ -986,7 +999,7 @@ function contractNext(elem) {
         append: getTitleInfo({
             id: `${elem.id}`,
             list: ['Оформление договора'],
-            status: 'contract'
+            status: `${elem.name.split('_')[1]}_contract`
         }).add($('<div>', {
             class: 'content',
             append: contractContentCard(elem)
@@ -1031,23 +1044,24 @@ function completionCard(element) {
 }
 // Закрытие карточки
 function closeCardMenu(id = '') {
+    $('.table').remove();
+    for (let i = saveTableAndCard[0].lastCard.length - 1; i >= 0; i--) {
+        if (saveTableAndCard[0].lastCard[i] != null) {
+            saveTableAndCard[0].lastCard[i] = null;
+        }
+    }
+    // Сохраняет данные на сервер
+    if (!id.includes('new')) saveInfoCard(id);
+    else getTableData(saveTableAndCard);
+
     // Если открыта карточка Выставления счета в Счете - закрыть ее
     if (categoryInFinanceAccount[0].lastCard[0] !== null) {
         if (id.replace(/_close_card/g, '') === categoryInFinanceAccount[0].lastCard[0][0].id.replace(/_invoicing_card/, '')) {
             categoryInFinanceAccount[0].lastCard[0] = null;
         }
     }
-    // Сохраняет данные на сервер
-    $('.table').remove();
-    for (let i = saveTableAndCard[0].lastCard.length - 1; i >= 0; i--) {
-        if (saveTableAndCard[0].lastCard[i] != null) {
-            saveTableAndCard[0].lastCard[i] = null;
-            if (!id.includes('new')) saveInfoCard(id);
-        }
-    }
     saveTableAndCard[1].pop();
     selectedLine = {};
-    requestTableData.getRequest(saveTableAndCard);
 
     setTimeout(() => {
         $('.card_menu, .overflow').remove();

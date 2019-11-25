@@ -22,7 +22,7 @@ function linkField() {
             for (let j = 1; j < subcategoryButtons[i].length; j++) {
                 if (this.id == subcategoryButtons[i][j].id) {
                     activityReassignment(subcategoryButtons[i]);
-                    requestTableData.getRequest(subcategoryButtons[i][j].objectName);
+                    getTableData(subcategoryButtons[i][j].objectName);
                     break;
                 }
             }
@@ -117,7 +117,7 @@ function linkCategory(element) {
             for (let j = 0; j < linkCategoryInfo[i].subcategories.length; j++) {
                 if (linkCategoryInfo[i].subcategories[j][0].active) {
                     addButtonsSubcategory(i);
-                    requestTableData.getRequest(linkCategoryInfo[i].subcategories[j]);
+                    getTableData(linkCategoryInfo[i].subcategories[j]);
                     i <= 1 ? $(`#${linkCategoryInfo[i].subcategories[j][0].id}Button`).addClass('active') : '';
                     break;
                 }
