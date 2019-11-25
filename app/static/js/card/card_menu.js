@@ -95,7 +95,8 @@ function createCardMenu(element, index = 0) {
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'clear') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
-                titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
+                if (getInfo[0] == 'client') titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
+                else if (getInfo[0] == 'provider') titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
             } else {
                 selectedLine = {};
             }
@@ -138,6 +139,7 @@ function createCardMenu(element, index = 0) {
     // Получаем контент карточки
     function getContentInfo(element) {
         let content = $('<div>', { class: 'content' });
+        console.log(selectedLine);
         content.append(element.link(selectedLine));
         return content;
     }
@@ -336,7 +338,7 @@ function createCardMenu(element, index = 0) {
                         })
                     }))
                 }).add(`<tr>
-                            <td>Районе</td>
+                            <td>Район</td>
                             <td>
                                 <input type="text" id="provider_area" value="${selectedLine.Rayon}">
                             </td>
@@ -507,7 +509,7 @@ function createCardMenu(element, index = 0) {
                         })
                     }))
                 }).add(`<tr>
-                            <td>Районе</td>
+                            <td>Район</td>
                             <td>
                                 <input type="text" id="carrier_area" value="${selectedLine.Area}">
                             </td>
