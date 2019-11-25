@@ -144,7 +144,7 @@ const subcategoryButtons = [
     ],
     [
         'Доставка',
-        { id: 'delivery-clear', objectName: categoryInDelivery, name: 'Добавить Доставку', class: 'btn btn-main btn-div' }
+        { id: 'delivery_new', objectName: categoryInDelivery, name: 'Добавить Доставку', class: 'btn btn-main btn-div' }
     ],
     [
         'Склад',
@@ -177,9 +177,9 @@ const linkCategoryInfo = [
 
 // Данные по вкладке "Добавить контакт"
 const contactsFormInfo = [
-    { id: 'client-clear', name: 'Клиент' },
-    { id: 'provider-clear', name: 'Поставщик' },
-    { id: 'carrier-clear', name: 'Перевозчик' }
+    { id: 'client_new', name: 'Клиент' },
+    { id: 'provider_new', name: 'Поставщик' },
+    { id: 'carrier_new', name: 'Перевозчик' }
 ];
 
 const idCardFields = [

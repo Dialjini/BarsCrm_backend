@@ -424,7 +424,6 @@ function unfastenCard(element) {
         // Добавить карточку в список Карточки клиентов
         closeCardMenu();
 
-
         $('#empty_customer_cards').append($('<div>', {
             class: 'fieldInfo padd',
             id: `detached_card_${idName.split('-')[1]}`, // Number

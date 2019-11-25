@@ -163,7 +163,7 @@ function addButtonsSubcategory(idCategory) {
                 id: subcategoryButtons[idCategory][i].id
             });
         })
-        $('#delivery-clear').attr('onclick', 'createCardMenu(this)');
+        $('#delivery_new').attr('onclick', 'createCardMenu(this)');
     }
 }
 

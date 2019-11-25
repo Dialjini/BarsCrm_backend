@@ -176,7 +176,7 @@ body {
   width: auto;
   height: 100%;
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: scroll;
   position: relative;
 }
 

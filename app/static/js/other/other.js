@@ -119,7 +119,7 @@ function createCT(id) {
     $('#createCT').empty();
     if (id == 'addContact') {
         $('#createCT').append(createContactsForm());
-        $('#client-clear').prop('checked', true);
+        $('#client_new').prop('checked', true);
     } else if (id == 'addTask') {
         $('#createCT').append(createContactsFormTask());
     }

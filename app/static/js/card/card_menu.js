@@ -38,7 +38,7 @@ function createCardMenu(element, index = 0) {
     }
 
     $('.card_menu').remove();
-    let getInfo = element.id.split('-');
+    let getInfo = element.id.split('_');
     let selectedLine = new Object();
 
     // Информация по всем карточкам подкатегорий
@@ -93,11 +93,13 @@ function createCardMenu(element, index = 0) {
         if (titleObject[i].id.includes(getInfo[0])) {
             element = titleObject[i];
             // Вытягиваем данные по Айди карточки и поставляем в поля
-            if (getInfo[1] !== 'clear') {
+            if (getInfo[1] !== 'new') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
                 if (getInfo[0] == 'client') titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
                 else if (getInfo[0] == 'provider') titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
             } else {
+                if (dataName[i].link[1][1] === undefined) requestTableData.getRequest(dataName[i].link, true);
+                titleObject[i].list.unshift(`Код: 0`);
                 selectedLine = {};
             }
         }
@@ -126,7 +128,7 @@ function createCardMenu(element, index = 0) {
     for (let i = 0; i < linkCategoryInfo.length; i++) {
         if (linkCategoryInfo[i].subid.includes(saveTableAndCard[0].id)) {
             $(`#${linkCategoryInfo[i].id}`).addClass('active');
-            if (element.status == 'clear') {
+            if (element.status == 'new') {
                 $('div').is('#subcategories') ? $('#subcategories').remove() : '';
                 addButtonsSubcategory(linkCategoryInfo[i].id[linkCategoryInfo[i].id.length - 1]);
                 $(`#${saveTableAndCard[0].id}Button`).addClass('active');
@@ -139,13 +141,12 @@ function createCardMenu(element, index = 0) {
     // Получаем контент карточки
     function getContentInfo(element) {
         let content = $('<div>', { class: 'content' });
-        console.log(selectedLine);
         content.append(element.link(selectedLine));
         return content;
     }
 
     $('.info').append(cardMenu());
-    $('.next .btn').attr('name', getInfo.join('-'));
+    $('.next .btn').attr('name', getInfo.join('_'));
 
     // Модальное окно для Склада
     if (getInfo[0] === 'stock') {
@@ -340,56 +341,56 @@ function createCardMenu(element, index = 0) {
                 }).add(`<tr>
                             <td>Район</td>
                             <td>
-                                <input type="text" id="provider_area" value="${selectedLine.Rayon}">
+                                <input type="text" id="provider_area" onchange="saveCard()" value="${selectedLine.Rayon}">
                             </td>
                         </tr>
                         <tr>
                             <td>Область/Край</td>
                             <td>
-                                <input type="text" id="provider_region" value="${selectedLine.Oblast}">
+                                <input type="text" id="provider_region" onchange="saveCard()" value="${selectedLine.Oblast}">
                             </td>
                         </tr>
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="provider_address" value="${selectedLine.Adress}">
+                                <input type="text" id="provider_address" onchange="saveCard()" value="${selectedLine.Adress}">
                             </td>
                         </tr>
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" id="provider_inn" value="${selectedLine.UHH}">
+                                <input type="text" id="provider_inn" onchange="saveCard()" value="${selectedLine.UHH}">
                             </td>
                         </tr>`)
             }).add(`<table class="table_block">
                         <tr>
                             <td>Тег</td>
                             <td>
-                                <input type="text" id="provider_tag" class="string" value="${selectedLine.Tag}">
+                                <input type="text" id="provider_tag" class="string" onchange="saveCard()" value="${selectedLine.Tag}">
                             </td>
                         </tr>
                         <tr>
                             <td>Категория</td>
                             <td>
-                                <input type="text" id="provider_category" class="string" value="${selectedLine.Category}">
+                                <input type="text" id="provider_category" class="string" onchange="saveCard()" value="${selectedLine.Category}">
                             </td>
                         </tr>
                         <tr>
                             <td>Ж/Д Станция</td>
                             <td>
-                                <input type="text" id="provider_station" class="string" value="${selectedLine.Train}">
+                                <input type="text" id="provider_station" class="string" onchange="saveCard()" value="${selectedLine.Train}">
                             </td>
                         </tr>
                         <tr>
                             <td>Цена вагона</td>
                             <td>
-                                <input type="text" id="provider_price" class="string" value="${selectedLine.Price}">
+                                <input type="text" id="provider_price" class="string" onchange="saveCard()" value="${selectedLine.Price}">
                             </td>
                         </tr>
                         <tr>
                             <td>км от НСК</td>
                             <td>
-                                <input type="text" id="provider_distance" class="string" value="${selectedLine.Distance}">
+                                <input type="text" id="provider_distance" class="string" onchange="saveCard()" value="${selectedLine.Distance}">
                             </td>
                         </tr>
                     </table>
@@ -397,19 +398,19 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Объем про-ва</td>
                             <td>
-                                <input type="text" id="provider_volume" class="string" value="${selectedLine.Volume}">
+                                <input type="text" id="provider_volume" class="string" onchange="saveCard()" value="${selectedLine.Volume}">
                             </td>
                         </tr>
                         <tr>
                             <td>НДС</td>
                             <td>
-                                <input type="text" id="provider_vat" class="string" value="${selectedLine.NDS}">
+                                <input type="text" id="provider_vat" class="string" onchange="saveCard()" value="${selectedLine.NDS}">
                             </td>
                         </tr>
                         <tr>
                             <td>Мерекурий</td>
                             <td>
-                                <input type="text" id="provider_merc" class="string" value="${selectedLine.Merc}">
+                                <input type="text" id="provider_merc" class="string" onchange="saveCard()" value="${selectedLine.Merc}">
                             </td>
                         </tr>
                     </table>`)
@@ -511,38 +512,38 @@ function createCardMenu(element, index = 0) {
                 }).add(`<tr>
                             <td>Район</td>
                             <td>
-                                <input type="text" id="carrier_area" value="${selectedLine.Area}">
+                                <input type="text" id="carrier_area" onchange="saveCard()" value="${selectedLine.Area}">
                             </td>
                         </tr>
                         <tr>
                             <td>Область/Край</td>
                             <td>
-                                <input type="text" id="carrier_region" value="${selectedLine.Region}">
+                                <input type="text" id="carrier_region" onchange="saveCard()" value="${selectedLine.Region}">
                             </td>
                         </tr>
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="carrier_address" value="${selectedLine.Address}">
+                                <input type="text" id="carrier_address" onchange="saveCard()" value="${selectedLine.Address}">
                             </td>
                         </tr>`)
             }).add(`<table class="table_block">
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" id="carrier_inn" value="${selectedLine.UHH}">
+                                <input type="text" id="carrier_inn" onchange="saveCard()" value="${selectedLine.UHH}">
                             </td>
                         </tr>
                         <tr>
                             <td>Грузоподъемность</td>
                             <td>
-                                <input type="text" id="carrier_capacity" value="${selectedLine.Capacity}" class="string">
+                                <input type="text" id="carrier_capacity" onchange="saveCard()" value="${selectedLine.Capacity}" class="string">
                             </td>
                         </tr>
                         <tr>
                             <td>Вид перевозки</td>
                             <td>
-                                <input type="text" id="carrier_view" value="${selectedLine.View}" class="string">
+                                <input type="text" id="carrier_view" onchange="saveCard()" value="${selectedLine.View}" class="string">
                             </td>
                         </tr>
                     </table>`)
@@ -976,36 +977,7 @@ function comeBack(elem) {
 }
 // Переход на вкладку оформления договора карточки
 function contractNext(elem) {
-    let createOrSaveCard = (function() {
-        return {
-            getRequest: function (idData, request) {
-                $.ajax({
-                    url: request,
-                    type: 'GET',
-                    data: idData,
-                    dataType: 'html',
-                    success: function(){}
-                });
-            }
-        }
-    })();
-
-    // Отсылаем данные для создания/сохранения карточки
-    let idData = {};
-    const data = elem.name.split('-');
-
-    for (let i = 0; i < idCardFields.length; i++) {
-        if (data[0] == idCardFields[i].name) {
-            const request = idCardFields[i].request;
-            for (let j = 0; j < idCardFields[i].ids.length; j++) {
-                idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
-            }
-            console.log(request);
-            createOrSaveCard.getRequest(idData, request);
-            break;
-        }
-    }
-
+    saveInfoCard(elem.name);
     saveCard();
     $('.card_menu').remove();
     $('.info').append($('<div>', {
@@ -1013,7 +985,8 @@ function contractNext(elem) {
         id: 'contract-decor',
         append: getTitleInfo({
             id: `${elem.id}`,
-            list: ['Оформление договора']
+            list: ['Оформление договора'],
+            status: 'contract'
         }).add($('<div>', {
             class: 'content',
             append: contractContentCard(elem)
@@ -1069,6 +1042,7 @@ function closeCardMenu(id = '') {
     for (let i = saveTableAndCard[0].lastCard.length - 1; i >= 0; i--) {
         if (saveTableAndCard[0].lastCard[i] != null) {
             saveTableAndCard[0].lastCard[i] = null;
+            if (!id.includes('new')) saveInfoCard(id);
         }
     }
     saveTableAndCard[1].pop();
@@ -1094,7 +1068,7 @@ function getTitleInfo(element) {
         function closeButton()  {
             return $('<div>', {
                 class: 'close',
-                id: `${element.id}_close_card`,
+                id: `${element.id}_close_card_${element.status}`,
                 onclick: 'closeCardMenu(this.id)',
                 append: $('<img>', {src: 'static/images/cancel.png'})
             })
@@ -1111,7 +1085,7 @@ function getTitleInfo(element) {
                 append: $('<div>', { class: 'gray', id: 'user',
                     append: $('<div>', {
                         class: 'drop_menu',
-                        id: `${element.id}-user`,
+                        id: `${element.id}-user-`,
                         html: 'Открепить карточку от менеджера'
                     }).add($('<div>', {
                         onclick: 'unfastenCard(this)',
