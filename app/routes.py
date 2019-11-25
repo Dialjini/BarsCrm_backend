@@ -118,10 +118,13 @@ def getCarriers():
 
 @app.route('/addProvider', methods=['GET'])
 def addProvider():
-    new = True
     data = request.args
-    if models.Provider.query.filter_by(Name=data['provider_name']).first():
+    if data['provider_data'] != 'new':
         new = False
+    else:
+        new = True
+
+    if not new:
         Provider = models.Provider.query.filter_by(Name=data['provider_name']).first()
     else:
         Provider = models.Provider()
@@ -151,10 +154,12 @@ def addProvider():
 
 @app.route('/addCarrier', methods=['GET'])
 def addCarier():
-    new = True
     data = request.args
-    if models.Carrier.query.filter_by(Name=data['carrier_name']).first():
+    if data['carrier_data'] != 'new':
         new = False
+    else:
+        new = True
+    if not new:
         Carrier = models.Carrier.query.filter_by(Name=data['carrier_name']).first()
     else:
         Carrier = models.Carrier()
@@ -177,10 +182,13 @@ def addCarier():
 
 @app.route('/addClient', methods=['GET'])
 def addClient():
-    new = True
     data = request.args
-    if models.Client.query.filter_by(Name=data['client_name']).first():
+    if data['client_data'] != 'new':
         new = False
+    else:
+        new = True
+
+    if not new:
         Client = models.Client.query.filter_by(Name=data['client_name']).first()
     else:
         Client = models.Client()
