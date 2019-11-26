@@ -29,8 +29,16 @@ function getTableData(table, input = false) {
                             url: requests[i].request,
                             type: 'GET',
                             dataType: 'html',
-                            success: function(data){
-                                gettingData(JSON.parse(data));
+                            beforeSend: function() {
+                                function fillTable() {
+                                    return $('<div>', { class: 'table', id: 'loading' });
+                                }
+                                $('.info').append(fillTable());
+                                $('#loading').fadeIn(100);;
+                            },
+                            success: function(data) { gettingData(JSON.parse(data)); },
+                            complete: function() {
+                                $('#loading').remove();
                             }
                         });
                     }

@@ -345,6 +345,10 @@ body {
   font-weight: bold;
 }
 
+.page .centerBlock .container .info #loading {
+  height: 1000px;
+}
+
 .page .centerBlock .container .info .table {
   background-color: #fff;
   margin-bottom: 40px;
@@ -524,6 +528,7 @@ body {
   width: 200px;
   height: 20px;
   outline: none;
+  border-radius: 5px;
   border: 1px solid lightgray;
   background-color: white;
   color: #595959;
