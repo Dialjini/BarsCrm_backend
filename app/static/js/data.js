@@ -168,7 +168,7 @@ const regions = [
 
 // Данные по кнопкам меню, для перехода на соответствующую категорию
 const linkCategoryInfo = [
-    { id: 'category-0', src: 'static/images/list.png', name: 'Рабочий стол', subcategories: [categoryInListClient, categoryInListProvider, categoryInListCarrier], number: 0, subid: ['client', 'provider', 'carrier'] }, // name: getName() { if (.active) input else break}
+    { id: 'category-0', src: 'static/images/list.png', name: 'Рабочий стол', subcategories: [categoryInListClient, categoryInListProvider, categoryInListCarrier], number: 0, subid: ['client', 'provider', 'carrier'] },
     { id: 'category-1', src: 'static/images/fin.png', name: 'Финансы', subcategories: [categoryInFinanceDebit, categoryInFinanceAccount], number: 1, subid: ['debit', 'account'] },
     { id: 'category-2', src: 'static/images/delivery.png', name: 'Доставка', subcategories: [categoryInDelivery], number: 2, subid: ['delivery'] },
     { id: 'category-3', src: 'static/images/stock.png', name: 'Склад', subcategories: [categoryInStock], number: 3, subid: ['stock'] },

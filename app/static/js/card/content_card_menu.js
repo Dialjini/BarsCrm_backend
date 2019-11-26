@@ -441,14 +441,14 @@ function itemSelection(element, select) {
 function unfastenCard(element) {
     $('.drop_menu').fadeIn(200);
     $('.drop_menu').click(function() {
-        let idName = element.id.replace(/remove-/g, '');
+        let idName = element.id.replace(/remove-/g, '').split('-');
         // Добавить карточку в список Карточки клиентов
         closeCardMenu();
 
         $('#empty_customer_cards').append($('<div>', {
             class: 'fieldInfo padd',
-            id: `detached_card_${idName.split('-')[1]}`, // Number
-            append: $('<div>', { class: 'name', html: $('#client_name').val() })
+            id: `detached_card_${idName[1]}`, // Number
+            append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
             .add($('<div>', {
                 class: 'row',
                 append: $('<div>', {
@@ -460,9 +460,11 @@ function unfastenCard(element) {
                 }))
             }))
         }));
-        // Делать запрос на удаление карточки из общей таблицы
+        // Делать запрос на удаление менеджера из карточки
+        for (let i = 0; i < dataName.length; i++) {
+            if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
+        }
     })
-    // Делать запрос на сохранение открепленной карточки 
 }
 // Сохранение изменений в карточке
 function saveCard() {

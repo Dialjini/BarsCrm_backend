@@ -92,7 +92,6 @@ function createCardMenu(element, index = 0) {
     for (let i = 0; i < titleObject.length; i++) {
         if (titleObject[i].id.includes(getInfo[0])) {
             element = titleObject[i];
-            console.log(getInfo);
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];

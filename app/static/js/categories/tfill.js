@@ -2,7 +2,7 @@
  * Функции для работы с таблиц
  */
 
-var rowFilling = (object, id, table) => {
+let rowFilling = (object, id, table) => {
     let getTitleTable = () => {
         let element = $('<tr>');
         for (let i = 0; i < object[0].length - 1; i++) {
@@ -11,10 +11,10 @@ var rowFilling = (object, id, table) => {
         }
         if (id !== 'delivery' && id !== 'stock') {
             element.append(`
-            <th width="${object[0][object[0].length - 1].width}%">
-                <div class="flex">
+            <th id="manager" onclick="selectManager()" width="${object[0][object[0].length - 1].width}%">
+                <div class="flex jc-sb">
                     <span>${object[0][object[0].length - 1].name}</span>
-                    <img src="static/images/dropmenu_black.svg" class="drop_down_img manager" onclick="">
+                    <img src="static/images/dropmenu_black.svg" class="drop_down_img manager">
                 </div>
             </th>`);
         } else {
@@ -32,10 +32,9 @@ var rowFilling = (object, id, table) => {
                 { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id]},
                 { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, object[1][i].Manager_id]},
                 { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, object[1][i].Manager_id]},
-                { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
-                { id: 'account', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
-                { id: 'delivery', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
-                { id: 'stock', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
+                { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id, object[1][i].Manager_id]},
+                { id: 'account', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id]},
+                { id: 'delivery', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id, object[1][i].Manager_id]}
             ]
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id === id) {
@@ -61,7 +60,7 @@ var rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = 0; i < object[1].length; i++) {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
+            const name = [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -89,6 +88,14 @@ var rowFilling = (object, id, table) => {
             return element.function(id);
         }
     }
+}
+
+function selectManager() {
+    if ($('.table .manager').hasClass('drop_active')) {
+        $('.table .manager').removeClass('drop_active');
+        return;
+    }
+    $('.table .manager').addClass('drop_active');
 }
 
 function fillingTables(object) {

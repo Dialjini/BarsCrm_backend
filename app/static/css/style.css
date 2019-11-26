@@ -393,11 +393,19 @@ body {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
-  margin-left: 8px;
+  margin-right: 10px;
 }
 
-.page .centerBlock .container .info .table th .manager:hover {
+.page .centerBlock .container .info .table #manager {
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .table #manager:hover {
   cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #FFFEED;
 }
 
 .page .centerBlock .container .info .analytics tr:not(:first-child) {
@@ -1047,9 +1055,13 @@ body {
       align-self: flex-end;
   margin-left: 15px;
   height: 19px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
 }
 
 .page .rightBlock .sidebar .infoblock .title .active {
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
   -webkit-transform: rotate(180deg);
           transform: rotate(180deg);
   -ms-flex-item-align: center;
