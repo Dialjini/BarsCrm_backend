@@ -80,6 +80,8 @@ function saveInfoCard(id) {
                 idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
             }
             idData[`${data[0]}_data`] = card;
+            idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
+            idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
             createOrSaveCard.getRequest(idData, request);
             break;
         }

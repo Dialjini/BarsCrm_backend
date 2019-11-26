@@ -29,7 +29,7 @@ var rowFilling = (object, id, table) => {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this)'});
             // Получать для разных таблиц - разные переменные
             let name, data = [
-                { id: 'client', list: [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id]},
+                { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id]},
                 { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, object[1][i].Manager_id]},
                 { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, object[1][i].Manager_id]},
                 { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id]},
@@ -61,7 +61,7 @@ var rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = 0; i < object[1].length; i++) {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].Client_id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
+            const name = [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });

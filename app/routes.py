@@ -142,6 +142,7 @@ def addProvider():
     Provider.NDS = data['provider_vat']
     Provider.Merc = data['provider_merc']
     Provider.Volume = data['provider_volume']
+    Provider.Holding = data['provider_holding']
 
     if new:
         db.session.add(Provider)
@@ -204,6 +205,8 @@ def addClient():
     Client.Station = data['client_station']
     Client.Tag = data['client_tag']
     Client.Adress = data['client_address']
+    Client.Holding = data['client_holding']
+    Client.Site = data['client_site']
 
     if new:
         db.session.add(Client)

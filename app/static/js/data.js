@@ -185,13 +185,13 @@ const contactsFormInfo = [
 const idCardFields = [
     {   
         name: 'client', ids:
-        ['client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
+        ['client_site', 'client_holding', 'client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
         'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry'],
         request: '/addClient'
     },
     {   
         name: 'provider', ids:
-        ['provider_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
+        ['provider_holding', 'provider_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
         'provider_tag', 'provider_category', 'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_vat', 'provider_merc'],
         request: '/addProvider'
     },

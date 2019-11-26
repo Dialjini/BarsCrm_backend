@@ -76,7 +76,7 @@ class EmptyClients(db.Model):
 
 
 class Client(db.Model):
-    Client_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     Status = db.Column(db.String)
     Number = db.Column(db.String)
     Faks = db.Column(db.String)
@@ -100,11 +100,12 @@ class Client(db.Model):
     Station = db.Column(db.String)
     Distance = db.Column(db.String)
     Price = db.Column(db.String)
-
+    Site = db.Column(db.String)
+    Holding = db.Column(db.String)
 
 class Contacts(db.Model):
     Contact_id = db.Column(db.Integer, primary_key=True)
-    Client_id = db.Column(db.Integer, db.ForeignKey('client.Client_id'))
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     Position = db.Column(db.String)
     Name = db.Column(db.String)
     Number = db.Column(db.String)
@@ -119,7 +120,7 @@ class Contacts(db.Model):
 
 class Notes(db.Model):
     NoteId = db.Column(db.Integer, primary_key=True)
-    Client_id = db.Column(db.Integer, db.ForeignKey('client.Client_id'))
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     Done = db.Column(db.Boolean)
     Type = db.Column(db.String)
     Date = db.Column(db.Date)
@@ -156,6 +157,7 @@ class Provider(db.Model):
     Category = db.Column(db.String)
     Merc = db.Column(db.String)
     Volume = db.Column(db.String)
+    Holding = db.Column(db.String)
 
 
 

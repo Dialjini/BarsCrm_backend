@@ -3,8 +3,8 @@ function createContactsFormTask() {
         { id: 'task_type', html: 'Тип задачи', type: 'text' },
         { id: 'task_whom', html: 'Кому', type: 'text' },
         { id: 'task_who', html: 'Кто', type: 'text' },
-        { id: 'task_date', html: 'Дата', type: 'date' },
-        { id: 'task_time', html: 'Время', type: 'time' },
+        { id: 'task_date', html: 'Дата', type: 'text' },
+        { id: 'task_time', html: 'Время', type: 'text' },
         { id: 'task_comment', html: 'Комментарий', type: 'text' },
     ]
 

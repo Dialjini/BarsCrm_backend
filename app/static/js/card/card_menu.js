@@ -46,19 +46,19 @@ function createCardMenu(element, index = 0) {
     const titleObject = [
         {
             id: 'client',
-            list: [`Местное время: ${getCurrentTime()}`, `Какой-то их сайт`, `Холдинг`],
+            list: [`Местное время: ${getCurrentTime()}`],
             link: clientContentCard,
             status: getInfo[1]
         },
         {
             id: 'provider',
-            list: [`Местное время: ${getCurrentTime()}`, `Холдинг`],
+            list: [`Местное время: ${getCurrentTime()}`],
             link: providerContentCard,
             status: getInfo[1]
         },
         {
             id: 'carrier',
-            list: [`Местное время: 14:42`],
+            list: [`Местное время: ${getCurrentTime()}`],
             link: carrierContentCard,
             status: getInfo[1]
         },
@@ -92,15 +92,21 @@ function createCardMenu(element, index = 0) {
     for (let i = 0; i < titleObject.length; i++) {
         if (titleObject[i].id.includes(getInfo[0])) {
             element = titleObject[i];
+            console.log(getInfo);
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
-                if (getInfo[0] == 'client') titleObject[i].list.unshift(`Код: ${selectedLine.Client_id}`);
-                else if (getInfo[0] == 'provider') titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
+                titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
+                if (getInfo[0] === 'client') {
+                    titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
+                    titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
+                } if (getInfo[0] === 'provider') {
+                    titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
+                }
             } else {
                 const emptyData = [
-                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress'] },
-                    { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume'] },
+                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding'] },
+                    { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] }
                 ]
 
@@ -114,6 +120,13 @@ function createCardMenu(element, index = 0) {
                         }
                     }
                 }
+
+                if (getInfo[0] === 'client') {
+                    titleObject[i].list.push(`<input id="${getInfo[0]}_site" placeholder="Сайт"  value="${selectedLine.Site}">`);
+                    titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
+                } if (getInfo[0] === 'provider') {
+                    titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
+                }  
             }
         }
     }

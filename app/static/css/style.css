@@ -434,6 +434,14 @@ body {
   display: flex;
 }
 
+.page .centerBlock .container .info .card_menu .title .left_side input {
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #cecece;
+  padding: 5px 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+
 .page .centerBlock .container .info .card_menu .title .left_side span:not(:last-child) {
   margin-right: 90px;
 }
@@ -517,7 +525,8 @@ body {
   height: 20px;
   outline: none;
   border: 1px solid lightgray;
-  background-color: whitesmoke;
+  background-color: white;
+  color: #595959;
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -992,12 +1001,13 @@ body {
   width: 100%;
   border: none;
   outline: none;
-  border-bottom: 1px solid #c4c4c4;
+  border-bottom: 1px solid #e9e9e9;
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   margin-left: 10px;
+  padding: 5px 10px;
 }
 
 .page .rightBlock .sidebar .infoblock .mr {
