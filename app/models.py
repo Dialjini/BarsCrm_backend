@@ -106,8 +106,11 @@ class Client(db.Model):
 class Contacts(db.Model):
     Contact_id = db.Column(db.Integer, primary_key=True)
     Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
+    Carrier_id = db.Column(db.Integer, db.ForeignKey('carrier.id'))
     Position = db.Column(db.String)
     Name = db.Column(db.String)
+    Last_name = db.Column(db.String)
     Number = db.Column(db.String)
     Email = db.Column(db.String)
     Comment = db.Column(db.String)
@@ -147,7 +150,7 @@ class Provider(db.Model):
     Price = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
     Items = db.relationship('Provide_Item', backref='Stock', lazy='dynamic')
-    Driver = db.relationship('Driver', backref='Provider', lazy='dynamic')
+    Contacts = db.relationship('Contacts', backref='Provider', lazy='dynamic')
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
     NDS = db.Column(db.String)
@@ -219,6 +222,7 @@ class Carrier(db.Model):
     Name = db.Column(db.String)
     Region = db.Column(db.String)
     View = db.Column(db.String)
+    Contacts = db.relationship('Contacts', backref='Carrier', lazy='dynamic')
 
 
 class Stock(db.Model):
@@ -233,9 +237,4 @@ class Stock(db.Model):
     Cost_Price = db.Column(db.Float)
 
 
-class Driver(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
-    Name = db.Column(db.String)
-    Contact = db.Column(db.String)
 

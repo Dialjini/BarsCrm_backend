@@ -78,12 +78,79 @@ def getClients():
 
 @app.route('/getMessages', methods=['GET'])
 def getMessages():
-    if 'client' in request.args:
-        client = request.args['client']
+    if request.args['category'] == 'client':
+        client = request.args['id']
+        Client = models.Client.query.filter_by(id=client).first()
+        return table_to_json(models.Notes.query.filter_by(Author=Client).all())
+    elif request.args['category'] == 'provider':
+        provider = request.args['id']
+        Provider = models.Provider.query.filter_by(id=provider).all()
+        return table_to_json(models.Notes.query.filter_by(Author=Provider).all())
+    elif request.args['category'] == 'carrier':
+        carrier = request.args['id']
+        Carrier = models.Provider.query.filter_by(id=carrier).all()
+        return table_to_json(models.Notes.query.filter_by(Author=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
-    Client = models.Client.query.filter_by(Name=client).first()
-    return table_to_json(models.Notes.query.filter_by(Author=Client).all())
+
+
+@app.route('/addMessages', methods=['GET'])
+def addMessags():
+    data = request.args
+    Message = models.Notes()
+
+    # TODO СООБЩЕНИЯ
+
+    return 'OK'
+
+
+@app.route('/getContacts', methods=['GET'])
+def getContacts():
+    if request.args['category'] == 'client':
+        client = request.args['id']
+        Client = models.Client.query.filter_by(id=client).first()
+        return table_to_json(models.Contacts.query.filter_by(Author=Client).all())
+    elif request.args['category'] == 'provider':
+        provider = request.args['id']
+        Provider = models.Provider.query.filter_by(id=provider).all()
+        return table_to_json(models.Contacts.query.filter_by(Author=Provider).all())
+    elif request.args['category'] == 'carrier':
+        carrier = request.args['id']
+        Carrier = models.Provider.query.filter_by(id=carrier).all()
+        return table_to_json(models.Contacts.query.filter_by(Author=Carrier).all())
+    else:
+        return 'ERROR 400 BAD REQUEST'
+
+
+@app.route('/addContacts', methods=['GET'])
+def addContacts():
+    if request.args['category'] == 'client':
+        Owner = models.Client.query.filter_by(id=request.args['id'])
+    elif request.args['category'] == 'provider':
+        Owner = models.Provider.query.filter_by(id=request.args['id'])
+    else:
+        Owner = models.Carrier.query.filter_by(id=request.args['id'])
+
+    Contact = models.Contacts()
+    Contacts = []
+    for i in request.args['contacts']:
+        Contact.Name = i['first_name']
+        Contact.Last_name = i['last_name']
+        Contact.Number = i['phone']
+        Contact.Email = i['email']
+        Contact.Position = i['role']
+        if request.args['category'] == 'client':
+            Contact.Client_id = request.args['id']
+        elif request.args['category'] == 'provider':
+            Contact.Provider_id = request.args['id']
+        elif request.args['category'] == 'carrier':
+            Contact.Carrier_id = request.args['id']
+        Contacts.append(Contact)
+
+    Owner.Contacts = Contacts
+    db.session.commit()
+
+    return 'OK'
 
 
 @app.route('/getProviders', methods=['GET'])
@@ -150,7 +217,6 @@ def addProvider():
     db.session.commit()
 
     return 'OK'
-
 
 
 @app.route('/addCarrier', methods=['GET'])
