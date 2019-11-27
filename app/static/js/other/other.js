@@ -105,6 +105,7 @@ function createContactsForm() {
 
 // Проверка какой контакт выбран
 function сheckSelectedRadioBox() {
+    members = [];
     for (let i = 0; i < contactsFormInfo.length; i++) {
         if ($(`#${contactsFormInfo[i].id}`).prop('checked')) {
             createCardMenu(contactsFormInfo[i]);

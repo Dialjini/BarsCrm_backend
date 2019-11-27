@@ -338,59 +338,73 @@ function addComment() {
     console.log('Add Comment');
 }
 // Добавление контакта в карточках, мб переделать в одну функцию
-function addMember() {
-    $('#members').append($('<div>', {
-        class: 'member',
+function addMember(id = 'client', selectedLine = '') {
+    if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт'};
+    else category = {class: 'phone', member: '', placeholder: 'Телефон'};
+    if (selectedLine == '') {
+        selectedLine = {role: '', phone: '', last_name: '', first_name: '', email: ''};
+    }
+    $('#member').append($('<div>', {
+        class: `member ${category.member}`,
         append: $('<div>', {
             class: 'top',
-            append: $('<input>', {class: 'role', id: 'role'
-            }).add('<input>',    {class: 'phone', id: 'phone'
+            append: $('<input>', {placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.role, type: 'text'
+            }).add('<input>',    {placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.phone, type: 'tel'
             })
         }).add($('<div>', {
             class: 'bottom',
-            append: $('<input>', {class: 'surname', id: 'surname'
-            }).add('<input>',    {class: 'fullname', id: 'fullname'
-            }).add('<input>',    {class: 'email', id: 'email'
+            append: $('<input>', {placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.last_name, type: 'text'
+            }).add('<input>',    {placeholder: 'Имя Отчество', class: 'first_name', id: 'first_name', onchange: 'saveCard()', value: selectedLine.first_name, type: 'name'
+            }).add('<input>',    {placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', value: selectedLine.email, type: 'email'
             })
         }))
     }));
-    $('#remove_last_member').fadeIn(100);
+    $('[name="remove_last_member"]').fadeIn(100);
     saveCard();
 }
 // Удаление последнего контакта в карточках
-function removeMember() {
-    $('#members').children().last().remove();
-    if ($('#members').html().trim() === '') {
-        $('#remove_last_member').fadeOut(0);
+// Удаление последней строки в таблицах карточек
+function removeMemberOrRow(id) {
+    id = id.split('_')[2];
+    $(`#${id}`).children().last().remove();
+    if ($(`#${id}`).children.length <= 2) {
+        $(`[name="remove_last_${id}"]`).fadeOut(0);
     }
-}
-// Добавление контакта в карточках Поставщик
-function addMemberDelivery() {
-    $('#members').append($('<div>', {
-        class: 'member delivery',
-        append: $('<div>', {
-            class: 'top',
-            append: $('<div>', {class: 'role', id: 'role', html: 'Водитель 1'
-            }).add('<input>',    {class: 'car', id: 'car'
-            })
-        }).add($('<div>', {
-            class: 'bottom',
-            append: $('<input>', {class: 'surname', id: 'surname'
-            }).add('<input>',    {class: 'fullname', id: 'fullname'
-            }).add('<input>',    {class: 'email', id: 'email'
-            })
-        }))
-    }))
-    saveCard();
+    if (id === 'member') members.pop();
 }
 // Добавление строк в таблицах карточек
 function addRow(element) {
     const tableInfo = [
-        { id: 'client-group', count: 4, widthInput: [57, 43, 104, 43], tbody: 'group', remove: 'remove_last_group' },
-        { id: 'provider-group', count: 6, widthInput: [57, 33, 28, 59, 24, 57], tbody: 'group', remove: 'remove_last_group' },
-        { id: 'carrier-group', count: 5, widthInput: [50, 100, 160, 90, 33], tbody: 'group', remove: 'remove_last_group' },
-        { id: 'account-group', count: 3, widthInput: [58, 42, 43], tbody: 'group', remove: 'remove_last_group' },
-        { id: 'delivery-group', count: 2, widthInput: [45, 43], tbody: 'group', remove: 'remove_last_group' },
+        { id: 'client-group', count: 4, widthInput: [
+            {id: 'client_product', width: 57},
+            {id: 'client_volume', width: 43},
+            {id: 'client_who', width: 104},
+            {id: 'client_price', width: 43}
+        ]},
+        { id: 'provider-group', count: 6, widthInput: [
+            {id: 'provider_product', width: 57},
+            {id: 'provider_price', width: 33},
+            {id: 'provider_vat', width: 28},
+            {id: 'provider_pack', width: 59},
+            {id: 'provider_weight', width: 24},
+            {id: 'provider_fraction', width: 57}
+        ]},
+        { id: 'carrier-group', count: 5, widthInput: [
+            {id: 'carrier_date', width: 50},
+            {id: 'carrier_client', width: 100},
+            {id: 'carrier_stock', width: 160},
+            {id: 'carrier_driver', width: 90},
+            {id: 'carrier_price', width: 33}
+        ]},
+        { id: 'account-group', count: 3, widthInput: [
+            {id: 'account_position', width: 58},
+            {id: 'account_date', width: 42},
+            {id: 'account_price', width: 43}
+        ]},
+        { id: 'delivery-group', count: 2, widthInput: [
+            {id: 'delivery_date', width: 45},
+            {id: 'delivery_price', width: 43}
+        ]}
     ]
 
     function trFill(table) {
@@ -398,7 +412,8 @@ function addRow(element) {
         for (let i = 0; i < table.count; i++) {
             tr.append($('<td>', {
                 append: $('<input>', {
-                    css: { width: table.widthInput[i] + 'px', padding: '0' },
+                    css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                    id: table.widthInput[i].id
                 })
             }));
         }
@@ -407,19 +422,11 @@ function addRow(element) {
 
     for (let i = 0; i < tableInfo.length; i++) {
         if (element.id == tableInfo[i].id) {
-            $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
-            $(`#${tableInfo[i].remove}`).fadeIn(100);
+            $(`#group`).append(trFill(tableInfo[i]));
+            $(`[name="remove_last_group"]`).fadeIn(0);
         }
     }
     saveCard();
-}
-// Удаление последней строки в таблицах карточек
-function removeRow(id) {
-    let tbody = id.split('_')[2];
-    $(`#${tbody}`).children().last().remove();
-    if ($(`#${tbody}`).html().trim() === '') {
-        $(`#${id}`).fadeOut(0);
-    }
 }
 function itemSelection(element, select) {
     if (element === 'client' || element === 'provider') {

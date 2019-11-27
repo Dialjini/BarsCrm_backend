@@ -7,6 +7,8 @@ $(document).ready(function() {
     $('#clientButton, #category-0').addClass('active');
 });
 
+let test;
+
 // Отсылаем данные для получения данных по таблице
 function getTableData(table, input = false) {
     let requestTableData = (function() {
@@ -93,8 +95,39 @@ function saveInfoCard(id) {
             idData[`${data[0]}_data`] = card;
             idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
             idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
+            //idData[`${data[0]}_members`] = 
+            getMembersInfo();
             createOrSaveCard.getRequest(idData, request);
             break;
         }
+    }
+
+    function getMembersInfo() {
+        let members = [];
+        $('#member .member').each(function(i, element) {
+            members.push({
+                role: $(element).children()[0].children[0].value,
+                phone: $(element).children()[0].children[1].value,
+                last_name: $(element).children()[1].children[0].value,
+                first_name: $(element).children()[1].children[1].value,
+                email: $(element).children()[1].children[2].value
+            })
+            let data = Object.keys(members[members.length - 1]);
+            let count = 0;
+            for (let i = 0; i < data.length; i++) {
+                if (members[members.length - 1][data[i]] == '') count++;
+            }
+            if (count == 5) members.pop();
+        });
+        $.ajax({
+            url: '/addContacts',
+            type: 'GET',
+            data: {category: data[0], id: data[1], contacts: members},
+            dataType: 'html',
+            success: function(result) {
+                console.log(result);
+            }
+        });
+        console.log(members);
     }
 }

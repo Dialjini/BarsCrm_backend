@@ -120,8 +120,6 @@ function createCardMenu(element, index = 0) {
                     }
                 }
 
-                selectedLine.Members = [];
-
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<input id="${getInfo[0]}_site" placeholder="Сайт"  value="${selectedLine.Site}">`);
                     titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
@@ -175,6 +173,35 @@ function createCardMenu(element, index = 0) {
     $('.info').append(cardMenu());
     $('.next .btn').attr('name', getInfo.join('_'));
     itemSelection(getInfo[0], selectedLine);
+
+    // Получаем данные по клиентам
+    getContacts();
+    function getContacts() {
+        if (getInfo[1] == 'new') {
+            addMember(getInfo[0]);
+            $('[name="remove_last_member"]').fadeOut(0);
+        } else {
+            $.ajax({
+                url: '/getContacts',
+                type: 'GET',
+                data: {category: getInfo[0], id: getInfo[1]},
+                dataType: 'html',
+                success: function(result) {
+                    inputContacts(JSON.parse(result));
+                }
+            });
+        }
+        function inputContacts(contacts) {
+            if (contacts.length == 0) 
+                addMember(getInfo[0]);
+            else {
+                for (let i = 0; i < contacts.length; i++) {
+                    addMember(getInfo[0], contacts[i]);
+                }
+            }
+            $('[name="remove_last_member"]').fadeOut(0);   
+        }
+    }
 
     // Модальное окно для Склада
     if (getInfo[0] === 'stock') {
@@ -272,11 +299,11 @@ function createCardMenu(element, index = 0) {
                                 <td>Дойного</td>
                                 <td>Надои</td>
                             </tr>
-                            <tbody>
+                            <tbody id="livestock">
                                 <tr>
-                                    <td><input type="text" style="width: 75px"></td>
-                                    <td><input type="text" style="width: 75px"></td>
-                                    <td><input type="text" style="width: 75px"></td>
+                                    <td><input id="livestock_general" type="text" style="width: 75px"></td>
+                                    <td><input id="livestock_milking" type="text" style="width: 75px"></td>
+                                    <td><input id="livestock_milkyield" type="text" style="width: 75px"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -288,30 +315,18 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tbody id="demand">
                                 <tr>
-                                    <td><input type="text" style="width: 196px"></td>
-                                    <td><input type="text" style="width: 50px"></td>
+                                    <td><input id="demand_product" type="text" style="width: 196px"></td>
+                                    <td><input id="demand_volume" type="text" style="width: 50px"></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>`)
         }).add(`<div class="row_card">
                     <div class="left_side">
-                        <div class="hmax" id="members">
-                            <div id="client_member_1" class="member">
-                                <div class="top">
-                                    <div class="role" id="role">Директор</div>
-                                    <input type="phone" onchange="saveCard()" class="phone" id="phone" value="${selectedLine[2]}">
-                                </div>
-                                <div class="bottom">
-                                    <input type="text" onchange="saveCard()" class="surname" id="surname" value="${selectedLine[2]}">
-                                    <input type="text" onchange="saveCard()" class="fullname" id="fullname" value="${selectedLine[2]}">
-                                    <input type="email" onchange="saveCard()" class="email" id="email" value="${selectedLine[2]}">
-                                </div>
-                            </div>
-                        </div>
+                        <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                            <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
+                            <img name="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                     <div class="info_block">
@@ -331,7 +346,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="events">
                             <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this)">
-                            <img id="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeRow(this.id)">
+                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -475,22 +490,10 @@ function createCardMenu(element, index = 0) {
                     </table>`)
         }).add(`<div class="row_card">
                     <div class="left_side">
-                        <div class="hmax" id="members">
-                            <div id="provider_member_1" class="member">
-                                <div class="top">
-                                    <div class="role" id="role">Директор</div>
-                                    <input type="phone" class="phone" id="phone" value="${selectedLine[2]}">
-                                </div>
-                                <div class="bottom">
-                                    <input type="text" class="surname" id="surname" value="${selectedLine[2]}">
-                                    <input type="text" class="fullname" id="fullname" value="${selectedLine[2]}">
-                                    <input type="email" class="email" id="email" value="${selectedLine[2]}">
-                                </div>
-                            </div>
-                        </div>
+                        <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                            <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
+                            <img name="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                     <div class="info_block">
@@ -505,7 +508,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="events">
                             <img class="add_something" id="provider-group" src="static/images/add.png" onclick="addRow(this)">
-                            <img id="remove_last_row" class="add_something" src="static/images/remove.png" onclick="removeRow()">
+                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -607,22 +610,10 @@ function createCardMenu(element, index = 0) {
                     </table>`)
         }).add(`<div class="row_card" id="media">
                     <div class="left_side">
-                        <div class="hmax" id="members">
-                            <div id="carrier_member_1" class="member delivery">
-                                <div class="top">
-                                    <div class="role" id="role">Водитель</div>
-                                    <input type="text" value="${selectedLine[2]}" class="car" id="car">
-                                </div>
-                                <div class="bottom">
-                                    <input type="text" value="${selectedLine[2]}" class="surname" id="surname">
-                                    <input type="text" value="${selectedLine[2]}" class="fullname" id="fullname">
-                                    <input type="email" value="${selectedLine[2]}" class="email" id="email">
-                                </div>
-                            </div>
-                        </div>
+                        <div class="hmax" id="member"></div>
                         <div class="events">
-                            <img class="add_something" src="static/images/add.png" onclick="addMemberDelivery()">
-                            <img id="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMember()">
+                            <img class="add_something" src="static/images/add.png" onclick="addMember('carrier')">
+                            <img name="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                     <div class="info_block" style="width: fit-content">
@@ -649,7 +640,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="events">
                             <img class="add_something" id="carrier-group" src="static/images/add.png" onclick="addRow(this)">
-                            <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
+                            <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -818,7 +809,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="events">
                             <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this)">
-                            <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
+                            <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -933,7 +924,7 @@ function createCardMenu(element, index = 0) {
                             </div>
                             <div class="events">
                                 <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this)">
-                                <img class="add_something" id="remove_last_row" src="static/images/remove.png" onclick="removeRow()">
+                                <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                             </div>
                         </div>
                     </div>
@@ -1100,6 +1091,7 @@ function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
     if (!id.includes('new')) saveInfoCard(id);
     else getTableData(saveTableAndCard);
+    members = [];
 
     // Если открыта карточка Выставления счета в Счете - закрыть ее
     if (categoryInFinanceAccount[0].lastCard[0] !== null) {

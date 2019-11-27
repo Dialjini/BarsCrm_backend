@@ -637,17 +637,16 @@ body {
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .top .role {
   font-weight: bolder;
-  width: 80px;
+  width: 90px;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .top .car {
-  margin-left: 10px;
-  width: 40px;
-  height: 15px;
+  margin-left: 50px;
+  width: 100px;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .top .phone {
-  width: 100px;
+  width: 115px;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .bottom {
@@ -659,12 +658,12 @@ body {
           justify-content: space-between;
 }
 
-.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .bottom .surname {
+.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .bottom .last_name {
   width: 95px;
 }
 
-.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .bottom .fullname {
-  width: 150px;
+.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .bottom .first_name {
+  width: 170px;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .bottom .email {
