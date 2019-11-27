@@ -109,15 +109,15 @@ def getContacts():
     if request.args['category'] == 'client':
         client = request.args['id']
         Client = models.Client.query.filter_by(id=client).first()
-        return table_to_json(models.Contacts.query.filter_by(Author=Client).all())
+        return table_to_json(models.Contacts.query.filter_by(Owner=Client).all())
     elif request.args['category'] == 'provider':
         provider = request.args['id']
         Provider = models.Provider.query.filter_by(id=provider).all()
-        return table_to_json(models.Contacts.query.filter_by(Author=Provider).all())
+        return table_to_json(models.Contacts.query.filter_by(Provider=Provider).all())
     elif request.args['category'] == 'carrier':
         carrier = request.args['id']
         Carrier = models.Provider.query.filter_by(id=carrier).all()
-        return table_to_json(models.Contacts.query.filter_by(Author=Carrier).all())
+        return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
 
