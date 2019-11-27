@@ -333,6 +333,10 @@ function returnBack(element) {
     }
     $('#exposed_list').append(returnEmptyRow);
 }
+// Добавление комментариев в карточках
+function addComment() {
+    console.log('Add Comment');
+}
 // Добавление контакта в карточках, мб переделать в одну функцию
 function addMember() {
     $('#members').append($('<div>', {
@@ -366,7 +370,7 @@ function addMemberDelivery() {
         class: 'member delivery',
         append: $('<div>', {
             class: 'top',
-            append: $('<div>', {class: 'role', id: 'role', html: 'Водитель'
+            append: $('<div>', {class: 'role', id: 'role', html: 'Водитель 1'
             }).add('<input>',    {class: 'car', id: 'car'
             })
         }).add($('<div>', {

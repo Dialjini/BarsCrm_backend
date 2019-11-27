@@ -11,7 +11,7 @@ let rowFilling = (object, id, table) => {
         }
         if (id !== 'delivery' && id !== 'stock') {
             element.append(`
-            <th id="manager" onclick="selectManager()" width="${object[0][object[0].length - 1].width}%">
+            <th id="manager" onclick="selectManager(this)" width="${object[0][object[0].length - 1].width}%">
                 <div class="flex jc-sb">
                     <span>${object[0][object[0].length - 1].name}</span>
                     <img src="static/images/dropmenu_black.svg" class="drop_down_img manager">
@@ -44,7 +44,7 @@ let rowFilling = (object, id, table) => {
             }
             for (let j = 0; j < name.length; j++) {
                 let currentInfo = name[j];
-                if (currentInfo === null) {
+                if (currentInfo === null || currentInfo === '') {
                     currentInfo = 'Не указано';
                 }
 
@@ -90,12 +90,40 @@ let rowFilling = (object, id, table) => {
     }
 }
 
-function selectManager() {
+function selectManager(element) {
+    function listManager() {
+        let ul = $('<ul>', { class: 'list'});
+        const data = [
+            { id: 0, name: 'Петров' },
+            { id: 1, name: 'Пупсин' },
+            { id: 2, name: 'Кустов' },
+            { id: 3, name: 'Сидоров' },
+        ]
+        // data = массив фамилий менеджеров
+        for (let i = 0; i < data.length; i++) {
+            ul.append($('<li>', {
+                html: data[i].name,
+                id: data[i].id,
+                onclick: ''
+            }))
+        }
+        return ul;
+    }
     if ($('.table .manager').hasClass('drop_active')) {
         $('.table .manager').removeClass('drop_active');
+        $('.list_manager').fadeOut(200);
+        setTimeout(function() {
+            $('.list_manager').remove();
+        }, 200);
         return;
     }
     $('.table .manager').addClass('drop_active');
+    $(element).append($('<div>', { 
+        class: 'list_manager',
+        css: {'top': `${$(element).height() + 20}px`},
+        append: listManager()
+    }))
+    $('.list_manager').fadeIn(200);
 }
 
 function fillingTables(object) {

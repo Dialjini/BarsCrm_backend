@@ -120,6 +120,8 @@ function createCardMenu(element, index = 0) {
                     }
                 }
 
+                selectedLine.Members = [];
+
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<input id="${getInfo[0]}_site" placeholder="Сайт"  value="${selectedLine.Site}">`);
                     titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
@@ -337,20 +339,17 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img class="add_something" src="static/images/add.png">
+                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">
-                                <tr>
-                                    <td>10.10.18</td>
-                                    <td>Директор</td>
-                                    <td>Начали переговоры</td>
-                                </tr>
-                                <tr>
-                                    <td>10.10.18</td>
-                                    <td>Менеждер</td>
-                                    <td>Начали переговоры</td>
-                                </tr>
+                                <tbody id="messages">
+                                    <tr id="message_1">
+                                        <td id="date"></td>
+                                        <td id="role"></td>
+                                        <td id="comment"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -358,12 +357,14 @@ function createCardMenu(element, index = 0) {
                         <div class="title">Последний комментарий</div>
                         <div class="messages">
                             <table class="message">
-                                <tr>
-                                    <td style="width: 15%">10.10.18</td>
-                                    <td style="width: 20%">Менеджер</td>
-                                    <td style="width: 65%">Товар получен, счет оплачен</td>
-                                    <td style="width: 10%" class="lightgray">Иванова</td>
-                                </tr>
+                                <tbody id="comments">
+                                    <tr id="comment_1">
+                                        <td id="date" style="width: 15%"></td>
+                                        <td id="role" style="width: 20%"></td>
+                                        <td id="comment" style="width: 65%"></td>
+                                        <td id="manager" style="width: 10%" class="lightgray"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -512,20 +513,17 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img class="add_something" src="static/images/add.png">
+                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">
-                                <tr>
-                                    <td>10.10.18</td>
-                                    <td>Директор</td>
-                                    <td>Начали переговоры</td>
-                                </tr>
-                                <tr>
-                                    <td>10.10.18</td>
-                                    <td>Менеждер</td>
-                                    <td>Начали переговоры</td>
-                                </tr>
+                                <tbody id="messages">
+                                    <tr id="message_1">
+                                        <td id="date"></td>
+                                        <td id="role"></td>
+                                        <td id="comment"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -533,12 +531,14 @@ function createCardMenu(element, index = 0) {
                         <div class="title">Последний комментарий</div>
                         <div class="messages">
                             <table class="message">
-                                <tr>
-                                    <td style="width: 15%">10.10.18</td>
-                                    <td style="width: 20%">Менеджер</td>
-                                    <td style="width: 65%">Товар получен, счет оплачен</td>
-                                    <td style="width: 10%" class="lightgray">Иванова</td>
-                                </tr>
+                                <tbody id="comments">
+                                    <tr id="comment_1">
+                                        <td id="date" style="width: 15%"></td>
+                                        <td id="role" style="width: 20%"></td>
+                                        <td id="comment" style="width: 65%"></td>
+                                        <td id="manager" style="width: 10%" class="lightgray"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -657,11 +657,17 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img class="add_something" src="static/images/add.png">
+                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">
-
+                                <tbody id="messages">
+                                    <tr id="message_1">
+                                        <td id="date"></td>
+                                        <td id="role"></td>
+                                        <td id="comment"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -669,12 +675,14 @@ function createCardMenu(element, index = 0) {
                         <div class="title">Последний комментарий</div>
                         <div class="messages">
                             <table class="message">
-                                <tr>
-                                    <td style="width: 15%"></td>
-                                    <td style="width: 20%"></td>
-                                    <td style="width: 65%"></td>
-                                    <td style="width: 10%" class="lightgray"></td>
-                                </tr>
+                                <tbody id="comments">
+                                    <tr id="comment_1">
+                                        <td id="date" style="width: 15%"></td>
+                                        <td id="role" style="width: 20%"></td>
+                                        <td id="comment" style="width: 65%"></td>
+                                        <td id="manager" style="width: 10%" class="lightgray"></td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>

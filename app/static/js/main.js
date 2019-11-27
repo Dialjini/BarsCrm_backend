@@ -45,7 +45,10 @@ function getTableData(table, input = false) {
                 }
     
                 function gettingData(data) {
-                    if (table[0].id !== 'analytics' && table[1][1] === undefined) table[1].push(data);
+                    if (table[0].id !== 'analytics' && table[1][1] === undefined) {
+                        table[1].push(data);
+                        table[1][1].reverse();
+                    }
                     if (!input) $('.info').append(fillingTables(table));
                 }
             }
