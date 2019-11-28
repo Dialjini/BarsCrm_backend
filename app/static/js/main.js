@@ -7,8 +7,6 @@ $(document).ready(function() {
     $('#clientButton, #category-0').addClass('active');
 });
 
-let test;
-
 // Отсылаем данные для получения данных по таблице
 function getTableData(table, input = false) {
     let requestTableData = (function() {
@@ -122,12 +120,11 @@ function saveInfoCard(id) {
         $.ajax({
             url: '/addContacts',
             type: 'GET',
-            data: {category: data[0], id: data[1], contacts: members},
+            data: {category: data[0], id: data[1], contacts: JSON.stringify(members)},
             dataType: 'html',
             success: function(result) {
                 console.log(result);
             }
         });
-        console.log(members);
     }
 }

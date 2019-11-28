@@ -1091,7 +1091,6 @@ function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
     if (!id.includes('new')) saveInfoCard(id);
     else getTableData(saveTableAndCard);
-    members = [];
 
     // Если открыта карточка Выставления счета в Счете - закрыть ее
     if (categoryInFinanceAccount[0].lastCard[0] !== null) {
