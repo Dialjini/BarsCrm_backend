@@ -23,8 +23,9 @@ def add_user(login, password, email, role, name, avatar='default'):
     db.session.commit()
 # -------------------------------------------------------Client---------------------------------------------------------
 
-def get_clients_contacts(sheet, parent_table, col):
+def get_clients_contacts(sheet, parent_table, col, client_id):
     i = col + 1
+    print(4)
     while(sheet['A' + str(i)].value == None):
         table = models.Contacts()
         table.Position = sheet['B' + str(i)].value
@@ -38,14 +39,15 @@ def get_clients_contacts(sheet, parent_table, col):
         table.Date = sheet['J' + str(i)].value
         table.Birthday = sheet['K' + str(i)].value
         table.Owner = parent_table
+        table.Client_id = client_id
         i = i + 1
-
         parent_table.Contacts.append(table)
-
+        if (i - 1) == sheet.max_row:
+            return parent_table.Contacts
     return parent_table.Contacts
 
-def get_clients_notes(sheet, parent_table, col):
-
+def get_clients_notes(sheet, parent_table, col, client_id):
+    print(3)
     i = col + 1
     while(sheet['A' + str(i)].value == None):
         table = models.Notes()
@@ -60,15 +62,21 @@ def get_clients_notes(sheet, parent_table, col):
         table.Manager = sheet['F' + str(i)].value
         table.File_Path = sheet['H' + str(i)].value
         table.Author = parent_table
+        table.Client_id = client_id
         i = i + 1
         parent_table.Notes.append(table)
 
-    if(sheet['A' + str(i)] == 'Контактные лица'):
-        parent_table.Contacts = get_clients_contacts(sheet=sheet, parent_table=parent_table, col=i)
+        if (i - 1) == sheet.max_row:
+            return {'notes': parent_table.Notes, 'contacts': parent_table.Contacts}
+
+    if sheet['A' + str(i)].value == 'Контактные лица':
+        parent_table.Contacts = get_clients_contacts(sheet=sheet, parent_table=parent_table, col=i, client_id=client_id)
 
     return {'notes': parent_table.Notes, 'contacts': parent_table.Contacts}
 
 def get_client_from_xlsx(sheet, parent_table, col=1):
+    client_id = 1
+    print(2)
     for i in range(col, sheet.max_row):
         if(sheet['A'+str(i)].value == 'Компания'):
             table = parent_table()
@@ -89,18 +97,20 @@ def get_client_from_xlsx(sheet, parent_table, col=1):
 
 
             if (sheet['A'+str(i + 2)].value == 'История'):
-                result = get_clients_notes(sheet=sheet, parent_table=table, col=i + 2)
+                result = get_clients_notes(sheet=sheet, parent_table=table, col=i + 2, client_id=client_id)
                 table.Notes = result['notes']
                 if str(result['contacts']) != '[]':
-                    table.contacts = result['contacts']
+                    table.Contacts = result['contacts']
 
             if (sheet['A' + str(i + 2)].value == 'Контактные лица'):
-                table.contacts = get_clients_contacts(sheet=sheet, parent_table=table, col=i + 2)
+                table.Contacts = get_clients_contacts(sheet=sheet, parent_table=table, col=i + 2, client_id=client_id)
 
             db.session.add(table)
             db.session.commit()
+            client_id = client_id + 1
 
 def add_client_from_xlsx():
+    print(1)
     sheet = openpyxl.load_workbook('app/files/book2Irkutsk.xlsx').active
     table = models.Client
     get_client_from_xlsx(col=1, sheet=sheet, parent_table=table)
@@ -183,9 +193,14 @@ def table_to_json(query):
     result = []
     for i in query:
         subres = i.__dict__
-        subres.pop('_sa_instance_state', None)
+        if '_sa_instance_state' in subres:
+            subres.pop('_sa_instance_state', None)
+        if 'Date' in subres:
+            if subres['Date'] != None:
+                subres['Date'] = subres['Date'].strftime("%m/%d/%Y, %H:%M:%S")
+
         result.append(subres)
-    return result
+    return json.dumps(result)
 
 # -------------------------------------------------------Usage----------------------------------------------------------
 

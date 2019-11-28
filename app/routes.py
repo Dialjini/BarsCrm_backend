@@ -12,7 +12,8 @@ def table_to_json(query):
         if '_sa_instance_state' in subres:
             subres.pop('_sa_instance_state', None)
         if 'Date' in subres:
-            subres['Date'] = subres['Date'].strftime("%m/%d/%Y, %H:%M:%S")
+            if subres['Date'] != None:
+                subres['Date'] = subres['Date'].strftime("%m/%d/%Y, %H:%M:%S")
 
         result.append(subres)
     return json.dumps(result)
@@ -124,16 +125,12 @@ def getContacts():
 
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
-    print('----------------------------------')
-    print(request.args)
-    print(request.json)
-    print('----------------------------------')
     if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['id'])
+        Owner = models.Client.query.filter_by(id=request.args['id']).first()
     elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['id'])
+        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
     else:
-        Owner = models.Carrier.query.filter_by(id=request.args['id'])
+        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
 
     Contact = models.Contacts()
     Contacts = []
