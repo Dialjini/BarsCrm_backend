@@ -132,9 +132,10 @@ def addContacts():
     else:
         Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
 
-    Contact = models.Contacts()
     Contacts = []
-    for i in json.loads(request.args['contacts']):
+    args = json.loads(request.args['contacts'])
+    for i in args:
+        Contact = models.Contacts()
         Contact.Name = i['first_name']
         Contact.Last_name = i['last_name']
         Contact.Number = i['phone']
@@ -147,7 +148,6 @@ def addContacts():
         elif request.args['category'] == 'carrier':
             Contact.Carrier_id = request.args['id']
         Contacts.append(Contact)
-
     Owner.Contacts = Contacts
     db.session.commit()
 
