@@ -112,11 +112,11 @@ def getContacts():
         return table_to_json(models.Contacts.query.filter_by(Owner=Client).all())
     elif request.args['category'] == 'provider':
         provider = request.args['id']
-        Provider = models.Provider.query.filter_by(id=provider).all()
+        Provider = models.Provider.query.filter_by(id=provider).first()
         return table_to_json(models.Contacts.query.filter_by(Provider=Provider).all())
     elif request.args['category'] == 'carrier':
         carrier = request.args['id']
-        Carrier = models.Provider.query.filter_by(id=carrier).all()
+        Carrier = models.Provider.query.filter_by(id=carrier).first()
         return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
@@ -124,6 +124,10 @@ def getContacts():
 
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
+    print('----------------------------------')
+    print(request.args)
+    print(request.json)
+    print('----------------------------------')
     if request.args['category'] == 'client':
         Owner = models.Client.query.filter_by(id=request.args['id'])
     elif request.args['category'] == 'provider':
@@ -133,7 +137,7 @@ def addContacts():
 
     Contact = models.Contacts()
     Contacts = []
-    for i in request.args['contacts']:
+    for i in json.loads(request.args['contacts']):
         Contact.Name = i['first_name']
         Contact.Last_name = i['last_name']
         Contact.Number = i['phone']
