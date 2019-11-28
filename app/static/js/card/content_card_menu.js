@@ -348,14 +348,14 @@ function addMember(id = 'client', selectedLine = '') {
         class: `member ${category.member}`,
         append: $('<div>', {
             class: 'top',
-            append: $('<input>', {placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.role, type: 'text'
-            }).add('<input>',    {placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.phone, type: 'tel'
+            append: $('<input>', {placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.Position, type: 'text'
+            }).add('<input>',    {placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.Number, type: 'tel'
             })
         }).add($('<div>', {
             class: 'bottom',
-            append: $('<input>', {placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.last_name, type: 'text'
-            }).add('<input>',    {placeholder: 'Имя Отчество', class: 'first_name', id: 'first_name', onchange: 'saveCard()', value: selectedLine.first_name, type: 'name'
-            }).add('<input>',    {placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', value: selectedLine.email, type: 'email'
+            append: $('<input>', {placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.Last_name, type: 'text'
+            }).add('<input>',    {placeholder: 'Имя Отчество', class: 'first_name', id: 'first_name', onchange: 'saveCard()', value: selectedLine.Name, type: 'name'
+            }).add('<input>',    {placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', value: selectedLine.Email, type: 'email'
             })
         }))
     }));

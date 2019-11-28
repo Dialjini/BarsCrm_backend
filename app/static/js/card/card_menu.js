@@ -108,8 +108,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] }
                 ]
-
-                if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, true);
+                if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
                 
                 for (let i = 0; i < emptyData.length; i++) {
@@ -149,6 +148,7 @@ function createCardMenu(element, index = 0) {
             break;
         }
     }
+
     // Переход в нужную категорию
     for (let i = 0; i < linkCategoryInfo.length; i++) {
         if (linkCategoryInfo[i].subid.includes(saveTableAndCard[0].id)) {
@@ -169,13 +169,13 @@ function createCardMenu(element, index = 0) {
         content.append(element.link(selectedLine));
         return content;
     }
-
+    
     $('.info').append(cardMenu());
     $('.next .btn').attr('name', getInfo.join('_'));
     itemSelection(getInfo[0], selectedLine);
 
-    // Получаем данные по клиентам
-    getContacts();
+    // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
+    if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContacts();
     function getContacts() {
         if (getInfo[1] == 'new') {
             addMember(getInfo[0]);
@@ -1001,7 +1001,7 @@ function createCardMenu(element, index = 0) {
                     </div>     
                 </div>
                 <div class="next">
-                    <button class="btn btn-main" onclick="closeCardMenu()">Оформить</button>
+                    <button class="btn btn-main" onclick="closeCardMenu('stock_new')">Оформить</button>
                 </div>
                 `
     }
@@ -1034,27 +1034,8 @@ function comeBack(elem) {
 }
 // Переход на вкладку оформления договора карточки
 function contractNext(elem) {
-    saveInfoCard(elem.name);
+    saveInfoCard(elem.name, true, elem);
     saveCard();
-    $('.card_menu').remove();
-    $('.info').append($('<div>', {
-        class: 'card_menu',
-        id: 'contract-decor',
-        append: getTitleInfo({
-            id: `${elem.id}`,
-            list: ['Оформление договора'],
-            status: `${elem.name.split('_')[1]}_contract`
-        }).add($('<div>', {
-            class: 'content',
-            append: contractContentCard(elem)
-        }))
-    }))
-    for (let i = 0; i < dataName.length; i++) {
-        if (elem.id == dataName[i].name) {
-            dataName[i].link[0].lastCard[1] = $('.card_menu');
-            break;
-        }
-    }
 }
 // Переход на вкладку выставления счета
 function invoiceCard(elem) {
@@ -1098,20 +1079,6 @@ function closeCardMenu(id = '') {
             categoryInFinanceAccount[0].lastCard[0] = null;
         }
     }
-
-    $('.table').remove();
-    for (let i = saveTableAndCard[0].lastCard.length - 1; i >= 0; i--) {
-        if (saveTableAndCard[0].lastCard[i] != null) {
-            saveTableAndCard[0].lastCard[i] = null;
-        }
-    }
-
-    saveTableAndCard[1].pop();
-    selectedLine = {};
-
-    setTimeout(() => {
-        $('.card_menu, .overflow').remove();
-    }, 0);
 };
 // Заполняем Заголовок карточки
 function getTitleInfo(element) {

@@ -25,7 +25,7 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDefault = (id) => {
         table.append(getTitleTable());
-        for (let i = 0; i < object[1].length; i++) {
+        for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this)'});
             // Получать для разных таблиц - разные переменные
             let name, data = [
@@ -58,7 +58,7 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
-        for (let i = 0; i < object[1].length; i++) {
+        for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this, 1)'});
             const name = [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id];
 

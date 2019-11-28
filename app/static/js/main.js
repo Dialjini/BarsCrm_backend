@@ -8,10 +8,10 @@ $(document).ready(function() {
 });
 
 // Отсылаем данные для получения данных по таблице
-function getTableData(table, input = false) {
+function getTableData(table, input = false, close = false) {
     let requestTableData = (function() {
         return {
-            getRequest: function (table, input) {
+            getRequest: function (table, input, close) {
                 const requests = [
                     { table: categoryInListClient, request: '/getClients' },
                     { table: categoryInListProvider, request: '/getProviders' },
@@ -34,7 +34,7 @@ function getTableData(table, input = false) {
                                     return $('<div>', { class: 'table', id: 'loading' });
                                 }
                                 $('.info').append(fillTable());
-                                $('#loading').fadeIn(100);;
+                                $('#loading').fadeIn(100);
                             },
                             success: function(data) { gettingData(JSON.parse(data)); },
                             complete: function() {
@@ -45,19 +45,30 @@ function getTableData(table, input = false) {
                 }
     
                 function gettingData(data) {
+                    if (($('table').is('.table') && !close) || ($('div').is('.card_menu') && !close)) {
+                        $('.table').remove();
+                        for (let i = table[0].lastCard.length - 1; i >= 0; i--) {
+                            if (table[0].lastCard[i] != null) {
+                                table[0].lastCard[i] = null;
+                            }
+                        }
+                        table[1].pop();
+                        setTimeout(() => {
+                            $('.card_menu, .overflow').remove();
+                        }, 0);
+                    }
                     if (table[0].id !== 'analytics' && table[1][1] === undefined) {
                         table[1].push(data);
-                        table[1][1].reverse();
                     }
                     if (!input) $('.info').append(fillingTables(table));
                 }
             }
         }
     })();
-    requestTableData.getRequest(table, input)
+    requestTableData.getRequest(table, input, close)
 }
 // Отсылаем данные для сохранения данных по таблице
-function saveInfoCard(id) {
+function saveInfoCard(id, close = false, elem = null) {
     let createOrSaveCard = (function() {
         return {
             getRequest: function (idData, request) {
@@ -67,7 +78,7 @@ function saveInfoCard(id) {
                     data: idData,
                     dataType: 'html',
                     success: function() {
-                        getTableData(saveTableAndCard);
+                        getMembersInfo(close);
                     }
                 });
             }
@@ -77,9 +88,9 @@ function saveInfoCard(id) {
     // Отсылаем данные для создания/сохранения карточки
     let idData = {};
     const data = id.split('_');
-    const card = data[data.length - 1];
-
-    if (card === 'contract') {
+    let card = data[data.length - 1];
+                                                     // Временно, пока не будет заполнение счетов и дебита
+    if (card === 'contract' || data[0] == 'stock' || data[0] == 'account' || data[0] == 'debit') {
         getTableData(saveTableAndCard);
         return;
     }
@@ -93,15 +104,16 @@ function saveInfoCard(id) {
             idData[`${data[0]}_data`] = card;
             idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
             idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
-            //idData[`${data[0]}_members`] = 
-            getMembersInfo();
             createOrSaveCard.getRequest(idData, request);
             break;
         }
     }
 
-    function getMembersInfo() {
+    function getMembersInfo(close) {
         let members = [];
+        if (card == 'new') {
+            card = saveTableAndCard[1][1].length + 1;
+        }
         $('#member .member').each(function(i, element) {
             members.push({
                 role: $(element).children()[0].children[0].value,
@@ -120,11 +132,36 @@ function saveInfoCard(id) {
         $.ajax({
             url: '/addContacts',
             type: 'GET',
-            data: {category: data[0], id: data[1], contacts: JSON.stringify(members)},
+            data: {category: data[0], id: card, contacts: JSON.stringify(members)},
             dataType: 'html',
-            success: function(result) {
-                console.log(result);
+            success: function() {
+                if (elem !== null) {
+                    removeCard(elem);
+                }
+                getTableData(saveTableAndCard, false, close);
             }
         });
+
+        function removeCard(elem) {
+            $('.card_menu').remove();
+            $('.info').append($('<div>', {
+                class: 'card_menu',
+                id: 'contract-decor',
+                append: getTitleInfo({
+                    id: `${elem.id}`,
+                    list: ['Оформление договора'],
+                    status: `${elem.name.split('_')[1]}_contract`
+                }).add($('<div>', {
+                    class: 'content',
+                    append: contractContentCard(elem)
+                }))
+            }))
+            for (let i = 0; i < dataName.length; i++) {
+                if (elem.id == dataName[i].name) {
+                    dataName[i].link[0].lastCard[1] = $('.card_menu');
+                    break;
+                }
+            }
+        }
     }
 }
