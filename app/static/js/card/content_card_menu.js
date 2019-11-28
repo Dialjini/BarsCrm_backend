@@ -367,10 +367,9 @@ function addMember(id = 'client', selectedLine = '') {
 function removeMemberOrRow(id) {
     id = id.split('_')[2];
     $(`#${id}`).children().last().remove();
-    if ($(`#${id}`).children.length <= 2) {
+    if ($(`#${id}`).children().length <= 1) {
         $(`[name="remove_last_${id}"]`).fadeOut(0);
     }
-    if (id === 'member') members.pop();
 }
 // Добавление строк в таблицах карточек
 function addRow(element) {

@@ -199,7 +199,10 @@ function createCardMenu(element, index = 0) {
                     addMember(getInfo[0], contacts[i]);
                 }
             }
-            $('[name="remove_last_member"]').fadeOut(0);   
+            // Если контакт один или ноль
+            if ($(`#member`).children().length <= 1) {
+                $(`[name="remove_last_member"]`).fadeOut(0);
+            }  
         }
     }
 

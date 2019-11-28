@@ -405,7 +405,7 @@ body {
 .page .centerBlock .container .info .table #manager .list_manager {
   display: none;
   position: absolute;
-  width: 101.5%;
+  width: 101%;
   left: -1px;
   background: #fff;
   border: 1px solid #cecece;
