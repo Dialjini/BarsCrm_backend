@@ -223,7 +223,7 @@ def addProvider():
         new = True
 
     if not new:
-        Provider = models.Provider.query.filter_by(Name=data['provider_name']).first()
+        Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
     else:
         Provider = models.Provider()
 
@@ -258,7 +258,7 @@ def addCarier():
     else:
         new = True
     if not new:
-        Carrier = models.Carrier.query.filter_by(Name=data['carrier_name']).first()
+        Carrier = models.Carrier.query.filter_by(id=data['carrier_data']).first()
     else:
         Carrier = models.Carrier()
 
@@ -287,7 +287,7 @@ def addClient():
         new = True
 
     if not new:
-        Client = models.Client.query.filter_by(Name=data['client_name']).first()
+        Client = models.Client.query.filter_by(id=data['client_data']).first()
     else:
         Client = models.Client()
 
