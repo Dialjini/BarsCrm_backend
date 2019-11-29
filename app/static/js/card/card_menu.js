@@ -95,6 +95,7 @@ function createCardMenu(element, index = 0) {
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
+                console.log(selectedLine)
                 titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
@@ -104,7 +105,7 @@ function createCardMenu(element, index = 0) {
                 }
             } else {
                 const emptyData = [
-                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding'] },
+                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] }
                 ]
@@ -311,9 +312,9 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tbody id="livestock">
                                 <tr>
-                                    <td><input id="livestock_general" type="text" style="width: 75px"></td>
-                                    <td><input id="livestock_milking" type="text" style="width: 75px"></td>
-                                    <td><input id="livestock_milkyield" type="text" style="width: 75px"></td>
+                                    <td><input id="livestock_general" type="text" style="width: 75px" value="${selectedLine.Livestock_all}"></td>
+                                    <td><input id="livestock_milking" type="text" style="width: 75px" value="${selectedLine.Livestock_milking}"></td>
+                                    <td><input id="livestock_milkyield" type="text" style="width: 75px" value="${selectedLine.Livestock_milkyield}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -325,8 +326,8 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tbody id="demand">
                                 <tr>
-                                    <td><input id="demand_product" type="text" style="width: 196px"></td>
-                                    <td><input id="demand_volume" type="text" style="width: 50px"></td>
+                                    <td><input id="demand_product" type="text" style="width: 196px" value="${selectedLine.Demand_item}"></td>
+                                    <td><input id="demand_volume" type="text" style="width: 50px" value="${selectedLine.Demand_volume}"></td>
                                 </tr>
                             </tbody>
                         </table>

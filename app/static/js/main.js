@@ -101,12 +101,25 @@ function saveInfoCard(id, close = false, elem = null) {
             for (let j = 0; j < idCardFields[i].ids.length; j++) {
                 idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
             }
-            idData[`${data[0]}_data`] = card;
-            idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
-            idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
+            additionalData(i);
+            console.log(idData);
             createOrSaveCard.getRequest(idData, request);
             break;
         }
+    }
+
+    function additionalData(i) {
+        if (data[0] == 'client') {
+            idData[`livestock_general`] = $('#livestock_general').val();
+            idData[`livestock_milking`] = $('#livestock_milking').val();
+            idData[`livestock_milkyield`] = $('#livestock_milkyield').val();
+            idData[`demand_product`] = $('#demand_product').val();
+            idData[`demand_volume`] = $('#demand_volume').val();
+            
+        }
+        idData[`${data[0]}_data`] = card;
+        idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
+        idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
     }
 
     function getMembersInfo(close) {
