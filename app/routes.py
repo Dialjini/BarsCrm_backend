@@ -153,6 +153,36 @@ def addContacts():
 
     return 'OK'
 
+@app.route('/addItems', methods=['GET'])
+def addItems():
+    if request.args['category'] == 'client':
+        Owner = models.Client.query.filter_by(id=request.args['id']).first()
+    elif request.args['category'] == 'provider':
+        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+    else:
+        return '400 BAD REQUEST'
+
+    Items = []
+    args = json.loads(request.args['contacts'])
+    for i in args:
+        Contact = models.Contacts()
+        Contact.Name = i['first_name']
+        Contact.Last_name = i['last_name']
+        Contact.Number = i['phone']
+        Contact.Email = i['email']
+        Contact.Position = i['role']
+        if request.args['category'] == 'client':
+            Contact.Client_id = request.args['id']
+        elif request.args['category'] == 'provider':
+            Contact.Provider_id = request.args['id']
+        elif request.args['category'] == 'carrier':
+            Contact.Carrier_id = request.args['id']
+        Items.append(Contact)
+    Owner.Contacts = Items
+    db.session.commit()
+
+    return 'OK'
+
 
 @app.route('/getProviders', methods=['GET'])
 def getProviders():
@@ -274,6 +304,12 @@ def addClient():
     Client.Adress = data['client_address']
     Client.Holding = data['client_holding']
     Client.Site = data['client_site']
+    Client.Demand_item = data['demand_product']
+    Client.Demand_volume = data['demand_volume']
+    Client.Livestock_all = data['livestock_general']
+    Client.Livestock_milking = data['livestock_milking']
+    Client.Livestock_milkyield = data['livestock_milkyield']
+
 
     if new:
         db.session.add(Client)

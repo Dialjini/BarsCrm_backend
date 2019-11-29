@@ -40,20 +40,10 @@ class Order(db.Model):
     Cost = db.Column(db.Float)
 
 
-class Provide_Item(db.Model):
-    Item_id = db.Column(db.Integer, primary_key=True)
-    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
-    Name = db.Column(db.String)
-    Creator = db.Column(db.String)
-    Bags = db.Column(db.Float)
-    MKR = db.Column(db.Float)
-    Pile = db.Column(db.Float)
-    Cost = db.Column(db.Float)
-    NDS = db.Column(db.String)
-
-
 class Item_groups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Group = db.Column(db.String)
     Item = db.relationship('Item', backref='Group', lazy='dynamic')
 
@@ -64,11 +54,12 @@ class Item(db.Model):
     Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
     Name = db.Column(db.String)
     Creator = db.Column(db.String)
-    Bags = db.Column(db.Float)
-    MKR = db.Column(db.Float)
-    Pile = db.Column(db.Float)
-    Cost = db.Column(db.Float)
+    Weight = db.Column(db.String)
+    Fraction = db.Column(db.String)
+    Packing = db.Column(db.String)
+    Cost = db.Column(db.String)
     NDS = db.Column(db.String)
+    Volume = db.Column(db.String)
 
 
 class EmptyClients(db.Model):
@@ -102,6 +93,13 @@ class Client(db.Model):
     Price = db.Column(db.String)
     Site = db.Column(db.String)
     Holding = db.Column(db.String)
+    Item_groups = db.relationship('Item_groups', backref='Client', lazy='dynamic')
+    Livestock_all = db.Column(db.String)
+    Livestock_milking = db.Column(db.String)
+    Livestock_milkyield = db.Column(db.String)
+    Demand_item = db.Column(db.String)
+    Demand_volume = db.Column(db.String)
+
 
 class Contacts(db.Model):
     Contact_id = db.Column(db.Integer, primary_key=True)
@@ -149,7 +147,7 @@ class Provider(db.Model):
     Group = db.Column(db.String)
     Price = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
-    Items = db.relationship('Provide_Item', backref='Stock', lazy='dynamic')
+    Item_groups = db.relationship('Item_groups', backref='Provider', lazy='dynamic')
     Contacts = db.relationship('Contacts', backref='Provider', lazy='dynamic')
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
