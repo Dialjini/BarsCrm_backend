@@ -179,7 +179,8 @@ function createCardMenu(element, index = 0) {
     function getContacts() {
         if (getInfo[1] == 'new') {
             addMember(getInfo[0]);
-            $('[name="remove_last_member"]').fadeOut(0);
+            addRow(`${getInfo[0]}-group`);
+            $('[name="remove_last_member"], [name="remove_last_group"]').fadeOut(0);
         } else {
             $.ajax({
                 url: '/getContacts',
@@ -202,6 +203,12 @@ function createCardMenu(element, index = 0) {
             // Если контакт один или ноль
             if ($(`#member`).children().length <= 1) {
                 $(`[name="remove_last_member"]`).fadeOut(0);
+            }
+
+            // Временно
+            addRow(`${getInfo[0]}-group`);
+            if ($(`#group`).children().length <= 1) {
+                $(`[name="remove_last_group"]`).fadeOut(0);
             }  
         }
     }
@@ -348,7 +355,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
@@ -510,7 +517,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="provider-group" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="provider-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
@@ -642,7 +649,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="carrier-group" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="carrier-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
@@ -811,7 +818,7 @@ function createCardMenu(element, index = 0) {
                             </table>
                         </div>
                         <div class="events">
-                            <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this)">
+                            <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
@@ -926,7 +933,7 @@ function createCardMenu(element, index = 0) {
                                 </table>
                             </div>
                             <div class="events">
-                                <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this)">
+                                <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this.id)">
                                 <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                             </div>
                         </div>

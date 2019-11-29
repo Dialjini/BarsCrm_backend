@@ -372,7 +372,7 @@ function removeMemberOrRow(id) {
     }
 }
 // Добавление строк в таблицах карточек
-function addRow(element) {
+function addRow(id) {
     const tableInfo = [
         { id: 'client-group', count: 4, widthInput: [
             {id: 'client_product', width: 57},
@@ -420,7 +420,7 @@ function addRow(element) {
     }
 
     for (let i = 0; i < tableInfo.length; i++) {
-        if (element.id == tableInfo[i].id) {
+        if (id == tableInfo[i].id) {
             $(`#group`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
         }
