@@ -335,7 +335,43 @@ function returnBack(element) {
 }
 // Добавление комментариев в карточках
 function addComment() {
-    console.log('Add Comment');
+    $(`[name="remove_last_comment"]`).fadeIn(0);
+    $('#messages').append(
+        $('<tr>', {
+            id: 'message',
+            append: `
+                <td>
+                    <input type="text" onchange="saveCard()" placeholder="01.01.70" id="message_date" class="m_date">
+                </td>
+                <td>
+                    <select onselect="saveCard()" id="message_role" class="m_role">
+                        <option value="Не указано" selected disabled>Не указано</option>
+                        <option>Должность 1</option>
+                        <option>Должность 2</option>
+                        <option>Должность 3</option>
+                    <select>
+                </td>
+            `
+        })
+    );
+    $('#comments').append(
+        $('<tr>', {
+            id: 'comment',
+            append: `
+                <td>
+                    <input type="text" onchange="saveCard()" placeholder="Комментарий" id="message_comment" class="m_comment">
+                </td>
+            `
+        })
+    )
+}
+// Удаление последнего созданного комментария в карточках
+function removeComment() {
+    $(`#messages`).children().last().remove();
+    $(`#comments`).children().last().remove();
+    if ($(`#messages`).children().length <= 1) {
+        $(`[name="remove_last_comment"]`).fadeOut(0);
+    }
 }
 // Добавление контакта в карточках, мб переделать в одну функцию
 function addMember(id = 'client', selectedLine = '') {
@@ -375,18 +411,18 @@ function removeMemberOrRow(id) {
 function addRow(id) {
     const tableInfo = [
         { id: 'client-group', count: 4, widthInput: [
-            {id: 'client_product', width: 57},
-            {id: 'client_volume', width: 43},
-            {id: 'client_who', width: 104},
-            {id: 'client_price', width: 43}
+            {id: 'item_product', width: 57},
+            {id: 'item_volume', width: 43},
+            {id: 'item_creator', width: 104},
+            {id: 'item_price', width: 43}
         ]},
         { id: 'provider-group', count: 6, widthInput: [
-            {id: 'provider_product', width: 57},
-            {id: 'provider_price', width: 33},
-            {id: 'provider_vat', width: 28},
-            {id: 'provider_pack', width: 59},
-            {id: 'provider_weight', width: 24},
-            {id: 'provider_fraction', width: 57}
+            {id: 'item_product', width: 57},
+            {id: 'item_price', width: 33},
+            {id: 'item_vat', width: 28},
+            {id: 'item_packing', width: 59},
+            {id: 'item_weight', width: 24},
+            {id: 'item_fraction', width: 57}
         ]},
         { id: 'carrier-group', count: 5, widthInput: [
             {id: 'carrier_date', width: 50},

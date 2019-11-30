@@ -546,6 +546,18 @@ body {
   font-size: 12px;
 }
 
+.page .centerBlock .container .info .card_menu .content select {
+  margin-top: 15px;
+  width: 200px;
+  height: 20px;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid lightgray;
+  background-color: white;
+  color: #595959;
+  font-family: 'Montserrat', sans-serif;
+}
+
 .page .centerBlock .container .info .card_menu .content .row_card {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -557,18 +569,6 @@ body {
 
 .page .centerBlock .container .info .card_menu .content .row_card:not(:last-child) {
   margin-bottom: 30px;
-}
-
-.page .centerBlock .container .info .card_menu .content .row_card select {
-  margin-top: 15px;
-  width: 200px;
-  height: 20px;
-  outline: none;
-  border-radius: 5px;
-  border: 1px solid lightgray;
-  background-color: white;
-  color: #595959;
-  font-family: 'Montserrat', sans-serif;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .list {
@@ -791,20 +791,6 @@ body {
   padding-right: 15px;
 }
 
-.page .centerBlock .container .info .card_menu .content .row_card input {
-  border: none;
-  outline: none;
-  border-bottom: 1px solid #e9e9e9;
-  width: 180px;
-  height: 25px;
-  margin-top: 8px;
-  padding: 5px;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 11px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
 .page .centerBlock .container .info .card_menu .content .row_card .numbers {
   width: 50px;
   margin-right: 10px;
@@ -845,6 +831,20 @@ body {
   cursor: pointer;
 }
 
+.page .centerBlock .container .info .card_menu .content input {
+  border: none;
+  outline: none;
+  border-bottom: 1px solid #e9e9e9;
+  width: 180px;
+  height: 25px;
+  margin-top: 8px;
+  padding: 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 .page .centerBlock .container .info .card_menu .content .area {
   width: 100%;
   height: 200px;
@@ -875,6 +875,15 @@ body {
   overflow-y: auto;
 }
 
+.page .centerBlock .container .info .card_menu .content .area .last_comment td {
+  width: 100%;
+}
+
+.page .centerBlock .container .info .card_menu .content .area .last_comment td .m_comment {
+  width: 100%;
+  margin-top: 12px;
+}
+
 .page .centerBlock .container .info .card_menu .content .area .messages {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -888,6 +897,15 @@ body {
 
 .page .centerBlock .container .info .card_menu .content .area .messages .message {
   width: 100%;
+}
+
+.page .centerBlock .container .info .card_menu .content .area .messages .message .m_date {
+  width: 80px;
+  margin-right: 20px;
+}
+
+.page .centerBlock .container .info .card_menu .content .area .messages .message .m_role {
+  width: 235px;
 }
 
 .page .centerBlock .container .info .card_menu .content .next {

@@ -205,12 +205,15 @@ function createCardMenu(element, index = 0) {
             if ($(`#member`).children().length <= 1) {
                 $(`[name="remove_last_member"]`).fadeOut(0);
             }
-
             // Временно
             addRow(`${getInfo[0]}-group`);
             if ($(`#group`).children().length <= 1) {
                 $(`[name="remove_last_group"]`).fadeOut(0);
-            }  
+            }
+            addComment();
+            if ($(`#messages`).children().length <= 1) {
+                $(`[name="remove_last_comment"]`).fadeOut(0);
+            }
         }
     }
 
@@ -350,9 +353,7 @@ function createCardMenu(element, index = 0) {
                                     <td>У кого</td>
                                     <td>Цена</td>
                                 </tr>
-                                <tbody id="group">
-
-                                </tbody>
+                                <tbody id="group"></tbody>
                             </table>
                         </div>
                         <div class="events">
@@ -365,17 +366,14 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
+                            <div>
+                                <img style="margin-right: 10px" name="remove_last_comment" onclick="removeComment()" class="add_something" src="static/images/remove.png">
+                                <img onclick="addComment()" class="add_something" src="static/images/add.png">
+                            </div>
                         </div>
                         <div class="messages">
                             <table class="message">
-                                <tbody id="messages">
-                                    <tr id="message_1">
-                                        <td id="date"></td>
-                                        <td id="role"></td>
-                                        <td id="comment"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="messages"></tbody>
                             </table>
                         </div>
                     </div>
