@@ -78,7 +78,8 @@ function saveInfoCard(id, close = false, elem = null) {
                     data: idData,
                     dataType: 'html',
                     success: function() {
-                        getMembersInfo(close);
+                        addCommentsInfo(close)
+                        addMembersInfo(close);
                     }
                 });
             }
@@ -114,15 +115,40 @@ function saveInfoCard(id, close = false, elem = null) {
             idData[`livestock_milking`] = $('#livestock_milking').val();
             idData[`livestock_milkyield`] = $('#livestock_milkyield').val();
             idData[`demand_product`] = $('#demand_product').val();
-            idData[`demand_volume`] = $('#demand_volume').val();
-            
+            idData[`demand_volume`] = $('#demand_volume').val();    
         }
         idData[`${data[0]}_data`] = card;
         idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
         idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
     }
 
-    function getMembersInfo(close) {
+    function addCommentsInfo(close) {
+        let items = [];
+        $('#group tr').each(function(i, element) {
+            items.push({
+                item_product: $(element).children()[0].children[0].value,
+                item_volume: $(element).children()[1].children[0].value,
+                item_creator: $(element).children()[2].children[0].value,
+                item_price: $(element).children()[3].children[0].value,
+            })
+            let data = Object.keys(items[items.length - 1]);
+            let count = 0;
+            for (let i = 0; i < data.length; i++) {
+                if (items[items.length - 1][data[i]] == '') count++;
+            }
+            if (count == 4) comments.pop();
+        });
+        console.log(items);
+        $.ajax({
+            url: '/addItems',
+            type: 'GET',
+            data: {category: data[0], id: card, item: JSON.stringify(items)},
+            dataType: 'html',
+            success: function(data) {console.log(data)}
+        });
+    }
+
+    function addMembersInfo(close) {
         let members = [];
         if (card == 'new') {
             card = saveTableAndCard[1][1].length + 1;

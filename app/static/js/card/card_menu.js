@@ -232,6 +232,13 @@ function createCardMenu(element, index = 0) {
             }
         } catch {}
     }
+    // Вывод последнего комментария
+    // <tr id="comment_1">
+    //     <td id="date" style="width: 15%"></td>
+    //     <td id="role" style="width: 20%"></td>
+    //     <td id="comment" style="width: 65%"></td>
+    //     <td id="manager" style="width: 10%" class="lightgray"></td>
+    // </tr>
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
         let content = $('<div>', { 
@@ -381,14 +388,7 @@ function createCardMenu(element, index = 0) {
                         <div class="title">Последний комментарий</div>
                         <div class="messages">
                             <table class="message">
-                                <tbody id="comments">
-                                    <tr id="comment_1">
-                                        <td id="date" style="width: 15%"></td>
-                                        <td id="role" style="width: 20%"></td>
-                                        <td id="comment" style="width: 65%"></td>
-                                        <td id="manager" style="width: 10%" class="lightgray"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="comments"></tbody>
                             </table>
                         </div>
                     </div>
@@ -510,9 +510,7 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax">
                             <table>
                                 <tr><td>Товар</td><td>Цена</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
-                                <tbody id="group">
-                                    
-                                </tbody>
+                                <tbody id="group"></tbody>
                             </table>
                         </div>
                         <div class="events">
@@ -529,13 +527,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="messages">
                             <table class="message">
-                                <tbody id="messages">
-                                    <tr id="message_1">
-                                        <td id="date"></td>
-                                        <td id="role"></td>
-                                        <td id="comment"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="messages"></tbody>
                             </table>
                         </div>
                     </div>
@@ -543,14 +535,7 @@ function createCardMenu(element, index = 0) {
                         <div class="title">Последний комментарий</div>
                         <div class="messages">
                             <table class="message">
-                                <tbody id="comments">
-                                    <tr id="comment_1">
-                                        <td id="date" style="width: 15%"></td>
-                                        <td id="role" style="width: 20%"></td>
-                                        <td id="comment" style="width: 65%"></td>
-                                        <td id="manager" style="width: 10%" class="lightgray"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="comments"></tbody>
                             </table>
                         </div>
                     </div>
@@ -661,13 +646,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="messages">
                             <table class="message">
-                                <tbody id="messages">
-                                    <tr id="message_1">
-                                        <td id="date"></td>
-                                        <td id="role"></td>
-                                        <td id="comment"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="messages"></tbody>
                             </table>
                         </div>
                     </div>
@@ -675,14 +654,7 @@ function createCardMenu(element, index = 0) {
                         <div class="title">Последний комментарий</div>
                         <div class="messages">
                             <table class="message">
-                                <tbody id="comments">
-                                    <tr id="comment_1">
-                                        <td id="date" style="width: 15%"></td>
-                                        <td id="role" style="width: 20%"></td>
-                                        <td id="comment" style="width: 65%"></td>
-                                        <td id="manager" style="width: 10%" class="lightgray"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="comments"></tbody>
                             </table>
                         </div>
                     </div>
