@@ -408,38 +408,48 @@ function removeMemberOrRow(id) {
     }
 }
 // Добавление строк в таблицах карточек
-function addRow(id) {
+function addRow(id, selectedLine = '') {
     const tableInfo = [
         { id: 'client-group', count: 4, widthInput: [
-            {id: 'item_product', width: 57},
-            {id: 'item_volume', width: 43},
-            {id: 'item_creator', width: 104},
-            {id: 'item_price', width: 43}
-        ]},
+                {id: 'item_product', width: 57},
+                {id: 'item_volume', width: 43},
+                {id: 'item_creator', width: 104},
+                {id: 'item_price', width: 43}
+            ],
+            html: ['Name', 'Volume', 'Creator', 'Cost']
+        },
         { id: 'provider-group', count: 6, widthInput: [
-            {id: 'item_product', width: 57},
-            {id: 'item_price', width: 33},
-            {id: 'item_vat', width: 28},
-            {id: 'item_packing', width: 59},
-            {id: 'item_weight', width: 24},
-            {id: 'item_fraction', width: 57}
-        ]},
-        { id: 'carrier-group', count: 5, widthInput: [
-            {id: 'carrier_date', width: 50},
-            {id: 'carrier_client', width: 100},
-            {id: 'carrier_stock', width: 160},
-            {id: 'carrier_driver', width: 90},
-            {id: 'carrier_price', width: 33}
-        ]},
-        { id: 'account-group', count: 3, widthInput: [
-            {id: 'account_position', width: 58},
-            {id: 'account_date', width: 42},
-            {id: 'account_price', width: 43}
-        ]},
-        { id: 'delivery-group', count: 2, widthInput: [
-            {id: 'delivery_date', width: 45},
-            {id: 'delivery_price', width: 43}
-        ]}
+                {id: 'item_product', width: 57},
+                {id: 'item_price', width: 33},
+                {id: 'item_vat', width: 28},
+                {id: 'item_packing', width: 59},
+                {id: 'item_weight', width: 24},
+                {id: 'item_fraction', width: 57}
+            ],
+            html: ['Name', 'Cost', 'NDS', 'Packing', 'Weight', 'Fraction']
+        },
+            { id: 'carrier-group', count: 5, widthInput: [
+                    {id: 'carrier_date', width: 50},
+                    {id: 'carrier_client', width: 100},
+                    {id: 'carrier_stock', width: 160},
+                    {id: 'carrier_driver', width: 90},
+                    {id: 'carrier_price', width: 33}
+                ],
+                html: []
+        },
+            { id: 'account-group', count: 3, widthInput: [
+                    {id: 'account_position', width: 58},
+                    {id: 'account_date', width: 42},
+                    {id: 'account_price', width: 43}
+                ],
+                html: []
+        },
+            { id: 'delivery-group', count: 2, widthInput: [
+                    {id: 'delivery_date', width: 45},
+                    {id: 'delivery_price', width: 43}
+                ],
+                html: []
+        }
     ]
 
     function trFill(table) {
@@ -448,7 +458,7 @@ function addRow(id) {
             tr.append($('<td>', {
                 append: $('<input>', {
                     css: { width: table.widthInput[i].width + 'px', padding: '0' },
-                    id: table.widthInput[i].id
+                    id: table.widthInput[i].id, value: selectedLine[table.html[i]]
                 })
             }));
         }
@@ -459,6 +469,7 @@ function addRow(id) {
         if (id == tableInfo[i].id) {
             $(`#group`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
+            break;
         }
     }
     saveCard();

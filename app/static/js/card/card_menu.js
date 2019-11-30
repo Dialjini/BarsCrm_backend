@@ -95,7 +95,6 @@ function createCardMenu(element, index = 0) {
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
-                console.log(selectedLine)
                 titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
@@ -176,13 +175,22 @@ function createCardMenu(element, index = 0) {
     itemSelection(getInfo[0], selectedLine);
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
-    if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContacts();
-    function getContacts() {
+    if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
+    function getContactsAndItems() {
         if (getInfo[1] == 'new') {
             addMember(getInfo[0]);
             addRow(`${getInfo[0]}-group`);
             $('[name="remove_last_member"], [name="remove_last_group"]').fadeOut(0);
         } else {
+            $.ajax({
+                url: '/getItems',
+                type: 'GET',
+                data: {category: getInfo[0], id: getInfo[1]},
+                dataType: 'html',
+                success: function(result) {
+                    inputItems(JSON.parse(result));
+                }
+            });
             $.ajax({
                 url: '/getContacts',
                 type: 'GET',
@@ -192,6 +200,18 @@ function createCardMenu(element, index = 0) {
                     inputContacts(JSON.parse(result));
                 }
             });
+        }
+        function inputItems(items) {
+            if (items.length == 0) 
+                addRow(`${getInfo[0]}-group`);
+            else {
+                for (let i = 0; i < items.length; i++) {
+                    addRow(`${getInfo[0]}-group`, items[i]);
+                }
+            }
+            if ($(`#group`).children().length <= 1) {
+                $(`[name="remove_last_group"]`).fadeOut(0);
+            }
         }
         function inputContacts(contacts) {
             if (contacts.length == 0) 
@@ -206,10 +226,6 @@ function createCardMenu(element, index = 0) {
                 $(`[name="remove_last_member"]`).fadeOut(0);
             }
             // Временно
-            addRow(`${getInfo[0]}-group`);
-            if ($(`#group`).children().length <= 1) {
-                $(`[name="remove_last_group"]`).fadeOut(0);
-            }
             addComment();
             if ($(`#messages`).children().length <= 1) {
                 $(`[name="remove_last_comment"]`).fadeOut(0);

@@ -165,7 +165,7 @@ def addItems():
         return '400 BAD REQUEST'
 
     Items = []
-    args = json.loads(request.args['items'])
+    args = json.loads(request.args['item'])
     for i in args:
         Item = models.Item()
         if isClient:
