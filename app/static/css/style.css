@@ -855,7 +855,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .area .history {
-  width: 340px;
+  width: 30%;
   border-right: 1px solid lightgray;
   padding: 5px 10px;
   overflow-x: hidden;
@@ -867,21 +867,27 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .area .last_comment {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+  width: 70%;
   padding: 5px 10px;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-.page .centerBlock .container .info .card_menu .content .area .last_comment td {
-  width: 100%;
-}
-
 .page .centerBlock .container .info .card_menu .content .area .last_comment td .m_comment {
   width: 100%;
   margin-top: 12px;
+}
+
+.page .centerBlock .container .info .card_menu .content .area .last_comment td .done {
+  margin-top: 0;
+  margin-bottom: 10px;
+  padding-left: 15px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.page .centerBlock .container .info .card_menu .content .area .last_comment td .done:hover {
+  cursor: default;
 }
 
 .page .centerBlock .container .info .card_menu .content .area .messages {
@@ -902,10 +908,15 @@ body {
 .page .centerBlock .container .info .card_menu .content .area .messages .message .m_date {
   width: 80px;
   margin-right: 20px;
+  margin-bottom: 10px;
 }
 
 .page .centerBlock .container .info .card_menu .content .area .messages .message .m_role {
-  width: 235px;
+  width: 200px;
+}
+
+.page .centerBlock .container .info .card_menu .content .area .messages .message .static:hover {
+  cursor: pointer;
 }
 
 .page .centerBlock .container .info .card_menu .content .next {

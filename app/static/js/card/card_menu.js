@@ -192,6 +192,15 @@ function createCardMenu(element, index = 0) {
                 }
             });
             $.ajax({
+                url: '/getMessages',
+                type: 'GET',
+                data: {category: getInfo[0], id: getInfo[1]},
+                dataType: 'html',
+                success: function(result) {
+                    inputComments(JSON.parse(result));
+                }
+            });
+            $.ajax({
                 url: '/getContacts',
                 type: 'GET',
                 data: {category: getInfo[0], id: getInfo[1]},
@@ -200,6 +209,30 @@ function createCardMenu(element, index = 0) {
                     inputContacts(JSON.parse(result));
                 }
             });
+        }
+        function inputComments(comments) {
+            console.log(comments);
+            if (comments.length == 0) 
+                addComment();
+            else {
+                let list_managers = [];
+                for (let i = 0; i < comments.length; i++) {
+                    list_managers.push(comments[i].Manager);
+                }
+                for (let i = 0; i < list_managers.length - 1; i++) {
+                    for (let j = i + 1; j < list_managers.length; j++) {
+                        if (list_managers[i] === list_managers[j]) {
+                            list_managers.splice(j, 1);
+                            j--;
+                        }
+                    }
+                }
+                for (let i = 0; i < list_managers.length; i++)
+                    addComment(list_managers[i], comments[0], getInfo)
+            }
+            if ($(`#messages`).children().length <= 1) {
+                $(`[name="remove_last_comment"]`).fadeOut(0);
+            }
         }
         function inputItems(items) {
             if (items.length == 0) 
@@ -224,11 +257,6 @@ function createCardMenu(element, index = 0) {
             // Если контакт один или ноль
             if ($(`#member`).children().length <= 1) {
                 $(`[name="remove_last_member"]`).fadeOut(0);
-            }
-            // Временно
-            addComment();
-            if ($(`#messages`).children().length <= 1) {
-                $(`[name="remove_last_comment"]`).fadeOut(0);
             }
         }
     }
@@ -389,10 +417,7 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <div>
-                                <img style="margin-right: 10px" name="remove_last_comment" onclick="removeComment()" class="add_something" src="static/images/remove.png">
-                                <img onclick="addComment()" class="add_something" src="static/images/add.png">
-                            </div>
+                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">
@@ -401,7 +426,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="last_comment">
-                        <div class="title">Последний комментарий</div>
+                        <div class="title">Последние комментарии</div>
                         <div class="messages">
                             <table class="message">
                                 <tbody id="comments"></tbody>
@@ -548,7 +573,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="last_comment">
-                        <div class="title">Последний комментарий</div>
+                        <div class="title">Последние комментарии</div>
                         <div class="messages">
                             <table class="message">
                                 <tbody id="comments"></tbody>
@@ -667,7 +692,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="last_comment">
-                        <div class="title">Последний комментарий</div>
+                        <div class="title">Последние комментарии</div>
                         <div class="messages">
                             <table class="message">
                                 <tbody id="comments"></tbody>

@@ -334,43 +334,89 @@ function returnBack(element) {
     $('#exposed_list').append(returnEmptyRow);
 }
 // Добавление комментариев в карточках
-function addComment() {
-    $(`[name="remove_last_comment"]`).fadeIn(0);
-    $('#messages').append(
-        $('<tr>', {
-            id: 'message',
-            append: `
-                <td>
-                    <input type="text" onchange="saveCard()" placeholder="01.01.70" id="message_date" class="m_date">
-                </td>
-                <td>
-                    <select onselect="saveCard()" id="message_role" class="m_role">
-                        <option value="Не указано" selected disabled>Не указано</option>
-                        <option>Должность 1</option>
-                        <option>Должность 2</option>
-                        <option>Должность 3</option>
-                    <select>
-                </td>
-            `
-        })
-    );
-    $('#comments').append(
-        $('<tr>', {
-            id: 'comment',
-            append: `
-                <td>
-                    <input type="text" onchange="saveCard()" placeholder="Комментарий" id="message_comment" class="m_comment">
-                </td>
-            `
-        })
-    )
+function addComment(manager = '', selectedLine, data) {
+    if (manager === '') {
+        $(`#messages`).empty();
+        $(`#comments`).empty();
+        $('#messages').append(
+            $('<tr>', {
+                id: 'message',
+                append: `
+                    <td>
+                        <input type="text" onchange="saveCard()" placeholder="01.01.70" id="message_date" class="m_date">
+                    </td>
+                    <td>
+                        <select onselect="saveCard()" id="message_role" class="m_role">
+                            <option value="Не указано" selected disabled>Не указано</option>
+                            <option>Должность 1</option>
+                            <option>Должность 2</option>
+                            <option>Должность 3</option>
+                        <select>
+                    </td>
+                `
+            })
+        );
+        $('#comments').append(
+            $('<tr>', {
+                id: 'comment',
+                append: `
+                    <td>
+                        <input type="text" onchange="saveCard()" placeholder="Комментарий" id="message_comment" class="m_comment">
+                    </td>
+                `
+            })
+        )
+    } else {
+        selectedLine.Date = selectedLine.Date.split(',')[0];
+        $('#messages').append(
+            $('<tr>', {
+                id: 'message',
+                append: `
+                    <td>
+                        <div type="text" id="message_date" class="m_date">${selectedLine.Date}</div>
+                    </td>
+                    <td>
+                        <div type="text" onclick="showComments(this)" id="comments_${data[0]}_${data[1]}" class="m_role static">${manager}</div>
+                    </td>
+                `
+            })
+        );
+    }
 }
-// Удаление последнего созданного комментария в карточках
-function removeComment() {
-    $(`#messages`).children().last().remove();
-    $(`#comments`).children().last().remove();
-    if ($(`#messages`).children().length <= 1) {
-        $(`[name="remove_last_comment"]`).fadeOut(0);
+function showComments(element) {
+    $(`#comments`).empty();
+    let data = element.id.split('_');
+    let value = $(element).html();
+    $.ajax({
+        url: '/getMessages',
+        type: 'GET',
+        data: {category: data[1], id: data[2]},
+        dataType: 'html',
+        success: function(result) {
+            showAllComments(JSON.parse(result), value);
+        }
+    });
+    function showAllComments(result, value) {
+        let comments = [];
+        for (let i = 0; i < result.length; i++) {
+            if (value === result[i].Manager) {
+                comments.push({
+                    date: result[i].Date.split(',')[0],
+                    comment: result[i].Note
+                })
+                $('#comments').append(
+                    $('<tr>', {
+                        id: 'comment',
+                        append: `
+                            <td>${comments[i].date}</td>
+                            <td>
+                                <div class="m_comment done">${comments[i].comment}</div>
+                            </td>
+                        `
+                    })
+                )
+            }
+        }
     }
 }
 // Добавление контакта в карточках, мб переделать в одну функцию
