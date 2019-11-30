@@ -42,8 +42,6 @@ class Order(db.Model):
 
 class Item_groups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
-    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Group = db.Column(db.String)
     Item = db.relationship('Item', backref='Group', lazy='dynamic')
 
@@ -52,6 +50,8 @@ class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
     Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
     Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Name = db.Column(db.String)
     Creator = db.Column(db.String)
     Weight = db.Column(db.String)
@@ -93,12 +93,13 @@ class Client(db.Model):
     Price = db.Column(db.String)
     Site = db.Column(db.String)
     Holding = db.Column(db.String)
-    Item_groups = db.relationship('Item_groups', backref='Client', lazy='dynamic')
+    Items = db.relationship('Item', backref='Client', lazy='dynamic')
     Livestock_all = db.Column(db.String)
     Livestock_milking = db.Column(db.String)
     Livestock_milkyield = db.Column(db.String)
     Demand_item = db.Column(db.String)
     Demand_volume = db.Column(db.String)
+    Last_comment = db.Column(db.String)
 
 
 class Contacts(db.Model):
@@ -147,8 +148,8 @@ class Provider(db.Model):
     Group = db.Column(db.String)
     Price = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
-    Item_groups = db.relationship('Item_groups', backref='Provider', lazy='dynamic')
     Contacts = db.relationship('Contacts', backref='Provider', lazy='dynamic')
+    Items = db.relationship('Item', backref='Provider', lazy='dynamic')
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
     NDS = db.Column(db.String)
@@ -159,6 +160,7 @@ class Provider(db.Model):
     Merc = db.Column(db.String)
     Volume = db.Column(db.String)
     Holding = db.Column(db.String)
+    Last_comment = db.Column(db.String)
 
 
 
@@ -183,8 +185,9 @@ class Account(db.Model):
     Manger_id = db.Column(db.Integer)
 
 
-class DeliveryCar(db.Model):
+class Delivery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    Carrier_id = db.Column(db.Integer, db.ForeignKey('carrier.id'))
     Name = db.Column(db.String)
     Contact_Number = db.Column(db.String)
     Contact_Name = db.Column(db.String)
@@ -196,17 +199,6 @@ class DeliveryCar(db.Model):
     ExactCar = db.Column(db.String)
     Comment = db.Column(db.String)
     DoneContract = db.Column(db.String)
-
-
-class DeliveryTrain(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    Name = db.Column(db.String)
-    Contact_Number = db.Column(db.String)
-    Contact_Name = db.Column(db.String)
-    Adress = db.Column(db.String)
-    Segment = db.Column(db.String)
-    Active = db.Column(db.Boolean)
-    Debt_Credit = db.Column(db.String)
     Station = db.Column(db.String)
     Price = db.Column(db.Float)
 
@@ -220,7 +212,9 @@ class Carrier(db.Model):
     Name = db.Column(db.String)
     Region = db.Column(db.String)
     View = db.Column(db.String)
+    Delivery = db.relationship('Delivery', backref='Carrier', lazy='dynamic')
     Contacts = db.relationship('Contacts', backref='Carrier', lazy='dynamic')
+    Last_comment = db.Column(db.String)
 
 
 class Stock(db.Model):

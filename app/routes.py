@@ -156,8 +156,10 @@ def addContacts():
 @app.route('/addItems', methods=['GET'])
 def addItems():
     if request.args['category'] == 'client':
+        isClient = True
         Owner = models.Client.query.filter_by(id=request.args['id']).first()
     elif request.args['category'] == 'provider':
+        isClient = False
         Owner = models.Provider.query.filter_by(id=request.args['id']).first()
     else:
         return '400 BAD REQUEST'
@@ -165,20 +167,23 @@ def addItems():
     Items = []
     args = json.loads(request.args['contacts'])
     for i in args:
-        Contact = models.Contacts()
-        Contact.Name = i['first_name']
-        Contact.Last_name = i['last_name']
-        Contact.Number = i['phone']
-        Contact.Email = i['email']
-        Contact.Position = i['role']
-        if request.args['category'] == 'client':
-            Contact.Client_id = request.args['id']
-        elif request.args['category'] == 'provider':
-            Contact.Provider_id = request.args['id']
-        elif request.args['category'] == 'carrier':
-            Contact.Carrier_id = request.args['id']
-        Items.append(Contact)
-    Owner.Contacts = Items
+        Item = models.Item()
+        if isClient:
+            Item.Volume = i['item_volume']
+            Item.Creator = i['item_creator']
+            Item.Client_id = request.args['id']
+        else:
+            Item.NDS = i['item_vat']
+            Item.Fraction = i['item_fraction']
+            Item.Packing = i['item_packing']
+            Item.Weight = i['item_weight']
+            Item.Provider_id = request.args['id']
+
+        Item.Name = i['item_product']
+        Item.Cost = i['item_price']
+
+        Items.append(Item)
+    Owner.Items = Items
     db.session.commit()
 
     return 'OK'
@@ -248,6 +253,21 @@ def addProvider():
     db.session.commit()
 
     return 'OK'
+
+
+@app.route('/addComment', methods=['GET'])
+def addComment():
+    if request.args['category'] == 'client':
+        Owner = models.Client.query.filter_by(id=request.args['id']).first()
+    elif request.args['category'] == 'provider':
+        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+    elif request.args['category'] == 'carrier':
+        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+    else:
+        return '400 BAD REQUEST'
+
+    Owner.Comment = request['comment']
+    db.session.commit()
 
 
 @app.route('/addCarrier', methods=['GET'])
