@@ -193,7 +193,7 @@ def getItems():
     if request.args['category'] == 'client':
         client = request.args['id']
         Client = models.Client.query.filter_by(id=client).first()
-        return table_to_json(models.Item.query.filter_by(Owner=Client).all())
+        return table_to_json(models.Item.query.filter_by(Client=Client).all())
     elif request.args['category'] == 'provider':
         provider = request.args['id']
         Provider = models.Provider.query.filter_by(id=provider).first()
