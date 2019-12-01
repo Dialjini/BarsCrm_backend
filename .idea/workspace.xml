@@ -52,8 +52,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
+            <state relative-caret-position="357">
+              <caret line="21" column="29" lean-forward="true" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -303,20 +303,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1571908541946</updated>
-    </task>
-    <task id="LOCAL-00003" summary="refactoring">
-      <created>1572949626225</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1572949626225</updated>
-    </task>
-    <task id="LOCAL-00004" summary="refactoring">
-      <created>1572950912124</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1572950912124</updated>
     </task>
     <task id="LOCAL-00005" summary="add module db_methods">
       <created>1572952208357</created>
@@ -647,7 +633,21 @@
       <option name="project" value="LOCAL" />
       <updated>1575217836572</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="try this">
+      <created>1575217956486</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1575217956486</updated>
+    </task>
+    <task id="LOCAL-00053" summary="lol missclick">
+      <created>1575218069653</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1575218069653</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TodoView">
@@ -742,8 +742,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix provider bug and add getCarriers method" />
-    <MESSAGE value="clear dbase" />
     <MESSAGE value="fix Provider bug" />
     <MESSAGE value="rebuild new card recognition" />
     <MESSAGE value="rebuild test database" />
@@ -767,7 +765,9 @@
     <MESSAGE value="debug for ofswg" />
     <MESSAGE value="fix date bug" />
     <MESSAGE value="that's better" />
-    <option name="LAST_COMMIT_MESSAGE" value="that's better" />
+    <MESSAGE value="try this" />
+    <MESSAGE value="lol missclick" />
+    <option name="LAST_COMMIT_MESSAGE" value="lol missclick" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -933,8 +933,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="29" lean-forward="true" selection-start-line="18" selection-start-column="29" selection-end-line="18" selection-end-column="29" />
+        <state relative-caret-position="357">
+          <caret line="21" column="29" lean-forward="true" selection-start-line="21" selection-start-column="29" selection-end-line="21" selection-end-column="29" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

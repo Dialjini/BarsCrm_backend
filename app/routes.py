@@ -13,8 +13,11 @@ def table_to_json(query):
         if '_sa_instance_state' in subres:
             subres.pop('_sa_instance_state', None)
         if 'Date' in subres:
-            if subres['Date'] != None and subres['Date'].type != str:
-                subres['Date'] = subres['Date'].strftime("%d.%m.%Y")
+            if subres['Date'] != None:
+                try:
+                    subres['Date'] = subres['Date'].strftime("%d.%m.%Y")
+                except Exception:
+                    print(subres['Date'])
 
         result.append(subres)
     return json.dumps(result)
