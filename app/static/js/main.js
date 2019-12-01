@@ -217,3 +217,47 @@ function saveInfoCard(id, close = false, elem = null) {
         }
     }
 }
+let getCommentsInfo = (function() {
+    return {
+        getRequest: function (data) {
+            if (typeof data === typeof '') data = data.split('_');
+            $.ajax({
+                url: '/getMessages',
+                type: 'GET',
+                data: {category: data[0], id: data[1]},
+                dataType: 'html',
+                success: function(result) {
+                    inputComments(JSON.parse(result), data);
+                }
+            });
+        }
+    }
+    function inputComments(comments, data) {
+        if (comments.length == 0) 
+            addComment();
+        else {
+            $(`#messages, #comments`).empty();
+            let list_managers = [];
+            for (let i = 0; i < comments.length; i++) {
+                list_managers.push({
+                    name: comments[i].Manager,
+                    date: comments[i].Date.split(',')[0]
+                });
+            }
+            for (let i = 0; i < list_managers.length - 1; i++) {
+                for (let j = i + 1; j < list_managers.length; j++) {
+                    if (list_managers[i].name === list_managers[j].name) {
+                        list_managers.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+            for (let i = 0; i < list_managers.length; i++)
+                addComment(list_managers[i], data)
+            $('#add_new_comment').attr('onclick', 'addComment()')
+        }
+        if ($(`#messages`).children().length <= 1) {
+            $(`[name="remove_last_comment"]`).fadeOut(0);
+        }
+    }
+})();

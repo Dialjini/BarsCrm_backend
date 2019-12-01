@@ -171,7 +171,7 @@ function createCardMenu(element, index = 0) {
     }
     
     $('.info').append(cardMenu());
-    $('.next .btn').attr('name', getInfo.join('_'));
+    $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
     itemSelection(getInfo[0], selectedLine);
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
@@ -192,15 +192,6 @@ function createCardMenu(element, index = 0) {
                 }
             });
             $.ajax({
-                url: '/getMessages',
-                type: 'GET',
-                data: {category: getInfo[0], id: getInfo[1]},
-                dataType: 'html',
-                success: function(result) {
-                    inputComments(JSON.parse(result));
-                }
-            });
-            $.ajax({
                 url: '/getContacts',
                 type: 'GET',
                 data: {category: getInfo[0], id: getInfo[1]},
@@ -209,30 +200,7 @@ function createCardMenu(element, index = 0) {
                     inputContacts(JSON.parse(result));
                 }
             });
-        }
-        function inputComments(comments) {
-            console.log(comments);
-            if (comments.length == 0) 
-                addComment();
-            else {
-                let list_managers = [];
-                for (let i = 0; i < comments.length; i++) {
-                    list_managers.push(comments[i].Manager);
-                }
-                for (let i = 0; i < list_managers.length - 1; i++) {
-                    for (let j = i + 1; j < list_managers.length; j++) {
-                        if (list_managers[i] === list_managers[j]) {
-                            list_managers.splice(j, 1);
-                            j--;
-                        }
-                    }
-                }
-                for (let i = 0; i < list_managers.length; i++)
-                    addComment(list_managers[i], comments[0], getInfo)
-            }
-            if ($(`#messages`).children().length <= 1) {
-                $(`[name="remove_last_comment"]`).fadeOut(0);
-            }
+            getCommentsInfo.getRequest(getInfo);
         }
         function inputItems(items) {
             if (items.length == 0) 
@@ -417,7 +385,7 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
+                            <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">

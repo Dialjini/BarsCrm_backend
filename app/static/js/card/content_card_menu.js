@@ -334,7 +334,7 @@ function returnBack(element) {
     $('#exposed_list').append(returnEmptyRow);
 }
 // Добавление комментариев в карточках
-function addComment(manager = '', selectedLine, data) {
+function addComment(manager = '', data) {
     if (manager === '') {
         $(`#messages`).empty();
         $(`#comments`).empty();
@@ -352,8 +352,7 @@ function addComment(manager = '', selectedLine, data) {
                             <option>Должность 2</option>
                             <option>Должность 3</option>
                         <select>
-                    </td>
-                `
+                    </td>`
             })
         );
         $('#comments').append(
@@ -362,23 +361,21 @@ function addComment(manager = '', selectedLine, data) {
                 append: `
                     <td>
                         <input type="text" onchange="saveCard()" placeholder="Комментарий" id="message_comment" class="m_comment">
-                    </td>
-                `
+                    </td>`
             })
         )
+        $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
     } else {
-        selectedLine.Date = selectedLine.Date.split(',')[0];
         $('#messages').append(
             $('<tr>', {
                 id: 'message',
                 append: `
                     <td>
-                        <div type="text" id="message_date" class="m_date">${selectedLine.Date}</div>
+                        <div type="text" id="message_date" class="m_date">${manager.date}</div>
                     </td>
                     <td>
-                        <div type="text" onclick="showComments(this)" id="comments_${data[0]}_${data[1]}" class="m_role static">${manager}</div>
-                    </td>
-                `
+                        <div type="text" onclick="showComments(this)" id="comments_${data[0]}_${data[1]}" class="m_role static">${manager.name}</div>
+                    </td>`
             })
         );
     }
@@ -397,20 +394,19 @@ function showComments(element) {
         }
     });
     function showAllComments(result, value) {
-        let comments = [];
         for (let i = 0; i < result.length; i++) {
             if (value === result[i].Manager) {
-                comments.push({
+                let comments = {
                     date: result[i].Date.split(',')[0],
                     comment: result[i].Note
-                })
+                }
                 $('#comments').append(
                     $('<tr>', {
                         id: 'comment',
                         append: `
-                            <td>${comments[i].date}</td>
+                            <td>${comments.date}</td>
                             <td>
-                                <div class="m_comment done">${comments[i].comment}</div>
+                                <div class="m_comment done">${comments.comment}</div>
                             </td>
                         `
                     })
