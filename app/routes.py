@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, redirect, session, request
 from app import models, db
+from time import strptime
 
 import json
 
@@ -13,7 +14,7 @@ def table_to_json(query):
             subres.pop('_sa_instance_state', None)
         if 'Date' in subres:
             if subres['Date'] != None:
-                subres['Date'] = subres['Date'].strftime("%m/%d/%Y, %H:%M:%S")
+                subres['Date'] = subres['Date'].strftime("%d/%m/%Y, %H:%M:%S")
 
         result.append(subres)
     return json.dumps(result)
@@ -108,7 +109,7 @@ def addMessages():
     args = json.loads(request.args['comments'])
     for i in args:
         Message = models.Notes()
-        Message.Date = i['comment_date']
+        Message.Date = strptime(i['comment_date'], '%d.%m.%Y')
         Message.Manager = i['comment_role']
         Message.Note = i['comment_content']
         if request.args['category'] == 'client':
