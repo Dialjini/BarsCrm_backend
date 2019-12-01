@@ -123,6 +123,8 @@ class Contacts(db.Model):
 class Notes(db.Model):
     NoteId = db.Column(db.Integer, primary_key=True)
     Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
+    Carrier_id = db.Column(db.Integer, db.ForeignKey('carrier.id'))
     Done = db.Column(db.Boolean)
     Type = db.Column(db.String)
     Date = db.Column(db.Date)
@@ -161,7 +163,7 @@ class Provider(db.Model):
     Volume = db.Column(db.String)
     Holding = db.Column(db.String)
     Last_comment = db.Column(db.String)
-
+    Notes = db.relationship('Notes', backref='Provider', lazy='dynamic')
 
 
 class Debt(db.Model):
@@ -212,6 +214,7 @@ class Carrier(db.Model):
     Name = db.Column(db.String)
     Region = db.Column(db.String)
     View = db.Column(db.String)
+    Notes = db.relationship('Notes', backref='Carrier', lazy='dynamic')
     Delivery = db.relationship('Delivery', backref='Carrier', lazy='dynamic')
     Contacts = db.relationship('Contacts', backref='Carrier', lazy='dynamic')
     Last_comment = db.Column(db.String)

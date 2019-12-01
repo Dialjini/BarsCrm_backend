@@ -86,21 +86,40 @@ def getMessages():
     elif request.args['category'] == 'provider':
         provider = request.args['id']
         Provider = models.Provider.query.filter_by(id=provider).all()
-        return table_to_json(models.Notes.query.filter_by(Author=Provider).all())
+        return table_to_json(models.Notes.query.filter_by(Provider=Provider).all())
     elif request.args['category'] == 'carrier':
         carrier = request.args['id']
         Carrier = models.Provider.query.filter_by(id=carrier).all()
-        return table_to_json(models.Notes.query.filter_by(Author=Carrier).all())
+        return table_to_json(models.Notes.query.filter_by(Carrier=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
 
 
 @app.route('/addMessages', methods=['GET'])
-def addMessags():
-    data = request.args
-    Message = models.Notes()
+def addMessages():
+    if request.args['category'] == 'client':
+        Owner = models.Client.query.filter_by(id=request.args['id']).first()
+    elif request.args['category'] == 'provider':
+        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+    else:
+        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
 
-    # TODO СООБЩЕНИЯ
+    Messages = []
+    args = json.loads(request.args['comments'])
+    for i in args:
+        Message = models.Notes()
+        Message.Date = i['comment_date']
+        Message.Manager = i['comment_role']
+        Message.Note = i['comment_content']
+        if request.args['category'] == 'client':
+            Message.Client_id = request.args['id']
+        elif request.args['category'] == 'provider':
+            Message.Provider_id = request.args['id']
+        elif request.args['category'] == 'carrier':
+            Message.Carrier_id = request.args['id']
+        Messages.append(Message)
+    Owner.Notes = Messages
+    db.session.commit()
 
     return 'OK'
 
