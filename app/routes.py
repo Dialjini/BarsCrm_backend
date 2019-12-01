@@ -109,6 +109,9 @@ def addMessages():
     args = json.loads(request.args['comments'])
     for i in args:
         Message = models.Notes()
+        print('----------------')
+        print(args)
+        print('----------------')
         Message.Date = strptime(i['comment_date'], '%d.%m.%Y')
         Message.Manager = i['comment_role']
         Message.Note = i['comment_content']
