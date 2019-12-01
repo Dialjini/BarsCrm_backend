@@ -89,11 +89,11 @@ def getMessages():
         return table_to_json(models.Notes.query.filter_by(Author=Client).all())
     elif request.args['category'] == 'provider':
         provider = request.args['id']
-        Provider = models.Provider.query.filter_by(id=provider).all()
+        Provider = models.Provider.query.filter_by(id=provider).first()
         return table_to_json(models.Notes.query.filter_by(Provider=Provider).all())
     elif request.args['category'] == 'carrier':
         carrier = request.args['id']
-        Carrier = models.Provider.query.filter_by(id=carrier).all()
+        Carrier = models.Provider.query.filter_by(id=carrier).first()
         return table_to_json(models.Notes.query.filter_by(Carrier=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
