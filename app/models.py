@@ -127,7 +127,7 @@ class Notes(db.Model):
     Carrier_id = db.Column(db.Integer, db.ForeignKey('carrier.id'))
     Done = db.Column(db.Boolean)
     Type = db.Column(db.String)
-    Date = db.Column(db.Date)
+    Date = db.Column(db.String)
     Note = db.Column(db.String)
     Manager = db.Column(db.String)
     File_Path = db.Column(db.String)

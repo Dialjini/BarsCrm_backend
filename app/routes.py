@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, redirect, session, request
 from app import models, db
-from time import strptime
+from datetime import datetime
 
 import json
 
@@ -105,24 +105,19 @@ def addMessages():
     else:
         Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
 
-    Messages = []
-    args = json.loads(request.args['comments'])
-    for i in args:
-        Message = models.Notes()
-        print('----------------')
-        print(args)
-        print('----------------')
-        Message.Date = strptime(i['comment_date'], '%d.%m.%Y')
-        Message.Manager = i['comment_role']
-        Message.Note = i['comment_content']
-        if request.args['category'] == 'client':
-            Message.Client_id = request.args['id']
-        elif request.args['category'] == 'provider':
-            Message.Provider_id = request.args['id']
-        elif request.args['category'] == 'carrier':
-            Message.Carrier_id = request.args['id']
-        Messages.append(Message)
-    Owner.Notes = Messages
+    i = json.loads(request.args['comments'])
+    Message = models.Notes()
+
+    Message.Date = i['comment_date']
+    Message.Manager = i['comment_role']
+    Message.Note = i['comment_content']
+    if request.args['category'] == 'client':
+        Message.Client_id = request.args['id']
+    elif request.args['category'] == 'provider':
+        Message.Provider_id = request.args['id']
+    elif request.args['category'] == 'carrier':
+        Message.Carrier_id = request.args['id']
+    Owner.Notes.append(Message)
     db.session.commit()
 
     return 'OK'
