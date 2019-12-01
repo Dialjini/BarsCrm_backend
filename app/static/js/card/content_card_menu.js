@@ -343,10 +343,10 @@ function addComment(manager = '', data) {
                 id: 'message',
                 append: `
                     <td>
-                        <input type="text" onchange="saveCard()" placeholder="01.01.70" id="message_date" class="m_date">
+                        <input type="text" onchange="saveCard()" placeholder="01.01.70" id="comment_date" class="m_date">
                     </td>
                     <td>
-                        <select onselect="saveCard()" id="message_role" class="m_role">
+                        <select onselect="saveCard()" id="comment_role" class="m_role">
                             <option value="Не указано" selected disabled>Не указано</option>
                             <option>Должность 1</option>
                             <option>Должность 2</option>
@@ -360,7 +360,7 @@ function addComment(manager = '', data) {
                 id: 'comment',
                 append: `
                     <td>
-                        <input type="text" onchange="saveCard()" placeholder="Комментарий" id="message_comment" class="m_comment">
+                        <input type="text" onchange="saveCard()" placeholder="Комментарий" id="comment_content" class="m_comment">
                     </td>`
             })
         )
@@ -397,14 +397,14 @@ function showComments(element) {
         for (let i = 0; i < result.length; i++) {
             if (value === result[i].Manager) {
                 let comments = {
-                    date: result[i].Date.split(',')[0],
+                    date: result[i].Date.split(' ')[0],
                     comment: result[i].Note
                 }
                 $('#comments').append(
                     $('<tr>', {
                         id: 'comment',
                         append: `
-                            <td>${comments.date}</td>
+                            <td width="70px">${comments.date}</td>
                             <td>
                                 <div class="m_comment done">${comments.comment}</div>
                             </td>

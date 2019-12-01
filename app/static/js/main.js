@@ -220,16 +220,46 @@ function saveInfoCard(id, close = false, elem = null) {
 let getCommentsInfo = (function() {
     return {
         getRequest: function (data) {
-            if (typeof data === typeof '') data = data.split('_');
-            $.ajax({
-                url: '/getMessages',
-                type: 'GET',
-                data: {category: data[0], id: data[1]},
-                dataType: 'html',
-                success: function(result) {
-                    inputComments(JSON.parse(result), data);
+            if (typeof data === typeof '') {
+                // Сохраняем комментарий
+                let list = {
+                    comment_date: $('#comment_date').val(),
+                    comment_role: $('#comment_role').val(),
+                    comment_content: $('#comment_content').val()
+                };
+                data = data.split('_');
+                let count = 0, array = Object.keys(list);
+                for (let i = 0; i < 3; i++) {
+                    if (list[array[i]] == '' || list[array[i]] == null) {
+                        count++;
+                    } 
                 }
-            });
+                if (count == 3) {
+                    getComments();
+                    return;
+                }
+                $.ajax({
+                    url: '/addMessages',
+                    type: 'GET',
+                    data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
+                    dataType: 'html',
+                    success: function(result) {
+                        console.log(result);
+                        getComments()
+                    }
+                });
+            } else { getComments() }
+            function getComments() {
+                $.ajax({
+                    url: '/getMessages',
+                    type: 'GET',
+                    data: {category: data[0], id: data[1]},
+                    dataType: 'html',
+                    success: function(result) {
+                        inputComments(JSON.parse(result), data);
+                    }
+                });
+            }
         }
     }
     function inputComments(comments, data) {
@@ -241,7 +271,7 @@ let getCommentsInfo = (function() {
             for (let i = 0; i < comments.length; i++) {
                 list_managers.push({
                     name: comments[i].Manager,
-                    date: comments[i].Date.split(',')[0]
+                    date: comments[i].Date.split(' ')[0]
                 });
             }
             for (let i = 0; i < list_managers.length - 1; i++) {

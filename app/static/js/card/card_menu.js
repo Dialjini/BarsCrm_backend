@@ -532,7 +532,7 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
+                            <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">
@@ -651,7 +651,7 @@ function createCardMenu(element, index = 0) {
                     <div class="history">
                         <div class="title">
                             <div>История обращений</div>
-                            <img onclick="addComment()" class="add_something" src="static/images/add.png">
+                            <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
                         </div>
                         <div class="messages">
                             <table class="message">
