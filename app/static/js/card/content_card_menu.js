@@ -338,6 +338,12 @@ function addComment(manager = '', data) {
     if (manager === '') {
         $(`#messages`).empty();
         $(`#comments`).empty();
+        let list_role = [];
+        $('#member .member').each(function(i, element) {
+            if ($(element).children()[0].children[0].value != '') {
+                list_role.push($(element).children()[0].children[0].value)
+            }
+        });
         $('#messages').append(
             $('<tr>', {
                 id: 'message',
@@ -348,9 +354,7 @@ function addComment(manager = '', data) {
                     <td>
                         <select onselect="saveCard()" id="comment_role" class="m_role">
                             <option value="Не указано" selected disabled>Не указано</option>
-                            <option>Должность 1</option>
-                            <option>Должность 2</option>
-                            <option>Должность 3</option>
+                            ${getRoleList()}
                         <select>
                     </td>`
             })
@@ -365,6 +369,13 @@ function addComment(manager = '', data) {
             })
         )
         $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
+        function getRoleList() {
+            let list = '';
+            for (let i = 0; i < list_role.length; i++) {
+                list = list.concat(`<option value="${list_role[i]}">${list_role[i]}</option>`)
+            }
+            return list;
+        }
     } else {
         $('#messages').append(
             $('<tr>', {
