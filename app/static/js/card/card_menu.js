@@ -95,6 +95,15 @@ function createCardMenu(element, index = 0) {
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
                 selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
+                
+                let list = Object.keys(selectedLine);
+                for (let elem = 0; elem < list.length; elem++) {
+                    if (selectedLine[list[elem]] == null || selectedLine[list[elem]] == 'null'){ 
+                        selectedLine[list[elem]] = '';
+
+                    }
+                }
+
                 titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
@@ -180,7 +189,7 @@ function createCardMenu(element, index = 0) {
         if (getInfo[1] == 'new') {
             addMember(getInfo[0]);
             addRow(`${getInfo[0]}-group`);
-            $('[name="remove_last_member"], [name="remove_last_group"]').fadeOut(0);
+            $('[name="remove_last_group"]').fadeOut(0);
         } else {
             $.ajax({
                 url: '/getItems',
@@ -222,10 +231,6 @@ function createCardMenu(element, index = 0) {
                     addMember(getInfo[0], contacts[i]);
                 }
             }
-            // Если контакт один или ноль
-            if ($(`#member`).children().length <= 1) {
-                $(`[name="remove_last_member"]`).fadeOut(0);
-            }
         }
     }
 
@@ -236,21 +241,11 @@ function createCardMenu(element, index = 0) {
     // Проверка на заполненность Контактов и строк таблиц (Не у Склада)
     } else { 
         try {
-            if ($('#members').html().trim() !== '') {
-                $('#remove_last_member').fadeIn(0);
-            }
             if ($('#group').html().trim() !== '') {
                 $('#remove_last_row').fadeIn(0);
             }
         } catch {}
     }
-    // Вывод последнего комментария
-    // <tr id="comment_1">
-    //     <td id="date" style="width: 15%"></td>
-    //     <td id="role" style="width: 20%"></td>
-    //     <td id="comment" style="width: 65%"></td>
-    //     <td id="manager" style="width: 10%" class="lightgray"></td>
-    // </tr>
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
         let content = $('<div>', { 
@@ -259,6 +254,7 @@ function createCardMenu(element, index = 0) {
                 class: 'table_block',
                 append: $('<tr>', {
                     append: $('<td>', {
+                        class: 'bold',
                         html: 'Наименование'
                     }).add($('<td>', {
                         append: $('<input>', {
@@ -359,7 +355,6 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                            <img name="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                     <div class="info_block">
@@ -415,6 +410,7 @@ function createCardMenu(element, index = 0) {
                 class: 'table_block',
                 append: $('<tr>', {
                     append: $('<td>', {
+                        class: 'bold',
                         html: 'Наименование'
                     }).add($('<td>', {
                         append: $('<input>', {
@@ -511,7 +507,6 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
-                            <img name="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                     <div class="info_block">
@@ -564,6 +559,7 @@ function createCardMenu(element, index = 0) {
                 css: {'margin-right': '50px'},
                 append: $('<tr>', {
                     append: $('<td>', {
+                        class: 'bold',
                         html: 'Наименование'
                     }).add($('<td>', {
                         append: $('<input>', {
@@ -616,7 +612,6 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember('carrier')">
-                            <img name="remove_last_member" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                     <div class="info_block" style="width: fit-content">
@@ -630,15 +625,7 @@ function createCardMenu(element, index = 0) {
                                     <td>Водитель</td>
                                     <td>Цена</td>
                                 </tr>
-                                <tbody id="group">
-                                    <tr>
-                                        <td class="date"><input value="${selectedLine[3]}" type="text"></td>
-                                        <td class="name"><input value="${selectedLine[3]}" type="text"></td>
-                                        <td class="stock"><input value="${selectedLine[3]}" type="text"></td>
-                                        <td class="driver"><input value="${selectedLine[3]}" type="text"></td>
-                                        <td class="price"><input value="${selectedLine[3]}" type="text"></td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="group"></tbody>
                             </table>
                         </div>
                         <div class="events">
@@ -792,9 +779,7 @@ function createCardMenu(element, index = 0) {
                                     <th>Дата</th>
                                     <th>Сумма</th>
                                 </tr>
-                                <tbody id="group">
-
-                                </tbody>
+                                <tbody id="group"></tbody>
                             </table>
                         </div>
                         <div class="events">
@@ -996,7 +981,6 @@ function createCardMenu(element, index = 0) {
                 `
     }
 }
-
 // Переход на предыдущую вкладку карточки
 function comeBack(elem) {
     for (let i = 0; i < dataName.length; i++) {
@@ -1024,7 +1008,9 @@ function comeBack(elem) {
 }
 // Переход на вкладку оформления договора карточки
 function contractNext(elem) {
+    if (!checkEmail()) return;
     saveInfoCard(elem.name, true, elem);
+    getCommentsInfo.getRequest(elem.name);
     saveCard();
 }
 // Переход на вкладку выставления счета
@@ -1060,7 +1046,16 @@ function completionCard(element) {
 // Закрытие карточки
 function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
-    if (!id.includes('new')) saveInfoCard(id);
+    if (id[1] == 'user') {
+        getTableData(saveTableAndCard);
+        return;
+    }
+    if (!id.includes('new') && !id.includes('stock') && !id.includes('delivery')) { 
+        saveInfoCard(id);
+        let idSplit = id.split('_');
+        let idComment = `${idSplit[0]}_${idSplit[idSplit.length - 1]}`;
+        getCommentsInfo.getRequest(idComment);
+     }
     else getTableData(saveTableAndCard);
 
     // Если открыта карточка Выставления счета в Счете - закрыть ее
@@ -1091,47 +1086,41 @@ function getTitleInfo(element) {
             })
         }
 
+        function getUserInfo() {
+            return $('<div>', { class: 'gray', id: 'user',
+                        append: $('<div>', {
+                            class: 'drop_menu',
+                            id: `${element.id}-user-${element.status}`,
+                            html: 'Открепить карточку от менеджера',
+                            onclick: 'detachmentCard(this)'
+                        }).add($('<div>', {
+                            onclick: 'unfastenCard(this)',
+                            class: 'hover',
+                            id: `remove-${element.id}-${element.status}`,
+                            append: $('<img>', {
+                                src: 'static/images/dropmenu_black.svg',
+                                class: 'drop_down_img padl',
+                            }).add($('<span>', { html: username, class: 'marl' }))
+                        }))
+                    })
+        }
+
         if (element.id === 'stock') {
             return $('<div>', {
                 class: 'right_side',
                 append: closeButton()
             })
         } else {
-            return $('<div>', {
-                class: 'right_side',
-                append: $('<div>', { class: 'gray', id: 'user',
-                    append: $('<div>', {
-                        class: 'drop_menu',
-                        id: `${element.id}-user-`,
-                        html: 'Открепить карточку от менеджера'
-                    }).add($('<div>', {
-                        onclick: 'unfastenCard(this)',
-                        class: 'hover',
-                        id: `remove-${element.id}-${element.status}`,
-                        append: $('<img>', {
-                            src: 'static/images/dropmenu_black.svg',
-                            class: 'drop_down_img padl',
-                        }).add($('<span>', { html: username, class: 'marl' }))
-                    }))
-                }).add(closeButton())
-            })
+            let block = $('<div>', { class: 'right_side' });
+            if (!element.status.includes('contract') && !element.status.includes('new')) {
+                block.append(getUserInfo());
+            }
+            block.append(closeButton());
+            return block;
         }
     }
 
     title.append(getRightSide());
 
     return title;
-}
-// Смена режима в Выставлении счета (показатели)
-let enteredValues = 0;
-function switchMode(element) {
-    let selectInput = $(`#${element.id.replace(/mode_/g, 'total_')}_inv`);
-    if ($(element).css('background-image').includes('lock.svg')) {
-        $(element).css('background-image', 'url(static/images/unlc.svg)');
-        selectInput.removeAttr('disabled');
-    } else if ($(element).css('background-image').includes('unlc.svg')) {
-        $(element).css('background-image', 'url(static/images/lock.svg)');
-        selectInput.attr('disabled', 'disabled');
-        // Автоматическое вычисление для других показателей
-    }
 }

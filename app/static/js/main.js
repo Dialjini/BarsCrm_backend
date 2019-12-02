@@ -1,6 +1,7 @@
 $(document).ready(function() {
     addButtonsSubcategory(0);
     getTableData(categoryInListClient);
+    getTaskList();
     createCategoryMenu();
     createCTButtons();
     linkField();
@@ -92,6 +93,10 @@ function saveInfoCard(id, close = false, elem = null) {
     let idData = {};
     const data = id.split('_');
     let card = data[data.length - 1];
+
+    if (card !== 'contract') {
+        if (!checkEmail()) return
+    }
                                                      // Временно, пока не будет заполнение счетов и дебита
     if (card === 'contract' || data[0] == 'stock' || data[0] == 'account' || data[0] == 'debit') {
         getTableData(saveTableAndCard);
@@ -105,7 +110,6 @@ function saveInfoCard(id, close = false, elem = null) {
                 idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
             }
             additionalData(i);
-            console.log(idData);
             createOrSaveCard.getRequest(idData, request);
             break;
         }
@@ -146,6 +150,9 @@ function saveInfoCard(id, close = false, elem = null) {
                     item_weight: $(element).children()[4].children[0].value,
                     item_fraction: $(element).children()[5].children[0].value,
                 })
+            } else {
+                // Переводчики
+                return;
             }
             let array = Object.keys(items[items.length - 1]);
             let count = 0;
@@ -170,11 +177,11 @@ function saveInfoCard(id, close = false, elem = null) {
         }
         $('#member .member').each(function(i, element) {
             members.push({
-                role: $(element).children()[0].children[0].value,
-                phone: $(element).children()[0].children[1].value,
-                last_name: $(element).children()[1].children[0].value,
-                first_name: $(element).children()[1].children[1].value,
-                email: $(element).children()[1].children[2].value
+                role: $(element).children()[0].children[0].children[0].value,
+                phone: $(element).children()[0].children[0].children[1].value,
+                last_name: $(element).children()[0].children[1].children[0].value,
+                first_name: $(element).children()[0].children[1].children[1].value,
+                email: $(element).children()[0].children[1].children[2].value
             })
             let data = Object.keys(members[members.length - 1]);
             let count = 0;

@@ -190,8 +190,9 @@ function invoicingContentCard(elem) {
 
         for (let i = 0; i < 3; i++) {
             tbody = tbody.add($('<tr>', {
-                prepend: $('<td>', { colspan: 10 }),
+                prepend: $('<td>', { colspan: 9, css: {'border': 'none'} }),
                 append: $('<td>', {
+                    colspan: 2,
                     class: 'fz10',
                     append: $('<div>', {
                         class: 'flex jc-sb',
@@ -233,23 +234,23 @@ function invoicingContentCard(elem) {
                 class: 'costs gray',
                 html: ` <div class="costs_element">
                             <span>Всего затраты</span>
-                            <input type="number" id="total_costs_inv" class="total_count red bold mrl" value="15000">
-                            <div class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
+                            <input type="number" id="total_costs_inv" class="total_count red bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
                         </div> 
                         <div class="costs_element">
                             <span>Скидка</span> 
-                            <input type="number" id="total_discount_inv" class="total_count bold mrl" value="5000">
-                            <div class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
+                            <input type="number" id="total_discount_inv" class="total_count bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Привет</span> 
-                            <input type="number" id="total_privet_inv" class="total_count bold mrl" value="5000">
-                            <div class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
+                            <input type="number" id="total_privet_inv" class="total_count bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Доставка</span> 
-                            <input type="number" id="total_delivery_inv" class="total_count bold mrl" value="5000">
-                            <div class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
+                            <input type="number" id="total_delivery_inv" class="total_count bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>`,
             })
         })
@@ -280,6 +281,60 @@ function invoicingContentCard(elem) {
             .add(getContentCard([getTitleTable, getRowsTable], ''))
             .add(getContentCard([getTitleFilterList, getFilterList], 5))
             .add(nextStepButtons());
+}
+let list_inv = [
+    { disable: false, id: 'total_discount_inv'},
+    { disable: false, id: 'total_privet_inv'},
+    { disable: false, id: 'total_delivery_inv'},
+]
+// Смена режима в Выставлении счета (показатели)
+function switchMode(element) {
+    let selectInput = $(`#${element.id.replace(/mode_/g, 'total_')}_inv`);
+    if ($(element).attr('name') == 'lock') {
+        $(element).css('background-image', 'url(static/images/unlc.svg)');
+        $(element).attr('name', 'unlock');
+        selectInput.removeAttr('disabled');
+        selectInput.removeClass('disable');
+        for (let i = 0; i < list_inv.length; i++) {
+            if (list_inv[i].id == selectInput[0].id) {
+                list_inv[i].disable = false;
+            }
+        }
+    } else if ($(element).attr('name') == 'unlock') {
+        $(element).css('background-image', 'url(static/images/lock.svg)');
+        $(element).attr('name', 'lock');
+        selectInput.attr('disabled', 'disabled');
+        selectInput.addClass('disable');
+        if ($('#total_costs_inv').val() == '') {
+            let value = 0;
+            for (let i = 0; i < list_inv.length; i++) {
+                value += +$(`#${list_inv[i].id}`).val();
+            }
+            $('#total_costs_inv').val(value);
+        } else {
+            let disableValue = 0;
+            for (let i = 0; i < list_inv.length; i++) {
+                if (list_inv[i].id == selectInput[0].id) {
+                    list_inv[i].disable = true;
+                }
+            }
+            let amount = 3;
+            for (let i = 0; i < list_inv.length; i++) {
+                if (list_inv[i].disable) {
+                    amount--;
+                    disableValue += +$(`#${list_inv[i].id}`).val();
+                }
+            }
+            let value = $('#total_costs_inv').val() - disableValue;
+            if (typeof value == typeof '') return;
+            let averageValue = Math.round(value / amount);
+            for (let i = 0; i < list_inv.length; i++) {
+                if (!list_inv[i].disable) {
+                    $(`#${list_inv[i].id}`).val(averageValue);
+                }
+            }
+        }
+    }
 }
 // Временная переменная
 const info = [
@@ -340,8 +395,8 @@ function addComment(manager = '', data) {
         $(`#comments`).empty();
         let list_role = [];
         $('#member .member').each(function(i, element) {
-            if ($(element).children()[0].children[0].value != '') {
-                list_role.push($(element).children()[0].children[0].value)
+            if ($(element).children()[0].children[0].children[0].value != '') {
+                list_role.push($(element).children()[0].children[0].children[0].value)
             }
         });
         $('#messages').append(
@@ -364,7 +419,7 @@ function addComment(manager = '', data) {
                 id: 'comment',
                 append: `
                     <td>
-                        <input type="text" onchange="saveCard()" placeholder="Комментарий" id="comment_content" class="m_comment">
+                        <textarea class="m_comment" id="comment_content" onchange="saveCard()"></textarea>
                     </td>`
             })
         )
@@ -417,7 +472,7 @@ function showComments(element) {
                         append: `
                             <td width="70px">${comments.date}</td>
                             <td>
-                                <div class="m_comment done">${comments.comment}</div>
+                                <div class="done"><pre>${comments.comment}</pre></div>
                             </td>
                         `
                     })
@@ -433,23 +488,94 @@ function addMember(id = 'client', selectedLine = '') {
     if (selectedLine == '') {
         selectedLine = {role: '', phone: '', last_name: '', first_name: '', email: ''};
     }
+    let count_members = 0;
+    $('#member .member').each(function(i, element) {
+        count_members++;
+    });
     $('#member').append($('<div>', {
         class: `member ${category.member}`,
+        id: `member_${count_members}`,
         append: $('<div>', {
-            class: 'top',
-            append: $('<input>', {placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.Position, type: 'text'
-            }).add('<input>',    {placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.Number, type: 'tel'
-            })
-        }).add($('<div>', {
-            class: 'bottom',
-            append: $('<input>', {placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.Last_name, type: 'text'
-            }).add('<input>',    {placeholder: 'Имя Отчество', class: 'first_name', id: 'first_name', onchange: 'saveCard()', value: selectedLine.Name, type: 'name'
-            }).add('<input>',    {placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', value: selectedLine.Email, type: 'email'
-            })
-        }))
+            class: 'm_info',
+            append: $('<div>', {
+                class: 'top',
+                append: $('<input>', { placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.Position, type: 'text', size: 'onkeydown()', onkeydown: 'widthRole(this)', onkeyup: 'onkeydown()', onkeypress: 'onkeydown()', onchange: 'onkeydown()'
+                }).add('<input>',    { placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.Number, type: 'tel'
+                })
+            }).add($('<div>', {
+                class: 'bottom',
+                append: $('<input>', { placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.Last_name, type: 'text'
+                }).add('<input>',    { placeholder: 'Имя Отчество', class: 'first_name', id: 'first_name', onchange: 'saveCard()', value: selectedLine.Name, type: 'name'
+                }).add('<input>',    { placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', onblur: 'checkEmail()', value: selectedLine.Email, type: 'email'
+                })
+            }))
+        }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)' }))
     }));
-    $('[name="remove_last_member"]').fadeIn(100);
+    $('#member .member').each(function(i, element) {
+        widthRole($(element).children()[0].children[0].children[0]);
+    });
     saveCard();
+}
+// Скрытие/Показ контакта
+function visOrHidContact(idElem) {
+    let id = idElem.split('_');
+    if (id[0] == 'visible') {
+        $(`#${idElem}`).attr('id', `hidden_${id[1]}`);
+        $(`#member_${id[1]}`).addClass('hidden');
+
+        $(`#member_${id[1]} #role`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} #phone`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} #last_name`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} #first_name`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} #email`).attr('disabled', 'disabled')
+
+        let save = $(`#member_${id[1]}`).remove();
+        $('#member').append(save);
+    } else {
+        $(`#${idElem}`).attr('id', `visible_${id[1]}`);
+        $(`#member_${id[1]}`).removeClass('hidden');
+
+        $(`#member_${id[1]} #role`).removeAttr('disabled')
+        $(`#member_${id[1]} #phone`).removeAttr('disabled')
+        $(`#member_${id[1]} #last_name`).removeAttr('disabled')
+        $(`#member_${id[1]} #first_name`).removeAttr('disabled')
+        $(`#member_${id[1]} #email`).removeAttr('disabled')
+
+        let save = $(`#member_${id[1]}`).remove();
+        $('#member').prepend(save);
+    }
+}
+// Автоширина поля Должность
+function widthRole(element) {
+    let width = $(element).val().length * 7;
+    if (width > 110) $(element).css('width', `${width}px`)
+    else $(element).css('width', '110px')
+}
+// Проверка email адреса 
+function checkEmail() {
+    let listEmail = [];
+    $('#member .member').each(function(i, element) {
+        let email = $(element).children()[0].children[1].children[2];
+        let value = email.value;
+        if (value == '') {
+            listEmail.push('true');
+            return false;
+        }
+        let check = value.match(/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/)
+        if (check == null) {
+            $(email).addClass('wrong_input');
+            setTimeout(function(){
+                $(email).removeClass('wrong_input');
+            }, 2250);
+            listEmail.push('false');
+        } else listEmail.push('true');
+    });
+    for (let i = 0; i < listEmail.length; i++) {
+        if (listEmail[i] == 'false') {
+            return false;
+        }
+    }
+    return true;
 }
 // Удаление последнего контакта в карточках
 // Удаление последней строки в таблицах карточек
@@ -548,33 +674,33 @@ function itemSelection(element, select) {
     saveCard();
 }
 // Открепление карточки от менеджера
-function unfastenCard(element) {
+function unfastenCard() {
     $('.drop_menu').fadeIn(200);
-    $('.drop_menu').click(function() {
-        let idName = element.id.replace(/remove-/g, '').split('-');
-        // Добавить карточку в список Карточки клиентов
-        closeCardMenu();
+}
+function detachmentCard(element) {
+    let idName = element.id.replace(/remove-/g, '').split('-');
+    // Добавить карточку в список Карточки клиентов
+    closeCardMenu(idName);
 
-        $('#empty_customer_cards').append($('<div>', {
-            class: 'fieldInfo padd',
-            id: `detached_card_${idName[1]}`, // Number
-            append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
-            .add($('<div>', {
-                class: 'row',
-                append: $('<div>', {
-                    class: 'descr',
-                    html: `Снято с ${username}`
-                }).add($('<div>', {
-                    class: 'time',
-                    html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDate()}</span>`
-                }))
+    $('#empty_customer_cards').append($('<div>', {
+        class: 'fieldInfo padd',
+        id: `detached_card_${idName[1]}`, // Number
+        append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
+        .add($('<div>', {
+            class: 'row',
+            append: $('<div>', {
+                class: 'descr',
+                html: `Снято с ${username}`
+            }).add($('<div>', {
+                class: 'time',
+                html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDate()}</span>`
             }))
-        }));
-        // Делать запрос на удаление менеджера из карточки
-        for (let i = 0; i < dataName.length; i++) {
-            if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
-        }
-    })
+        }))
+    }));
+    // Делать запрос на удаление менеджера из карточки
+    for (let i = 0; i < dataName.length; i++) {
+        if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
+    }
 }
 // Сохранение изменений в карточке
 function saveCard() {
