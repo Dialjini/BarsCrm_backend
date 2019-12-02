@@ -349,7 +349,7 @@ function addComment(manager = '', data) {
                 id: 'message',
                 append: `
                     <td>
-                        <input type="text" onchange="saveCard()" placeholder="01.01.70" id="comment_date" class="m_date">
+                        <input type="text" onchange="saveCard()" placeholder="01.01.2020" id="comment_date" class="m_date">
                     </td>
                     <td>
                         <select onselect="saveCard()" id="comment_role" class="m_role">
@@ -411,7 +411,7 @@ function showComments(element) {
                     date: result[i].Date.split(' ')[0],
                     comment: result[i].Note
                 }
-                $('#comments').append(
+                $('#comments').prepend(
                     $('<tr>', {
                         id: 'comment',
                         append: `

@@ -52,7 +52,9 @@ function getTableData(table, input = false, close = false) {
                                 table[0].lastCard[i] = null;
                             }
                         }
-                        table[1].pop();
+                        if (table[0].id !== 'delivery') {
+                            table[1].pop();
+                        } 
                         setTimeout(() => {
                             $('.card_menu, .overflow').remove();
                         }, 0);
@@ -244,7 +246,6 @@ let getCommentsInfo = (function() {
                     data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
                     dataType: 'html',
                     success: function(result) {
-                        console.log(result);
                         getComments()
                     }
                 });
@@ -277,6 +278,8 @@ let getCommentsInfo = (function() {
             for (let i = 0; i < list_managers.length - 1; i++) {
                 for (let j = i + 1; j < list_managers.length; j++) {
                     if (list_managers[i].name === list_managers[j].name) {
+                        if (list_managers[j].date != '')
+                            list_managers[i].date = list_managers[j].date
                         list_managers.splice(j, 1);
                         j--;
                     }
