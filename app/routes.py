@@ -144,6 +144,45 @@ def getContacts():
         return 'ERROR 400 BAD REQUEST'
 
 
+@app.route('/addStock', methods=['GET'])
+def addStock():
+    name = request.args['stock_name']
+    type = request.args['stock_type']
+    stock = models.Stock()
+    stock.Name = name
+    stock.Type = type
+
+    db.session.add(stock)
+    db.session.commit()
+
+
+@app.route('/addItemToStock', methods=['GET'])
+def addItemToStock():
+    data = request.args
+    Stocks = models.Stock.query.filter_by(id=data['stock_id']).all()
+    if len(Stocks):
+        Stock = Stocks[0]
+    else:
+        return 'Bad Stock'
+
+    item = models.Item()
+    item.Weight = data['item_weight']
+    item.Packing = data['item_packing']
+    item.Fraction = data['item_fraction']
+    item.Creator = data['item_creator']
+    item.Name = data['item_product']
+    item.Cost = data['item_price']
+    item.Volume = data['item_volume']
+    item.NDS = data['item_vat']
+
+    Stock.Items.append(item)
+    db.session.commit()
+
+
+@app.route('/getStocks', methods=['GET'])
+def getStocks():
+    return table_to_json(models.Stock.query.all())
+
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
     if request.args['category'] == 'client':
@@ -162,6 +201,7 @@ def addContacts():
         Contact.Number = i['phone']
         Contact.Email = i['email']
         Contact.Position = i['role']
+        Contact.Visible = i['visible']
         if request.args['category'] == 'client':
             Contact.Client_id = request.args['id']
         elif request.args['category'] == 'provider':

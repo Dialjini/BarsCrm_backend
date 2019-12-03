@@ -43,6 +43,7 @@ class Order(db.Model):
 class Item_groups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Group = db.Column(db.String)
+    # Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
     Item = db.relationship('Item', backref='Group', lazy='dynamic')
 
 
@@ -118,6 +119,7 @@ class Contacts(db.Model):
     Manager = db.Column(db.String)
     Date = db.Column(db.Date)
     Birthday = db.Column(db.Date)
+    Visible = db.Column(db.Boolean)
 
 
 class Notes(db.Model):
@@ -224,12 +226,13 @@ class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
     Product_Type = db.Column(db.String)
+    # Item_groups = db.relationship('Item_groups', backref='Stock', lazy='dynamic')
     Items = db.relationship('Item', backref='Stock', lazy='dynamic')
     Type = db.Column(db.String)
     Size = db.Column(db.String)
     Packing = db.Column(db.String)
     NDS = db.Column(db.String)
-    Cost_Price = db.Column(db.Float)
+    Cost_Price = db.Column(db.String)
 
 
 
