@@ -472,7 +472,7 @@ function showComments(element) {
                         append: `
                             <td width="70px">${comments.date}</td>
                             <td>
-                                <div class="done"><pre>${comments.comment}</pre></div>
+                                <div class="done"><p>${comments.comment}</p></div>
                             </td>
                         `
                     })

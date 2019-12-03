@@ -990,6 +990,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .area .last_comment td .done {
+  word-wrap: break-word;
   margin-top: 0;
   margin-bottom: 10px;
   padding-left: 15px;
