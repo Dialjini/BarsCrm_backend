@@ -32,6 +32,7 @@ function linkField() {
     // Подкатегория с вызовом модального окна
     $('.list').click(function() {
         const list = [
+            {width: 162, id: 'stock_group', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
             {width: 112, id: 'stock_product', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
             {width: 110, id: 'stock_packing', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
             {width: 99, id: 'stock_volume', list: ['10', '20', '30'] },

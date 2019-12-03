@@ -486,7 +486,7 @@ function addMember(id = 'client', selectedLine = '') {
     if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт'};
     else category = {class: 'phone', member: '', placeholder: 'Телефон'};
     if (selectedLine == '') {
-        selectedLine = {role: '', phone: '', last_name: '', first_name: '', email: ''};
+        selectedLine = {role: '', phone: '', last_name: '', first_name: '', email: '', visible: true};
     }
     let count_members = 0;
     $('#member .member').each(function(i, element) {
@@ -499,7 +499,7 @@ function addMember(id = 'client', selectedLine = '') {
             class: 'm_info',
             append: $('<div>', {
                 class: 'top',
-                append: $('<input>', { placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.Position, type: 'text', size: 'onkeydown()', onkeydown: 'widthRole(this)', onkeyup: 'onkeydown()', onkeypress: 'onkeydown()', onchange: 'onkeydown()'
+                append: $('<input>', { placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.Position, type: 'text', onkeydown: 'widthRole(this)', onkeyup: 'onkeydown()', onkeypress: 'onkeydown()', onchange: 'onkeydown()', maxlength: 30
                 }).add('<input>',    { placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.Number, type: 'tel'
                 })
             }).add($('<div>', {
@@ -514,6 +514,12 @@ function addMember(id = 'client', selectedLine = '') {
     $('#member .member').each(function(i, element) {
         widthRole($(element).children()[0].children[0].children[0]);
     });
+    console.log(selectedLine.Visible);
+    if (selectedLine.Visible == null) {
+        selectedLine.Visible = true;
+    } if (!selectedLine.Visible) {
+        visOrHidContact(`visible_${count_members}`);
+    }
     saveCard();
 }
 // Скрытие/Показ контакта

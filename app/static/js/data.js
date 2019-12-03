@@ -148,6 +148,7 @@ const subcategoryButtons = [
     ],
     [
         'Склад',
+        { id: 'stock_group', objectName: categoryInStock, name: 'Группа товаров', class: 'field_with_modal' },
         { id: 'stock_product', objectName: categoryInStock, name: 'Товар', class: 'field_with_modal' },
         { id: 'stock_packing', objectName: categoryInStock, name: 'Фасовка', class: 'field_with_modal' },
         { id: 'stock_volume', objectName: categoryInStock, name: 'Объем', class: 'field_with_modal' },
