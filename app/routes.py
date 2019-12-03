@@ -154,6 +154,16 @@ def addStock():
 
     db.session.add(stock)
     db.session.commit()
+    return 'OK'
+
+@app.route('/getStockTable', methods=['GET'])
+def getStockTable():
+    result = []
+    Stocks = models.Stock.query.all()
+    for stock in Stocks:
+        result.append(json.loads(table_to_json(stock.Items)))
+
+    return json.dumps(result)
 
 
 @app.route('/getStockItems', methods=['GET'])
@@ -196,6 +206,7 @@ def addItemToStock():
 @app.route('/getStocks', methods=['GET'])
 def getStocks():
     return table_to_json(models.Stock.query.all())
+
 
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
