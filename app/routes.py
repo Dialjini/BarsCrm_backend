@@ -156,6 +156,18 @@ def addStock():
     db.session.commit()
 
 
+@app.route('/getStockItems', methods=['GET'])
+def getStockItems():
+    data = request.args
+    Stocks = models.Stock.query.filter_by(id=data['stock_id']).all()
+    if len(Stocks):
+        Stock = Stocks[0]
+    else:
+        return 'Bad Stock'
+
+    return table_to_json(Stock.Items)
+
+
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
     data = request.args
@@ -177,6 +189,8 @@ def addItemToStock():
 
     Stock.Items.append(item)
     db.session.commit()
+
+    return 'OK'
 
 
 @app.route('/getStocks', methods=['GET'])
