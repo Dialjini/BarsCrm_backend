@@ -20,7 +20,7 @@ function getTableData(table, input = false, close = false) {
                     { table: categoryInFinanceDebit, request: '/getClients' },
                     { table: categoryInFinanceAccount, request: '/getClients' },
                     { table: categoryInDelivery, request: '/getClients' },
-                    { table: categoryInStock, request: '/getClients' },
+                    { table: categoryInStock, request: '/getStockTable' },
                     { table: categoryInAnalytics, request: '/getClients' },
                 ]
     
@@ -176,12 +176,14 @@ function saveInfoCard(id, close = false, elem = null) {
             card = saveTableAndCard[1][1].length + 1;
         }
         $('#member .member').each(function(i, element) {
+            let visible_contact = $(element).children()[1].id.includes('visible') ? true : false;
             members.push({
                 role: $(element).children()[0].children[0].children[0].value,
                 phone: $(element).children()[0].children[0].children[1].value,
                 last_name: $(element).children()[0].children[1].children[0].value,
                 first_name: $(element).children()[0].children[1].children[1].value,
-                email: $(element).children()[0].children[1].children[2].value
+                email: $(element).children()[0].children[1].children[2].value,
+                visible: visible_contact
             })
             let data = Object.keys(members[members.length - 1]);
             let count = 0;
@@ -190,6 +192,7 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == data.length) members.pop();
         });
+        console.log(members);
         $.ajax({
             url: '/addContacts',
             type: 'GET',

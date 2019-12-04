@@ -59,16 +59,18 @@ let rowFilling = (object, id, table) => {
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
-            let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id];
+            for (let k = 0; k < object[1][i].length; k++) {
+                let element = $('<tr>', {id: `stock_${object[1][i][k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
+                const name = [object[1][i][k].Name, object[1][i][k].Name, object[1][i][k].Type, object[1][i][k].Volume, object[1][i][k].Packing, object[1][i][k].NDS, object[1][i][k].Cost, object[1][i][k].Creator];
 
-            for (let j = 0; j < name.length; j++) {
-                let elementTr = $('<td>', { html: name[j] });
-                element.append(elementTr);
+                for (let j = 0; j < name.length - 1; j++) {
+                    let elementTr = $('<td>', { html: name[j] });
+                    element.append(elementTr);
+                }
+                element.append($('<td>', { class: 'pos-rel', append: $('<span>', { html: name[name.length - 1] })
+                            .add($('<img>', { src: 'static/images/transit.png', class: 'transit_img' }))}));
+                table.append(element);
             }
-            element.append($('<td>', { class: 'pos-rel', append: $('<span>', { html: name[name.length - 1] })
-                        .add($('<img>', { src: 'static/images/transit.png', class: 'transit_img' }))}));
-            table.append(element);
         }
         return table;
     }

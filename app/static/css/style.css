@@ -571,6 +571,10 @@ body {
   margin-bottom: 30px;
 }
 
+.page .centerBlock .container .info .card_menu .content .row_card .margin {
+  margin-left: 15px;
+}
+
 .page .centerBlock .container .info .card_menu .content .row_card .list {
   margin-top: 20px;
   display: -webkit-box;
@@ -986,6 +990,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .area .last_comment td .done {
+  word-wrap: break-word;
   margin-top: 0;
   margin-bottom: 10px;
   padding-left: 15px;

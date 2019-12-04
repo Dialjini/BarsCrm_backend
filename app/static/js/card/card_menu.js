@@ -94,7 +94,20 @@ function createCardMenu(element, index = 0) {
             element = titleObject[i];
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
-                selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
+                if (getInfo[0] === 'stock') {
+                    for (let j = 0; j < dataName[i].link[1][1].length; j++) {
+                        for (let k = 0; k < dataName[i].link[1][1][j].length; k++) {
+                            if (dataName[i].link[1][1][j][k].Item_id == getInfo[1]) {
+                                selectedLine = dataName[i].link[1][1][j][k];
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
+                }
+
+                console.log(selectedLine);
                 
                 let list = Object.keys(selectedLine);
                 for (let elem = 0; elem < list.length; elem++) {
@@ -104,7 +117,7 @@ function createCardMenu(element, index = 0) {
                     }
                 }
 
-                titleObject[i].list.unshift(`Код: ${selectedLine.id}`);
+                titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id}`);
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
                     titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
@@ -912,13 +925,13 @@ function createCardMenu(element, index = 0) {
     // Контентная часть Склада
     function stockContentCard(selectedLine) {
         return `<div class="row_card">
-                    <div class="info_block">
+                    <div class="info_block full">
                         <div class="mb">
                             <span class="bold">Транзит со склада</span>
-                            <input value="${selectedLine[selectedLine.length - 1]}">
+                            <input class="margin" maxlength="30" onchange="onkeydown()" type="text" onkeydown="widthRole(this)" onkeyup="onkeydown()" onkeypress="onkeydown()" value="${selectedLine.Creator}">
                         </div>
                         <div>
-                            <table>
+                            <table class="full">
                                 <tr>
                                     <td>Группа товаров</td>
                                     <td>Товар</td>
@@ -929,12 +942,12 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tbody>
                                     <tr>
-                                        <td>${selectedLine[0]}</td>
-                                        <td>${selectedLine[1]}</td>
-                                        <td>${selectedLine[2]}</td>
-                                        <td id="from">${selectedLine[3]}</td>
-                                        <td>${selectedLine[4]}</td>
-                                        <td>${selectedLine[6]}</td>
+                                        <td>${selectedLine.Name}</td>
+                                        <td>${selectedLine.Name}</td>
+                                        <td>${selectedLine.Type}</td>
+                                        <td id="from">${selectedLine.Volume}</td>
+                                        <td>${selectedLine.Packing}</td>
+                                        <td>${selectedLine.Cost}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -942,17 +955,22 @@ function createCardMenu(element, index = 0) {
                     </div>
                 </div>
                 <div class="row_card">
-                    <div class="info_block">
+                    <div class="info_block full">
                         <div>
                             <span class="bold">На склад</span>
-                            <input value="">
+                            <select class="margin">
+                                <option value="Склад 1">Склад 1</option>
+                                <option value="Склад 2">Склад 2</option>
+                                <option value="Склад 3">Склад 3</option>
+                                <option value="Склад 4">Склад 4</option>
+                            </select>
                         </div>
                         <div class="mb">
                             <span class="bold">Объем</span>
-                            <input oninput="fillVolume(this.value)">
+                            <input style="width: 60px" class="margin" oninput="fillVolume(this.value)">
                         </div>
                         <div>
-                            <table>
+                            <table class="full">
                                 <tr>
                                     <td>Группа товаров</td>
                                     <td>Товар</td>
@@ -963,12 +981,12 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tbody>
                                     <tr>
-                                        <td>${selectedLine[0]}</td>
-                                        <td>${selectedLine[1]}</td>
-                                        <td>${selectedLine[2]}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                         <td id="volume_goods">т</td>
-                                        <td>${selectedLine[4]}</td>
-                                        <td>${selectedLine[6]}</td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </tbody>
                             </table>
