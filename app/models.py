@@ -61,6 +61,8 @@ class Item(db.Model):
     Cost = db.Column(db.String)
     NDS = db.Column(db.String)
     Volume = db.Column(db.String)
+    Group_name = db.Column(db.String)
+    Prefix = db.Column(db.String)
 
 
 class EmptyClients(db.Model):

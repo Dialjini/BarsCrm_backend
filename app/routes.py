@@ -156,12 +156,16 @@ def addStock():
     db.session.commit()
     return 'OK'
 
+
 @app.route('/getStockTable', methods=['GET'])
 def getStockTable():
     result = []
     Stocks = models.Stock.query.all()
     for stock in Stocks:
-        result.append(json.loads(table_to_json(stock.Items)))
+        subres = {'items':json.loads(table_to_json(stock.Items))}
+
+        subres['stock_address'] = stock.Name
+        result.append(subres)
 
     return json.dumps(result)
 
@@ -177,6 +181,14 @@ def getStockItems():
 
     return table_to_json(Stock.Items)
 
+
+@app.route('/addItemGroup', methods=['GET'])
+def addItemGroup():
+    group = models.Item_groups()
+    group.Group = request.args['group_name']
+    db.session.add(group)
+    db.session.commit()
+    return 'OK'
 
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
@@ -196,6 +208,9 @@ def addItemToStock():
     item.Cost = data['item_price']
     item.Volume = data['item_volume']
     item.NDS = data['item_vat']
+    item.Group_id = data['group_id']
+    item.Prefix = data['item_prefix']
+    item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
 
     Stock.Items.append(item)
     db.session.commit()
