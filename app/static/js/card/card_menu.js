@@ -96,18 +96,17 @@ function createCardMenu(element, index = 0) {
             if (getInfo[1] !== 'new') {
                 if (getInfo[0] === 'stock') {
                     for (let j = 0; j < dataName[i].link[1][1].length; j++) {
-                        for (let k = 0; k < dataName[i].link[1][1][j].length; k++) {
-                            if (dataName[i].link[1][1][j][k].Item_id == getInfo[1]) {
-                                selectedLine = dataName[i].link[1][1][j][k];
+                        for (let k = 0; k < dataName[i].link[1][1][j].items.length; k++) {
+                            if (dataName[i].link[1][1][j].items[k].Item_id == getInfo[1]) {
+                                selectedLine = dataName[i].link[1][1][j].items[k];
                                 break;
                             }
                         }
+                        selectedLine['stock_address'] = dataName[i].link[1][1][j].stock_address;
                     }
                 } else {
                     selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
                 }
-
-                console.log(selectedLine);
                 
                 let list = Object.keys(selectedLine);
                 for (let elem = 0; elem < list.length; elem++) {
@@ -924,6 +923,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Склада
     function stockContentCard(selectedLine) {
+        console.log(selectedLine);
         return `<div class="row_card">
                     <div class="info_block full">
                         <div class="mb">
@@ -942,9 +942,9 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tbody>
                                     <tr>
+                                        <td>${selectedLine.Group_name}</td>
                                         <td>${selectedLine.Name}</td>
-                                        <td>${selectedLine.Name}</td>
-                                        <td>${selectedLine.Type}</td>
+                                        <td>${selectedLine.Prefix}</td>
                                         <td id="from">${selectedLine.Volume}</td>
                                         <td>${selectedLine.Packing}</td>
                                         <td>${selectedLine.Cost}</td>
@@ -981,12 +981,12 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tbody>
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td id="volume_goods">т</td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>${selectedLine.Group_name}</td>
+                                        <td>${selectedLine.Name}</td>
+                                        <td>${selectedLine.Prefix}</td>
+                                        <td id="volume_goods"></td>
+                                        <td>${selectedLine.Packing}</td>
+                                        <td>${selectedLine.Cost}</td>
                                     </tr>
                                 </tbody>
                             </table>

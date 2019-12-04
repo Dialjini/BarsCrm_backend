@@ -94,7 +94,7 @@ function fillVolume(value) {
     if (value.length > 4) { return };
     let spaceIndex = value.indexOf(' ');
     if (spaceIndex > 0) { value = value.substring(0, spaceIndex) }
-    $('#volume_goods').html(value + ' т');
+    $('#volume_goods').html(value);
 }
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
@@ -426,6 +426,14 @@ function addComment(manager = '', data) {
         $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
         function getRoleList() {
             let list = '';
+            for (let i = 0; i < list_role.length - 1; i++) {
+                for (let j = i + 1; j < list_role.length; j++) {
+                    if (list_role[i] === list_role[j]) {
+                        list_role.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
             for (let i = 0; i < list_role.length; i++) {
                 list = list.concat(`<option value="${list_role[i]}">${list_role[i]}</option>`)
             }

@@ -32,16 +32,40 @@ function linkField() {
     // Подкатегория с вызовом модального окна
     $('.list').click(function() {
         const list = [
-            {width: 162, id: 'stock_group', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
-            {width: 112, id: 'stock_product', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
-            {width: 110, id: 'stock_packing', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
-            {width: 99, id: 'stock_volume', list: ['10', '20', '30'] },
-            {width: 240, id: 'stock_stock', list: ['Мой Склад', 'Твой Склад', 'Наш Склад'] },
-            {width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
-            {width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
+            { width: 162, id: 'stock_group', list: [] },
+            { width: 112, id: 'stock_product', list: [] },
+            { width: 110, id: 'stock_packing', list: [] },
+            { width: 240, id: 'stock_stock', list: ['Мой Склад', 'Твой Склад', 'Наш Склад'] },
+            { width: 99, id: 'stock_volume', list: ['10', '20', '30'] },
+            { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
+            { width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
         ]
 
+        for (let i = 0; i < categoryInStock[1][1].length; i++) {
+            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                list[1].list.push(categoryInStock[1][1][i].items[j].Name.toLowerCase())
+            }
+        }
+    
         let idList = this.id;
+
+        let element;
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id === idList) {
+                element = i;
+            }
+        }
+        let array = list[element].list;
+        for (let i = 0; i < array.length - 1; i++) {
+            for (let j = i + 1; j < array.length; j++) {
+                if (array[i] === array[j]) {
+                    array.splice(j, 1);
+                    j--;
+                }
+            }
+            array[i] = array[i][0].toUpperCase() + array[i].slice(1);
+            array[i + 1] = array[i + 1][0].toUpperCase() + array[i + 1].slice(1);
+        }
 
         if ($(`#${idList} .drop_down_img`).hasClass('drop_active')) {
             $(`#${idList} .drop_down_img`).removeClass('drop_active');
@@ -91,7 +115,8 @@ function linkField() {
             $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
-                if (this.id.includes('analytics_reports')) {
+                console.log(idList);
+                if (idList.includes('analytics_reports')) {
                     let functions = [
                         analyticsFilterTable_0,
                         analyticsFilterTable_1,

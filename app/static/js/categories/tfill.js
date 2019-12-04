@@ -58,10 +58,12 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
+        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
-            for (let k = 0; k < object[1][i].length; k++) {
-                let element = $('<tr>', {id: `stock_${object[1][i][k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-                const name = [object[1][i][k].Name, object[1][i][k].Name, object[1][i][k].Type, object[1][i][k].Volume, object[1][i][k].Packing, object[1][i][k].NDS, object[1][i][k].Cost, object[1][i][k].Creator];
+            console.log(object[1][i].items);
+            for (let k = 0; k < object[1][i].items.length; k++) {
+                let element = $('<tr>', {id: `stock_${object[1][i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
+                const name = [object[1][i].items[k].Group_name, object[1][i].items[k].Name, object[1][i].items[k].Prefix, object[1][i].items[k].Volume, object[1][i].items[k].Packing, object[1][i].items[k].NDS, object[1][i].items[k].Cost, object[1][i].stock_address];
 
                 for (let j = 0; j < name.length - 1; j++) {
                     let elementTr = $('<td>', { html: name[j] });
