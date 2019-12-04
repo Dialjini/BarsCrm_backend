@@ -1,7 +1,7 @@
 /**
  * Функции для работы с категориями и подкатегориями
  */
-
+let test = 0;
 // Нажатие на подкатегорию
 function linkField() {
     // Обычная подкатегория
@@ -35,7 +35,7 @@ function linkField() {
             { width: 162, id: 'stock_group', list: [] },
             { width: 112, id: 'stock_product', list: [] },
             { width: 110, id: 'stock_packing', list: [] },
-            { width: 240, id: 'stock_stock', list: ['Мой Склад', 'Твой Склад', 'Наш Склад'] },
+            { width: 260, id: 'stock_stock', list: [] },
             { width: 99, id: 'stock_volume', list: ['10', '20', '30'] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
             { width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
@@ -43,7 +43,24 @@ function linkField() {
 
         for (let i = 0; i < categoryInStock[1][1].length; i++) {
             for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                list[1].list.push(categoryInStock[1][1][i].items[j].Name.toLowerCase())
+                list[0].list.push(categoryInStock[1][1][i].items[j].Group_name)
+            }
+        }
+
+        for (let i = 0; i < categoryInStock[1][1].length; i++) {
+            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                list[1].list.push(categoryInStock[1][1][i].items[j].Name)
+            }
+        }
+
+        for (let i = 0; i < categoryInStock[1][1].length; i++) {
+            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                list[2].list.push(categoryInStock[1][1][i].items[j].Packing)
+            }
+        }
+        for (let i = 0; i < categoryInStock[1][1].length; i++) {
+            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                list[3].list.push(categoryInStock[1][1][i].stock_address)
             }
         }
     
@@ -58,13 +75,11 @@ function linkField() {
         let array = list[element].list;
         for (let i = 0; i < array.length - 1; i++) {
             for (let j = i + 1; j < array.length; j++) {
-                if (array[i] === array[j]) {
+                if (array[i].toLowerCase() === array[j].toLowerCase()) {
                     array.splice(j, 1);
                     j--;
                 }
             }
-            array[i] = array[i][0].toUpperCase() + array[i].slice(1);
-            array[i + 1] = array[i + 1][0].toUpperCase() + array[i + 1].slice(1);
         }
 
         if ($(`#${idList} .drop_down_img`).hasClass('drop_active')) {
@@ -76,8 +91,11 @@ function linkField() {
             return;
         }
 
-        let namesList;
+        for (let i = 0; i < list.length; i++) {
+            $(`#${list[i].id}`).width('auto');
+        }
 
+        let namesList;
         function fillingList() {
             for (let i = 0; i < list.length; i++) {
                 if (list[i].id == idList) {
@@ -110,12 +128,14 @@ function linkField() {
         $(`#${idList} .drop_down_img`).addClass('drop_active');
 
         $('li').click(function() {
+            let filterName = this.innerHTML;
+            console.log(filterName);
+
             $('table').remove();
             $(`#${idList} #active_field`).html(namesList[this.id.split('_')[2]]);
             $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
-                console.log(idList);
                 if (idList.includes('analytics_reports')) {
                     let functions = [
                         analyticsFilterTable_0,
@@ -125,6 +145,24 @@ function linkField() {
                         analyticsFilterTable_4
                     ]
                     return functions[this.id.split('_')[2]]();
+                } else {
+                    categoryInFilterStock[1][1] = [];
+                    for (let i = 0; i < categoryInStock[1][1].length; i++) {
+                        for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                            let test;
+                            if (idList === 'stock_product') {
+                                test = categoryInStock[1][1][i].items[j].Name
+                            } else if (idList = 'stock_group') {
+                                test = categoryInStock[1][1][i].items[j].Group_name
+                            }
+                            if (test.toLowerCase() === filterName.toLowerCase()) {
+                                let element = categoryInStock[1][1][i].items[j];
+                                element['stock_address'] = categoryInStock[1][1][categoryInStock[1][1][i].items[j].Stock_id - 1].stock_address;
+                                categoryInFilterStock[1][1].push(categoryInStock[1][1][i].items[j])
+                            }
+                        }
+                    }
+                    return fillingTables(categoryInFilterStock);
                 }
             };
 

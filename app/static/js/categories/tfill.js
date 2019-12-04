@@ -58,9 +58,7 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
-        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
-            console.log(object[1][i].items);
             for (let k = 0; k < object[1][i].items.length; k++) {
                 let element = $('<tr>', {id: `stock_${object[1][i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
                 const name = [object[1][i].items[k].Group_name, object[1][i].items[k].Name, object[1][i].items[k].Prefix, object[1][i].items[k].Volume, object[1][i].items[k].Packing, object[1][i].items[k].NDS, object[1][i].items[k].Cost, object[1][i].stock_address];
@@ -77,6 +75,23 @@ let rowFilling = (object, id, table) => {
         return table;
     }
 
+    let rowFillingFilterStock = (id) => {
+        table.append(getTitleTable());
+        for (let i = object[1].length - 1; i >= 0; i--) {
+            let element = $('<tr>', {id: `stock_${object[1][i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
+            const name = [object[1][i].Group_name, object[1][i].Name, object[1][i].Prefix, object[1][i].Volume, object[1][i].Packing, object[1][i].NDS, object[1][i].Cost, object[1][i].stock_address];
+
+            for (let j = 0; j < name.length - 1; j++) {
+                let elementTr = $('<td>', { html: name[j] });
+                element.append(elementTr);
+            }
+            element.append($('<td>', { class: 'pos-rel', append: $('<span>', { html: name[name.length - 1] })
+                        .add($('<img>', { src: 'static/images/transit.png', class: 'transit_img' }))}));
+            table.append(element);
+        }
+        return table;
+    }
+
     const tableFunctiouns = [
         { id: 'client', function: rowFillingDefault },
         { id: 'provider', function: rowFillingDefault },
@@ -85,6 +100,7 @@ let rowFilling = (object, id, table) => {
         { id: 'account', function: rowFillingDefault },
         { id: 'delivery', function: rowFillingDefault },
         { id: 'stock', function: rowFillingStock },
+        { id: 'filter_stock', function: rowFillingFilterStock },
     ]
 
     for (let element of tableFunctiouns) {
@@ -131,8 +147,10 @@ function selectManager(element) {
 }
 
 function fillingTables(object) {
-    object[0].active = true;
-    saveTableAndCard = object;
+    if (object[0].id !== 'filter_stock') {
+        object[0].active = true;
+        saveTableAndCard = object;
+    }
 
     for (let i = object[0].lastCard.length - 1; i >= 0; i--) {
         if (object[0].lastCard[i] != null) {

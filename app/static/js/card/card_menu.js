@@ -923,7 +923,6 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Склада
     function stockContentCard(selectedLine) {
-        console.log(selectedLine);
         return `<div class="row_card">
                     <div class="info_block full">
                         <div class="mb">
