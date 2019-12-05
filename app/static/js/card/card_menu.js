@@ -694,11 +694,14 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        let sum = 0, vat = 0;
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
 
+
             for (let i = 0; i < list_items.length; i++) {
+                sum += Math.round(list_items[i].Cost * list_items[i].Volume);
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
                         <td>${list_items[i].Name}</td>
@@ -715,6 +718,7 @@ function createCardMenu(element, index = 0) {
                     </tr>
                 `)
             }
+            vat = sum > 0 ? sum - ((sum * +list_items[0].NDS) / 100) : 0;
 
             if (5 - list_items.length > 0) {
                 for (let i = 0; i < 5 - list_items.length; i++) {
@@ -762,19 +766,19 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Общая</span>234000</div>
+                                    <div class="flex jc-sb"><span class="gray">Общая</span><span>${sum}</span></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="9" style="border: none"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">НДС</span>12222</div>
+                                    <div class="flex jc-sb"><span class="gray">НДС</span><span>${sum - vat}</span></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="9" style="border: none"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span>123332</div>
+                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${vat}</span></div>
                                 </td>
                             </tr>
                         </table>

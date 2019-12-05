@@ -368,6 +368,9 @@ function invoiceInTable(element) {
                                 } else if (k == 8) {
                                     tr.append($('<td>', { id: 'calcDelivery_' + account.Item_id, html: list[k] }));
                                     continue;
+                                } else if (k == list.length - 1) {
+                                    tr.append($('<td>', { id: 'calcSum', html: list[k] }));
+                                    continue;
                                 }
                                 tr.append($('<td>', { html: list[k] }));
                             }
@@ -375,9 +378,14 @@ function invoiceInTable(element) {
                             $(`#empty`).last().remove();
                             $('#exposed_list').prepend(tr);
 
-                            // $('#total').html('Многа');
-                            // $('#vat').html('1000');
-                            // $('#without-vat').html('Многа');
+                            let sum = 0;
+                            $('#exposed_list .invoiled #calcSum').each(function(i, element) {
+                                sum += +$(element).html()
+                            });
+                            let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
+                            $('#total').html(sum);
+                            $('#vat').html(sum - vat);
+                            $('#without-vat').html(vat);
                             break;
                         }
                     }
@@ -406,6 +414,15 @@ function returnBack(element) {
                             tr.append($('<td>', { html: list[k] }));
                         }
                         tr.append($('<td>', {html: ''}));
+
+                        let sum = 0;
+                        $('#exposed_list .invoiled #calcSum').each(function(i, element) {
+                            sum += +$(element).html()
+                        });
+                        let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
+                        $('#total').html(sum);
+                        $('#vat').html(sum - vat);
+                        $('#without-vat').html(vat);
                         break;
                     }
                 }
