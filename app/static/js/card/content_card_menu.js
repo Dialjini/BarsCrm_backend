@@ -119,21 +119,21 @@ function contractContentCard(elem) {
     `
 }
 // Контентная часть вкладки Выставления счета
-function invoicingContentCard(elem) {
-    // Изначально искать ту строку и передавать в функции
-    // Там подставлять тот контент, который соответствует свойствам
-    // Через тбоди добавлять строку в таблицу ???
-    // Вывод контента отфильтрованной, нижней таблицы
-    function getFilterList(count) {
+function invoicingContentCard(elem, data) {
+    function getFilterList() {
         let tbody = $('<tbody>', {id: 'filter_list'});
-        for (let i = 0; i < count; i++) {
-            let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice-${i}`});
-            for (let j = 0; j < 9; j++) {
-                tr.append($('<td>', {
-                    html: info[i][j]
-                }))
+        for (let i = 0; i < data.length; i++) {
+            for (let j = 0; j < data[i].items.length; j++) {
+                let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
+                const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
+                for (let k = 0; k < name.length; k++) {
+                    tr.append($('<td>', {
+                        html: name[k]
+                    }))
+                }
+                tr.append($('<td>', {html: ''}));
+                tbody.append(tr);
             }
-            tbody.append(tr);
         }
         return tbody;
     }
@@ -211,16 +211,16 @@ function invoicingContentCard(elem) {
         return tbody;
     }
     // Вывод контента вкладки
-    function getContentCard(listFunctions, arg) {
+    function getContentCard(listFunctions, idTable, className) {
         let content = $('<div>', {
             class: 'row_card',
             append: $('<div>', {
-                class: 'info_block full',
+                class: 'info_block full ' + className,
                 append: $('<table>', {
                     class: 'account_table',
-                    id: 'output_table',
+                    id: idTable,
                     html: listFunctions[0](),
-                    append: listFunctions[1](arg)
+                    append: listFunctions[1]()
                 })
             })
         })
@@ -278,9 +278,100 @@ function invoicingContentCard(elem) {
     }
 
     return  getRowContent()
-            .add(getContentCard([getTitleTable, getRowsTable], ''))
-            .add(getContentCard([getTitleFilterList, getFilterList], 5))
+            .add(getContentCard([getTitleTable, getRowsTable], 'input_table'))
+            .add(getContentCard([getTitleFilterList, getFilterList], 'output_table', 'hmax'))
             .add(nextStepButtons());
+}
+// Выставление счета
+function invoiceInTable(element) {
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            let prefixAccount = null;
+            let accountInUpperTable = $('#exposed_list .invoiled').attr('id');
+
+            if (accountInUpperTable != undefined) {
+                accountInUpperTable = accountInUpperTable.split('_')[1]
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].items.length; j++) {
+                        let account = data[i].items[j];
+                        if (account.Item_id == accountInUpperTable) {
+                            prefixAccount = account.Prefix;
+                        }
+                    }
+                }
+            } else {
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].items.length; j++) {
+                        let account = data[i].items[j];
+                        if (account.Item_id == element.id.split('_')[1]) {
+                            prefixAccount = account.Prefix;
+                        }
+                    }
+                }
+            }
+            
+            let tr = $('<tr>', { class: 'product invoiled', id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)'});
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].items.length; j++) {
+                    let account = data[i].items[j];
+                    if (account.Prefix == prefixAccount) {
+                        if (account.Item_id == element.id.split('_')[1]) {
+                            let list = [account.Name, account.Packing, account.Weight + ' кг.', account.Volume, account.Volume, account.Cost, 0, 0, 0, 0, account.Cost * account.Volume]
+                            for (let k = 0; k < list.length; k++) {
+                                tr.append($('<td>', { html: list[k] }));
+                            }
+                            $(`#${element.id}`).remove();
+                            $(`#empty`).last().remove();
+                            $('#exposed_list').prepend(tr);
+
+                            // $('#total').html('Многа');
+                            // $('#vat').html('1000');
+                            // $('#without-vat').html('Многа');
+                            break;
+                        }
+                    }
+                }
+            }
+        },
+    });
+}
+function returnBack(element) {
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            $(`#${element.id}`).remove();
+            // Возвращаем столбец из верхней таблицы обратно
+            let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: element.id.replace(/invoiled_/g, 'invoice_')});
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].items.length; j++) {
+                    let account = data[i].items[j];
+                    if (account.Item_id == element.id.split('_')[1]) {
+                        let list = [account.Group_name, account.Name, account.Prefix, account.Volume, account.Packing, account.NDS, account.Cost, data[i].stock_address]
+                        for (let k = 0; k < list.length; k++) {
+                            tr.append($('<td>', { html: list[k] }));
+                        }
+                        tr.append($('<td>', {html: ''}));
+                        break;
+                    }
+                }
+            }
+            $('#filter_list').append(tr);
+
+            // Возвращаем пустой столбец в верхнюю таблицу
+            let returnEmptyRow = $('<tr>', {class: 'product', id: 'empty'});
+            for (let j = 0; j < 11; j++) {
+                returnEmptyRow.append($('<td>', { html: '' }));
+            }
+            $('#exposed_list').append(returnEmptyRow);
+        },
+    });
 }
 let list_inv = [
     { disable: false, id: 'total_discount_inv'},
@@ -335,58 +426,6 @@ function switchMode(element) {
             }
         }
     }
-}
-// Временная переменная
-const info = [
-    ['Xxxxxx', 'Xxxxxx', 'ООО', 20, 'Xxxxxxx', 18, 1000, 'Xxxxxx Xxxxx', ''],
-    ['Xxxxxx', 'Xxxxxx', 'ООО', 30, 'Xxxxxxx', 28, 4000, 'Xxxxxx Xxxxx', ''],
-    ['Xxxxxx', 'Xxxxxx', 'ООО', 40, 'Xxxxxxx', 38, 2000, 'Xxxxxx Xxxxx', ''],
-    ['Xxxxxx', 'Xxxxxx', 'ООО', 50, 'Xxxxxxx', 48, 5000, 'Xxxxxx Xxxxx', ''],
-    ['Xxxxxx', 'Xxxxxx', 'ООО', 60, 'Xxxxxxx', 58, 3000, 'Xxxxxx Xxxxx', ''],
-];
-// Выставление счета
-function invoiceInTable(element) {
-    const stringID = ['total', 'vat', 'without-vat'];
-
-    function fillInfoInRow(index) {
-        let test = ['Дольки апельсина с чесноком', 'Пакетик', '1488 кг', '123', '', '500000', '10020', 'Пока', '1000', '500', 'Много'];
-        if (test[index] === '') {
-            return '000'
-        } else {
-            return test[index];
-        }
-    }
-    
-    let tr = $('<tr>', { class: 'product invoiled', id: `${element.id}-invoiled`, onclick: 'returnBack(this)'});
-    for (let i = 0; i < 11; i++) {
-        tr.append($('<td>', { html: fillInfoInRow(i)}));
-    }
-    // Пункт 45
-    $('#total').html('Многа');
-    $('#vat').html('1000');
-    $('#without-vat').html('Многа');
-
-    $(`#${element.id}`).remove();
-    $(`#empty`).last().remove();
-    $('#exposed_list').prepend(tr);
-}
-function returnBack(element) {
-    $(`#${element.id}`).remove();
-    
-    // Возвращаем столбец из верхней таблицы обратно
-    let returnFillRow = $('<tr>', { onclick: 'invoiceInTable(this)', id: element.id.replace(/-invoiled/g, '')});
-    let max = info[element.id.split('-')[1]];
-    for (let i = 0; i < max.length; i++) {
-        returnFillRow.append($('<td>', { html: max[i] }));
-    }
-    $('#filter_list').append(returnFillRow);
-
-    // Возвращаем пустой столбец в верхнюю таблицу
-    let returnEmptyRow = $('<tr>', {class: 'product', id: 'empty'});
-    for (let j = 0; j < 11; j++) {
-        returnEmptyRow.append($('<td>', { html: '' }));
-    }
-    $('#exposed_list').append(returnEmptyRow);
 }
 // Добавление комментариев в карточках
 function addComment(manager = '', data) {

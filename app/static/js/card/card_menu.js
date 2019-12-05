@@ -1032,34 +1032,69 @@ function contractNext(elem) {
 }
 // Переход на вкладку выставления счета
 function invoiceCard(elem) {
-    function invoiceCardContent() {
-        return $('<div>', {
-            class: 'card_menu invoicing',
-            id: `${elem.id}_invoicing_card`,
-            append: $('<div>', {
-                class: 'content',
-                append: invoicingContentCard(elem)
-            })
-        })
-    }
-    $('.card_menu').remove();
-    categoryInFinanceAccount[0].lastCard[0] = invoiceCardContent();
-
-    categoryInFinanceAccount[0].active = true;
-    categoryInFinanceDebit[0].active = false;
-    
-    linkCategory('category-1');
-    linkField();
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            function invoiceCardContent(data) {
+                return $('<div>', {
+                    class: 'card_menu invoicing',
+                    id: `${elem.id}_invoicing_card`,
+                    append: $('<div>', {
+                        class: 'content',
+                        append: invoicingContentCard(elem, data)
+                    })
+                })
+            }
+            // Вытягивать данные по таблице
+            $('.card_menu').remove();
+            categoryInFinanceAccount[0].lastCard[0] = invoiceCardContent(JSON.parse(data));
+        
+            categoryInFinanceAccount[0].active = true;
+            categoryInFinanceDebit[0].active = false;
+            
+            linkCategory('category-1');
+            linkField();
+        },
+    });
 }
 // Завершение выставления счета и закрытие карточки 
 function completionCard(element) {
-    for (let i = 0; i < dataName.length; i++) {
-        if (element.name === dataName[i].name) {
-            dataName[i].link[0].lastCard = [null, null];
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            let list_items = [];
+            $('#exposed_list .invoiled').each(function(i, element) {
+                let idProduct = $(element).attr('id').split('_')[1];
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].items.length; j++) {
+                        let account = data[i].items[j];
+                        if (account.Item_id == idProduct) {
+                            list_items.push(account);
+                        }
+                    }
+                }
+            });
+            if (list_items.length > 0) {
+                console.log(list_items);
+                // Передать данные на сервер и создать карточку счета
+                for (let i = 0; i < dataName.length; i++) {
+                    if (element.name === dataName[i].name) {
+                        dataName[i].link[0].lastCard = [null, null];
+                    }
+                }
+                closeCardMenu('account_new');
+            } else {
+                alert('Невозможно создать счет, ни один товар не выбран!');
+            }
         }
-    }
-    closeCardMenu('account_new');
+    })
 }
+
 // Закрытие карточки
 function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
@@ -1077,7 +1112,7 @@ function closeCardMenu(id = '') {
 
     // Если открыта карточка Выставления счета в Счете - закрыть ее
     if (categoryInFinanceAccount[0].lastCard[0] !== null) {
-        if (id.replace(/_close_card/g, '') === categoryInFinanceAccount[0].lastCard[0][0].id.replace(/_invoicing_card/, '')) {
+        if (id.split('_')[0] === categoryInFinanceAccount[0].lastCard[0][0].id.split('_')[0]) {
             categoryInFinanceAccount[0].lastCard[0] = null;
         }
     }
