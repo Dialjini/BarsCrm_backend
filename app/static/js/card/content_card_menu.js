@@ -82,10 +82,7 @@ function analyticsContent() {
 // Оформление доставки из карточки Счета
 function arrangeDelivery(element) {
     categoryInFinanceAccount[0].lastCard[0] = null;            
-    $('.card_menu').remove();
-    
-    linkCategory('category-2');
-    createCardMenu(element);
+    createDelCardMenu(element);
 }
 // Заполнение объема в карточке категории Склад для переноса груза из одного склада в другой
 function fillVolume(value) { 

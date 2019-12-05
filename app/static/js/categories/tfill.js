@@ -25,6 +25,7 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDefault = (id) => {
         table.append(getTitleTable());
+
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this)'});
             // Получать для разных таблиц - разные переменные
@@ -34,7 +35,6 @@ let rowFilling = (object, id, table) => {
                 { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, object[1][i].Manager_id]},
                 { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id, object[1][i].Manager_id]},
                 { id: 'account', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id]},
-                { id: 'delivery', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id, object[1][i].Manager_id]}
             ]
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id === id) {
@@ -56,8 +56,25 @@ let rowFilling = (object, id, table) => {
         return table;
     }
 
+    let rowFillingDelivery = (id) => {
+        table.append(getTitleTable());
+        for (let i = object[1].length - 1; i >= 0; i--) {
+            //let prefix = object[1][i].items[0].Prefix;
+            let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
+            const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, object[1][i].delivery.Carrier_id, object[1][i].delivery.Prefix, object[1][i].delivery.Price, +object[1][i].delivery.Price - ((+object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
+
+            for (let j = 0; j < name.length; j++) {
+                let elementTr = $('<td>', { html: name[j] });
+                element.append(elementTr);
+            }
+            table.append(element);
+        }
+        return table;
+    }
+
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
+        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
             //let prefix = object[1][i].items[0].Prefix;
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
@@ -114,7 +131,7 @@ let rowFilling = (object, id, table) => {
         { id: 'carrier', function: rowFillingDefault },
         { id: 'debit', function: rowFillingDefault },
         { id: 'account', function: rowFillingAccount },
-        { id: 'delivery', function: rowFillingDefault },
+        { id: 'delivery', function: rowFillingDelivery },
         { id: 'stock', function: rowFillingStock },
         { id: 'filter_stock', function: rowFillingFilterStock },
     ]

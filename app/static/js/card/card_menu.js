@@ -100,15 +100,21 @@ function createCardMenu(element, index = 0) {
                         for (let k = 0; k < data_list[j].items.length; k++) {
                             if (data_list[j].items[k].Item_id == getInfo[1]) {
                                 selectedLine = data_list[j].items[k];
+                                selectedLine['stock_address'] = data_list[j].stock_address;
                                 break;
                             }
                         }
-                        selectedLine['stock_address'] = data_list[j].stock_address;
                     }
                 } else if (getInfo[0] === 'account') {
                     for (let j = 0; j < data_list.length; j++) {
                         if (data_list[j].account.id == getInfo[1]) {
                             selectedLine = data_list[j];
+                        }
+                    }
+                } else if (getInfo[0] === 'delivery') {
+                    for (let j = 0; j < data_list.length; j++) {
+                        if (data_list[j].delivery.id == getInfo[1]) {
+                            selectedLine = data_list[j].delivery;
                         }
                     }
                 } else {
@@ -138,7 +144,8 @@ function createCardMenu(element, index = 0) {
                 const emptyData = [
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
-                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] }
+                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -205,6 +212,7 @@ function createCardMenu(element, index = 0) {
     $('.info').append(cardMenu());
     $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
     itemSelection(getInfo[0], selectedLine);
+    console.log(123);
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
@@ -269,6 +277,7 @@ function createCardMenu(element, index = 0) {
             }
         } catch {}
     }
+
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
         let content = $('<div>', { 
@@ -751,20 +760,20 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             ${fillingProducts()}
                             <tr>
-                                <td colspan="10"></td>
-                                <td class="fz10">
+                                <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
+                                <td colspan="2" class="fz10">
                                     <div class="flex jc-sb"><span class="gray">Общая</span>234000</div>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="10"></td>
-                                <td class="fz10">
+                                <td colspan="9" style="border: none"></td>
+                                <td colspan="2" class="fz10">
                                     <div class="flex jc-sb"><span class="gray">НДС</span>12222</div>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="10"></td>
-                                <td class="fz10">
+                                <td colspan="9" style="border: none"></td>
+                                <td colspan="2" class="fz10">
                                     <div class="flex jc-sb"><span class="gray">Без НДС</span>123332</div>
                                 </td>
                             </tr>
@@ -798,126 +807,13 @@ function createCardMenu(element, index = 0) {
     function debitContentCard(selectedLine) {
         return `<div class="row_card"></div>`
     }
-    // Контентная часть Доставки
-    function deliveryContentCard(selectedLine) {
-        return `<div class="row_card">
-                    <table class="table_block">
-                        <tr>
-                            <td>Заказчик</td>
-                            <td>
-                                <input type="text" id="delivery_customer" value="${selectedLine[1]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Дата отгрузки</td>
-                            <td>
-                                <input type="text" id="delivery_shipment" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Дата разгрузки</td>
-                            <td>
-                                <input type="text" id="delivery_unloading" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Способ погрузки</td>
-                            <td>
-                                <input type="text" id="delivery_way" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                    </table>
-                    <table class="table_block">
-                        <tr>
-                            <td>Перевозчик</td>
-                            <td>
-                                <input type="text" id="delivery_carrier" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Водитель</td>
-                            <td>
-                                <input type="text" id="delivery_driver" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Вид перевозки</td>
-                            <td>
-                                <input type="text" id="delivery_view" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Комментарий</td>
-                            <td>
-                                <input type="text" id="delivery_comment" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                    </table>
-                    <table class="table_block">
-                        <tr>
-                            <td>Клиент</td>
-                            <td>
-                                <input type="text" id="delivery_client" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Контакт на выгрузке</td>
-                            <td>
-                                <input type="text" id="delivery_contact" value="${selectedLine[2]}">
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="row_card">
-                    <div class="info_block">
-                        <div>
-                            <span class="lightgray">Рейс</span>
-                            <table>
-                                <tr>
-                                    <th>Товар</th>
-                                    <th>Склад</th>
-                                    <th>Вес</th>
-                                    <th>Вид упаковки</th>
-                                    <th>Сумма</th>
-                                    <th>Клиент</th>
-                                </tr>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="info_block fit" style="margin-top: 15px;">
-                            <span class="lightgray" style="margin-top: 10px;">Оплата</span>
-                            <div class="hmax">
-                                <table style="width: fit-content">
-                                    <tr>
-                                        <th>Дата</th>
-                                        <th>Сумма</th>
-                                    </tr>
-                                    <tbody id="group">
-
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="events">
-                                <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this.id)">
-                                <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="next">
-                    <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
-                    <button class="btn btn-main" id="delivery_new" onclick="closeCardMenu(this.id)">Оформить Заявку</button>
-                </div>`
-    }
     // Контентная часть Склада
     function stockContentCard(selectedLine) {
         return `<div class="row_card">
                     <div class="info_block full">
                         <div class="mb">
                             <span class="bold">Транзит со склада</span>
-                            <input class="margin" maxlength="30" onchange="onkeydown()" type="text" onkeydown="widthRole(this)" onkeyup="onkeydown()" onkeypress="onkeydown()" value="${selectedLine.Creator}">
+                            <input class="margin" maxlength="30" onchange="onkeydown()" type="text" onkeydown="widthRole(this)" onkeyup="onkeydown()" onkeypress="onkeydown()" value="${selectedLine.stock_address}">
                         </div>
                         <div>
                             <table class="full">
@@ -987,6 +883,155 @@ function createCardMenu(element, index = 0) {
                 </div>
                 `
     }
+    // Контентная часть Доставки
+    function deliveryContentCard(selectedLine) {
+        console.log(selectedLine);
+        function carrierSelect() {
+            let data = categoryInListCarrier[1][1];
+            let list_name = [];
+            let select = '<select id="delivery_carrier" onchange="selectDrivers(this)">';
+            select += '<option value="disabled" selected disabled>Не выбран</option>'
+            for (let i = 0; i < data.length; i++) {
+                select += `<option value="carrier_${data[i].id}">${data[i].Name}</option>`;
+                list_name.push({ name: data[i].Name, id: data[i].id });
+            }
+            select += '</select>';
+            return select;
+        }
+        
+        return `<div class="row_card">
+                        <table class="table_block">
+                            <tr>
+                                <td>Заказчик</td>
+                                <td>
+                                    <input type="text" id="delivery_customer" value="${selectedLine.Customer}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Дата отгрузки</td>
+                                <td>
+                                    <input type="text" id="delivery_shipment" value="${selectedLine.Start_date}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Дата разгрузки</td>
+                                <td>
+                                    <input type="text" id="delivery_unloading" value="${selectedLine.End_date}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Способ погрузки</td>
+                                <td>
+                                    <input type="text" id="delivery_way" value="${selectedLine.Load_type}">
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table_block">
+                            <tr>
+                                <td>Перевозчик</td>
+                                <td>
+                                    ${carrierSelect()}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Водитель</td>
+                                <td>
+                                    <select id="delivery_driver"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Вид перевозки</td>
+                                <td>
+                                    <input type="text" id="delivery_view" value="${selectedLine.Type}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Комментарий</td>
+                                <td>
+                                    <input type="text" id="delivery_comment" value="${selectedLine.Comment}">
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table_block">
+                            <tr>
+                                <td>Клиент</td>
+                                <td>
+                                    <input type="text" id="delivery_client" value="${selectedLine.Client}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Контакт на выгрузке</td>
+                                <td>
+                                    <input type="text" id="delivery_contact" value="${selectedLine.Contact_Number}">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="row_card">
+                        <div class="info_block">
+                            <div>
+                                <span class="lightgray">Рейс</span>
+                                <table>
+                                    <tr>
+                                        <th>Товар</th>
+                                        <th>Склад</th>
+                                        <th>Вес</th>
+                                        <th>Вид упаковки</th>
+                                        <th>Сумма</th>
+                                        <th>Клиент</th>
+                                    </tr>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="info_block fit" style="margin-top: 15px;">
+                                <span class="lightgray" style="margin-top: 10px;">Оплата</span>
+                                <div class="hmax">
+                                    <table style="width: fit-content">
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Сумма</th>
+                                        </tr>
+                                        <tbody id="group">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="events">
+                                    <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this.id)">
+                                    <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="next">
+                        <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
+                        <button class="btn btn-main" id="delivery_new" onclick="closeCardMenu(this.id)">Оформить Заявку</button>
+                    </div>`
+    }
+}
+function selectDrivers() {
+    $('#delivery_driver').append(
+        `<option>Водитель 1</option>
+        <option>Водитель 2</option>
+        <option>Водитель 3</option>`
+    )
+}
+function createDelCardMenu(element) {
+    $.ajax({
+        url: '/getCarriers',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            if (categoryInListCarrier[1][1] === undefined) {
+                categoryInListCarrier[1].push(data);
+                console.log(categoryInListCarrier[1]);
+            }
+            createCardMenu(element);
+        },
+    });
 }
 // Переход на предыдущую вкладку карточки
 function comeBack(elem) {
@@ -1086,7 +1131,7 @@ function completionCard(element) {
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
-                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: idsItems});
+
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',

@@ -19,7 +19,7 @@ function getTableData(table, input = false, close = false) {
                     { table: categoryInListCarrier, request: '/getCarriers' },
                     { table: categoryInFinanceDebit, request: '/getClients' },
                     { table: categoryInFinanceAccount, request: '/getAccounts' },
-                    { table: categoryInDelivery, request: '/getClients' },
+                    { table: categoryInDelivery, request: '/getDeliveries' },
                     { table: categoryInStock, request: '/getStockTable' },
                     { table: categoryInAnalytics, request: '/getClients' },
                 ]
@@ -53,9 +53,7 @@ function getTableData(table, input = false, close = false) {
                                 table[0].lastCard[i] = null;
                             }
                         }
-                        if (table[0].id !== 'delivery') {
-                            table[1].pop();
-                        } 
+                        table[1].pop();
                         setTimeout(() => {
                             $('.card_menu, .overflow').remove();
                         }, 0);
