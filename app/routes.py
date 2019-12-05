@@ -125,6 +125,49 @@ def addMessages():
 
     return 'OK'
 
+@app.route('/getDeliveries', methods=['GET'])
+def getDeliveries():
+    deliveries = models.Delivery.query.all()
+    result = []
+    for delivery in deliveries:
+        if delivery.Carrier_id:
+            carrier = models.Carrier.query.filter_by(id=delivery.Carrier_id).first()
+            result.append({'carrier': json.loads(table_to_json([carrier]))[0], 'delivery': json.loads(table_to_json([delivery]))[0]})
+        else:
+            result.append({'carrier': None, 'delivery': json.loads(table_to_json([delivery]))[0]})
+    return json.dumps(result)
+
+
+@app.route('/addDelivery', methods=['GET'])
+def addDelivery():
+    data = request.args
+    table = models.Delivery()
+
+    table.Name = data['account_name']
+    table.Date = data['account_date']
+    table.Price = data['account_price']
+    table.Contact_Number = data['account_contact_number']
+    table.Contact_Name = data['account_contact_name']
+    table.Carrier_id = data['account_carrier_id']
+    table.Comment = data['account_comment']
+    table.Client = data['account_client']
+    table.NDS = data['account_vat']
+    table.Contact_End = data['account_contact_end']
+    table.Customer = data['account_customer']
+    table.End_date = data['account_end_date']
+    table.Load_type = data['account_load_type']
+    table.Payment_date = data['account_payment_date']
+    table.Prefix = data['account_prefix']
+    table.Start_date = data['account_start_date']
+    table.Stock = data['account_stock']
+    table.Type = data['account_type']
+
+    db.session.add(table)
+    db.session.commit()
+
+    return 'OK'
+
+
 
 @app.route('/getContacts', methods=['GET'])
 def getContacts():
