@@ -190,6 +190,42 @@ def addItemGroup():
     db.session.commit()
     return 'OK'
 
+
+@app.route('/getAccounts', methods=['GET'])
+def getAccounts():
+    result = []
+    for i in models.Account.query.all():
+        items = json.loads(table_to_json(i.Items))
+        account = json.loads(table_to_json([i]))
+        subres = {'items': items, 'account': account}
+        result.append(subres)
+    return json.dumps(result)
+
+
+@app.route('/addAccount', methods=['GET'])
+def addAccount():
+    data = request.args
+    table = models.Account()
+    table.Name = data['name']
+    table.Status = data['status']
+    table.Date = data['date']
+    table.Hello = data['hello']
+    table.Sale = data['sale']
+    table.Shipping = data['shipping']
+    table.Sum = data['sum']
+    item_ids = json.loads(data['item_ids'])
+    items = []
+    for i in item_ids:
+        item = models.Item.query.filter_by(Item_id=i).first()
+        items.append(item)
+    table.Items = items
+
+    db.session.add(table)
+    db.session.commit()
+
+    return 'OK'
+
+
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
     data = request.args

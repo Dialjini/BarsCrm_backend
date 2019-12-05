@@ -17,6 +17,7 @@ class User(db.Model):
     role = db.Column(db.String)
     password = db.Column(db.String)
     avatar = db.Column(db.String)
+
     tasks = db.relationship('Tasks', backref='manager', lazy='dynamic')
 
     def get_task_by_login(self):
@@ -49,6 +50,7 @@ class Item_groups(db.Model):
 
 class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
+    Account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
     Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
     Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
@@ -172,23 +174,29 @@ class Provider(db.Model):
 
 class Debt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Type = db.Column(db.String)
     Name = db.Column(db.String)
-    Date = db.Column(db.Date)
-    Days = db.Column(db.Integer)
-    Sum = db.Column(db.Float)
-    Payed = db.Column(db.Float)
-    Maneger_id = db.Column(db.Integer)
+    Date = db.Column(db.String)
+    Days = db.Column(db.String)
+    Sum = db.Column(db.String)
+    Status = db.Column(db.String)
+    Sale = db.Column(db.String)
+    Hello = db.Column(db.String)
+    Shipping = db.Column(db.String)
+    Manager_id = db.Column(db.Integer)
 
 
 class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    Type = db.Column(db.String)
-    Date = db.Column(db.Date)
     Name = db.Column(db.String)
-    Sum = db.Column(db.Float)
+    Date = db.Column(db.String)
+    Days = db.Column(db.String)
+    Sum = db.Column(db.String)
     Status = db.Column(db.String)
-    Manger_id = db.Column(db.Integer)
+    Sale = db.Column(db.String)
+    Hello = db.Column(db.String)
+    Shipping = db.Column(db.String)
+    Manager_id = db.Column(db.Integer)
+    Items = db.relationship('Item', backref='Account', lazy='dynamic')
 
 
 class Delivery(db.Model):
