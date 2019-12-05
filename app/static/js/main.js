@@ -18,7 +18,7 @@ function getTableData(table, input = false, close = false) {
                     { table: categoryInListProvider, request: '/getProviders' },
                     { table: categoryInListCarrier, request: '/getCarriers' },
                     { table: categoryInFinanceDebit, request: '/getClients' },
-                    { table: categoryInFinanceAccount, request: '/getClients' },
+                    { table: categoryInFinanceAccount, request: '/getAccounts' },
                     { table: categoryInDelivery, request: '/getClients' },
                     { table: categoryInStock, request: '/getStockTable' },
                     { table: categoryInAnalytics, request: '/getClients' },
@@ -192,7 +192,6 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == data.length) members.pop();
         });
-        console.log(members);
         $.ajax({
             url: '/addContacts',
             type: 'GET',

@@ -70,7 +70,7 @@ function createCardMenu(element, index = 0) {
         },
         {
             id: 'account',
-            list: [`Счета от ${selectedLine[0]}`],
+            list: [],
             link: accountContentCard,
             status: getInfo[1]
         },
@@ -94,18 +94,25 @@ function createCardMenu(element, index = 0) {
             element = titleObject[i];
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
+                let data_list = dataName[i].link[1][1];
                 if (getInfo[0] === 'stock') {
-                    for (let j = 0; j < dataName[i].link[1][1].length; j++) {
-                        for (let k = 0; k < dataName[i].link[1][1][j].items.length; k++) {
-                            if (dataName[i].link[1][1][j].items[k].Item_id == getInfo[1]) {
-                                selectedLine = dataName[i].link[1][1][j].items[k];
+                    for (let j = 0; j < data_list.length; j++) {
+                        for (let k = 0; k < data_list[j].items.length; k++) {
+                            if (data_list[j].items[k].Item_id == getInfo[1]) {
+                                selectedLine = data_list[j].items[k];
                                 break;
                             }
                         }
-                        selectedLine['stock_address'] = dataName[i].link[1][1][j].stock_address;
+                        selectedLine['stock_address'] = data_list[j].stock_address;
+                    }
+                } else if (getInfo[0] === 'account') {
+                    for (let j = 0; j < data_list.length; j++) {
+                        if (data_list[j].account.id == getInfo[1]) {
+                            selectedLine = data_list[j];
+                        }
                     }
                 } else {
-                    selectedLine = dataName[i].link[1][1][titleObject[i].status - 1];
+                    selectedLine = data_list[titleObject[i].status - 1];
                 }
                 
                 let list = Object.keys(selectedLine);
@@ -116,12 +123,16 @@ function createCardMenu(element, index = 0) {
                     }
                 }
 
-                titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id}`);
+                titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id || selectedLine.account.id}`);
                 if (getInfo[0] === 'client') {
                     titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
                     titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
-                } if (getInfo[0] === 'provider') {
+                } 
+                if (getInfo[0] === 'provider') {
                     titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
+                } 
+                if (getInfo[0] === 'account') {
+                    titleObject[i].list.push(`Счета от ${selectedLine.items[0].Prefix}`)
                 }
             } else {
                 const emptyData = [
@@ -674,6 +685,49 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        function fillingProducts() {
+            let list_items = selectedLine.items;
+            let table = '';
+
+            for (let i = 0; i < list_items.length; i++) {
+                table = table.concat(`
+                    <tr class="product" id="product_${list_items[i].Item_id}">
+                        <td>${list_items[i].Name}</td>
+                        <td>${list_items[i].Packing}</td>
+                        <td>${list_items[i].Weight} кг.</td>
+                        <td>${Math.round(list_items[i].Volume / list_items[i].Weight)}</td>
+                        <td>${list_items[i].Volume}</td>
+                        <td>${list_items[i].Cost}</td>
+                        <td>${(selectedLine.account.Sale / list_items[i].Volume / list_items.length).toFixed(2)}</td>
+                        <td>${(selectedLine.account.Hello / list_items[i].Volume / list_items.length).toFixed(2)}</td>
+                        <td>${(selectedLine.account.Shipping / list_items[i].Volume / list_items.length).toFixed(2)}</td>
+                        <td>${Math.round(list_items[i].Cost / list_items[i].Volume)}</td>
+                        <td>${Math.round(list_items[i].Cost * list_items[i].Volume)}</td>
+                    </tr>
+                `)
+            }
+
+            if (5 - list_items.length > 0) {
+                for (let i = 0; i < 5 - list_items.length; i++) {
+                    table = table.concat(`
+                        <tr class="product">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    `);
+                }
+            }
+            return table;
+        }
         return ` <div class="row_card">
                     <div class="info_block full">
                         <table class="account_table">
@@ -695,71 +749,7 @@ function createCardMenu(element, index = 0) {
                                 <th>Доставка</th>
                                 <th>За единицу</th>
                             </tr>
-                            <tr class="product">
-                                <td>Продукт</td>
-                                <td>Бочка</td>
-                                <td>25</td>
-                                <td>100</td>
-                                <td>15000</td>
-                                <td>180000</td>
-                                <td>5000</td>
-                                <td>5000</td>
-                                <td>5000</td>
-                                <td>195</td>
-                                <td>195000</td>
-                            </tr>
-                            <tr class="product">
-                                <td>Продукт 2</td>
-                                <td>Мешок</td>
-                                <td>30</td>
-                                <td>200</td>
-                                <td>20000</td>
-                                <td>200000</td>
-                                <td>10000</td>
-                                <td>10000</td>
-                                <td>10000</td>
-                                <td>300</td>
-                                <td>25000</td>
-                            </tr>
-                            <tr class="product">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr class="product">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr class="product">
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            ${fillingProducts()}
                             <tr>
                                 <td colspan="10"></td>
                                 <td class="fz10">
@@ -1067,27 +1057,45 @@ function completionCard(element) {
         dataType: 'html',
         success: function(data) { 
             data = JSON.parse(data);
-            let list_items = [];
+            let idsItems = [];
             $('#exposed_list .invoiled').each(function(i, element) {
                 let idProduct = $(element).attr('id').split('_')[1];
                 for (let i = 0; i < data.length; i++) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
                         if (account.Item_id == idProduct) {
-                            list_items.push(account);
+                            idsItems.push(account.Item_id);
                         }
                     }
                 }
             });
-            if (list_items.length > 0) {
-                console.log(list_items);
+            
+            if (idsItems.length > 0) {
+                let sale = $('#total_discount_inv').val();
+                let privet = $('#total_privet_inv').val();
+                let delivery = $('#total_delivery_inv').val();
+                let status = 'true';
+                let date = getCurrentDate('year');
+                let name;
+                let sum = '1000';
+
                 // Передать данные на сервер и создать карточку счета
                 for (let i = 0; i < dataName.length; i++) {
                     if (element.name === dataName[i].name) {
+                        name = dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1].children[0].value;
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
-                closeCardMenu('account_new');
+                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: idsItems});
+                $.ajax({
+                    url: '/addAccount',
+                    type: 'GET',
+                    data: {name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)},
+                    dataType: 'html',
+                    success: function() {
+                        closeCardMenu('account_new');
+                    }
+                })
             } else {
                 alert('Невозможно создать счет, ни один товар не выбран!');
             }
@@ -1106,9 +1114,8 @@ function closeCardMenu(id = '') {
         saveInfoCard(id);
         let idSplit = id.split('_');
         let idComment = `${idSplit[0]}_${idSplit[idSplit.length - 1]}`;
-        getCommentsInfo.getRequest(idComment);
-     }
-    else getTableData(saveTableAndCard);
+        if (!id.includes('account')) getCommentsInfo.getRequest(idComment);
+    } else getTableData(saveTableAndCard);
 
     // Если открыта карточка Выставления счета в Счете - закрыть ее
     if (categoryInFinanceAccount[0].lastCard[0] !== null) {

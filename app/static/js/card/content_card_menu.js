@@ -96,6 +96,46 @@ function fillVolume(value) {
     if (spaceIndex > 0) { value = value.substring(0, spaceIndex) }
     $('#volume_goods').html(value);
 }
+function dataСalculation(element) {
+    for (let i = 0; i < list_inv.length; i++) {
+        if (list_inv[i].id == element.id) {
+            list_inv[i].value = $(element).val();
+        }
+    }
+    let total = $('#total_costs_inv').val();
+    let sale = $('#total_discount_inv').val();
+    let privet = $('#total_privet_inv').val();
+    let delivery = $('#total_delivery_inv').val();
+    if ((total == '' || total == '0') && (sale != '' && privet != '' && delivery != '')) {
+        let sum = +sale + +privet + +delivery;
+        $('#total_costs_inv').val(sum);
+    }
+}
+function calculationIndicators() {
+    let list = [
+        {id: 'total_discount_inv', tr: 'calcSale'},
+        {id: 'total_privet_inv', tr: 'calcPrivet'},
+        {id: 'total_delivery_inv', tr: 'calcDelivery'},
+    ]
+    let count = 0;
+    $('#exposed_list .invoiled').each(function(i, element) {
+        count++;
+    });
+    for (let i = 0; i < list.length; i++) {
+        let data = categoryInFinanceAccount[1][1];
+        for (let j = 0; j < data.length; j++) {
+            for (let k = 0; k < data[j].items.length; k++) {
+                $('#exposed_list .invoiled').each(function(i, element) {
+                    if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
+                        $(`#calcSale_${data[j].items[k].Item_id}`).html((+$('#total_discount_inv').val() / data[j].items[k].Volume / count).toFixed(2));
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html((+$('#total_privet_inv').val() / data[j].items[k].Volume / count).toFixed(2));
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html((+$('#total_delivery_inv').val() / data[j].items[k].Volume / count).toFixed(2));
+                    }
+                });
+            }
+        }
+    }
+}
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
     return `
@@ -239,17 +279,17 @@ function invoicingContentCard(elem, data) {
                         </div> 
                         <div class="costs_element">
                             <span>Скидка</span> 
-                            <input type="number" id="total_discount_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Привет</span> 
-                            <input type="number" id="total_privet_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Доставка</span> 
-                            <input type="number" id="total_delivery_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>`,
             })
@@ -320,8 +360,18 @@ function invoiceInTable(element) {
                     let account = data[i].items[j];
                     if (account.Prefix == prefixAccount) {
                         if (account.Item_id == element.id.split('_')[1]) {
-                            let list = [account.Name, account.Packing, account.Weight + ' кг.', account.Volume, account.Volume, account.Cost, 0, 0, 0, 0, account.Cost * account.Volume]
+                            let list = [account.Name, account.Packing, account.Weight + ' кг.', Math.round(account.Volume / account.Weight), account.Volume, account.Cost, 0, 0, 0, Math.round(account.Cost / account.Volume), Math.round(account.Cost * account.Volume)]
                             for (let k = 0; k < list.length; k++) {
+                                if (k == 6) {
+                                    tr.append($('<td>', { id: 'calcSale_' + account.Item_id, html: list[k] }));
+                                    continue;
+                                } else if (k == 7) {
+                                    tr.append($('<td>', { id: 'calcPrivet_' + account.Item_id, html: list[k] }));
+                                    continue;
+                                } else if (k == 8) {
+                                    tr.append($('<td>', { id: 'calcDelivery_' + account.Item_id, html: list[k] }));
+                                    continue;
+                                }
                                 tr.append($('<td>', { html: list[k] }));
                             }
                             $(`#${element.id}`).remove();
@@ -336,6 +386,7 @@ function invoiceInTable(element) {
                     }
                 }
             }
+            calculationIndicators();
         },
     });
 }
@@ -370,13 +421,14 @@ function returnBack(element) {
                 returnEmptyRow.append($('<td>', { html: '' }));
             }
             $('#exposed_list').append(returnEmptyRow);
+            calculationIndicators();
         },
     });
 }
 let list_inv = [
-    { disable: false, id: 'total_discount_inv'},
-    { disable: false, id: 'total_privet_inv'},
-    { disable: false, id: 'total_delivery_inv'},
+    { disable: false, id: 'total_discount_inv', value: 0},
+    { disable: false, id: 'total_privet_inv', value: 0},
+    { disable: false, id: 'total_delivery_inv', value: 0},
 ]
 // Смена режима в Выставлении счета (показатели)
 function switchMode(element) {
@@ -426,6 +478,10 @@ function switchMode(element) {
             }
         }
     }
+    for (let i = 0; i < list_inv.length; i++) {
+        list_inv[i].value = $(`#${list_inv[i].id}`).val();
+    }
+    calculationIndicators();
 }
 // Добавление комментариев в карточках
 function addComment(manager = '', data) {
@@ -561,7 +617,6 @@ function addMember(id = 'client', selectedLine = '') {
     $('#member .member').each(function(i, element) {
         widthRole($(element).children()[0].children[0].children[0]);
     });
-    console.log(selectedLine.Visible);
     if (selectedLine.Visible == null) {
         selectedLine.Visible = true;
     } if (!selectedLine.Visible) {

@@ -56,6 +56,22 @@ let rowFilling = (object, id, table) => {
         return table;
     }
 
+    let rowFillingAccount = (id) => {
+        table.append(getTitleTable());
+        for (let i = object[1].length - 1; i >= 0; i--) {
+            //let prefix = object[1][i].items[0].Prefix;
+            let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
+            const name = [123, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, object[1][i].account.Status, object[1][i].account.Hello, object[1][i].account.Manager_id];
+
+            for (let j = 0; j < name.length; j++) {
+                let elementTr = $('<td>', { html: name[j] });
+                element.append(elementTr);
+            }
+            table.append(element);
+        }
+        return table;
+    }
+
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
@@ -97,7 +113,7 @@ let rowFilling = (object, id, table) => {
         { id: 'provider', function: rowFillingDefault },
         { id: 'carrier', function: rowFillingDefault },
         { id: 'debit', function: rowFillingDefault },
-        { id: 'account', function: rowFillingDefault },
+        { id: 'account', function: rowFillingAccount },
         { id: 'delivery', function: rowFillingDefault },
         { id: 'stock', function: rowFillingStock },
         { id: 'filter_stock', function: rowFillingFilterStock },
