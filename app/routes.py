@@ -196,7 +196,7 @@ def getAccounts():
     result = []
     for i in models.Account.query.all():
         items = json.loads(table_to_json(i.Items))
-        account = json.loads(table_to_json([i]))
+        account = json.loads(table_to_json([i]))[0]
         subres = {'items': items, 'account': account}
         result.append(subres)
     return json.dumps(result)
