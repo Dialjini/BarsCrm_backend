@@ -50,7 +50,6 @@ class Item_groups(db.Model):
 
 class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
-    Account_id = db.Column(db.Integer, db.ForeignKey('account.id'))
     Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
     Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
     Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
@@ -196,7 +195,7 @@ class Account(db.Model):
     Hello = db.Column(db.String)
     Shipping = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
-    Items = db.relationship('Item', backref='Account', lazy='dynamic')
+    Item_ids = db.Column(db.String)
 
 
 class Delivery(db.Model):

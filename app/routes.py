@@ -195,7 +195,10 @@ def addItemGroup():
 def getAccounts():
     result = []
     for i in models.Account.query.all():
-        items = json.loads(table_to_json(i.Items))
+        items = []
+        for j in json.loads(i.Item_ids):
+            item = models.Item.query.filter_by(id=j).first()
+            items.append(item)
         account = json.loads(table_to_json([i]))[0]
         subres = {'items': items, 'account': account}
         result.append(subres)
@@ -213,12 +216,7 @@ def addAccount():
     table.Sale = data['sale']
     table.Shipping = data['shipping']
     table.Sum = data['sum']
-    item_ids = json.loads(data['item_ids'])
-    items = []
-    for i in item_ids:
-        item = models.Item.query.filter_by(Item_id=i).first()
-        items.append(item)
-    table.Items = items
+    table.Item_ids = data['item_ids']
 
     db.session.add(table)
     db.session.commit()
