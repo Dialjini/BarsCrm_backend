@@ -420,9 +420,9 @@ function returnBack(element) {
                             sum += +$(element).html()
                         });
                         let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
-                        $('#total').html(sum);
-                        $('#vat').html(sum - vat);
-                        $('#without-vat').html(vat);
+                        $('#total').html(Math.round(sum));
+                        $('#vat').html(Math.round(sum - vat));
+                        $('#without-vat').html(Math.round(vat));
                         break;
                     }
                 }

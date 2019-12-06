@@ -120,6 +120,9 @@ function createCardMenu(element, index = 0) {
                 } else {
                     selectedLine = data_list[titleObject[i].status - 1];
                 }
+
+                console.log(getInfo, selectedLine);
+                // Передать данные счета в карточку доставки
                 
                 let list = Object.keys(selectedLine);
                 for (let elem = 0; elem < list.length; elem++) {
@@ -212,7 +215,6 @@ function createCardMenu(element, index = 0) {
     $('.info').append(cardMenu());
     $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
     itemSelection(getInfo[0], selectedLine);
-    console.log(123);
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
@@ -893,10 +895,10 @@ function createCardMenu(element, index = 0) {
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
-            let select = '<select id="delivery_carrier" onchange="selectDrivers(this)">';
+            let select = '<select id="delivery_carrier_id" onchange="selectDrivers(this)">';
             select += '<option value="disabled" selected disabled>Не выбран</option>'
             for (let i = 0; i < data.length; i++) {
-                select += `<option value="carrier_${data[i].id}">${data[i].Name}</option>`;
+                select += `<option value="${data[i].id}">${data[i].Name}</option>`;
                 list_name.push({ name: data[i].Name, id: data[i].id });
             }
             select += '</select>';
@@ -914,19 +916,19 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Дата отгрузки</td>
                                 <td>
-                                    <input type="text" id="delivery_shipment" value="${selectedLine.Start_date}">
+                                    <input type="text" id="delivery_start_date" value="${selectedLine.Start_date}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Дата разгрузки</td>
                                 <td>
-                                    <input type="text" id="delivery_unloading" value="${selectedLine.End_date}">
+                                    <input type="text" id="delivery_end_date" value="${selectedLine.End_date}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Способ погрузки</td>
                                 <td>
-                                    <input type="text" id="delivery_way" value="${selectedLine.Load_type}">
+                                    <input type="text" id="delivery_load_type" value="${selectedLine.Load_type}">
                                 </td>
                             </tr>
                         </table>
@@ -946,7 +948,7 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Вид перевозки</td>
                                 <td>
-                                    <input type="text" id="delivery_view" value="${selectedLine.Type}">
+                                    <input type="text" id="delivery_type" value="${selectedLine.Type}">
                                 </td>
                             </tr>
                             <tr>
@@ -966,7 +968,7 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Контакт на выгрузке</td>
                                 <td>
-                                    <input type="text" id="delivery_contact" value="${selectedLine.Contact_Number}">
+                                    <input type="text" id="delivery_contact_number" value="${selectedLine.Contact_Number}">
                                 </td>
                             </tr>
                         </table>
@@ -1011,9 +1013,39 @@ function createCardMenu(element, index = 0) {
                     </div>
                     <div class="next">
                         <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
-                        <button class="btn btn-main" id="delivery_new" onclick="closeCardMenu(this.id)">Оформить Заявку</button>
+                        <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this.name)">Оформить Заявку</button>
                     </div>`
     }
+}
+function makeRequest(element) {
+    let data = {};
+    for (let i = 0; i < idCardFields[3].ids.length; i++) {
+        data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
+    }
+
+    let idDelivery = element.split('_');
+    data['delivery_id'] = idDelivery[idDelivery.length - 1];
+    data['delivery_date'] = '06.12.2019';
+    data['delivery_vat'] = '20';
+    data['delivery_name'] = 'Тестовый';
+    data['delivery_contact_end'] = 'Петя';
+    data['delivery_payment_date'] = '10.12.2019';
+    data['delivery_prefix'] = 'ООО';
+    data['delivery_stock'] = 'ул. Пушкина';
+    data['delivery_price'] = '1000';
+    data['delivery_contact_name'] = 'Василий';
+    console.log(data);
+    $.ajax({
+        url: '/addDelivery',
+        type: 'GET',
+        data: data,
+        dataType: 'html',
+        success: function(data) {
+            console.log(data);
+        }
+    });
+    
+    closeCardMenu(element);
 }
 function selectDrivers() {
     $('#delivery_driver').append(
@@ -1031,7 +1063,6 @@ function createDelCardMenu(element) {
             data = JSON.parse(data);
             if (categoryInListCarrier[1][1] === undefined) {
                 categoryInListCarrier[1].push(data);
-                console.log(categoryInListCarrier[1]);
             }
             createCardMenu(element);
         },
@@ -1191,7 +1222,7 @@ function getTitleInfo(element) {
             return $('<div>', {
                 class: 'close',
                 id: `${element.id}_close_card_${element.status}`,
-                onclick: 'closeCardMenu(this.id)',
+                onclick: element.id !== 'delivery' ? 'closeCardMenu(this.id)' : 'makeRequest(this.id)',
                 append: $('<img>', {src: 'static/images/cancel.png'})
             })
         }
@@ -1214,8 +1245,7 @@ function getTitleInfo(element) {
                         }))
                     })
         }
-
-        if (element.id === 'stock') {
+        if (element.id === 'stock' || element.id === 'delivery') {
             return $('<div>', {
                 class: 'right_side',
                 append: closeButton()

@@ -74,7 +74,6 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
-        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
             //let prefix = object[1][i].items[0].Prefix;
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
