@@ -1,8 +1,6 @@
 from app import app
 from flask import render_template, redirect, session, request
 from app import models, db
-from datetime import datetime
-
 import json
 
 
@@ -76,6 +74,7 @@ def logout():
         session.pop('username', None)
     return redirect('/', code=302)
 
+
 @app.route('/getClients', methods=['GET'])
 def getClients():
     return table_to_json(models.Client.query.all())
@@ -125,6 +124,7 @@ def addMessages():
 
     return 'OK'
 
+
 @app.route('/getDeliveries', methods=['GET'])
 def getDeliveries():
     deliveries = models.Delivery.query.all()
@@ -143,30 +143,29 @@ def addDelivery():
     data = request.args
     table = models.Delivery()
 
-    table.Name = data['account_name']
-    table.Date = data['account_date']
-    table.Price = data['account_price']
-    table.Contact_Number = data['account_contact_number']
-    table.Contact_Name = data['account_contact_name']
-    table.Carrier_id = data['account_carrier_id']
-    table.Comment = data['account_comment']
-    table.Client = data['account_client']
-    table.NDS = data['account_vat']
-    table.Contact_End = data['account_contact_end']
-    table.Customer = data['account_customer']
-    table.End_date = data['account_end_date']
-    table.Load_type = data['account_load_type']
-    table.Payment_date = data['account_payment_date']
-    table.Prefix = data['account_prefix']
-    table.Start_date = data['account_start_date']
-    table.Stock = data['account_stock']
-    table.Type = data['account_type']
+    table.Name = data['delivery_name']
+    table.Date = data['delivery_date']
+    table.Price = data['delivery_price']
+    table.Contact_Number = data['delivery_contact_number']
+    table.Contact_Name = data['delivery_contact_name']
+    table.Carrier_id = data['delivery_carrier_id']
+    table.Comment = data['delivery_comment']
+    table.Client = data['delivery_client']
+    table.NDS = data['delivery_vat']
+    table.Contact_End = data['delivery_contact_end']
+    table.Customer = data['delivery_customer']
+    table.End_date = data['delivery_end_date']
+    table.Load_type = data['delivery_load_type']
+    table.Payment_date = data['delivery_payment_date']
+    table.Prefix = data['delivery_prefix']
+    table.Start_date = data['delivery_start_date']
+    table.Stock = data['delivery_stock']
+    table.Type = data['delivery_type']
 
     db.session.add(table)
     db.session.commit()
 
     return 'OK'
-
 
 
 @app.route('/getContacts', methods=['GET'])
@@ -331,6 +330,7 @@ def addContacts():
 
     return 'OK'
 
+
 @app.route('/addItems', methods=['GET'])
 def addItems():
     if request.args['category'] == 'client':
@@ -366,6 +366,7 @@ def addItems():
 
     return 'OK'
 
+
 @app.route('/getItems', methods=['GET'])
 def getItems():
     if request.args['category'] == 'client':
@@ -382,6 +383,7 @@ def getItems():
         return table_to_json(models.Item.query.filter_by(Carrier=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
+
 
 @app.route('/getProviders', methods=['GET'])
 def getProviders():
@@ -402,6 +404,7 @@ def getTasks(login):
 @app.route('/getUsers', methods=['GET'])
 def getUsers():
     return table_to_json(models.User.query.all())
+
 
 @app.route('/getCarriers', methods=['GET'])
 def getCarriers():
@@ -531,7 +534,6 @@ def addClient():
     Client.Livestock_all = data['livestock_general']
     Client.Livestock_milking = data['livestock_milking']
     Client.Livestock_milkyield = data['livestock_milkyield']
-
 
     if new:
         db.session.add(Client)
