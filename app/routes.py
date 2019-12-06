@@ -141,7 +141,10 @@ def getDeliveries():
 @app.route('/addDelivery', methods=['GET'])
 def addDelivery():
     data = request.args
-    table = models.Delivery()
+    if data['delivery_id'] == 'new':
+        table = models.Delivery()
+    else:
+        table = models.Delivery.query.filter_by(id=data['delivery_id']).first()
 
     table.Name = data['delivery_name']
     table.Date = data['delivery_date']
