@@ -148,7 +148,8 @@ def addDelivery():
     table.Price = data['delivery_price']
     table.Contact_Number = data['delivery_contact_number']
     table.Contact_Name = data['delivery_contact_name']
-    table.Carrier_id = data['delivery_carrier_id']
+    if data['delivery_carrier_id']:
+        table.Carrier_id = data['delivery_carrier_id']
     table.Comment = data['delivery_comment']
     table.Client = data['delivery_client']
     table.NDS = data['delivery_vat']
