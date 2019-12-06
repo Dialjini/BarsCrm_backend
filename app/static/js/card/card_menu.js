@@ -1024,7 +1024,7 @@ function makeRequest(element) {
     }
 
     let idDelivery = element.split('_');
-    data['delivery_id'] = +idDelivery[idDelivery.length - 1];
+    data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? categoryInDelivery[1][1].length : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = '06.12.2019';
     data['delivery_vat'] = '20';
     data['delivery_name'] = 'Тестовый';
