@@ -119,7 +119,7 @@ function calculationIndicators() {
         count++;
     });
     for (let i = 0; i < list.length; i++) {
-        let data = categoryInFinanceAccount[1][1];
+        let data = categoryInStock[1][1];
         for (let j = 0; j < data.length; j++) {
             for (let k = 0; k < data[j].items.length; k++) {
                 $('#exposed_list .invoiled').each(function(i, element) {

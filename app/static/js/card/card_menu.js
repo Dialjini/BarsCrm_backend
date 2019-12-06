@@ -1075,7 +1075,9 @@ function invoiceCard(elem) {
         url: '/getStockTable',
         type: 'GET',
         dataType: 'html',
-        success: function(data) { 
+        success: function(data) {
+            data = JSON.parse(data);
+            if (categoryInStock[1][1] == undefined) categoryInStock[1].push(data);
             function invoiceCardContent(data) {
                 return $('<div>', {
                     class: 'card_menu invoicing',
@@ -1088,7 +1090,7 @@ function invoiceCard(elem) {
             }
             // Вытягивать данные по таблице
             $('.card_menu').remove();
-            categoryInFinanceAccount[0].lastCard[0] = invoiceCardContent(JSON.parse(data));
+            categoryInFinanceAccount[0].lastCard[0] = invoiceCardContent(data);
         
             categoryInFinanceAccount[0].active = true;
             categoryInFinanceDebit[0].active = false;
