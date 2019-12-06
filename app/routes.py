@@ -163,7 +163,8 @@ def addDelivery():
     table.Stock = data['delivery_stock']
     table.Type = data['delivery_type']
 
-    db.session.add(table)
+    if data['delivery_id'] == 'new':
+        db.session.add(table)
     db.session.commit()
 
     return 'OK'

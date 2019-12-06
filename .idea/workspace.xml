@@ -52,8 +52,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
-              <caret line="164" column="25" lean-forward="true" selection-start-line="164" selection-start-column="25" selection-end-line="164" selection-end-column="25" />
+            <state relative-caret-position="85">
+              <caret line="166" column="8" selection-start-line="166" selection-start-column="8" selection-end-line="166" selection-end-column="8" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -302,20 +302,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1571908541946</updated>
-    </task>
-    <task id="LOCAL-00015" summary="add VERY BAD provider parser DO NOT USE for prod">
-      <created>1574251423590</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1574251423590</updated>
-    </task>
-    <task id="LOCAL-00016" summary="add parse item table">
-      <created>1574255943395</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1574255943395</updated>
     </task>
     <task id="LOCAL-00017" summary="add test db">
       <created>1574255978375</created>
@@ -646,7 +632,21 @@
       <option name="project" value="LOCAL" />
       <updated>1575562606535</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="fix delivery names">
+      <created>1575606969265</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1575606969265</updated>
+    </task>
+    <task id="LOCAL-00065" summary="fix delivery names">
+      <created>1575608798821</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1575608798821</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TodoView">
@@ -741,7 +741,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refresh dbase" />
     <MESSAGE value="now locate users with id" />
     <MESSAGE value="add addItems method, addComment method, restruct dbase" />
     <MESSAGE value="fill test dbase" />
@@ -766,7 +765,8 @@
     <MESSAGE value="fix same items in accounts bug" />
     <MESSAGE value="fix 500 error" />
     <MESSAGE value="add delivery methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="add delivery methods" />
+    <MESSAGE value="fix delivery names" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix delivery names" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -940,8 +940,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="164" column="25" lean-forward="true" selection-start-line="164" selection-start-column="25" selection-end-line="164" selection-end-column="25" />
+        <state relative-caret-position="85">
+          <caret line="166" column="8" selection-start-line="166" selection-start-column="8" selection-end-line="166" selection-end-column="8" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
