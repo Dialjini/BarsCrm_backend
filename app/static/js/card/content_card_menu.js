@@ -177,7 +177,8 @@ function invoicingContentCard(elem, data) {
     // Вывод заголовка основной таблицы
     function getTitleTable() {
         return `<tr>
-                    <th rowspan="2">Товар</th>
+                    <th width="15" rowspan="2"></th>
+                    <th width="150" rowspan="2">Товар</th>
                     <th colspan="2">Фасовка</th>
                     <th colspan="2">Количество</th>
                     <th colspan="5">Цена</th>
@@ -214,7 +215,7 @@ function invoicingContentCard(elem, data) {
         let tbody = $('<tbody>', { id: 'exposed_list' });
         for (let i = 0; i < 5; i++) {
             let tr = $('<tr>', {class: 'product', id: 'empty'});
-            for (let j = 0; j < 11; j++) {
+            for (let j = 0; j < 12; j++) {
                 tr.append($('<td>', {
                     html: info
                 }))
@@ -222,12 +223,12 @@ function invoicingContentCard(elem, data) {
             tbody.append(tr);
         }
 
-        const string = ['Общая', 'НДС', 'Без НДС'];
-        const stringID = ['total', 'vat', 'without-vat'];
+        const string = ['НДС', 'Без НДС', 'Общая'];
+        const stringID = ['vat', 'without-vat', 'total'];
 
         for (let i = 0; i < 3; i++) {
             tbody = tbody.add($('<tr>', {
-                prepend: $('<td>', { colspan: 9, css: {'border': 'none'} }),
+                prepend: $('<td>', { colspan: 10, css: {'border': 'none'} }),
                 append: $('<td>', {
                     colspan: 2,
                     class: 'fz10',
@@ -351,13 +352,14 @@ function invoiceInTable(element) {
                 }
             }
             
-            let tr = $('<tr>', { class: 'product invoiled', id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)'});
+            let tr = $('<tr>', { class: 'product invoiled', id: `invoiled_${element.id.split('_')[1]}_product` });
             for (let i = 0; i < data.length; i++) {
                 for (let j = 0; j < data[i].items.length; j++) {
                     let account = data[i].items[j];
                     if (account.Prefix == prefixAccount) {
                         if (account.Item_id == element.id.split('_')[1]) {
-                            let list = [account.Name, account.Packing, account.Weight + ' кг.', Math.round(account.Volume / account.Weight), account.Volume, account.Cost, 0, 0, 0, Math.round(account.Cost / account.Volume), Math.round(account.Cost * account.Volume)]
+                            tr.append($('<td>', { id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)' }))
+                            let list = [account.Name, account.Packing, `<span id="product_weight_${element.id.split('_')[1]}">${account.Weight}</span>`, `<span id="product_containers_${element.id.split('_')[1]}"></span>`, `<input type="number" onkeyup="tarCalculation(this.id)" id="invoiled_volume_${element.id.split('_')[1]}"></input>`, account.Cost, 0, 0, 0, Math.round(account.Cost / account.Volume), Math.round(account.Cost * account.Volume)]
                             for (let k = 0; k < list.length; k++) {
                                 if (k == 6) {
                                     tr.append($('<td>', { id: 'calcSale_' + account.Item_id, html: list[k] }));
@@ -382,10 +384,11 @@ function invoiceInTable(element) {
                             $('#exposed_list .invoiled #calcSum').each(function(i, element) {
                                 sum += +$(element).html()
                             });
+                            account.NDS = account.NDS[0] + account.NDS[1];
                             let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
-                            $('#total').html(sum);
-                            $('#vat').html(sum - vat);
-                            $('#without-vat').html(vat);
+                            $('#total').html(Math.round(sum));
+                            $('#vat').html(Math.round(sum - vat));
+                            $('#without-vat').html(Math.round(vat));
                             break;
                         }
                     }
@@ -395,6 +398,12 @@ function invoiceInTable(element) {
         },
     });
 }
+function tarCalculation(id) {
+    let idElement = id.split('_')[2];
+    let volume = $(`#${id}`).val();
+    let weight = $(`#product_weight_${idElement}`).html();
+    $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
+}
 function returnBack(element) {
     $.ajax({
         url: '/getStockTable',
@@ -402,7 +411,8 @@ function returnBack(element) {
         dataType: 'html',
         success: function(data) { 
             data = JSON.parse(data);
-            $(`#${element.id}`).remove();
+            console.log($(`#${element.id}`));
+            $(`#${element.id}_product`).remove();
             // Возвращаем столбец из верхней таблицы обратно
             let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: element.id.replace(/invoiled_/g, 'invoice_')});
             for (let i = 0; i < data.length; i++) {
@@ -419,6 +429,7 @@ function returnBack(element) {
                         $('#exposed_list .invoiled #calcSum').each(function(i, element) {
                             sum += +$(element).html()
                         });
+                        account.NDS = account.NDS[0] + account.NDS[1];
                         let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
                         $('#total').html(Math.round(sum));
                         $('#vat').html(Math.round(sum - vat));
@@ -431,7 +442,7 @@ function returnBack(element) {
 
             // Возвращаем пустой столбец в верхнюю таблицу
             let returnEmptyRow = $('<tr>', {class: 'product', id: 'empty'});
-            for (let j = 0; j < 11; j++) {
+            for (let j = 0; j < 12; j++) {
                 returnEmptyRow.append($('<td>', { html: '' }));
             }
             $('#exposed_list').append(returnEmptyRow);
@@ -710,7 +721,6 @@ function removeMemberOrRow(id) {
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
-    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},

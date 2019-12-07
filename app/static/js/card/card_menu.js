@@ -120,8 +120,7 @@ function createCardMenu(element, index = 0) {
                 } else {
                     selectedLine = data_list[titleObject[i].status - 1];
                 }
-
-                console.log(getInfo, selectedLine);
+                
                 // Передать данные счета в карточку доставки
                 
                 let list = Object.keys(selectedLine);
@@ -1203,6 +1202,7 @@ function completionCard(element) {
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
+                
                 console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)});
                 $.ajax({
                     url: '/addAccount',
