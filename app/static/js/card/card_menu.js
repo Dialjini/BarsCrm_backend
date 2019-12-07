@@ -214,7 +214,7 @@ function createCardMenu(element, index = 0) {
     
     $('.info').append(cardMenu());
     $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
-    itemSelection(getInfo[0], selectedLine);
+    if (getInfo[0] !== 'client') itemSelection(getInfo[0], selectedLine);
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
@@ -378,8 +378,12 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tbody id="demand">
                                 <tr>
-                                    <td><input id="demand_product" type="text" style="width: 196px" value="${selectedLine.Demand_item}"></td>
-                                    <td><input id="demand_volume" type="text" style="width: 50px" value="${selectedLine.Demand_volume}"></td>
+                                    <td>
+                                        <select id="demand_product" style="width: 196px" onchange="itemSelection(this)">
+                                            ${getItemsList('demand_product', selectedLine, getInfo[0])}
+                                        </select>
+                                    </td>
+                                    <td><input id="demand_volume" type="number" style="width: 50px" value="${selectedLine.Demand_volume}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1168,7 +1172,7 @@ function completionCard(element) {
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
-
+                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)});
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',
@@ -1192,7 +1196,7 @@ function closeCardMenu(id = '') {
         getTableData(saveTableAndCard);
         return;
     }
-    if (!id.includes('new') && !id.includes('stock') && !id.includes('delivery')) { 
+    if (!id.includes('stock') && !id.includes('delivery')) { 
         saveInfoCard(id);
         let idSplit = id.split('_');
         let idComment = `${idSplit[0]}_${idSplit[idSplit.length - 1]}`;
@@ -1245,18 +1249,18 @@ function getTitleInfo(element) {
                         }))
                     })
         }
-        if (element.id === 'stock' || element.id === 'delivery') {
-            return $('<div>', {
-                class: 'right_side',
-                append: closeButton()
-            })
-        } else {
+        if (element.id === 'client' || element.id === 'provider') {
             let block = $('<div>', { class: 'right_side' });
             if (!element.status.includes('contract') && !element.status.includes('new')) {
                 block.append(getUserInfo());
             }
             block.append(closeButton());
             return block;
+        } else {
+            return $('<div>', {
+                class: 'right_side',
+                append: closeButton()
+            })
         }
     }
 

@@ -236,6 +236,10 @@ let getCommentsInfo = (function() {
                     comment_role: $('#comment_role').val(),
                     comment_content: $('#comment_content').val()
                 };
+                if (list.comment_role == null) {
+                    addComment();
+                    return;
+                }
                 data = data.split('_');
                 let count = 0, array = Object.keys(list);
                 for (let i = 0; i < 3; i++) {

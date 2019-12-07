@@ -513,7 +513,7 @@ function addComment(manager = '', data) {
                 id: 'message',
                 append: `
                     <td>
-                        <input type="text" onchange="saveCard()" placeholder="01.01.2020" id="comment_date" class="m_date">
+                        <input type="text" onchange="saveCard()" value="${getCurrentDate('year')}" id="comment_date" class="m_date">
                     </td>
                     <td>
                         <select onselect="saveCard()" id="comment_role" class="m_role">
@@ -710,44 +710,45 @@ function removeMemberOrRow(id) {
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
+    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', count: 4, widthInput: [
-                {id: 'item_product', width: 57},
-                {id: 'item_volume', width: 43},
-                {id: 'item_creator', width: 104},
-                {id: 'item_price', width: 43}
+                {id: 'item_product', width: 100, type: 'text'},
+                {id: 'item_volume', width: 43, type: 'number'},
+                {id: 'item_creator', width: 104, type: 'text'},
+                {id: 'item_price', width: 43, type: 'number'}
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
         },
         { id: 'provider-group', count: 6, widthInput: [
-                {id: 'item_product', width: 57},
-                {id: 'item_price', width: 33},
-                {id: 'item_vat', width: 28},
-                {id: 'item_packing', width: 59},
-                {id: 'item_weight', width: 24},
-                {id: 'item_fraction', width: 57}
+                {id: 'item_product', width: 100, type: 'text'},
+                {id: 'item_price', width: 33, type: 'number'},
+                {id: 'item_vat', width: 28, type: 'number'},
+                {id: 'item_packing', width: 59, type: 'text'},
+                {id: 'item_weight', width: 24, type: 'text'},
+                {id: 'item_fraction', width: 57, type: 'text'}
             ],
             html: ['Name', 'Cost', 'NDS', 'Packing', 'Weight', 'Fraction']
         },
             { id: 'carrier-group', count: 5, widthInput: [
-                    {id: 'carrier_date', width: 50},
-                    {id: 'carrier_client', width: 100},
-                    {id: 'carrier_stock', width: 160},
-                    {id: 'carrier_driver', width: 90},
-                    {id: 'carrier_price', width: 33}
+                    {id: 'carrier_date', width: 50, type: 'text'},
+                    {id: 'carrier_client', width: 100, type: 'text'},
+                    {id: 'carrier_stock', width: 160, type: 'text'},
+                    {id: 'carrier_driver', width: 90, type: 'text'},
+                    {id: 'carrier_price', width: 33, type: 'number'}
                 ],
                 html: []
         },
             { id: 'account-group', count: 3, widthInput: [
-                    {id: 'account_position', width: 58},
-                    {id: 'account_date', width: 42},
-                    {id: 'account_price', width: 43}
+                    {id: 'account_position', width: 58, type: 'text'},
+                    {id: 'account_date', width: 42, type: 'text'},
+                    {id: 'account_price', width: 43, type: 'number'}
                 ],
                 html: []
         },
             { id: 'delivery-group', count: 2, widthInput: [
-                    {id: 'delivery_date', width: 45},
-                    {id: 'delivery_price', width: 43}
+                    {id: 'delivery_date', width: 45, type: 'text'},
+                    {id: 'delivery_price', width: 43, type: 'number'}
                 ],
                 html: []
         }
@@ -756,12 +757,30 @@ function addRow(id, selectedLine = '') {
     function trFill(table) {
         let tr = $('<tr>');
         for (let i = 0; i < table.count; i++) {
-            tr.append($('<td>', {
-                append: $('<input>', {
-                    css: { width: table.widthInput[i].width + 'px', padding: '0' },
-                    id: table.widthInput[i].id, value: selectedLine[table.html[i]]
+            if (table.widthInput[i].id == 'item_product') {
+                let count = 0;
+                $('.hmax #group [name="items_list"]').each(function() {
+                    count++;
                 })
-            }));
+                tr.append($('<td>', {
+                    append: $('<select>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: 'item_product_' + count,
+                        name: 'items_list',
+                        append: getItemsList('item_product_' + count, selectedLine , id.split('-')[0])
+                    })
+                }));
+            } else {
+                tr.append($('<td>', {
+                    append: $('<input>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: table.widthInput[i].id, 
+                        value: selectedLine[table.html[i]],
+                        type: table.widthInput[i].type
+                    })
+                }));
+            }
+            
         }
         return tr;
     }
@@ -774,6 +793,52 @@ function addRow(id, selectedLine = '') {
         }
     }
     saveCard();
+}
+function getItemsList(id, selectedLine, category) {
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);     
+            let options = '<option value="disabled" selected disabled>Выбрать</option>';
+            let list_items = [];
+            for (let i = 0; i < data.length; i++) 
+                for (let j = 0; j < data[i].items.length; j++) 
+                    list_items.push(data[i].items[j].Name);
+
+            for (let i = 0; i < list_items.length - 1; i++) {
+                for (let j = i + 1; j < list_items.length; j++) {
+                    if (list_items[i] == list_items[j]) {
+                        list_items.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+
+            for (let i = 0; i < list_items.length; i++) 
+                options += `<option value="${list_items[i]}">${list_items[i]}</option>`
+            $(`#${id}`).empty();
+            $(`#${id}`).append(options);
+            if (!id.includes('item_product')) itemSelection(category, selectedLine);
+            else {
+                let count = 0;
+                $('.hmax #group [name="items_list"]').each(function() {
+                    if (selectedLine.Name == '') {
+                        $(`#${id} option:contains('Выбрать')`).attr('selected', true)
+                    } else {
+                        $(`#${id} option`).each(function(i, element) {
+                            if ($(element).html() == selectedLine.Name) {
+                                $(element).attr('selected', true);
+                            }
+                        });
+                        $(`#${id} :selected`).val($(`#${id} :selected`).html());       
+                    }
+                    count++;
+                })
+            };
+        }
+    });
 }
 function itemSelection(element, select) {
     if (element === 'client' || element === 'provider') {
@@ -788,6 +853,16 @@ function itemSelection(element, select) {
         } else {
             $(`#${element}_industry option:contains('${select.Segment}')`).attr('selected', true)
             $(`#${element}_industry :selected`).val($(`#${element}_industry :selected`).html());
+        }
+        if (select.Demand_item == '') {
+            $(`#demand_product option:contains('Выбрать')`).attr('selected', true)
+        } else {
+            $('#demand_product option').each(function(i, element) {
+                if ($(element).html() == select.Demand_item) {
+                    $(element).attr('selected', true);
+                }
+            });
+            $(`#demand_product :selected`).val($(`#demand_product :selected`).html());       
         }
     } else {
         let option = $(`#${element.id} :selected`);
