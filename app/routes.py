@@ -238,13 +238,18 @@ def addItemGroup():
     return 'OK'
 
 
+@app.route('/getAllItems', methods=['GET'])
+def getAllItems():
+    return table_to_json(models.Item.query.all())
+
 @app.route('/getAccounts', methods=['GET'])
 def getAccounts():
     result = []
+    Items = models.Item.query.all()
     for i in models.Account.query.all():
         items = []
         for j in json.loads(i.Item_ids):
-            item = models.Item.query.filter_by(Item_id=int(j)).first()
+            item = Items[int(j) - 1]
             items.append(json.loads(table_to_json([item]))[0])
         account = json.loads(table_to_json([i]))[0]
         subres = {'items': items, 'account': account}
