@@ -174,7 +174,7 @@ function linkField() {
 // Нажатие на категорию
 function linkCategory(element) {
     $('.info').empty();
-    $('[name="linkCategory"]').removeClass('active');
+    $('[name="linkCategory"], .mini_logo').removeClass('active');
     $(`#${element}`).addClass('active');
     for (let i = 0; i < linkCategoryInfo.length; i++) {
         if (element == linkCategoryInfo[i].id) {
@@ -229,6 +229,77 @@ function addButtonsSubcategory(idCategory) {
         })
         $('#delivery_new').attr('onclick', 'createDelCardMenu(this)');
     }
+}
+
+function closePersonCard() {
+    // Создавать пользователя
+    $('.card_menu').remove();
+    adminPanel();
+}
+
+function adminPanel() {
+    // Проверка на полномочия пользователя
+    $('.info').empty();
+    $('[name="linkCategory"]').removeClass('active');
+    $(this).addClass('active');
+
+    getContent();
+    function getContent() {
+        $('.info').append(`
+        <div class="row">
+            <div class="fields">
+                <div class="btn btn-main btn-div" id="addNewPerson">Добавить сотрудника</div>
+            </div>
+            <div class="category">АДМИН ПАНЕЛЬ</div>
+        </div>
+        <table class="table" id="admin">
+            <tr>
+                <th width="180">Фамилия</th>
+                <th width="180">Имя</th>
+                <th width="180">Отчество</th>
+                <th width="130">Должность</th>
+                <th width="170">Логин</th>
+                <th width="170">Пароль</th>
+            </tr>
+            <tr>
+                <td>Солдатов</td>
+                <td>Даниил</td>
+                <td>Артемович</td>
+                <td>Администратор</td>
+                <td>ofswg</td>
+                <td>1234qwer</td>
+            </tr>
+            <tr>
+                <td>Кустов</td>
+                <td>Даниил</td>
+                <td>Егорович</td>
+                <td>Бэкэндер</td>
+                <td>kustov</td>
+                <td>qwerzy132</td>
+            </tr>
+        </table>`
+        )
+    }
+
+    $('#addNewPerson').click(function() {
+        $('.table').remove();
+        $('.info').append(`
+        <div class="card_menu" id="card_menu">
+            <div class="title">
+                <div class="left_side">
+                    <span>Добавление сотрудника</span>
+                </div>
+                <div class="right_side">
+                    <div class="close" onclick="closePersonCard()">
+                        <img src="static/images/cancel.png">
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                Тут можно будет добавить пользователя
+            </div>
+        </div>`)
+    })
 }
 
 // Отчеты
