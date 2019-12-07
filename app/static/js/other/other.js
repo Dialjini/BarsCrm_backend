@@ -221,6 +221,7 @@ function createCT(id, values = 'empty') {
     } else if (id == 'addTask') {
         if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: ''}
         $('#createCT').append(createContactsFormTask(values));
+        $('#task_date').datepicker({minDate: new Date(), position: 'left top'})
     }
     //$('#task_type').attr('onchange', 'selectTypeTask()')
     $('#task_type').append(`

@@ -219,24 +219,31 @@ function createCardMenu(element, index = 0) {
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
     function getContactsAndItems() {
-        if (getInfo[1] == 'new') {
-            addMember(getInfo[0]);
-            addRow(`${getInfo[0]}-group`);
+        let category = getInfo[0];
+        let idElement = getInfo[1];
+        if (idElement == 'new') {
+            addMember(category);
+            addRow(`${category}-group`);
             $('[name="remove_last_group"]').fadeOut(0);
         } else {
-            $.ajax({
-                url: '/getItems',
-                type: 'GET',
-                data: {category: getInfo[0], id: getInfo[1]},
-                dataType: 'html',
-                success: function(result) {
-                    inputItems(JSON.parse(result));
-                }
-            });
+            if (category == 'client' || category == 'provider') {
+                $.ajax({
+                    url: '/getItems',
+                    type: 'GET',
+                    data: {category: category, id: idElement},
+                    dataType: 'html',
+                    success: function(result) {
+                        inputItems(JSON.parse(result));
+                    }
+                });
+            } else {
+                // Запрос для перевозчиков
+                inputItems([])
+            }
             $.ajax({
                 url: '/getContacts',
                 type: 'GET',
-                data: {category: getInfo[0], id: getInfo[1]},
+                data: {category: category, id: idElement},
                 dataType: 'html',
                 success: function(result) {
                     inputContacts(JSON.parse(result));
@@ -246,10 +253,10 @@ function createCardMenu(element, index = 0) {
         }
         function inputItems(items) {
             if (items.length == 0) 
-                addRow(`${getInfo[0]}-group`);
+                addRow(`${category}-group`);
             else {
                 for (let i = 0; i < items.length; i++) {
-                    addRow(`${getInfo[0]}-group`, items[i]);
+                    addRow(`${category}-group`, items[i]);
                 }
             }
             if ($(`#group`).children().length <= 1) {
@@ -258,10 +265,10 @@ function createCardMenu(element, index = 0) {
         }
         function inputContacts(contacts) {
             if (contacts.length == 0) 
-                addMember(getInfo[0]);
+                addMember(category);
             else {
                 for (let i = 0; i < contacts.length; i++) {
-                    addMember(getInfo[0], contacts[i]);
+                    addMember(category, contacts[i]);
                 }
             }
         }
@@ -944,15 +951,17 @@ function createCardMenu(element, index = 0) {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Водитель</td>
+                                <td>Вид перевозки</td>
                                 <td>
-                                    <select id="delivery_driver"></select>
+                                    <select id="delivery_type">
+                                        <option selected disabled>Указывается в карточке Перевозчика</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Вид перевозки</td>
+                                <td>Водитель</td>
                                 <td>
-                                    <input type="text" id="delivery_type" value="${selectedLine.Type}">
+                                    <select id="delivery_driver"></select>
                                 </td>
                             </tr>
                             <tr>
@@ -964,15 +973,37 @@ function createCardMenu(element, index = 0) {
                         </table>
                         <table class="table_block">
                             <tr>
+                                <td>Счёт</td>
+                                <td>
+                                    <select id="delivery_account">
+                                        <option selected disabled>Не выбран</option>
+                                        <option>Счёт 1</option>
+                                        <option></option>
+                                        <option></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Клиент</td>
                                 <td>
-                                    <input type="text" id="delivery_client" value="${selectedLine.Client}">
+                                    <select id="delivery_client">
+                                        <option selected disabled>Не выбран</option>
+                                        <option>Клиент</option>
+                                        <option>Который</option>
+                                        <option>В счете</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
                                 <td>Контакт на выгрузке</td>
                                 <td>
-                                    <input type="text" id="delivery_contact_number" value="${selectedLine.Contact_Number}">
+                                    <select id="delivery_contact_name">
+                                        <option selected disabled>Не выбран</option>
+                                        <option>Одна из</option>
+                                        <option>Должностей</option>
+                                        <option>Контакта</option>
+                                        <option>Или просто ввод</option>
+                                    </select>
                                 </td>
                             </tr>
                         </table>

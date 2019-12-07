@@ -129,7 +129,6 @@ function linkField() {
 
         $('li').click(function() {
             let filterName = this.innerHTML;
-            console.log(filterName);
 
             $('table').remove();
             $(`#${idList} #active_field`).html(namesList[this.id.split('_')[2]]);
