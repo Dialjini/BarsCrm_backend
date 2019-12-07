@@ -195,6 +195,7 @@ class Account(db.Model):
     Hello = db.Column(db.String)
     Shipping = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
+    Transferred_volume = db.Column(db.String)
     Item_ids = db.Column(db.String)
 
 

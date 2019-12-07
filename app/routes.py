@@ -269,6 +269,7 @@ def addAccount():
     table.Shipping = data['shipping']
     table.Sum = data['sum']
     table.Item_ids = data['item_ids']
+    table.Transferred_volume = data['transferred_volume']
 
     db.session.add(table)
     db.session.commit()
