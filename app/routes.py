@@ -244,7 +244,7 @@ def getAccounts():
     for i in models.Account.query.all():
         items = []
         for j in json.loads(i.Item_ids):
-            item = models.Item.query.filter_by(Item_id=j).first()
+            item = models.Item.query.filter_by(Item_id=int(j)).first()
             items.append(json.loads(table_to_json([item]))[0])
         account = json.loads(table_to_json([i]))[0]
         subres = {'items': items, 'account': account}
