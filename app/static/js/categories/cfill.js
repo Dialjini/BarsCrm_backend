@@ -32,41 +32,29 @@ function linkField() {
     // Подкатегория с вызовом модального окна
     $('.list').click(function() {
         const list = [
-            { width: 162, id: 'stock_group', list: [] },
-            { width: 112, id: 'stock_product', list: [] },
-            { width: 110, id: 'stock_packing', list: [] },
-            { width: 260, id: 'stock_stock', list: [] },
-            { width: 99, id: 'stock_volume', list: ['10', '20', '30'] },
+            { width: 161.125, id: 'stock_group', list: [] },
+            { width: 90.656, id: 'stock_product', list: [] },
+            { width: 110.328, id: 'stock_packing', list: [] },
+            { width: 92.297, id: 'stock_stock', list: [] },
+            { width: 97.281, id: 'stock_volume', list: ['10', '20', '30'] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
             { width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
         ]
 
-        for (let i = 0; i < categoryInStock[1][1].length; i++) {
-            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                list[0].list.push(categoryInStock[1][1][i].items[j].Group_name)
+        let info = ['Group_name', 'Name', 'Packing', 'stock_address'];
+
+        for (let k = 0; k < info.length; k++) {
+            for (let i = 0; i < categoryInStock[1][1].length; i++) {
+                for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                    if (k !== 3) list[k].list.push(categoryInStock[1][1][i].items[j][info[k]]);
+                    else list[k].list.push(categoryInStock[1][1][i][info[k]])
+                }
             }
         }
 
-        for (let i = 0; i < categoryInStock[1][1].length; i++) {
-            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                list[1].list.push(categoryInStock[1][1][i].items[j].Name)
-            }
-        }
-
-        for (let i = 0; i < categoryInStock[1][1].length; i++) {
-            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                list[2].list.push(categoryInStock[1][1][i].items[j].Packing)
-            }
-        }
-        for (let i = 0; i < categoryInStock[1][1].length; i++) {
-            for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                list[3].list.push(categoryInStock[1][1][i].stock_address)
-            }
-        }
-    
         let idList = this.id;
-
         let element;
+
         for (let i = 0; i < list.length; i++) {
             if (list[i].id === idList) {
                 element = i;
@@ -99,8 +87,7 @@ function linkField() {
         function fillingList() {
             for (let i = 0; i < list.length; i++) {
                 if (list[i].id == idList) {
-                    $(`#${idList} .report_list`).width(list[i].width);
-                    $(`#${idList}`).width(list[i].width);
+                    
                     namesList = list[i].list;
                     let ul = $('<ul>');
                     for (let j = 0; j < list[i].list.length; j++) {
@@ -122,6 +109,20 @@ function linkField() {
         }));
 
         $('.report_list').append(fillingList());
+        checkWidth();
+        function checkWidth() {
+            let width = $(`#${idList} .report_list`).width();
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id == idList) {
+                    if (width > list[i].width) {
+                        $(`#${idList}`).width(width);
+                    } else {
+                        $(`#${idList}`).width(list[i].width);
+                        $(`#${idList} .report_list`).width(list[i].width);
+                    }
+                }
+            }
+        }
 
         $('.report_list').fadeIn(400);
         $(`#${idList} .field_with_modal`).addClass('active');

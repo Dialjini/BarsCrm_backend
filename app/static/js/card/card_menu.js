@@ -120,7 +120,7 @@ function createCardMenu(element, index = 0) {
                 } else {
                     selectedLine = data_list[titleObject[i].status - 1];
                 }
-                
+
                 // Передать данные счета в карточку доставки
                 
                 let list = Object.keys(selectedLine);
@@ -706,6 +706,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        console.log(selectedLine);
         let sum = 0, vat = 0;
         function fillingProducts() {
             let list_items = selectedLine.items;
@@ -730,6 +731,7 @@ function createCardMenu(element, index = 0) {
                     </tr>
                 `)
             }
+            list_items[0].NDS = list_items[0].NDS[0] + list_items[0].NDS[1];
             vat = sum > 0 ? sum - ((sum * +list_items[0].NDS) / 100) : 0;
 
             if (5 - list_items.length > 0) {
@@ -778,19 +780,19 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Общая</span><span>${sum}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Общая</span><span>${Math.round(sum)}</span></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="9" style="border: none"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">НДС</span><span>${sum - vat}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">НДС</span><span>${Math.round(sum - vat)}</span></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="9" style="border: none"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${vat}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${Math.round(vat)}</span></div>
                                 </td>
                             </tr>
                         </table>
@@ -829,7 +831,9 @@ function createCardMenu(element, index = 0) {
                     <div class="info_block full">
                         <div class="mb">
                             <span class="bold">Транзит со склада</span>
-                            <input class="margin" maxlength="30" onchange="onkeydown()" type="text" onkeydown="widthRole(this)" onkeyup="onkeydown()" onkeypress="onkeydown()" value="${selectedLine.stock_address}">
+                            <select class="margin">
+                                <option selected disabled value="${selectedLine.stock_address}">${selectedLine.stock_address}</option>
+                            </select>
                         </div>
                         <div>
                             <table class="full">
@@ -901,14 +905,18 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
-        console.log(selectedLine);
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
-            let select = '<select id="delivery_carrier_id" onchange="selectDrivers(this)">';
+            let select = '<select id="delivery_carrier_id" onchange="selectDrivers(this.value)">';
             select += '<option value="disabled" selected disabled>Не выбран</option>'
             for (let i = 0; i < data.length; i++) {
-                select += `<option value="${data[i].id}">${data[i].Name}</option>`;
+                if (selectedLine.Carrier_id != '' && selectedLine.Carrier_id == data[i].id) {
+                    select += `<option value="${data[i].id}" selected>${data[i].Name}</option>`;
+                    selectDrivers(data[i].id, selectedLine);
+                }
+                else 
+                    select += `<option value="${data[i].id}">${data[i].Name}</option>`;
                 list_name.push({ name: data[i].Name, id: data[i].id });
             }
             select += '</select>';
@@ -1020,10 +1028,12 @@ function createCardMenu(element, index = 0) {
                                         <th>Сумма</th>
                                         <th>Клиент</th>
                                     </tr>
-                                    <tbody>
-
-                                    </tbody>
+                                    <tbody id="flight"></tbody>
                                 </table>
+                            </div>
+                            <div class="events">
+                                <img class="add_something" id="flight-group" src="static/images/add.png" onclick="addRow(this.id)">
+                                <img class="add_something" name="remove_last_flight" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                             </div>
                             <div class="info_block fit" style="margin-top: 15px;">
                                 <span class="lightgray" style="margin-top: 10px;">Оплата</span>
@@ -1033,9 +1043,7 @@ function createCardMenu(element, index = 0) {
                                             <th>Дата</th>
                                             <th>Сумма</th>
                                         </tr>
-                                        <tbody id="group">
-
-                                        </tbody>
+                                        <tbody id="group"></tbody>
                                     </table>
                                 </div>
                                 <div class="events">
@@ -1058,35 +1066,50 @@ function makeRequest(element) {
     }
 
     let idDelivery = element.split('_');
-    data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? categoryInDelivery[1][1].length : +idDelivery[idDelivery.length - 1];
-    data['delivery_date'] = '06.12.2019';
+    data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
+    data['delivery_date'] = getCurrentDate('year');
     data['delivery_vat'] = '20';
-    data['delivery_name'] = 'Тестовый';
-    data['delivery_contact_end'] = 'Петя';
+    data['delivery_name'] = 'test';
+    data['delivery_contact_end'] = 'test';
     data['delivery_payment_date'] = '10.12.2019';
     data['delivery_prefix'] = 'ООО';
-    data['delivery_stock'] = 'ул. Пушкина';
+    data['delivery_stock'] = 'test';
     data['delivery_price'] = '1000';
-    data['delivery_contact_name'] = 'Василий';
-    console.log(data);
+    data['delivery_contact_name'] = $('#delivery_driver').val();
+    data['delivery_contact_number'] = 'test';
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
         data: data,
         dataType: 'html',
-        success: function(data) {
-            console.log(data);
+        success: function() {
+            closeCardMenu(element);
         }
     });
     
-    closeCardMenu(element);
 }
-function selectDrivers() {
-    $('#delivery_driver').append(
-        `<option>Водитель 1</option>
-        <option>Водитель 2</option>
-        <option>Водитель 3</option>`
-    )
+function selectDrivers(value, select = {Contact_Name: ''}) {
+    $.ajax({
+        url: '/getContacts',
+        type: 'GET',
+        data: {category: 'carrier', id: value},
+        dataType: 'html',
+        success: function(result) {
+            $('#delivery_driver').empty();
+            $('#delivery_driver').append(
+                `<option value="Не выбран" selected disabled>Не выбран</option>`
+            )
+            result = JSON.parse(result);
+            for (let i = 0; i < result.length; i++) {
+                if (select.Contact_Name != '' && select.Contact_Name == result[i].Position) 
+                    $('#delivery_driver').append(`<option value="${result[i].Position}" selected>${result[i].Position} | ${result[i].Last_name}</option>`)
+                else {
+                    $('#delivery_driver').append(`<option value="${result[i].Position}">${result[i].Position} | ${result[i].Last_name}</option>`)
+                }
+            }
+            
+        }
+    });
 }
 function createDelCardMenu(element) {
     $.ajax({
@@ -1166,7 +1189,7 @@ function invoiceCard(elem) {
     });
 }
 // Завершение выставления счета и закрытие карточки 
-function completionCard(element) {
+function completionCard(elem) {
     $.ajax({
         url: '/getStockTable',
         type: 'GET',
@@ -1180,7 +1203,7 @@ function completionCard(element) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
                         if (account.Item_id == idProduct) {
-                            idsItems.push(account.Item_id);
+                            idsItems.push({ id: idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
                         }
                     }
                 }
@@ -1197,13 +1220,13 @@ function completionCard(element) {
 
                 // Передать данные на сервер и создать карточку счета
                 for (let i = 0; i < dataName.length; i++) {
-                    if (element.name === dataName[i].name) {
+                    if (elem.name === dataName[i].name) {
                         name = dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1].children[0].value;
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
                 
-                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)});
+                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: idsItems});
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',

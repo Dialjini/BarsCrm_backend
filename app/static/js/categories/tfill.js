@@ -59,7 +59,6 @@ let rowFilling = (object, id, table) => {
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
-            //let prefix = object[1][i].items[0].Prefix;
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
             const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, object[1][i].delivery.Carrier_id, object[1][i].delivery.Prefix, object[1][i].delivery.Price, +object[1][i].delivery.Price - ((+object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
 

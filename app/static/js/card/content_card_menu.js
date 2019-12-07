@@ -124,9 +124,22 @@ function calculationIndicators() {
             for (let k = 0; k < data[j].items.length; k++) {
                 $('#exposed_list .invoiled').each(function(i, element) {
                     if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
-                        $(`#calcSale_${data[j].items[k].Item_id}`).html((+$('#total_discount_inv').val() / data[j].items[k].Volume / count).toFixed(2));
-                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html((+$('#total_privet_inv').val() / data[j].items[k].Volume / count).toFixed(2));
-                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html((+$('#total_delivery_inv').val() / data[j].items[k].Volume / count).toFixed(2));
+                        let totalSale = (+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let totalPrivet = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let totalDelivery = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        $(`#calcSale_${data[j].items[k].Item_id}`).html(isNaN(totalSale) || totalSale == Infinity ? '' : totalSale);
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity ? '' : totalPrivet);
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity ? '' : totalDelivery);
+
+                        let sum = 0;
+                        $('#exposed_list .invoiled').each(function(i, element) {
+                            sum += +$(element).children()[11].innerHTML;
+                        });
+                        data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
+                        let vat = sum > 0 ? sum - ((sum * +data[j].items[k].NDS) / 100) : 0;
+                        $('#total').html(Math.round(sum));
+                        $('#vat').html(Math.round(sum - vat));
+                        $('#without-vat').html(Math.round(vat));
                     }
                 });
             }
@@ -359,29 +372,34 @@ function invoiceInTable(element) {
                     if (account.Prefix == prefixAccount) {
                         if (account.Item_id == element.id.split('_')[1]) {
                             tr.append($('<td>', { id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)' }))
-                            let list = [account.Name, account.Packing, `<span id="product_weight_${element.id.split('_')[1]}">${account.Weight}</span>`, `<span id="product_containers_${element.id.split('_')[1]}"></span>`, `<input type="number" onkeyup="tarCalculation(this.id)" id="invoiled_volume_${element.id.split('_')[1]}"></input>`, account.Cost, 0, 0, 0, Math.round(account.Cost / account.Volume), Math.round(account.Cost * account.Volume)]
+                            let idProduct = element.id.split('_')[1];
+                            let list = [
+                                {id: ``, html: account.Name}, {id: ``, html: account.Packing},
+                                {id: `product_weight_${idProduct}`, html: account.Weight},
+                                {id: `product_containers_${idProduct}`, html: ''},
+                                {id: `invoiled_volume_${idProduct}`, html: ''},
+                                {id: `product_cost_${idProduct}`, html: account.Cost},
+                                {id: `calcSale_${idProduct}`, html: ''}, {id: `calcPrivet_${idProduct}`, html: ''},
+                                {id: `calcDelivery_${idProduct}`, html: ''}, {id: `product_unit_${idProduct}`, html: ''}, {id: `calcSum_${idProduct}`, html: ''},
+                            ]
                             for (let k = 0; k < list.length; k++) {
-                                if (k == 6) {
-                                    tr.append($('<td>', { id: 'calcSale_' + account.Item_id, html: list[k] }));
-                                    continue;
-                                } else if (k == 7) {
-                                    tr.append($('<td>', { id: 'calcPrivet_' + account.Item_id, html: list[k] }));
-                                    continue;
-                                } else if (k == 8) {
-                                    tr.append($('<td>', { id: 'calcDelivery_' + account.Item_id, html: list[k] }));
-                                    continue;
-                                } else if (k == list.length - 1) {
-                                    tr.append($('<td>', { id: 'calcSum', html: list[k] }));
-                                    continue;
+                                if (list[k].id.includes('invoiled_volume')) {
+                                    tr.append($('<td>', {
+                                        append: $('<input>', {
+                                            type: 'number', onkeyup: 'tarCalculation(this.id)', id: list[k].id, max: account.Volume
+                                        })
+                                    }))
+                                } else {
+                                    tr.append($('<td>', { id: list[k].id, html: list[k].html }));
                                 }
-                                tr.append($('<td>', { html: list[k] }));
                             }
                             $(`#${element.id}`).remove();
                             $(`#empty`).last().remove();
                             $('#exposed_list').prepend(tr);
 
                             let sum = 0;
-                            $('#exposed_list .invoiled #calcSum').each(function(i, element) {
+                            $('#exposed_list .invoiled #amount_product').each(function(i, element) {
+                                console.log(element);
                                 sum += +$(element).html()
                             });
                             account.NDS = account.NDS[0] + account.NDS[1];
@@ -402,7 +420,12 @@ function tarCalculation(id) {
     let idElement = id.split('_')[2];
     let volume = $(`#${id}`).val();
     let weight = $(`#product_weight_${idElement}`).html();
+    let unit = Math.round($(`#product_cost_${idElement}`).html() / volume).toFixed(2);
+    let amount = Math.round($(`#product_cost_${idElement}`).html() * volume).toFixed(2);
     $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
+    $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
+    $(`#calcSum_${idElement}`).html(amount);
+    calculationIndicators();
 }
 function returnBack(element) {
     $.ajax({
@@ -426,8 +449,8 @@ function returnBack(element) {
                         tr.append($('<td>', {html: ''}));
 
                         let sum = 0;
-                        $('#exposed_list .invoiled #calcSum').each(function(i, element) {
-                            sum += +$(element).html()
+                        $('#exposed_list .invoiled').each(function(i, element) {
+                            sum += +$(element).children()[11].innerHTML;
                         });
                         account.NDS = account.NDS[0] + account.NDS[1];
                         let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
@@ -722,7 +745,7 @@ function removeMemberOrRow(id) {
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
     const tableInfo = [
-        { id: 'client-group', count: 4, widthInput: [
+        { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
                 {id: 'item_volume', width: 43, type: 'number'},
                 {id: 'item_creator', width: 104, type: 'text'},
@@ -730,17 +753,16 @@ function addRow(id, selectedLine = '') {
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
         },
-        { id: 'provider-group', count: 6, widthInput: [
+        { id: 'provider-group', tbody: 'group', count: 6, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
                 {id: 'item_price', width: 33, type: 'number'},
                 {id: 'item_vat', width: 28, type: 'number'},
                 {id: 'item_packing', width: 59, type: 'text'},
-                {id: 'item_weight', width: 24, type: 'text'},
+                {id: 'item_weight', width: 28, type: 'text'},
                 {id: 'item_fraction', width: 57, type: 'text'}
             ],
             html: ['Name', 'Cost', 'NDS', 'Packing', 'Weight', 'Fraction']
-        },
-            { id: 'carrier-group', count: 5, widthInput: [
+        }, { id: 'carrier-group', tbody: 'group', count: 5, widthInput: [
                     {id: 'carrier_date', width: 50, type: 'text'},
                     {id: 'carrier_client', width: 100, type: 'text'},
                     {id: 'carrier_stock', width: 160, type: 'text'},
@@ -748,17 +770,24 @@ function addRow(id, selectedLine = '') {
                     {id: 'carrier_price', width: 33, type: 'number'}
                 ],
                 html: []
-        },
-            { id: 'account-group', count: 3, widthInput: [
+        }, { id: 'account-group', tbody: 'group', count: 3, widthInput: [
                     {id: 'account_position', width: 58, type: 'text'},
                     {id: 'account_date', width: 42, type: 'text'},
                     {id: 'account_price', width: 43, type: 'number'}
                 ],
                 html: []
-        },
-            { id: 'delivery-group', count: 2, widthInput: [
+        }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'delivery_date', width: 45, type: 'text'},
                     {id: 'delivery_price', width: 43, type: 'number'}
+                ],
+                html: []
+        }, { id: 'flight-group', tbody: 'flight', count: 6, widthInput: [
+                    {id: 'delivery_flight_product', width: 100, type: 'text'},
+                    {id: 'delivery_flight_stock', width: 160, type: 'text'},
+                    {id: 'delivery_flight_weight', width: 28, type: 'number'},
+                    {id: 'delivery_flight_type', width: 160, type: 'text'},
+                    {id: 'delivery_flight_sum', width: 70, type: 'number'},
+                    {id: 'delivery_flight_client', width: 100, type: 'text'}
                 ],
                 html: []
         }
@@ -797,7 +826,7 @@ function addRow(id, selectedLine = '') {
 
     for (let i = 0; i < tableInfo.length; i++) {
         if (id == tableInfo[i].id) {
-            $(`#group`).append(trFill(tableInfo[i]));
+            $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             break;
         }
