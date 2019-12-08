@@ -155,6 +155,8 @@ def addDelivery():
     table.Contact_Name = data['delivery_contact_name']
     if data['delivery_carrier_id']:
         table.Carrier_id = data['delivery_carrier_id']
+    if data['delivery_account_id']:
+        table.Account_id = data['delivery_account_id']
     table.Comment = data['delivery_comment']
     table.Client = data['delivery_client']
     table.NDS = data['delivery_vat']

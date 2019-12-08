@@ -201,6 +201,7 @@ class Account(db.Model):
 class Delivery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Carrier_id = db.Column(db.Integer, db.ForeignKey('carrier.id'))
+    Account_id = db.Column(db.Integer)
     Name = db.Column(db.String)
     Customer = db.Column(db.String)
     Date = db.Column(db.String)
