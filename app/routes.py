@@ -132,7 +132,8 @@ def getDeliveries():
     carriers = models.Carrier.query.all()
     for delivery in deliveries:
         if delivery.Carrier_id:
-            carrier = carriers[delivery.Carrier_id]
+            print(len(carriers))
+            carrier = carriers[delivery.Carrier_id - 1]
             result.append({'carrier': json.loads(table_to_json([carrier]))[0], 'delivery': json.loads(table_to_json([delivery]))[0]})
         else:
             result.append({'carrier': None, 'delivery': json.loads(table_to_json([delivery]))[0]})
@@ -250,8 +251,11 @@ def getAccounts():
     for i in models.Account.query.all():
         items = []
         for j in json.loads(i.Item_ids):
-            item = Items[int(j) - 1]
-            items.append(json.loads(table_to_json([item]))[0])
+            print(j)
+            item = Items[int(j['id']) - 1]
+            subres = json.loads(table_to_json([item]))[0]
+            subres['volume'] = j['volume']
+            items.append(subres)
         account = json.loads(table_to_json([i]))[0]
         subres = {'items': items, 'account': account}
         result.append(subres)
@@ -355,23 +359,26 @@ def addItems():
 
     Items = []
     args = json.loads(request.args['item'])
+    # items = models.Item.query.all()
     for i in args:
-        Item = models.Item()
-        if isClient:
-            Item.Volume = i['item_volume']
-            Item.Creator = i['item_creator']
-            Item.Client_id = request.args['id']
-        else:
-            Item.NDS = i['item_vat']
-            Item.Fraction = i['item_fraction']
-            Item.Packing = i['item_packing']
-            Item.Weight = i['item_weight']
-            Item.Provider_id = request.args['id']
+        if models.Item.query.filter_by(name=i['item_product']).first():
+            Item = models.Item()
+            if isClient:
+                Item.Volume = i['item_volume']
+                Item.Creator = i['item_creator']
+                Item.Client_id = request.args['id']
+            else:
+                Item.NDS = i['item_vat']
+                Item.Fraction = i['item_fraction']
+                Item.Packing = i['item_packing']
+                Item.Weight = i['item_weight']
+                Item.Provider_id = request.args['id']
 
-        Item.Name = i['item_product']
-        Item.Cost = i['item_price']
+            Item.Name = i['item_product']
+            Item.Cost = i['item_price']
 
-        Items.append(Item)
+            Items.append(Item)
+
     Owner.Items = Items
     db.session.commit()
 
