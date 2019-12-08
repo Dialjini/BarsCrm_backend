@@ -359,10 +359,10 @@ def addItems():
 
     Items = []
     args = json.loads(request.args['item'])
-    # items = models.Item.query.all()
+    items = models.Item.query.all()
     for i in args:
-        if models.Item.query.filter_by(name=i['item_product']).first():
-            Item = models.Item()
+        if len(items) > i['item_id']:
+            Item = items[i['item_id']]
             if isClient:
                 Item.Volume = i['item_volume']
                 Item.Creator = i['item_creator']
