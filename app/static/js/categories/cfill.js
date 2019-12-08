@@ -243,6 +243,31 @@ function adminPanel() {
     $('[name="linkCategory"]').removeClass('active');
     $('#mini_logo').addClass('active');
 
+    function fillingTable() {
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            dataType: 'html',
+            success: function(data) {
+                data = JSON.parse(data);
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].role == 'admin') data[i].role = 'Администратор';
+                    if (data[i].role == 'manager') data[i].role = 'Менеджер';
+                    $('#admin').append(`
+                    <tr>
+                        <td>${data[i].second_name}</td>
+                        <td>${data[i].name}</td>
+                        <td>${data[i].third_name}</td>
+                        <td>${data[i].role}</td>
+                        <td>${data[i].email}</td>
+                        <td>${data[i].login}</td>
+                        <td>${data[i].password}</td>
+                    </tr>
+                `)
+                }
+            }
+        });
+    }
     getContent();
     function getContent() {
         $('.info').append(`
@@ -254,31 +279,16 @@ function adminPanel() {
         </div>
         <table class="table" id="admin">
             <tr>
-                <th width="180">Фамилия</th>
-                <th width="180">Имя</th>
-                <th width="180">Отчество</th>
+                <th width="170">Фамилия</th>
+                <th width="170">Имя</th>
+                <th width="170">Отчество</th>
                 <th width="130">Должность</th>
-                <th width="170">Логин</th>
-                <th width="170">Пароль</th>
+                <th width="170">Email</th>
+                <th width="120">Логин</th>
+                <th width="150">Пароль</th>
             </tr>
-            <tr>
-                <td>Солдатов</td>
-                <td>Даниил</td>
-                <td>Артемович</td>
-                <td>Администратор</td>
-                <td>ofswg</td>
-                <td>1234qwer</td>
-            </tr>
-            <tr>
-                <td>Кустов</td>
-                <td>Даниил</td>
-                <td>Егорович</td>
-                <td>Бэкэндер</td>
-                <td>kustov</td>
-                <td>qwerzy132</td>
-            </tr>
-        </table>`
-        )
+        </table>`)
+        fillingTable();
     }
 
     $('#addNewPerson').click(function() {
@@ -307,7 +317,7 @@ function adminPanel() {
                         <tr>
                             <td>Имя</td>
                             <td>
-                                <input type="text" id="create_first_name">
+                                <input type="name" id="create_first_name">
                             </td>
                         </tr>
                         <tr>
@@ -316,23 +326,29 @@ function adminPanel() {
                                 <input type="text" id="create_patronymic">
                             </td>
                         </tr>
-                    </table>
-                    <table class="table_block">
                         <tr>
                             <td>Должность</td>
                             <td>
                                 <select type="text" id="create_role">
                                     <option value="none" selected disabled>Не выбран</option>
-                                    <option value="1">Администратор</option>
-                                    <option value="2">Менеджер</option>
+                                    <option value="admin">Администратор</option>
+                                    <option value="manager">Менеджер</option>
                                     <option>Еще кто-то</option>
                                 </select>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table_block">
+                        <tr>
+                            <td>Email</td>
+                            <td>
+                                <input type="email" id="create_email">
                             </td>
                         </tr>
                         <tr>
                             <td>Логин</td>
                             <td>
-                                <input type="text" id="create_login">
+                                <input type="login" id="create_login">
                             </td>
                         </tr>
                         <tr>
@@ -352,13 +368,25 @@ function adminPanel() {
 }
 
 function createNewMember() {
-    let ids = ['create_last_name', 'create_first_name', 'create_patronymic', 'create_role', 'create_password', 'create_login'];
+    let ids = ['create_last_name', 'create_first_name', 'create_patronymic', 'create_role', 'create_password', 'create_login', 'create_email'];
     let data = {};
 
     for (let i = 0; i < ids.length; i++) {
         data[ids[i]] = $(`#${ids[i]}`).val();
     }
+    data['create_email']
+    data['id'] = 'new';
     console.log(data);
+    $.ajax({
+        url: '/addUser',
+        data: data,
+        type: 'GET',
+        dataType: 'html',
+        success: function() {
+            closePersonCard();
+        }
+    });
+    
 }
 
 // Отчеты

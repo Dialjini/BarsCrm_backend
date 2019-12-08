@@ -5,7 +5,17 @@ let rowFilling = (object, id, table) => {
     let getTitleTable = () => {
         let element = $('<tr>');
         for (let i = 0; i < object[0].length - 1; i++) {
-            elementTr = `<th width="${object[0][i].width}%">${object[0][i].name}</th>`;
+            if (i == 1 && id == 'stock') {
+                elementTr = `
+                <th width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <button class="btn btn-main btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>
+                    </div>
+                </th>`;
+            } else {
+                elementTr = `<th width="${object[0][i].width}%">${object[0][i].name}</th>`;
+            }
             element.append(elementTr);
         }
         if (id !== 'delivery' && id !== 'stock') {

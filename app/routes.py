@@ -268,22 +268,24 @@ def getAccounts():
 def addUser():
     data = request.args
     if data['id'] == 'new':
-        user = db.User()
+        user = models.User()
     else:
-        user = db.User.query.filter_by(id=data['id']).first()
+        user = models.User.query.filter_by(id=data['id']).first()
 
     user.login = data['create_login']
     user.email = data['create_email']
     user.second_name = data['create_last_name']
     user.name = data['create_first_name']
     user.third_name = data['create_patronymic']
-    user.role = data['role']
-    user.password = data['password']
+    user.role = data['create_role']
+    user.password = data['create_password']
 
     if data['id'] == 'new':
         db.session.add(user)
     db.session.commit()
 
+    return 'OK'
+    
 
 @app.route('/addAccount', methods=['GET'])
 def addAccount():

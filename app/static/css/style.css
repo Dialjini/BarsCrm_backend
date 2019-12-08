@@ -1627,6 +1627,13 @@ body {
   transition: 0.3s all;
 }
 
+.btn-add-items {
+  width: 80px;
+  height: 20px;
+  font-size: 10px;
+  margin-right: 10px;
+}
+
 .btn-div {
   padding: 2px 5px;
   text-align: center;

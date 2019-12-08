@@ -86,7 +86,14 @@ function createCardMenu(element, index = 0) {
             list: [''],
             link: stockContentCard,
             status: getInfo[1]
-        }
+        },
+        {
+            id: 'item',
+            list: ['Добавление товара', '* Все поля обязательны к заполнению'],
+            link: addItemsInStockContent,
+            status: getInfo[1]
+        },
+        
     ]
 
     // Получаем нужную информацию по карточке
@@ -94,6 +101,7 @@ function createCardMenu(element, index = 0) {
         if (titleObject[i].id.includes(getInfo[0])) {
             infoElement = titleObject[i];
             // Вытягиваем данные по Айди карточки и поставляем в поля
+            if (getInfo[1] == 'add') break;
             if (getInfo[1] !== 'new') {
                 let data_list = dataName[i].link[1][1];
                 if (getInfo[0] === 'stock') {
@@ -185,6 +193,7 @@ function createCardMenu(element, index = 0) {
         })
         return container;
     }
+
     // Запоминаем карточку
     for (let i = 0; i < dataName.length; i++) {
         if (getInfo[0] == dataName[i].name) {
@@ -220,6 +229,7 @@ function createCardMenu(element, index = 0) {
     $('.info').append(cardMenu());
     $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
     if (getInfo[0] !== 'client') itemSelection(getInfo[0], selectedLine);
+    if (getInfo[0] === 'stock') categoryInStock[0].lastCard[0] = null;
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
@@ -941,6 +951,7 @@ function createCardMenu(element, index = 0) {
             return `<option disabled selected value="${selectedLine.Account_id}">Счёт ${selectedLine.Account_id}</option>`
         }
         function fillClients() {
+            // запрос на счета
             let data = categoryInFinanceAccount[1][1];
             for (let i = 0; i < data.length; i++) {
                 if (data[i].account.id == selectedLine.Account_id) {
@@ -1037,7 +1048,7 @@ function createCardMenu(element, index = 0) {
                                 <td>Клиент</td>
                                 <td>
                                     <select id="delivery_client">
-                                        
+                                        ${fillClients()}
                                     </select>
                                 </td>
                             </tr>
@@ -1098,15 +1109,132 @@ function createCardMenu(element, index = 0) {
                         <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
+    function addItemsInStockContent(selectedLine) {
+        function fillListStock() {
+            let info;
+            $.ajax({
+                url: '/getStocks',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    info = JSON.parse(data);
+                }
+            });
+            let options = '';
+            for (let i = 0; i < info.length; i++) {
+                options += `<option value="${info[i].id}">${info[i].Name}</option>`
+            }
+            return options;
+        }
+        function fillListGroup() {
+            
+        }
+        return `
+            <div class="row_card">
+                <table class="table_block">
+                    <tr>
+                        <td>Склад</td>
+                        <td>
+                            <select type="text" id="stock_id">${fillListStock()}</select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Группа товаров</td>
+                        <td>
+                            <select type="text" id="group_id">
+                                <option value="1">тест</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Товар</td>
+                        <td><input type="text" id="item_product" onchange="saveCard()" class="string"></td>
+                    </tr>
+                </table>
+                <table class="table_block">
+                    <tr>
+                        <td>Юр. лицо</td>
+                        <td>
+                            <select type="text" id="item_prefix">
+                                <option value="ООО">ООО</option>
+                                <option value="ИП">ИП</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Объем</td>
+                        <td><input type="number" id="item_volume" onchange="saveCard()" class="string"></td>
+                    </tr>
+                    <tr>
+                        <td>Фасовка</td>
+                        <td><input type="text" id="item_packing" onchange="saveCard()" class="string"></td>
+                    </tr>
+                </table>
+                <table class="table_block">
+                    <tr>
+                        <td>Вес</td>
+                        <td><input type="number" id="item_weight" onchange="saveCard()" class="string"></td>
+                    </tr>
+                    <tr>
+                        <td>НДС</td>
+                        <td><input type="number" id="item_vat" onchange="saveCard()" class="string"></td>
+                    </tr>
+                    <tr>
+                        <td>Цена прайса</td>
+                        <td><input type="number" id="item_price" onchange="saveCard()" class="string"></td>
+                    </tr>
+                </table>
+            </div>
+            <div> 
+                <table class="table_block" style="margin-bottom: 15px;">
+                    <tr>
+                        <td><input id="create_stock" type="text" style="width: 240px; margin-right: 15px;" placeholder="Адрес склада"></td>
+                        <td><button class="btn btn-main btn-add-items" onclick="createNewStock()">Создать</button></td>
+                    </tr>
+                </table>
+                <table class="table_block">
+                    <tr>
+                        <td><input id="create_group" type="text" style="width: 240px; margin-right: 15px;" placeholder="Группа товаров"></td>
+                        <td><button class="btn btn-main btn-add-items" onclick="createNewGroup()">Создать</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="next">
+                <button class="btn btn-main" id="item_new" onclick="createNewItem()">Добавить товар</button>
+            </div>
+        `;
+    }
+}
+function createNewItem() {
+    let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price'];
+    let data = {};
+
+    for (let i = 0; i < list.length; i++) {
+        data[list[i]] = $(`#${list[i]}`).val();
+    }
+    data['item_fraction'] = 'test';
+    data['item_creator'] = 'test';
+
+    $.ajax({
+        url: '/addItemToStock',
+        type: 'GET',
+        data: data,
+        dataType: 'html',
+        success: function() {
+            closeCardMenu('stock_new');
+        }
+    });
+
+    console.log(data);
 }
 function makeRequest(element) {
-    // запрос на счета
     let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
     let data = {};
     for (let i = 0; i < idCardFields[3].ids.length; i++) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
-    console.log(element.id)
+
     let idDelivery = element.id.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
@@ -1307,7 +1435,7 @@ function closeCardMenu(id = '') {
         getTableData(saveTableAndCard);
         return;
     }
-    if (!id.includes('stock') && !id.includes('delivery')) { 
+    if (!id.includes('stock') && !id.includes('delivery') && !id.includes('item')) { 
         saveInfoCard(id);
         let idSplit = id.split('_');
         let idComment = `${idSplit[0]}_${idSplit[idSplit.length - 1]}`;
