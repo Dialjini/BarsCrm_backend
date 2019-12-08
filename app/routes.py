@@ -359,10 +359,9 @@ def addItems():
 
     Items = []
     args = json.loads(request.args['item'])
-    items = models.Item.query.all()
     for i in args:
-        if len(items) > int(i['item_product']):
-            Item = items[int(i['item_product'] - 1)]
+        if i['item_product']:
+            Item = models.Item()
             if isClient:
                 Item.Volume = i['item_volume']
                 Item.Creator = i['item_creator']
@@ -374,7 +373,7 @@ def addItems():
                 Item.Weight = i['item_weight']
                 Item.Provider_id = request.args['id']
 
-            # Item.Name = i['item_product']
+            Item.Name = i['item_product']
             Item.Cost = i['item_price']
 
             Items.append(Item)
