@@ -129,9 +129,10 @@ def addMessages():
 def getDeliveries():
     deliveries = models.Delivery.query.all()
     result = []
+    carriers = models.Carrier.query.all()
     for delivery in deliveries:
         if delivery.Carrier_id:
-            carrier = models.Carrier.query.filter_by(id=delivery.Carrier_id).first()
+            carrier = carriers[delivery.Carrier_id]
             result.append({'carrier': json.loads(table_to_json([carrier]))[0], 'delivery': json.loads(table_to_json([delivery]))[0]})
         else:
             result.append({'carrier': None, 'delivery': json.loads(table_to_json([delivery]))[0]})
@@ -269,7 +270,6 @@ def addAccount():
     table.Shipping = data['shipping']
     table.Sum = data['sum']
     table.Item_ids = data['item_ids']
-    table.Transferred_volume = data['transferred_volume']
 
     db.session.add(table)
     db.session.commit()
@@ -399,11 +399,6 @@ def getItems():
 @app.route('/getProviders', methods=['GET'])
 def getProviders():
     return table_to_json(models.Provider.query.all())
-
-
-@app.route('/getDeliverers', methods=['GET'])
-def getDeliverers():
-    return table_to_json(models.Delivery.query)
 
 
 @app.route('/getTasks', methods=['GET'])

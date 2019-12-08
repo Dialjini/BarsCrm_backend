@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="">
+    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="rebuild dbase">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.db" beforeDir="false" afterPath="$PROJECT_DIR$/app.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
     </list>
@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="271" column="38" selection-start-line="271" selection-start-column="38" selection-end-line="271" selection-end-column="38" />
+            <state relative-caret-position="263">
+              <caret line="136" column="13" lean-forward="true" selection-start-line="136" selection-start-column="13" selection-end-line="136" selection-end-column="13" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -39,8 +39,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="268">
-              <caret line="195" column="35" lean-forward="true" selection-start-line="195" selection-start-column="35" selection-end-line="195" selection-end-column="35" />
+            <state relative-caret-position="370">
+              <caret line="198" lean-forward="true" selection-start-line="198" selection-end-line="198" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -79,6 +79,7 @@
       <find>g.user</find>
       <find>g</find>
       <find>contacts</find>
+      <find>delivery</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -130,7 +131,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-113" />
+    <option name="x" value="-114" />
     <option name="y" value="260" />
     <option name="width" value="1940" />
     <option name="height" value="1050" />
@@ -141,7 +142,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -158,6 +158,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -256,20 +257,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1571908541946</updated>
-    </task>
-    <task id="LOCAL-00020" summary="add admin profile">
-      <created>1574590175446</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1574590175446</updated>
-    </task>
-    <task id="LOCAL-00021" summary="add adding for 3 main tables">
-      <created>1574596279070</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1574596279070</updated>
     </task>
     <task id="LOCAL-00022" summary="fix client table bug">
       <created>1574599620819</created>
@@ -600,7 +587,21 @@
       <option name="project" value="LOCAL" />
       <updated>1575727561251</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="add transferred_volume">
+      <created>1575736011409</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1575736011410</updated>
+    </task>
+    <task id="LOCAL-00070" summary="rebuild dbase">
+      <created>1575736039223</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1575736039223</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TodoView">
@@ -695,8 +696,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add get(Items/Message) methods" />
-    <MESSAGE value="fix owner bug" />
     <MESSAGE value="add addMessages method" />
     <MESSAGE value="refresh database" />
     <MESSAGE value="add time compare" />
@@ -720,7 +719,9 @@
     <MESSAGE value="fix ???" />
     <MESSAGE value="fix TABLE DESTROYER bug" />
     <MESSAGE value="oopsie" />
-    <option name="LAST_COMMIT_MESSAGE" value="oopsie" />
+    <MESSAGE value="add transferred_volume" />
+    <MESSAGE value="rebuild dbase" />
+    <option name="LAST_COMMIT_MESSAGE" value="rebuild dbase" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -898,8 +899,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="195" column="35" lean-forward="true" selection-start-line="195" selection-start-column="35" selection-end-line="195" selection-end-column="35" />
+        <state relative-caret-position="370">
+          <caret line="198" lean-forward="true" selection-start-line="198" selection-end-line="198" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -908,8 +909,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="271" column="38" selection-start-line="271" selection-start-column="38" selection-end-line="271" selection-end-column="38" />
+        <state relative-caret-position="263">
+          <caret line="136" column="13" lean-forward="true" selection-start-line="136" selection-start-column="13" selection-end-line="136" selection-end-column="13" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
