@@ -254,7 +254,7 @@ def getAccounts():
             print(j)
             item = Items[int(j['id']) - 1]
             subres = json.loads(table_to_json([item]))[0]
-            subres['volume'] = j['volume']
+            subres['Transferred_volume'] = j['volume']
             items.append(subres)
         account = json.loads(table_to_json([i]))[0]
         subres = {'items': items, 'account': account}
