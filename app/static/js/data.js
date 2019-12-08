@@ -84,13 +84,13 @@ const categoryInDelivery = [
     [
         [
             { name: 'Дата', width: 5 },
-            { name: 'Наименование', width: 20 },
+            { name: 'Наименование', width: 15 },
             { name: 'Склад', width: 15 },
             { name: 'Перевозчик', width: 15 },
             { name: 'Юр. лицо', width: 5 },
             { name: 'Цена с НДС', width: 10 },
             { name: 'Цена без НДС', width: 10 },
-            { name: 'Дата оплаты', width: 5 },
+            { name: 'Дата оплаты', width: 10 },
         ],
     ]
 ]

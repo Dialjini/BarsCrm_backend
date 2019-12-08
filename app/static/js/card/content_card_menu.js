@@ -794,30 +794,14 @@ function addRow(id, selectedLine = '') {
     function trFill(table) {
         let tr = $('<tr>');
         for (let i = 0; i < table.count; i++) {
-            if (table.widthInput[i].id == 'item_product') {
-                let count = 0;
-                $('.hmax #group [name="items_list"]').each(function() {
-                    count++;
+            tr.append($('<td>', {
+                append: $('<input>', {
+                    css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                    id: table.widthInput[i].id, 
+                    value: selectedLine[table.html[i]],
+                    type: table.widthInput[i].type
                 })
-                tr.append($('<td>', {
-                    append: $('<select>', {
-                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
-                        id: 'item_product_' + count,
-                        name: 'items_list',
-                        append: getItemsList('item_product_' + count, selectedLine , id.split('-')[0])
-                    })
-                }));
-            } else {
-                tr.append($('<td>', {
-                    append: $('<input>', {
-                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
-                        id: table.widthInput[i].id, 
-                        value: selectedLine[table.html[i]],
-                        type: table.widthInput[i].type
-                    })
-                }));
-            }
-            
+            }));            
         }
         return tr;
     }

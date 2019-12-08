@@ -40,6 +40,7 @@ function createCardMenu(element, index = 0) {
     $('.card_menu').remove();
     let getInfo = element.id.split('_');
     let selectedLine = new Object();
+    let accountInfoInDelivery = null;
 
     // Информация по всем карточкам подкатегорий
     // Подставить актуальные данные
@@ -91,7 +92,7 @@ function createCardMenu(element, index = 0) {
     // Получаем нужную информацию по карточке
     for (let i = 0; i < titleObject.length; i++) {
         if (titleObject[i].id.includes(getInfo[0])) {
-            element = titleObject[i];
+            infoElement = titleObject[i];
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] !== 'new') {
                 let data_list = dataName[i].link[1][1];
@@ -147,7 +148,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
-                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number']}
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -165,7 +166,12 @@ function createCardMenu(element, index = 0) {
                     titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
                 } if (getInfo[0] === 'provider') {
                     titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
-                }  
+                } if (getInfo[0] === 'delivery') {
+                    if (element.name !== undefined) {
+                        let id = element.name.split('_')[1];
+                        selectedLine['Account_id'] = categoryInFinanceAccount[1][1][id - 1].account.id;
+                    }
+                } 
             }
         }
     }
@@ -175,7 +181,7 @@ function createCardMenu(element, index = 0) {
         let container = $('<div>', {
             class: 'card_menu',
             id: 'card_menu',
-            append: getTitleInfo(element).add(getContentInfo(element))
+            append: getTitleInfo(infoElement).add(getContentInfo(infoElement))
         })
         return container;
     }
@@ -194,7 +200,7 @@ function createCardMenu(element, index = 0) {
     for (let i = 0; i < linkCategoryInfo.length; i++) {
         if (linkCategoryInfo[i].subid.includes(saveTableAndCard[0].id)) {
             $(`#${linkCategoryInfo[i].id}`).addClass('active');
-            if (element.status == 'new') {
+            if (infoElement.status == 'new') {
                 $('div').is('#subcategories') ? $('#subcategories').remove() : '';
                 addButtonsSubcategory(linkCategoryInfo[i].id[linkCategoryInfo[i].id.length - 1]);
                 $(`#${saveTableAndCard[0].id}Button`).addClass('active');
@@ -205,9 +211,9 @@ function createCardMenu(element, index = 0) {
     }
 
     // Получаем контент карточки
-    function getContentInfo(element) {
+    function getContentInfo(infoElement) {
         let content = $('<div>', { class: 'content' });
-        content.append(element.link(selectedLine));
+        content.append(infoElement.link(selectedLine));
         return content;
     }
     
@@ -251,6 +257,7 @@ function createCardMenu(element, index = 0) {
             getCommentsInfo.getRequest(getInfo);
         }
         function inputItems(items) {
+            // Запрос на получение товаров из счета
             if (items.length == 0) 
                 addRow(`${category}-group`);
             else {
@@ -414,10 +421,6 @@ function createCardMenu(element, index = 0) {
                                 <tbody id="group"></tbody>
                             </table>
                         </div>
-                        <div class="events">
-                            <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this.id)">
-                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
-                        </div>
                     </div>
                 </div>
                 <div class="area">
@@ -560,10 +563,6 @@ function createCardMenu(element, index = 0) {
                                 <tr><td>Товар</td><td>Цена</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
                                 <tbody id="group"></tbody>
                             </table>
-                        </div>
-                        <div class="events">
-                            <img class="add_something" id="provider-group" src="static/images/add.png" onclick="addRow(this.id)">
-                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -713,7 +712,7 @@ function createCardMenu(element, index = 0) {
 
 
             for (let i = 0; i < list_items.length; i++) {
-                sum += Math.round(list_items[i].Cost * list_items[i].Volume);
+                sum += Math.round(list_items[i].Cost * list_items[i].Transferred_volume);
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
                         <td>${list_items[i].Name}</td>
@@ -779,7 +778,7 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Общая</span><span>${Math.round(sum)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${Math.round(vat)}</span></div>
                                 </td>
                             </tr>
                             <tr>
@@ -789,9 +788,9 @@ function createCardMenu(element, index = 0) {
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="9" style="border: none"></td>
+                                <td colspan="9" style="border: none;"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${Math.round(vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Общая</span><span>${Math.round(sum)}</span></div>
                                 </td>
                             </tr>
                         </table>
@@ -920,6 +919,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
+        console.log(selectedLine)
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -937,13 +937,44 @@ function createCardMenu(element, index = 0) {
             select += '</select>';
             return select;
         }
-        
+        function fillAccounts() {
+            return `<option disabled selected value="${selectedLine.Account_id}">Счёт ${selectedLine.Account_id}</option>`
+        }
+        function fillClients() {
+            let data = categoryInFinanceAccount[1][1];
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].account.id == selectedLine.Account_id) {
+                    if (selectedLine.id == null) {
+                        return `<option disabled selected value="${selectedLine.Account}">${data[i].account.Name}</option>`
+                    } else {
+                        return `<option selected disabled>Не выбран</option>`;
+                    }
+                }
+            }
+        }
+        function fillCustomer() {
+            let options = '';
+            if (selectedLine.Customer == 'ИП') {
+                options += `
+                    <option selected>ИП</option>
+                    <option>ООО</option>
+                `
+            } else {
+                options += `
+                    <option>ИП</option>
+                    <option selected>ООО</option>
+                `
+            }
+            return options;
+        }
         return `<div class="row_card">
                         <table class="table_block">
                             <tr>
                                 <td>Заказчик</td>
                                 <td>
-                                    <input type="text" id="delivery_customer" value="${selectedLine.Customer}">
+                                    <select id="delivery_customer">
+                                        ${fillCustomer()}
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
@@ -998,10 +1029,7 @@ function createCardMenu(element, index = 0) {
                                 <td>Счёт</td>
                                 <td>
                                     <select id="delivery_account">
-                                        <option selected disabled>Не выбран</option>
-                                        <option>Счёт 1</option>
-                                        <option></option>
-                                        <option></option>
+                                        ${fillAccounts()}
                                     </select>
                                 </td>
                             </tr>
@@ -1009,10 +1037,7 @@ function createCardMenu(element, index = 0) {
                                 <td>Клиент</td>
                                 <td>
                                     <select id="delivery_client">
-                                        <option selected disabled>Не выбран</option>
-                                        <option>Клиент</option>
-                                        <option>Который</option>
-                                        <option>В счете</option>
+                                        
                                     </select>
                                 </td>
                             </tr>
@@ -1070,17 +1095,19 @@ function createCardMenu(element, index = 0) {
                     </div>
                     <div class="next">
                         <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
-                        <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this.name)">Оформить Заявку</button>
+                        <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
 }
 function makeRequest(element) {
+    // запрос на счета
+    let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
     let data = {};
     for (let i = 0; i < idCardFields[3].ids.length; i++) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
-
-    let idDelivery = element.split('_');
+    console.log(element.id)
+    let idDelivery = element.id.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
     data['delivery_contact_end'] = '';
@@ -1088,12 +1115,13 @@ function makeRequest(element) {
     data['delivery_contact_number'] = '';
     data['delivery_contact_name'] = $('#delivery_driver').val();
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
+    data['delivery_account_id'] = +$('#delivery_account')[0].value;
 
-    data['delivery_prefix'] = 'ООО';
-    data['delivery_stock'] = 'test';
-    data['delivery_price'] = '1000';
-    data['delivery_vat'] = '20';
-    data['delivery_name'] = 'test';
+    data['delivery_prefix'] = infoAccount.items[0].Prefix;
+    data['delivery_stock'] = 'stock';
+    data['delivery_price'] = infoAccount.account.Sum;
+    data['delivery_vat'] = infoAccount.items[0].NDS;
+    data['delivery_name'] = infoAccount.account.Name;
     console.log(data);
     $.ajax({
         url: '/addDelivery',
@@ -1101,7 +1129,7 @@ function makeRequest(element) {
         data: data,
         dataType: 'html',
         success: function() {
-            closeCardMenu(element);
+            closeCardMenu(element.id);
         }
     });
     
@@ -1245,7 +1273,7 @@ function completionCard(elem) {
                 let status = 'true';
                 let date = getCurrentDate('year');
                 let name;
-                let sum = '1000';
+                let sum = $('#total').html();
 
                 // Передать данные на сервер и создать карточку счета
                 for (let i = 0; i < dataName.length; i++) {
@@ -1309,7 +1337,7 @@ function getTitleInfo(element) {
             return $('<div>', {
                 class: 'close',
                 id: `${element.id}_close_card_${element.status}`,
-                onclick: element.id !== 'delivery' ? 'closeCardMenu(this.id)' : 'makeRequest(this.id)',
+                onclick: element.id !== 'delivery' ? 'closeCardMenu(this.id)' : 'makeRequest(this)',
                 append: $('<img>', {src: 'static/images/cancel.png'})
             })
         }
