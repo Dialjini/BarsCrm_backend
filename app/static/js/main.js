@@ -159,7 +159,6 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == array.length) items.pop();
         });
-        console.log({category: data[0], id: card, item: JSON.stringify(items)});
         $.ajax({
             url: '/addItems',
             type: 'GET',

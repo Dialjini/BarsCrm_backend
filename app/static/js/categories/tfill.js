@@ -1,7 +1,6 @@
 /**
  * Функции для работы с таблиц
  */
-let huesos;
 let rowFilling = (object, id, table) => {
     let getTitleTable = () => {
         let element = $('<tr>');

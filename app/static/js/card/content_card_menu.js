@@ -399,7 +399,6 @@ function invoiceInTable(element) {
 
                             let sum = 0;
                             $('#exposed_list .invoiled #amount_product').each(function(i, element) {
-                                console.log(element);
                                 sum += +$(element).html()
                             });
                             account.NDS = account.NDS[0] + account.NDS[1];
@@ -434,7 +433,6 @@ function returnBack(element) {
         dataType: 'html',
         success: function(data) { 
             data = JSON.parse(data);
-            console.log($(`#${element.id}`));
             $(`#${element.id}_product`).remove();
             // Возвращаем столбец из верхней таблицы обратно
             let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: element.id.replace(/invoiled_/g, 'invoice_')});
@@ -846,7 +844,6 @@ function getItemsList(id, selectedLine, category) {
             for (let i = 0; i < data.length; i++) {
                 for (let j = 0; j < data[i].items.length; j++)  {
                     list_items.push(data[i].items[j].Name);
-                    list_ids.push(data[i].items[j].Item_id);
                 }
             }
                  
@@ -858,17 +855,9 @@ function getItemsList(id, selectedLine, category) {
                     }
                 }
             }
-            for (let i = 0; i < list_ids.length - 1; i++) {
-                for (let j = i + 1; j < list_ids.length; j++) {
-                    if (list_ids[i] == list_ids[j]) {
-                        list_ids.splice(j, 1);
-                        j--;
-                    }
-                }
-            }
 
             for (let i = 0; i < list_items.length; i++) 
-                options += `<option value="${list_ids[i]}">${list_items[i]}</option>`
+                options += `<option value="${list_items[i]}">${list_items[i]}</option>`
             $(`#${id}`).empty();
             $(`#${id}`).append(options);
             if (!id.includes('item_product')) itemSelection(category, selectedLine);

@@ -706,7 +706,6 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
-        console.log(selectedLine);
         let sum = 0, vat = 0;
         function fillingProducts() {
             let list_items = selectedLine.items;
