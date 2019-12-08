@@ -1225,8 +1225,32 @@ function createNewItem() {
             closeCardMenu('stock_new');
         }
     });
-
-    console.log(data);
+}
+function createNewStock() {
+    let data = {};
+    data['stock_name'] = $('#create_stock').val();
+    $.ajax({
+        url: '/addStock',
+        type: 'GET',
+        data: data,
+        dataType: 'html',
+        success: function() {
+            getTableData(categoryInStock);
+        }
+    });
+}
+function createNewGroup() {
+    let data = {};
+    data['group_name'] = $('#create_group').val();
+    $.ajax({
+        url: '/addItemGroup',
+        type: 'GET',
+        data: data,
+        dataType: 'html',
+        success: function() {
+            getTableData(categoryInStock);
+        }
+    });
 }
 function makeRequest(element) {
     let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];

@@ -198,10 +198,8 @@ def getContacts():
 @app.route('/addStock', methods=['GET'])
 def addStock():
     name = request.args['stock_name']
-    type = request.args['stock_type']
     stock = models.Stock()
     stock.Name = name
-    stock.Type = type
 
     db.session.add(stock)
     db.session.commit()
