@@ -362,7 +362,7 @@ def addItems():
     items = models.Item.query.all()
     for i in args:
         if len(items) > int(i['item_product']):
-            Item = items[int(i['item_product'])]
+            Item = items[int(i['item_product'] - 1)]
             if isClient:
                 Item.Volume = i['item_volume']
                 Item.Creator = i['item_creator']
