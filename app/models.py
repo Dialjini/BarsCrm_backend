@@ -44,7 +44,6 @@ class Order(db.Model):
 class Item_groups(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Group = db.Column(db.String)
-    # Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
     Item = db.relationship('Item', backref='Group', lazy='dynamic')
 
 
@@ -52,8 +51,6 @@ class Item(db.Model):
     Item_id = db.Column(db.Integer, primary_key=True)
     Stock_id = db.Column(db.Integer, db.ForeignKey('stock.id'))
     Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
-    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
-    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
     Name = db.Column(db.String)
     Creator = db.Column(db.String)
     Weight = db.Column(db.String)
@@ -97,7 +94,7 @@ class Client(db.Model):
     Price = db.Column(db.String)
     Site = db.Column(db.String)
     Holding = db.Column(db.String)
-    Items = db.relationship('Item', backref='Client', lazy='dynamic')
+    Item_ids = db.Column(db.String)
     Livestock_all = db.Column(db.String)
     Livestock_milking = db.Column(db.String)
     Livestock_milkyield = db.Column(db.String)
@@ -156,7 +153,7 @@ class Provider(db.Model):
     Price = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
     Contacts = db.relationship('Contacts', backref='Provider', lazy='dynamic')
-    Items = db.relationship('Item', backref='Provider', lazy='dynamic')
+    Item_ids = db.Column(db.String)
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
     NDS = db.Column(db.String)

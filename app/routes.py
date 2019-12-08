@@ -264,6 +264,23 @@ def getAccounts():
     return json.dumps(result)
 
 
+@app.route('/addUser', methods=['GET'])
+def addUser():
+    data = request.args
+    if data['id'] == 'new':
+        user = db.User()
+
+    user.login = data['login']
+    user.email = data['email']
+    user.name = data['name']
+    user.role = data['role']
+    user.password = data['password']
+
+    if data['id'] == 'new':
+        db.session.add(user)
+    db.session.commit()
+
+
 @app.route('/addAccount', methods=['GET'])
 def addAccount():
     data = request.args
@@ -276,6 +293,7 @@ def addAccount():
     table.Shipping = data['shipping']
     table.Sum = data['sum']
     table.Item_ids = data['item_ids']
+
 
     db.session.add(table)
     db.session.commit()
