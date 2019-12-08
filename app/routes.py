@@ -269,10 +269,14 @@ def addUser():
     data = request.args
     if data['id'] == 'new':
         user = db.User()
+    else:
+        user = db.User.query.filter_by(id=data['id']).first()
 
-    user.login = data['login']
-    user.email = data['email']
-    user.name = data['name']
+    user.login = data['create_login']
+    user.email = data['create_email']
+    user.second_name = data['create_last_name']
+    user.name = data['create_first_name']
+    user.third_name = data['create_patronymic']
     user.role = data['role']
     user.password = data['password']
 
