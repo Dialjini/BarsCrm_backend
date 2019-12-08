@@ -241,7 +241,7 @@ function adminPanel() {
     // Проверка на полномочия пользователя
     $('.info').empty();
     $('[name="linkCategory"]').removeClass('active');
-    $(this).addClass('active');
+    $('#mini_logo').addClass('active');
 
     getContent();
     function getContent() {
@@ -284,7 +284,7 @@ function adminPanel() {
     $('#addNewPerson').click(function() {
         $('.table').remove();
         $('.info').append(`
-        <div class="card_menu" id="card_menu">
+        <div class="card_menu persons" id="card_menu">
             <div class="title">
                 <div class="left_side">
                     <span>Добавление сотрудника</span>
@@ -296,10 +296,69 @@ function adminPanel() {
                 </div>
             </div>
             <div class="content">
-                Тут можно будет добавить пользователя
+                <div class="row_card">
+                    <table class="table_block">
+                        <tr>
+                            <td>Фамилия</td>
+                            <td>
+                                <input type="text" id="create_last_name">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Имя</td>
+                            <td>
+                                <input type="text" id="create_first_name">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Отчество</td>
+                            <td>
+                                <input type="text" id="create_patronymic">
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table_block">
+                        <tr>
+                            <td>Должность</td>
+                            <td>
+                                <select type="text" id="create_role">
+                                    <option value="none" selected disabled>Не выбран</option>
+                                    <option value="1">Администратор</option>
+                                    <option value="2">Менеджер</option>
+                                    <option>Еще кто-то</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Логин</td>
+                            <td>
+                                <input type="text" id="create_login">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Пароль</td>
+                            <td>
+                                <input type="text" id="create_password">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="next">
+                    <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
+                </div>
             </div>
         </div>`)
     })
+}
+
+function createNewMember() {
+    let ids = ['create_last_name', 'create_first_name', 'create_patronymic', 'create_role', 'create_password', 'create_login'];
+    let data = {};
+
+    for (let i = 0; i < ids.length; i++) {
+        data[ids[i]] = $(`#${ids[i]}`).val();
+    }
+    console.log(data);
 }
 
 // Отчеты

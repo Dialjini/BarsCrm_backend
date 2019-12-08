@@ -1075,6 +1075,11 @@ body {
   margin-top: 15px;
 }
 
+.page .centerBlock .container .info .persons {
+  width: 60%;
+  margin: 0 auto;
+}
+
 .page .centerBlock .container .info .modal {
   position: absolute;
   top: 120px;

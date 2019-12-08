@@ -221,7 +221,7 @@ const idCardFields = [
     },
     {   
         name: 'delivery', ids:
-        ['delivery_customer', 'delivery_start_date', 'delivery_end_date', 'delivery_load_type', 'delivery_type', 'delivery_carrier_id', 'delivery_contact_name',
+        ['delivery_customer', 'delivery_start_date', 'delivery_end_date', 'delivery_load_type', 'delivery_type', 'delivery_contact_name',
         'delivery_comment', 'delivery_client', 'delivery_contact_number'], request: '/addDelivery'
     },
 ]

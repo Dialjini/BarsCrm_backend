@@ -720,14 +720,14 @@ function createCardMenu(element, index = 0) {
                         <td>${list_items[i].Name}</td>
                         <td>${list_items[i].Packing}</td>
                         <td>${list_items[i].Weight} кг.</td>
-                        <td>${Math.round(list_items[i].Volume / list_items[i].Weight)}</td>
-                        <td>${list_items[i].Volume}</td>
+                        <td>${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
+                        <td>${list_items[i].Transferred_volume}</td>
                         <td>${list_items[i].Cost}</td>
-                        <td>${(selectedLine.account.Sale / list_items[i].Volume / list_items.length).toFixed(2)}</td>
-                        <td>${(selectedLine.account.Hello / list_items[i].Volume / list_items.length).toFixed(2)}</td>
-                        <td>${(selectedLine.account.Shipping / list_items[i].Volume / list_items.length).toFixed(2)}</td>
-                        <td>${Math.round(list_items[i].Cost / list_items[i].Volume)}</td>
-                        <td>${Math.round(list_items[i].Cost * list_items[i].Volume)}</td>
+                        <td>${(selectedLine.account.Sale / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${(selectedLine.account.Hello / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${(selectedLine.account.Shipping / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
+                        <td>${Math.round(list_items[i].Cost * list_items[i].Transferred_volume)}</td>
                     </tr>
                 `)
             }
@@ -827,6 +827,25 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Склада
     function stockContentCard(selectedLine) {
+        function listStock() {
+            let data = categoryInStock[1][1];
+            let list = [];
+            for (let i = 0; i < data.length; i++) {
+                list.push(data[i].stock_address);
+                if (list[i] == selectedLine.stock_address) {
+                    list.splice(i, 1);
+                }
+            }
+            let options = '<option disabled selected>Не выбран</option>';
+            for (let i = 0; i < list.length; i++) {
+                options += `<option value="${list[i]}">${list[i]}</option>`
+            }
+            if (list.length == 0) {
+                options = `<option disabled selected>Нет другого склада</option>`
+            }
+            return options;
+        }
+
         return `<div class="row_card">
                     <div class="info_block full">
                         <div class="mb">
@@ -864,10 +883,7 @@ function createCardMenu(element, index = 0) {
                         <div>
                             <span class="bold">На склад</span>
                             <select class="margin">
-                                <option value="Склад 1">Склад 1</option>
-                                <option value="Склад 2">Склад 2</option>
-                                <option value="Склад 3">Склад 3</option>
-                                <option value="Склад 4">Склад 4</option>
+                                ${listStock()}
                             </select>
                         </div>
                         <div class="mb">
@@ -960,8 +976,8 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Вид перевозки</td>
                                 <td>
-                                    <select id="delivery_type">
-                                        <option selected disabled>Указывается в карточке Перевозчика</option>
+                                    <select id="delivery_type" disabled>
+                                        <option selected disabled></option>
                                     </select>
                                 </td>
                             </tr>
@@ -1068,15 +1084,18 @@ function makeRequest(element) {
     let idDelivery = element.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
-    data['delivery_vat'] = '20';
-    data['delivery_name'] = 'test';
-    data['delivery_contact_end'] = 'test';
-    data['delivery_payment_date'] = '10.12.2019';
+    data['delivery_contact_end'] = '';
+    data['delivery_payment_date'] = '';
+    data['delivery_contact_number'] = '';
+    data['delivery_contact_name'] = $('#delivery_driver').val();
+    data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
+
     data['delivery_prefix'] = 'ООО';
     data['delivery_stock'] = 'test';
     data['delivery_price'] = '1000';
-    data['delivery_contact_name'] = $('#delivery_driver').val();
-    data['delivery_contact_number'] = 'test';
+    data['delivery_vat'] = '20';
+    data['delivery_name'] = 'test';
+    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -1100,10 +1119,21 @@ function selectDrivers(value, select = {Contact_Name: ''}) {
                 `<option value="Не выбран" selected disabled>Не выбран</option>`
             )
             result = JSON.parse(result);
+            let data = categoryInListCarrier[1][1];
+
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < result.length; j++) {
+                    if (data[i].id === result[j].Carrier_id) {
+                        $('#delivery_type option').html(data[i].View);
+                        break;
+                    }
+                }
+            }
+
             for (let i = 0; i < result.length; i++) {
-                if (select.Contact_Name != '' && select.Contact_Name == result[i].Position) 
+                if (select.Contact_Name != '' && select.Contact_Name == result[i].Position){
                     $('#delivery_driver').append(`<option value="${result[i].Position}" selected>${result[i].Position} | ${result[i].Last_name}</option>`)
-                else {
+                } else {
                     $('#delivery_driver').append(`<option value="${result[i].Position}">${result[i].Position} | ${result[i].Last_name}</option>`)
                 }
             }
@@ -1203,7 +1233,7 @@ function completionCard(elem) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
                         if (account.Item_id == idProduct) {
-                            idsItems.push({ id: idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
+                            idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
                         }
                     }
                 }
@@ -1226,7 +1256,7 @@ function completionCard(elem) {
                     }
                 }
                 
-                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: idsItems});
+                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)});
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',

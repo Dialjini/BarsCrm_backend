@@ -842,10 +842,14 @@ function getItemsList(id, selectedLine, category) {
             data = JSON.parse(data);     
             let options = '<option value="disabled" selected disabled>Выбрать</option>';
             let list_items = [];
-            for (let i = 0; i < data.length; i++) 
-                for (let j = 0; j < data[i].items.length; j++) 
+            let list_ids = [];
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].items.length; j++)  {
                     list_items.push(data[i].items[j].Name);
-
+                    list_ids.push(data[i].items[j].Item_id);
+                }
+            }
+                 
             for (let i = 0; i < list_items.length - 1; i++) {
                 for (let j = i + 1; j < list_items.length; j++) {
                     if (list_items[i] == list_items[j]) {
@@ -854,9 +858,17 @@ function getItemsList(id, selectedLine, category) {
                     }
                 }
             }
+            for (let i = 0; i < list_ids.length - 1; i++) {
+                for (let j = i + 1; j < list_ids.length; j++) {
+                    if (list_ids[i] == list_ids[j]) {
+                        list_ids.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
 
             for (let i = 0; i < list_items.length; i++) 
-                options += `<option value="${list_items[i]}">${list_items[i]}</option>`
+                options += `<option value="${list_ids[i]}">${list_items[i]}</option>`
             $(`#${id}`).empty();
             $(`#${id}`).append(options);
             if (!id.includes('item_product')) itemSelection(category, selectedLine);

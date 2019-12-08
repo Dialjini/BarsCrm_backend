@@ -1,7 +1,7 @@
 /**
  * Функции для работы с таблиц
  */
-
+let huesos;
 let rowFilling = (object, id, table) => {
     let getTitleTable = () => {
         let element = $('<tr>');
@@ -60,8 +60,7 @@ let rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
-            const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, object[1][i].delivery.Carrier_id, object[1][i].delivery.Prefix, object[1][i].delivery.Price, +object[1][i].delivery.Price - ((+object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
-
+            const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, object[1][i].carrier.Name, object[1][i].delivery.Prefix, object[1][i].delivery.Price, +object[1][i].delivery.Price - ((+object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
@@ -74,7 +73,6 @@ let rowFilling = (object, id, table) => {
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
-            //let prefix = object[1][i].items[0].Prefix;
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
             const name = [123, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, object[1][i].account.Status, object[1][i].account.Hello, object[1][i].account.Manager_id];
 
