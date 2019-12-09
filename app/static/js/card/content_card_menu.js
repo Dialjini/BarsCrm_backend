@@ -79,27 +79,48 @@ function analyticsContent() {
         </table>
     `
 }
+let list_items_acc, list_stock_acc;
 function checkStocks(element) {
-    let list_stock = $('#stock_items_list').attr('data-stock').split(',');
-    let list_items = $('#stock_items_list').attr('data-items').split(',');
+    list_stock_acc = $('#stock_items_list').attr('data-stock').split(',');
+    list_items_acc = $('#stock_items_list').attr('data-items').split(',');
+    let sortItemsStock = [];
 
-    let data;
+    let dataStock, dataItem;
     $.ajax({
         url: '/getStocks',
         type: 'GET',
         async: false,
         dataType: 'html',
         success: function(result) {
-            data = JSON.parse(result);
+            dataStock = JSON.parse(result);
         }
     });
 
+    $.ajax({
+        url: '/getAllItems',
+        type: 'GET',
+        async: false,
+        dataType: 'html',
+        success: function(result) {
+            dataItem = JSON.parse(result);
+        }
+    });
+
+    for (let i = 0; i < dataStock.length; i++) {
+        sortItemsStock.push({ stock: dataStock[i].id, items: [] });
+        for (let j = 0; j < dataItem.length; j++) {
+            if (dataStock[i].id == dataItem[j].Stock_id) {
+                sortItemsStock[i]['items'].push(dataItem[j].Item_id)
+            }
+        }
+    }
+
     function fillListStock() {
         let buttons = '';
-        for (let i = 0; i < data.length; i++) {
-            for (let j = 0; j < list_stock.length; j++) {
-                if (data[i].id == list_stock[j]) {
-                    buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)">${data[i].Name}</button>`
+        for (let i = 0; i < dataStock.length; i++) {
+            for (let j = 0; j < list_stock_acc.length; j++) {
+                if (dataStock[i].id == sortItemsStock[j].stock) {
+                    buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)" data-items="${sortItemsStock[j].items}" data-stock="${dataStock[i].Name}">${dataStock[i].Name}</button>`
                     break;
                 }
             }
@@ -107,7 +128,7 @@ function checkStocks(element) {
         return buttons;
     }
 
-    if (list_stock.length > 1) {
+    if (list_stock_acc.length > 1) {
         $('.page').prepend($('<div>', { class: 'background' }));
         $('.page').prepend(
             $('<div>', {
@@ -139,6 +160,8 @@ function closeModal() {
 }
 // Оформление доставки из карточки Счета
 function arrangeDelivery(element) {
+    list_stock_acc = $(element).attr('data-stock');
+    list_items_acc = $(element).attr('data-items').split(',');
     closeModal();
     categoryInFinanceAccount[0].lastCard[0] = null;            
     createDelCardMenu(element);
@@ -700,6 +723,19 @@ function addMember(id = 'client', selectedLine = '') {
     $('#member .member').each(function(i, element) {
         count_members++;
     });
+    function fillListRole() {
+        let options = `<option disabled selected value="Не выбрана">Должность</option>`;
+        let roles = ['Собственник', 'Директор', 'Генеральный директор', 'Заместитель директора', 'Председатель', 'Главный бухгалтер',
+                     'Бухгалтер', 'Снабжение', 'Зоотехник', 'Агроном', 'Секретарь', 'Логист', 'Зав. гаражом', 'Водитель'];
+        for (let i = 0; i < roles.length; i++) {
+            if (selectedLine.Position == roles[i]) {
+                options += `<option selected value="${roles[i]}">${roles[i]}</option>`
+            } else {
+                options += `<option value="${roles[i]}">${roles[i]}</option>`
+            }
+        }
+        return options;
+    }
     $('#member').append($('<div>', {
         class: `member ${category.member}`,
         id: `member_${count_members}`,
@@ -707,7 +743,9 @@ function addMember(id = 'client', selectedLine = '') {
             class: 'm_info',
             append: $('<div>', {
                 class: 'top',
-                append: $('<input>', { placeholder: 'Должность', class: 'role', id: 'role', onchange: 'saveCard()', value: selectedLine.Position, type: 'text', onkeydown: 'widthRole(this)', onkeyup: 'onkeydown()', onkeypress: 'onkeydown()', onchange: 'onkeydown()', maxlength: 30
+                //$('<input>', { value: selectedLine.Position
+                append: $('<select>', {
+                    append: fillListRole()
                 }).add('<input>',    { placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.Number, type: 'tel'
                 })
             }).add($('<div>', {
@@ -719,9 +757,6 @@ function addMember(id = 'client', selectedLine = '') {
             }))
         }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)' }))
     }));
-    $('#member .member').each(function(i, element) {
-        widthRole($(element).children()[0].children[0].children[0]);
-    });
     if (selectedLine.Visible == null) {
         selectedLine.Visible = true;
     } if (!selectedLine.Visible) {
@@ -757,12 +792,6 @@ function visOrHidContact(idElem) {
         let save = $(`#member_${id[1]}`).remove();
         $('#member').prepend(save);
     }
-}
-// Автоширина поля Должность
-function widthRole(element) {
-    let width = $(element).val().length * 7;
-    if (width > 110) $(element).css('width', `${width}px`)
-    else $(element).css('width', '110px')
 }
 // Проверка email адреса 
 function checkEmail() {

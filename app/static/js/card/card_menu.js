@@ -156,7 +156,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
-                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id']}
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -1043,7 +1043,7 @@ function createCardMenu(element, index = 0) {
             }
 
             if (data == undefined) {
-                return `<option selected disabled>Выберите клиента</option>`
+                return `<option selected disabled>Выберите счёт</option>`
             }
 
             $.ajax({
@@ -1069,6 +1069,74 @@ function createCardMenu(element, index = 0) {
                 }
             }
             return options;
+        }
+        function fillStocks() {
+            if (list_stock_acc == undefined) {
+                if (selectedLine.Stock == '') {
+                    return `<option selected value="null">Выберите счёт</option>`
+                } else {
+                    return `<option selected value="${selectedLine.Stock}">${selectedLine.Stock}</option>`
+                }
+            } else {
+                return `<option selected value="${list_stock_acc}">${list_stock_acc}</option>`
+            }
+        }
+        function fillFlights() {
+            let listAllItems = [];
+            $.ajax({
+                url: '/getAllItems',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    listAllItems = JSON.parse(data);
+                }
+            });
+
+            let tr = '';
+            console.log(123);
+            for (let i = 0; i < listAllItems.length; i++) {
+                if (list_items_acc == undefined) {
+                    if (selectedLine.Item_ids != '') {
+                        list_items_acc = JSON.parse(selectedLine.Item_ids);
+                    } else {
+                        return '';
+                    }
+                }
+                console.log(list_items_acc);
+                for (let j = 0; j < list_items_acc.length; j++) {
+                    if (+list_items_acc[j] == +listAllItems[i].Item_id) {
+                        let stocks;
+                        let stock;
+                        $.ajax({
+                            url: '/getStocks',
+                            type: 'GET',
+                            async: false,
+                            dataType: 'html',
+                            success: function(data) {
+                                stocks = JSON.parse(data);
+                            }
+                        });
+                        for (let i = 0; i < stocks.length; i++) {
+                            if (stocks[i].id == listAllItems[i].Stock_id) {
+                                stock = stocks[i].Name;
+                                break;
+                            }
+                        }
+                        tr += `
+                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                            <td>${listAllItems[i].Name}</td>
+                            <td>${stock}</td>
+                            <td>${listAllItems[i].Weight}</td>
+                            <td>${listAllItems[i].Packing}</td>
+                            <td><input type="number"></td>
+                            <td></td>
+                        </tr>
+                        `
+                    }
+                }
+            }
+            return tr;
         }
         return `<div class="row_card">
                         <table class="table_block">
@@ -1152,6 +1220,14 @@ function createCardMenu(element, index = 0) {
                                     </select>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Склад</td>
+                                <td>
+                                    <select id="delivery_stock">
+                                        ${fillStocks()}
+                                    </select>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                     <div class="row_card">
@@ -1167,12 +1243,10 @@ function createCardMenu(element, index = 0) {
                                         <th>Сумма</th>
                                         <th>Клиент</th>
                                     </tr>
-                                    <tbody id="flight"></tbody>
+                                    <tbody id="flight">
+                                        ${fillFlights()}
+                                    </tbody>
                                 </table>
-                            </div>
-                            <div class="events">
-                                <img class="add_something" id="flight-group" src="static/images/add.png" onclick="addRow(this.id)">
-                                <img class="add_something" name="remove_last_flight" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                             </div>
                             <div class="info_block fit" style="margin-top: 15px;">
                                 <span class="lightgray" style="margin-top: 10px;">Оплата</span>
@@ -1349,6 +1423,47 @@ function selectAccount(value) {
 
     $('#delivery_contact_name').empty();
     $('#delivery_contact_name').append(options);
+
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].account.id == +value) {
+            let listStock = [];
+            for (let j = 0; j < data[i].items.length; j++) {
+                listStock.push(data[i].items[j].Stock_id);
+            }
+            for (let j = 0; j < listStock.length - 1; j++) {
+                for (let k = j + 1; k < listStock.length; k++) {
+                    if (listStock[j] == listStock[k]) {
+                        listStock.splice(k, 1);
+                        k--;
+                    }
+                }
+            }
+
+            let dataStock;
+            let options = '';
+
+            $.ajax({
+                url: '/getStocks',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    dataStock = JSON.parse(data);
+                }
+            });
+
+            for (let j = 0; j < dataStock.length; j++) {
+                for (let k = 0; k < listStock.length; k++) {
+                    if (dataStock[j].id == listStock[k]) {
+                        options += `<option value="${dataStock[j].Name}">${dataStock[j].Name}</option>`
+                    }
+                }
+            }
+            $('#delivery_stock').empty();
+            $('#delivery_stock').append(options);
+            break;
+        }
+    }
 }
 function createNewItem() {
     let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price'];
@@ -1421,10 +1536,14 @@ function makeRequest(element) {
     data['delivery_client'] = $('#delivery_client')[0].value;
 
     data['delivery_prefix'] = infoAccount.items[0].Prefix;
-    data['delivery_stock'] = 'stock';
     data['delivery_price'] = infoAccount.account.Sum;
     data['delivery_vat'] = infoAccount.items[0].NDS;
     data['delivery_name'] = infoAccount.account.Name;
+    let items_ids = [];
+    for (let element of $('#flight [name="item_flight"]')) {
+        items_ids.push($(element).attr('id').split('_')[2]);
+    }
+    data['delivery_item_ids'] = JSON.stringify(items_ids);
     console.log(data);
     $.ajax({
         url: '/addDelivery',
@@ -1554,20 +1673,25 @@ function completionCard(elem) {
         url: '/getStockTable',
         type: 'GET',
         dataType: 'html',
-        success: function(data) { 
+        success: function(data) {
             data = JSON.parse(data);
             let idsItems = [];
-            $('#exposed_list .invoiled').each(function(i, element) {
+            for (let element of $('#exposed_list .invoiled')) {
                 let idProduct = $(element).attr('id').split('_')[1];
                 for (let i = 0; i < data.length; i++) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
                         if (account.Item_id == idProduct) {
+                            console.log(account, +$(`#invoiled_volume_${idProduct}`).val())
+                            if (+account.Volume < +$(`#invoiled_volume_${idProduct}`).val()) {
+                                alert(`Введенный объем товара "${account.Name}" больше, чем имеется на складе`);
+                                return;
+                            }
                             idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
                         }
                     }
                 }
-            });
+            }
             
             if (idsItems.length > 0) {
                 let sale = $('#total_discount_inv').val();
@@ -1596,8 +1720,9 @@ function completionCard(elem) {
                         closeCardMenu('account_new');
                     }
                 })
-            } else {
+            } else if (idsItems.length == 0) {
                 alert('Невозможно создать счет, ни один товар не выбран!');
+                return;
             }
         }
     })
