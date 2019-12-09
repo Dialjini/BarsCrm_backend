@@ -929,7 +929,6 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
-        console.log(selectedLine)
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -948,20 +947,46 @@ function createCardMenu(element, index = 0) {
             return select;
         }
         function fillAccounts() {
-            return `<option disabled selected value="${selectedLine.Account_id}">Счёт ${selectedLine.Account_id}</option>`
+            let options = '';
+            $.ajax({
+                url: '/getAccounts',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    data = JSON.parse(data);
+                    if (categoryInFinanceAccount[1][1] == undefined) {
+                        categoryInFinanceAccount[1].push(data);
+                    }   
+                    if (selectedLine.Account_id == '') {
+                        options += `<option disabled selected>Не выбран</option>`;
+                        for (let i = 0; i < data.length; i++) {
+                            options += `<option value="${data[i].account.id}">Счёт ${data[i].account.id}</option>`
+                        }
+                    } else options += `<option disabled selected value="${selectedLine.Account_id}">Счёт ${selectedLine.Account_id}</option>`
+                }
+            });
+            return options;
         }
         function fillClients() {
-            // запрос на счета
+            let options = '';
             let data = categoryInFinanceAccount[1][1];
+
             for (let i = 0; i < data.length; i++) {
                 if (data[i].account.id == selectedLine.Account_id) {
-                    if (selectedLine.id == null) {
-                        return `<option disabled selected value="${selectedLine.Account}">${data[i].account.Name}</option>`
+                    if (selectedLine.Account_id != '') {
+                        selectedLine.Name = data[i].account.Name;
+                        options += `<option disabled selected value="${data[i].account.Name}">${data[i].account.Name}</option>`
                     } else {
-                        return `<option selected disabled>Не выбран</option>`;
+                        options += `<option selected disabled>Не выбран</option>`;
                     }
+                    break;
                 }
             }
+            if (selectedLine.Account_id == '') {
+                options += `<option selected disabled>Выберите счёт</option>`;
+            }
+            return options;
         }
         function fillCustomer() {
             let options = '';
@@ -978,6 +1003,46 @@ function createCardMenu(element, index = 0) {
             }
             return options;
         }
+        function fillContacts() {
+            let dataClients = categoryInListClient[1][1];
+            let listContacts, data;
+            let options = '';
+
+            for (let i = 0; i < dataClients.length; i++) {
+                if (dataClients[i].Name == selectedLine.Name) {
+                    data = {id: dataClients[i].id, category: 'client'}
+                    break;
+                }
+            }
+
+            if (data == undefined) {
+                return `<option selected disabled>Выберите клиента</option>`
+            }
+
+            $.ajax({
+                url: '/getContacts',
+                type: 'GET',
+                async: false,
+                data: data,
+                dataType: 'html',
+                success: function(data) {
+                    listContacts = JSON.parse(data);
+                }
+            });
+
+            if (listContacts.length == 0) {
+                options += '<option selected disabled>Контакты не указаны</option>'
+            } else {
+                for (let i = 0; i < listContacts.length; i++) {
+                    if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
+                        options += `<option selected value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                    } else {
+                        options += `<option value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                    }
+                }
+            }
+            return options;
+        }
         return `<div class="row_card">
                         <table class="table_block">
                             <tr>
@@ -991,19 +1056,19 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Дата отгрузки</td>
                                 <td>
-                                    <input type="text" id="delivery_start_date" value="${selectedLine.Start_date}">
+                                    <input type="text" style="width: 200px" id="delivery_start_date" value="${selectedLine.Start_date}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Дата разгрузки</td>
                                 <td>
-                                    <input type="text" id="delivery_end_date" value="${selectedLine.End_date}">
+                                    <input type="text" style="width: 200px" id="delivery_end_date" value="${selectedLine.End_date}">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Способ погрузки</td>
                                 <td>
-                                    <input type="text" id="delivery_load_type" value="${selectedLine.Load_type}">
+                                    <input type="text" style="width: 200px" id="delivery_load_type" value="${selectedLine.Load_type}">
                                 </td>
                             </tr>
                         </table>
@@ -1031,7 +1096,7 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Комментарий</td>
                                 <td>
-                                    <input type="text" id="delivery_comment" value="${selectedLine.Comment}">
+                                    <input type="text" style="width: 200px" id="delivery_comment" value="${selectedLine.Comment}">
                                 </td>
                             </tr>
                         </table>
@@ -1039,7 +1104,7 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Счёт</td>
                                 <td>
-                                    <select id="delivery_account">
+                                    <select id="delivery_account" onchange="selectAccount(this.value)">
                                         ${fillAccounts()}
                                     </select>
                                 </td>
@@ -1056,11 +1121,7 @@ function createCardMenu(element, index = 0) {
                                 <td>Контакт на выгрузке</td>
                                 <td>
                                     <select id="delivery_contact_name">
-                                        <option selected disabled>Не выбран</option>
-                                        <option>Одна из</option>
-                                        <option>Должностей</option>
-                                        <option>Контакта</option>
-                                        <option>Или просто ввод</option>
+                                        ${fillContacts()}
                                     </select>
                                 </td>
                             </tr>
@@ -1206,6 +1267,50 @@ function createCardMenu(element, index = 0) {
         `;
     }
 }
+function selectAccount(value) {
+    let data = categoryInFinanceAccount[1][1];
+    let dataClients = categoryInListClient[1][1];
+    let nameClient, request;
+
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].account.id == +value) {
+            $('#delivery_client').empty();
+            $('#delivery_client').append(`<option>${data[i].account.Name}</option>`);
+            nameClient = data[i].account.Name;
+            break;
+        }
+    }
+
+    for (let i = 0; i < dataClients.length; i++) {
+        if (dataClients[i].Name == nameClient) {
+            request = {id: dataClients[i].id, category: 'client'}
+        }
+    }
+
+    let options = '';
+
+    $.ajax({
+        url: '/getContacts',
+        type: 'GET',
+        async: false,
+        data: request,
+        dataType: 'html',
+        success: function(data) {
+            request = JSON.parse(data);
+        }
+    });
+
+    if (request.length == 0) {
+        options += '<option selected disabled>Контакты не указаны</option>'
+    } else {
+        for (let i = 0; i < request.length; i++) {
+            options += `<option value="${request[i].Contact_id}">${request[i].Position} | ${request[i].Name} | ${request[i].Number}</option>`
+        }
+    }
+
+    $('#delivery_contact_name').empty();
+    $('#delivery_contact_name').append(options);
+}
 function createNewItem() {
     let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price'];
     let data = {};
@@ -1259,15 +1364,22 @@ function makeRequest(element) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
 
+    if (infoAccount == undefined) {
+        var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
+        if (result) { return closeCardMenu(element.id) }
+        else { return };
+    }
+
     let idDelivery = element.id.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
-    data['delivery_contact_end'] = '';
+    data['delivery_contact_end'] = +$('#delivery_contact_name').val();
     data['delivery_payment_date'] = '';
     data['delivery_contact_number'] = '';
     data['delivery_contact_name'] = $('#delivery_driver').val();
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
     data['delivery_account_id'] = +$('#delivery_account')[0].value;
+    data['delivery_client'] = $('#delivery_client')[0].value;
 
     data['delivery_prefix'] = infoAccount.items[0].Prefix;
     data['delivery_stock'] = 'stock';
