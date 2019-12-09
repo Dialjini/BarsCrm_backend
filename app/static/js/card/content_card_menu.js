@@ -107,9 +107,15 @@ function checkStocks(element) {
     });
 
     for (let i = 0; i < dataStock.length; i++) {
-        sortItemsStock.push({ stock: dataStock[i].id, items: [] });
+        for (let j = 0; j < list_stock_acc.length; j++) {
+            if (list_stock_acc[j] == dataStock[i].id) {
+                sortItemsStock.push({ stock: dataStock[i].id, items: [] });
+            }
+        }
+    }
+    for (let i = 0; i < sortItemsStock.length; i++) {
         for (let j = 0; j < dataItem.length; j++) {
-            if (dataStock[i].id == dataItem[j].Stock_id) {
+            if (sortItemsStock[i].stock == dataItem[j].Stock_id) {
                 sortItemsStock[i]['items'].push(dataItem[j].Item_id)
             }
         }
@@ -118,7 +124,7 @@ function checkStocks(element) {
     function fillListStock() {
         let buttons = '';
         for (let i = 0; i < dataStock.length; i++) {
-            for (let j = 0; j < list_stock_acc.length; j++) {
+            for (let j = 0; j < sortItemsStock.length; j++) {
                 if (dataStock[i].id == sortItemsStock[j].stock) {
                     buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)" data-items="${sortItemsStock[j].items}" data-stock="${dataStock[i].Name}">${dataStock[i].Name}</button>`
                     break;
@@ -151,6 +157,15 @@ function checkStocks(element) {
             })
         );
     } else {
+        for (let i = 0; i < dataStock.length; i++) {
+            for (let j = 0; j < list_stock_acc.length; j++) {
+                if (dataStock[i].id == list_stock_acc[j]) {
+                    list_stock_acc[j] = dataStock[i].Name;
+                }
+            }
+        }
+        $(element).attr('data-stock', list_stock_acc);
+        $(element).attr('data-items', list_items_acc);
         arrangeDelivery(element);
     }
 }
@@ -163,7 +178,8 @@ function arrangeDelivery(element) {
     list_stock_acc = $(element).attr('data-stock');
     list_items_acc = $(element).attr('data-items').split(',');
     closeModal();
-    categoryInFinanceAccount[0].lastCard[0] = null;            
+    console.log(element.name);
+    categoryInFinanceAccount[0].lastCard[0] = null;         
     createDelCardMenu(element);
 }
 // Заполнение объема в карточке категории Склад для переноса груза из одного склада в другой
