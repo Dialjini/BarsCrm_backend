@@ -431,6 +431,10 @@ function createCardMenu(element, index = 0) {
                                 <tbody id="group"></tbody>
                             </table>
                         </div>
+                        <div class="events">
+                            <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this.id)">
+                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
+                        </div>
                     </div>
                 </div>
                 <div class="area">
@@ -573,6 +577,10 @@ function createCardMenu(element, index = 0) {
                                 <tr><td>Товар</td><td>Цена</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
                                 <tbody id="group"></tbody>
                             </table>
+                        </div>
+                        <div class="events">
+                            <img class="add_something" id="provider-group" src="static/images/add.png" onclick="addRow(this.id)">
+                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -719,9 +727,10 @@ function createCardMenu(element, index = 0) {
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
-
-
+            let list_stock_id = [], list_items_id = [];
             for (let i = 0; i < list_items.length; i++) {
+                list_stock_id.push(list_items[i].Stock_id);
+                list_items_id.push(list_items[i].Item_id);
                 sum += Math.round(list_items[i].Cost * list_items[i].Transferred_volume);
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
@@ -739,6 +748,22 @@ function createCardMenu(element, index = 0) {
                     </tr>
                 `)
             }
+            
+            for (let i = 0; i < list_stock_id.length - 1; i++) {
+                for (let j = i + 1; j < list_stock_id.length; j++) {
+                    if (list_stock_id[i] == list_stock_id[j]) {
+                        list_stock_id.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+
+            table = table.concat(`
+                <div id="stock_items_list" style="display: none" data-stock="${list_stock_id}" data-items="${list_items_id}"></div>
+            `)
+
+            console.log(list_stock_id, list_items_id);
+
             list_items[0].NDS = list_items[0].NDS[0] + list_items[0].NDS[1];
             vat = sum > 0 ? sum - ((sum * +list_items[0].NDS) / 100) : 0;
 
@@ -826,7 +851,8 @@ function createCardMenu(element, index = 0) {
                     </div>
                 </div>
                 <div class="next">
-                    <button class="btn btn-main" id="delivery_new" onclick="arrangeDelivery(this)">Оформить Доставку</button>
+                    <div style="display:none" id="list_stock" data-stock=""></div>
+                    <button class="btn btn-main" id="delivery_new" onclick="checkStocks(this)">Оформить Доставку</button>
                 </div>`
     }
     // Контентная часть Дебеторки
@@ -929,6 +955,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
+        console.log(selectedLine);
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -1189,7 +1216,21 @@ function createCardMenu(element, index = 0) {
             return options;
         }
         function fillListGroup() {
-            
+            let info;
+            $.ajax({
+                url: '/getItemGroup',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    info = JSON.parse(data);
+                }
+            });
+            let options = '';
+            for (let i = 0; i < info.length; i++) {
+                options += `<option value="${info[i].id}">${info[i].Group}</option>`
+            }
+            return options;
         }
         return `
             <div class="row_card">
@@ -1203,9 +1244,7 @@ function createCardMenu(element, index = 0) {
                     <tr>
                         <td>Группа товаров</td>
                         <td>
-                            <select type="text" id="group_id">
-                                <option value="1">тест</option>
-                            </select>
+                            <select type="text" id="group_id">${fillListGroup()}</select>
                         </td>
                     </tr>
                     <tr>

@@ -79,8 +79,67 @@ function analyticsContent() {
         </table>
     `
 }
+function checkStocks(element) {
+    let list_stock = $('#stock_items_list').attr('data-stock').split(',');
+    let list_items = $('#stock_items_list').attr('data-items').split(',');
+
+    let data;
+    $.ajax({
+        url: '/getStocks',
+        type: 'GET',
+        async: false,
+        dataType: 'html',
+        success: function(result) {
+            data = JSON.parse(result);
+        }
+    });
+
+    function fillListStock() {
+        let buttons = '';
+        for (let i = 0; i < data.length; i++) {
+            for (let j = 0; j < list_stock.length; j++) {
+                if (data[i].id == list_stock[j]) {
+                    buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)">${data[i].Name}</button>`
+                    break;
+                }
+            }
+        }
+        return buttons;
+    }
+
+    if (list_stock.length > 1) {
+        $('.page').prepend($('<div>', { class: 'background' }));
+        $('.page').prepend(
+            $('<div>', {
+                class: 'modal_select',
+                append: `
+                    <div class="title">
+                        <span>Выбор склада</span>
+                        <img onclick="closeModal()" src="static/images/cancel.png">
+                    </div>
+                    <div class="content">
+                        <div class="message">
+                            <p>В счёте присутствуют несколько складов. <br> Выберите склад, чтобы создать доставку товаров выбранного склада <br>
+                            (Доставка будет только на те товары, которые находятся в выбранном складе)</p>
+                        </div>
+                        <div class="list_stock">
+                            ${fillListStock()}
+                        </div>
+                    </div>
+                `
+            })
+        );
+    } else {
+        arrangeDelivery(element);
+    }
+}
+function closeModal() {
+    $('.background').remove();
+    $('.modal_select').remove();
+}
 // Оформление доставки из карточки Счета
 function arrangeDelivery(element) {
+    closeModal();
     categoryInFinanceAccount[0].lastCard[0] = null;            
     createDelCardMenu(element);
 }

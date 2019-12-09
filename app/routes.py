@@ -240,6 +240,11 @@ def addItemGroup():
     return 'OK'
 
 
+@app.route('/getItemGroup', methods=['GET'])
+def getItemGroup():
+    return table_to_json(models.Item_groups.query.all())
+
+
 @app.route('/getAllItems', methods=['GET'])
 def getAllItems():
     return table_to_json(models.Item.query.all())

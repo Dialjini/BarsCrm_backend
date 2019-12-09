@@ -67,11 +67,12 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
+        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
             let carrier_name = object[1][i].carrier == null ? 'Не выбран' : object[1][i].carrier.Name
             object[1][i].delivery.NDS = object[1][i].delivery.NDS[0] + object[1][i].delivery.NDS[1];
-            const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, carrier_name, object[1][i].delivery.Prefix, object[1][i].delivery.Price, object[1][i].delivery.Price - ((object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
+            const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, carrier_name, object[1][i].delivery.Customer, object[1][i].delivery.Price, object[1][i].delivery.Price - ((object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);

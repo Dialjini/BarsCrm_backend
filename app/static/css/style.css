@@ -16,6 +16,103 @@ body {
   height: 100%;
 }
 
+.page .background {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.6;
+  z-index: 2;
+  position: absolute;
+}
+
+.page .modal_select {
+  width: 500px;
+  background-color: #fff;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 1px 2px lightgray;
+          box-shadow: 0 1px 2px lightgray;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.page .modal_select .title {
+  width: 90%;
+  margin: 15px auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.page .modal_select .title span {
+  color: lightgray;
+}
+
+.page .modal_select .title img {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+}
+
+.page .modal_select .title img:hover {
+  cursor: pointer;
+}
+
+.page .modal_select .content {
+  width: 90%;
+  margin: 20px auto 40px auto;
+}
+
+.page .modal_select .content .message {
+  text-align: center;
+  font-size: 11px;
+  margin-bottom: 15px;
+}
+
+.page .modal_select .content .list_stock {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  height: 100%;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.page .modal_select .content .list_stock .selectStock {
+  width: 70%;
+  height: 40px;
+  margin: 0 auto;
+  color: #595959;
+  border: none;
+  -webkit-box-shadow: 0 1px 3px 1px lightgrey;
+          box-shadow: 0 1px 3px 1px lightgrey;
+  font-size: 12px;
+  outline: none;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.page .modal_select .content .list_stock .selectStock:first-child {
+  border-radius: 7px 7px 0 0;
+}
+
+.page .modal_select .content .list_stock .selectStock:last-child {
+  border-radius: 0 0 7px 7px;
+}
+
+.page .modal_select .content .list_stock .selectStock:hover {
+  cursor: pointer;
+}
+
 .page .leftBlock {
   width: 75px;
   background-color: #5f35aa;
@@ -1142,12 +1239,22 @@ body {
   color: gray;
 }
 
-.page .rightBlock .profile .profile_menu {
-  height: 15px;
-  margin-right: 15px;
+.page .rightBlock .profile .logout {
+  width: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-right: 10px;
 }
 
-.page .rightBlock .profile .profile_menu:hover {
+.page .rightBlock .profile .logout .profile_menu {
+  height: 15px;
+}
+
+.page .rightBlock .profile .logout:hover {
   cursor: pointer;
 }
 

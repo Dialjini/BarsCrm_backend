@@ -79,6 +79,7 @@ function saveInfoCard(id, close = false, elem = null) {
                     data: idData,
                     dataType: 'html',
                     success: function() {
+                        addItemsInfo();
                         addMembersInfo(close);
                     }
                 });
@@ -123,6 +124,49 @@ function saveInfoCard(id, close = false, elem = null) {
         idData[`${data[0]}_data`] = card;
         idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
         idData[`${data[0]}_holding`] = $(`#${data[0]}_holding`).val() !== '' ? $(`#${data[0]}_holding`).val() : $(`#${data[0]}_holding`).html();
+    }
+
+    function addItemsInfo() {
+        let items = [];
+        if (card == 'new') {
+            card = saveTableAndCard[1][1].length + 1;
+        }
+        $('#group tr').each(function(i, element) {
+            if (data[0] == 'client') {
+                items.push({
+                    item_product: $(element).children()[0].children[0].value,
+                    item_volume: $(element).children()[1].children[0].value,
+                    item_creator: $(element).children()[2].children[0].value,
+                    item_price: $(element).children()[3].children[0].value,
+                })
+            } else if (data[0] == 'provider') {
+                items.push({
+                    item_product: $(element).children()[0].children[0].value,
+                    item_price: $(element).children()[1].children[0].value,
+                    item_vat: $(element).children()[2].children[0].value,
+                    item_packing: $(element).children()[3].children[0].value,
+                    item_weight: $(element).children()[4].children[0].value,
+                    item_fraction: $(element).children()[5].children[0].value,
+                })
+            } else {
+                // Переводчики
+                return;
+            }
+            let array = Object.keys(items[items.length - 1]);
+            let count = 0;
+            for (let i = 0; i < array.length; i++) {
+                if (items[items.length - 1][array[i]] == '') count++;
+            }
+            if (count == array.length) items.pop();
+        });
+        console.log({category: data[0], id: card, item: JSON.stringify(items)})
+        $.ajax({
+            url: '/addItems',
+            type: 'GET',
+            data: {category: data[0], id: card, item: JSON.stringify(items)},
+            dataType: 'html',
+            success: function() {}
+        });
     }
 
     function addMembersInfo(close) {
