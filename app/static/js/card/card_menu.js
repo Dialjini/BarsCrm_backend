@@ -253,6 +253,8 @@ function createCardMenu(element, index = 0) {
                 });
             } else {
                 // Запрос для перевозчиков
+                // Такие же как и в доставке
+                // Можно привязывать их при makeRequest()
                 inputItems([])
             }
             $.ajax({
@@ -267,7 +269,6 @@ function createCardMenu(element, index = 0) {
             getCommentsInfo.getRequest(getInfo);
         }
         function inputItems(items) {
-            // Запрос на получение товаров из счета
             if (items.length == 0) 
                 addRow(`${category}-group`);
             else {
@@ -1271,6 +1272,7 @@ function createCardMenu(element, index = 0) {
                         <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
+    
     function addItemsInStockContent(selectedLine) {
         function fillListStock() {
             let info;
@@ -1487,6 +1489,7 @@ function createNewItem() {
 }
 function createNewStock() {
     let data = {};
+    if ($('#create_stock').val() == '') return;
     data['stock_name'] = $('#create_stock').val();
     $.ajax({
         url: '/addStock',
@@ -1500,6 +1503,7 @@ function createNewStock() {
 }
 function createNewGroup() {
     let data = {};
+    if ($('#create_group').val() == '') return;
     data['group_name'] = $('#create_group').val();
     $.ajax({
         url: '/addItemGroup',
