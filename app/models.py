@@ -205,6 +205,7 @@ class Delivery(db.Model):
     Customer = db.Column(db.String)
     Date = db.Column(db.String)
     Stock = db.Column(db.String)
+    Item_ids = db.Column(db.String)
     Prefix = db.Column(db.String)
     Price = db.Column(db.String)
     NDS = db.Column(db.String)

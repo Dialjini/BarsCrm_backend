@@ -169,6 +169,7 @@ def addDelivery():
     table.Start_date = data['delivery_start_date']
     table.Stock = data['delivery_stock']
     table.Type = data['delivery_type']
+    table.Item_ids = data['delivery_item_ids']
 
     if data['delivery_id'] == 'new':
         db.session.add(table)
