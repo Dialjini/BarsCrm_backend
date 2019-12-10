@@ -77,548 +77,644 @@ def logout():
 
 @app.route('/getClients', methods=['GET'])
 def getClients():
-    return table_to_json(models.Client.query.all())
+    if 'username' in session:
+        return table_to_json(models.Client.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getMessages', methods=['GET'])
 def getMessages():
-    if request.args['category'] == 'client':
-        client = request.args['id']
-        Client = models.Client.query.filter_by(id=client).first()
-        return table_to_json(models.Notes.query.filter_by(Author=Client).all())
-    elif request.args['category'] == 'provider':
-        provider = request.args['id']
-        Provider = models.Provider.query.filter_by(id=provider).first()
-        return table_to_json(models.Notes.query.filter_by(Provider=Provider).all())
-    elif request.args['category'] == 'carrier':
-        carrier = request.args['id']
-        Carrier = models.Provider.query.filter_by(id=carrier).first()
-        return table_to_json(models.Notes.query.filter_by(Carrier=Carrier).all())
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            client = request.args['id']
+            Client = models.Client.query.filter_by(id=client).first()
+            return table_to_json(models.Notes.query.filter_by(Author=Client).all())
+        elif request.args['category'] == 'provider':
+            provider = request.args['id']
+            Provider = models.Provider.query.filter_by(id=provider).first()
+            return table_to_json(models.Notes.query.filter_by(Provider=Provider).all())
+        elif request.args['category'] == 'carrier':
+            carrier = request.args['id']
+            Carrier = models.Provider.query.filter_by(id=carrier).first()
+            return table_to_json(models.Notes.query.filter_by(Carrier=Carrier).all())
+        else:
+            return 'ERROR 400 BAD REQUEST'
     else:
-        return 'ERROR 400 BAD REQUEST'
+        return redirect('/', code=302)
 
 
 @app.route('/addMessages', methods=['GET'])
 def addMessages():
-    if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            Owner = models.Client.query.filter_by(id=request.args['id']).first()
+        elif request.args['category'] == 'provider':
+            Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+        else:
+            Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+
+        i = json.loads(request.args['comments'])
+        Message = models.Notes()
+
+        Message.Date = i['comment_date']
+        Message.Manager = i['comment_role']
+        Message.Note = i['comment_content']
+        if request.args['category'] == 'client':
+            Message.Client_id = request.args['id']
+        elif request.args['category'] == 'provider':
+            Message.Provider_id = request.args['id']
+        elif request.args['category'] == 'carrier':
+            Message.Carrier_id = request.args['id']
+        Owner.Notes.append(Message)
+        db.session.commit()
+
+        return 'OK'
     else:
-        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
-
-    i = json.loads(request.args['comments'])
-    Message = models.Notes()
-
-    Message.Date = i['comment_date']
-    Message.Manager = i['comment_role']
-    Message.Note = i['comment_content']
-    if request.args['category'] == 'client':
-        Message.Client_id = request.args['id']
-    elif request.args['category'] == 'provider':
-        Message.Provider_id = request.args['id']
-    elif request.args['category'] == 'carrier':
-        Message.Carrier_id = request.args['id']
-    Owner.Notes.append(Message)
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/getDeliveries', methods=['GET'])
 def getDeliveries():
-    deliveries = models.Delivery.query.all()
-    result = []
-    carriers = models.Carrier.query.all()
-    for delivery in deliveries:
-        if delivery.Carrier_id:
-            print(len(carriers))
-            carrier = carriers[delivery.Carrier_id - 1]
-            result.append({'carrier': json.loads(table_to_json([carrier]))[0], 'delivery': json.loads(table_to_json([delivery]))[0]})
-        else:
-            result.append({'carrier': None, 'delivery': json.loads(table_to_json([delivery]))[0]})
-    return json.dumps(result)
+    if 'username' in session:
+        deliveries = models.Delivery.query.all()
+        result = []
+        carriers = models.Carrier.query.all()
+        for delivery in deliveries:
+            if delivery.Carrier_id:
+                print(len(carriers))
+                carrier = carriers[delivery.Carrier_id - 1]
+                result.append({'carrier': json.loads(table_to_json([carrier]))[0], 'delivery': json.loads(table_to_json([delivery]))[0]})
+            else:
+                result.append({'carrier': None, 'delivery': json.loads(table_to_json([delivery]))[0]})
+        return json.dumps(result)
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addDelivery', methods=['GET'])
 def addDelivery():
-    data = request.args
-    if data['delivery_id'] == 'new':
-        table = models.Delivery()
+    if 'username' in session:
+        data = request.args
+        if data['delivery_id'] == 'new':
+            table = models.Delivery()
+        else:
+            table = models.Delivery.query.filter_by(id=data['delivery_id']).first()
+
+        table.Name = data['delivery_name']
+        table.Date = data['delivery_date']
+        table.Price = data['delivery_price']
+        table.Contact_Number = data['delivery_contact_number']
+        table.Contact_Name = data['delivery_contact_name']
+        if data['delivery_carrier_id']:
+            table.Carrier_id = data['delivery_carrier_id']
+        if data['delivery_account_id']:
+            table.Account_id = data['delivery_account_id']
+        table.Comment = data['delivery_comment']
+        table.Client = data['delivery_client']
+        table.NDS = data['delivery_vat']
+        table.Contact_End = data['delivery_contact_end']
+        table.Customer = data['delivery_customer']
+        table.End_date = data['delivery_end_date']
+        table.Load_type = data['delivery_load_type']
+        table.Payment_date = data['delivery_payment_date']
+        table.Prefix = data['delivery_prefix']
+        table.Start_date = data['delivery_start_date']
+        table.Stock = data['delivery_stock']
+        table.Type = data['delivery_type']
+        table.Item_ids = data['delivery_item_ids']
+
+        if data['delivery_id'] == 'new':
+            db.session.add(table)
+        db.session.commit()
+
+        return 'OK'
     else:
-        table = models.Delivery.query.filter_by(id=data['delivery_id']).first()
-
-    table.Name = data['delivery_name']
-    table.Date = data['delivery_date']
-    table.Price = data['delivery_price']
-    table.Contact_Number = data['delivery_contact_number']
-    table.Contact_Name = data['delivery_contact_name']
-    if data['delivery_carrier_id']:
-        table.Carrier_id = data['delivery_carrier_id']
-    if data['delivery_account_id']:
-        table.Account_id = data['delivery_account_id']
-    table.Comment = data['delivery_comment']
-    table.Client = data['delivery_client']
-    table.NDS = data['delivery_vat']
-    table.Contact_End = data['delivery_contact_end']
-    table.Customer = data['delivery_customer']
-    table.End_date = data['delivery_end_date']
-    table.Load_type = data['delivery_load_type']
-    table.Payment_date = data['delivery_payment_date']
-    table.Prefix = data['delivery_prefix']
-    table.Start_date = data['delivery_start_date']
-    table.Stock = data['delivery_stock']
-    table.Type = data['delivery_type']
-    table.Item_ids = data['delivery_item_ids']
-
-    if data['delivery_id'] == 'new':
-        db.session.add(table)
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/getContacts', methods=['GET'])
 def getContacts():
-    if request.args['category'] == 'client':
-        client = request.args['id']
-        Client = models.Client.query.filter_by(id=client).first()
-        return table_to_json(models.Contacts.query.filter_by(Owner=Client).all())
-    elif request.args['category'] == 'provider':
-        provider = request.args['id']
-        Provider = models.Provider.query.filter_by(id=provider).first()
-        return table_to_json(models.Contacts.query.filter_by(Provider=Provider).all())
-    elif request.args['category'] == 'carrier':
-        carrier = request.args['id']
-        Carrier = models.Provider.query.filter_by(id=carrier).first()
-        return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            client = request.args['id']
+            Client = models.Client.query.filter_by(id=client).first()
+            return table_to_json(models.Contacts.query.filter_by(Owner=Client).all())
+        elif request.args['category'] == 'provider':
+            provider = request.args['id']
+            Provider = models.Provider.query.filter_by(id=provider).first()
+            return table_to_json(models.Contacts.query.filter_by(Provider=Provider).all())
+        elif request.args['category'] == 'carrier':
+            carrier = request.args['id']
+            Carrier = models.Provider.query.filter_by(id=carrier).first()
+            return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
+        else:
+            return 'ERROR 400 BAD REQUEST'
     else:
-        return 'ERROR 400 BAD REQUEST'
+        return redirect('/', code=302)
 
 
 @app.route('/addStock', methods=['GET'])
 def addStock():
-    name = request.args['stock_name']
-    stock = models.Stock()
-    stock.Name = name
+    if 'username' in session:
+        name = request.args['stock_name']
+        stock = models.Stock()
+        stock.Name = name
 
-    db.session.add(stock)
-    db.session.commit()
-    return 'OK'
+        db.session.add(stock)
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getStockTable', methods=['GET'])
 def getStockTable():
-    result = []
-    Stocks = models.Stock.query.all()
-    for stock in Stocks:
-        subres = {'items':json.loads(table_to_json(stock.Items))}
+    if 'username' in session:
+        result = []
+        Stocks = models.Stock.query.all()
+        for stock in Stocks:
+            subres = {'items':json.loads(table_to_json(stock.Items))}
 
-        subres['stock_address'] = stock.Name
-        result.append(subres)
+            subres['stock_address'] = stock.Name
+            result.append(subres)
 
-    return json.dumps(result)
+        return json.dumps(result)
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getStockItems', methods=['GET'])
 def getStockItems():
-    data = request.args
-    Stocks = models.Stock.query.filter_by(id=data['stock_id']).all()
-    if len(Stocks):
-        Stock = Stocks[0]
-    else:
-        return 'Bad Stock'
+    if 'username' in session:
+        data = request.args
+        Stocks = models.Stock.query.filter_by(id=data['stock_id']).all()
+        if len(Stocks):
+            Stock = Stocks[0]
+        else:
+            return 'Bad Stock'
 
-    return table_to_json(Stock.Items)
+        return table_to_json(Stock.Items)
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addItemGroup', methods=['GET'])
 def addItemGroup():
-    group = models.Item_groups()
-    group.Group = request.args['group_name']
-    db.session.add(group)
-    db.session.commit()
-    return 'OK'
+    if 'username' in session:
+        group = models.Item_groups()
+        group.Group = request.args['group_name']
+        db.session.add(group)
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getItemGroup', methods=['GET'])
 def getItemGroup():
-    return table_to_json(models.Item_groups.query.all())
+    if 'username' in session:
+        return table_to_json(models.Item_groups.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getAllItems', methods=['GET'])
 def getAllItems():
-    return table_to_json(models.Item.query.all())
+    if 'username' in session:
+        return table_to_json(models.Item.query.all())
+    else:
+        return redirect('/', code=302)
 
 @app.route('/getAccounts', methods=['GET'])
 def getAccounts():
-    result = []
-    Items = models.Item.query.all()
-    for i in models.Account.query.all():
-        items = []
-        for j in json.loads(i.Item_ids):
-            print(j)
-            item = Items[int(j['id']) - 1]
-            subres = json.loads(table_to_json([item]))[0]
-            subres['Transferred_volume'] = j['volume']
-            items.append(subres)
-        account = json.loads(table_to_json([i]))[0]
-        subres = {'items': items, 'account': account}
-        result.append(subres)
-    return json.dumps(result)
+    if 'username' in session:
+        result = []
+        Items = models.Item.query.all()
+        for i in models.Account.query.all():
+            items = []
+            for j in json.loads(i.Item_ids):
+                print(j)
+                item = Items[int(j['id']) - 1]
+                subres = json.loads(table_to_json([item]))[0]
+                subres['Transferred_volume'] = j['volume']
+                items.append(subres)
+            account = json.loads(table_to_json([i]))[0]
+            subres = {'items': items, 'account': account}
+            result.append(subres)
+        return json.dumps(result)
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addUser', methods=['GET'])
 def addUser():
-    data = request.args
-    if data['id'] == 'new':
-        user = models.User()
+    if 'username' in session:
+        data = request.args
+        if data['id'] == 'new':
+            user = models.User()
+        else:
+            user = models.User.query.filter_by(id=data['id']).first()
+
+        user.login = data['create_login']
+        user.email = data['create_email']
+        user.second_name = data['create_last_name']
+        user.name = data['create_first_name']
+        user.third_name = data['create_patronymic']
+        user.role = data['create_role']
+        user.password = data['create_password']
+
+        if data['id'] == 'new':
+            db.session.add(user)
+        db.session.commit()
+
+        return 'OK'
     else:
-        user = models.User.query.filter_by(id=data['id']).first()
-
-    user.login = data['create_login']
-    user.email = data['create_email']
-    user.second_name = data['create_last_name']
-    user.name = data['create_first_name']
-    user.third_name = data['create_patronymic']
-    user.role = data['create_role']
-    user.password = data['create_password']
-
-    if data['id'] == 'new':
-        db.session.add(user)
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
     
 
 @app.route('/addAccount', methods=['GET'])
 def addAccount():
-    data = request.args
-    table = models.Account()
-    table.Name = data['name']
-    table.Status = data['status']
-    table.Date = data['date']
-    table.Hello = data['hello']
-    table.Sale = data['sale']
-    table.Shipping = data['shipping']
-    table.Sum = data['sum']
-    table.Item_ids = data['item_ids']
+    if 'username' in session:
+        data = request.args
+        table = models.Account()
+        table.Name = data['name']
+        table.Status = data['status']
+        table.Date = data['date']
+        table.Hello = data['hello']
+        table.Sale = data['sale']
+        table.Shipping = data['shipping']
+        table.Sum = data['sum']
+        table.Item_ids = data['item_ids']
 
 
-    db.session.add(table)
-    db.session.commit()
+        db.session.add(table)
+        db.session.commit()
 
-    return 'OK'
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
-    data = request.args
-    Stocks = models.Stock.query.filter_by(id=data['stock_id']).all()
-    if len(Stocks):
-        Stock = Stocks[0]
+    if 'username' in session:
+        data = request.args
+        Stocks = models.Stock.query.filter_by(id=data['stock_id']).all()
+        if len(Stocks):
+            Stock = Stocks[0]
+        else:
+            return 'Bad Stock'
+
+        item = models.Item()
+        item.Weight = data['item_weight']
+        item.Packing = data['item_packing']
+        item.Fraction = data['item_fraction']
+        item.Creator = data['item_creator']
+        item.Name = data['item_product']
+        item.Cost = data['item_price']
+        item.Volume = data['item_volume']
+        item.NDS = data['item_vat']
+        item.Group_id = data['group_id']
+        item.Prefix = data['item_prefix']
+        item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
+
+        Stock.Items.append(item)
+        db.session.commit()
+
+        return 'OK'
     else:
-        return 'Bad Stock'
-
-    item = models.Item()
-    item.Weight = data['item_weight']
-    item.Packing = data['item_packing']
-    item.Fraction = data['item_fraction']
-    item.Creator = data['item_creator']
-    item.Name = data['item_product']
-    item.Cost = data['item_price']
-    item.Volume = data['item_volume']
-    item.NDS = data['item_vat']
-    item.Group_id = data['group_id']
-    item.Prefix = data['item_prefix']
-    item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
-
-    Stock.Items.append(item)
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/getStocks', methods=['GET'])
 def getStocks():
-    return table_to_json(models.Stock.query.all())
+    if 'username' in session:
+        return table_to_json(models.Stock.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
-    if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
-    else:
-        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
-
-    Contacts = []
-    args = json.loads(request.args['contacts'])
-    for i in args:
-        Contact = models.Contacts()
-        Contact.Name = i['first_name']
-        Contact.Last_name = i['last_name']
-        Contact.Number = i['phone']
-        Contact.Email = i['email']
-        Contact.Position = i['role']
-        Contact.Visible = i['visible']
+    if 'username' in session:
         if request.args['category'] == 'client':
-            Contact.Client_id = request.args['id']
+            Owner = models.Client.query.filter_by(id=request.args['id']).first()
         elif request.args['category'] == 'provider':
-            Contact.Provider_id = request.args['id']
-        elif request.args['category'] == 'carrier':
-            Contact.Carrier_id = request.args['id']
-        Contacts.append(Contact)
-    Owner.Contacts = Contacts
-    db.session.commit()
+            Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+        else:
+            Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
 
-    return 'OK'
+        Contacts = []
+        args = json.loads(request.args['contacts'])
+        for i in args:
+            Contact = models.Contacts()
+            Contact.Name = i['first_name']
+            Contact.Last_name = i['last_name']
+            Contact.Number = i['phone']
+            Contact.Email = i['email']
+            Contact.Position = i['role']
+            Contact.Visible = i['visible']
+            if request.args['category'] == 'client':
+                Contact.Client_id = request.args['id']
+            elif request.args['category'] == 'provider':
+                Contact.Provider_id = request.args['id']
+            elif request.args['category'] == 'carrier':
+                Contact.Carrier_id = request.args['id']
+            Contacts.append(Contact)
+        Owner.Contacts = Contacts
+        db.session.commit()
+
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addManagerToCard', methods=['GET'])
 def addManagerToCard():
-    if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['card_id']).first()
-    elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            Owner = models.Client.query.filter_by(id=request.args['card_id']).first()
+        elif request.args['category'] == 'provider':
+            Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+        else:
+            return '400 BAD REQUEST'
+        Owner.Manager_active = True
+        Owner.Manager_id = request.args['manager_id']
+        db.session.commit()
+        return 'OK'
     else:
-        return '400 BAD REQUEST'
-    Owner.Manager_active = True
-    Owner.Manager_id = request.args['manager_id']
-    db.session.commit()
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/deleteManagerFromCard', methods=['GET'])
 def deleteManagerFromCard():
-    if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['card_id']).first()
-    elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            Owner = models.Client.query.filter_by(id=request.args['card_id']).first()
+        elif request.args['category'] == 'provider':
+            Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+        else:
+            return '400 BAD REQUEST'
+        Owner.Manager_active = False
+        Owner.Manager_date = request.args['date']
+        db.session.commit()
+        return 'OK'
     else:
-        return '400 BAD REQUEST'
-    Owner.Manager_active = False
-    Owner.Manager_date = request.args['date']
-    db.session.commit()
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/getThisUser', methods=['GET'])
 def getThisUser():
-    if models.User.query.filter_by(login=session['username']).first():
-        user = models.User.query.filter_by(login=session['username']).first()
+    if 'username' in session:
+        if models.User.query.filter_by(login=session['username']).first():
+            user = models.User.query.filter_by(login=session['username']).first()
+        else:
+            user = models.User.query.filter_by(email=session['username']).first()
+        result = json.loads(table_to_json([user]))[0]
+        result.pop('password', None)
+        return json.dumps(result)
     else:
-        user = models.User.query.filter_by(email=session['username']).first()
-    result = json.loads(table_to_json([user]))[0]
-    result.pop('password', None)
-    return json.dumps(result)
+        return redirect('/', code=302)
 
 
 @app.route('/addItems', methods=['GET'])
 def addItems():
-    if request.args['category'] == 'client':
-        isClient = True
-        Owner = models.Client.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'provider':
-        isClient = False
-        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            isClient = True
+            Owner = models.Client.query.filter_by(id=request.args['id']).first()
+        elif request.args['category'] == 'provider':
+            isClient = False
+            Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+        else:
+            return '400 BAD REQUEST'
+
+        Items = []
+        args = json.loads(request.args['item'])
+        for i in args:
+            if i['item_product']:
+                Item = models.Junk_item()
+                if isClient:
+                    Item.Volume = i['item_volume']
+                    Item.Creator = i['item_creator']
+                    Item.Client_id = request.args['id']
+                else:
+                    Item.NDS = i['item_vat']
+                    Item.Fraction = i['item_fraction']
+                    Item.Packing = i['item_packing']
+                    Item.Weight = i['item_weight']
+                    Item.Provider_id = request.args['id']
+
+                Item.Name = i['item_product']
+                Item.Cost = i['item_price']
+
+                Items.append(Item)
+
+        Owner.Junk_items = Items
+        db.session.commit()
+
+        return 'OK'
     else:
-        return '400 BAD REQUEST'
-
-    Items = []
-    args = json.loads(request.args['item'])
-    for i in args:
-        if i['item_product']:
-            Item = models.Junk_item()
-            if isClient:
-                Item.Volume = i['item_volume']
-                Item.Creator = i['item_creator']
-                Item.Client_id = request.args['id']
-            else:
-                Item.NDS = i['item_vat']
-                Item.Fraction = i['item_fraction']
-                Item.Packing = i['item_packing']
-                Item.Weight = i['item_weight']
-                Item.Provider_id = request.args['id']
-
-            Item.Name = i['item_product']
-            Item.Cost = i['item_price']
-
-            Items.append(Item)
-
-    Owner.Junk_items = Items
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/getItems', methods=['GET'])
 def getItems():
-    if request.args['category'] == 'client':
-        client = request.args['id']
-        Client = models.Client.query.filter_by(id=client).first()
-        return table_to_json(models.Junk_item.query.filter_by(Client=Client).all())
-    elif request.args['category'] == 'provider':
-        provider = request.args['id']
-        Provider = models.Provider.query.filter_by(id=provider).first()
-        return table_to_json(models.Junk_item.query.filter_by(Provider=Provider).all())
-    elif request.args['category'] == 'carrier':
-        carrier = request.args['id']
-        Carrier = models.Provider.query.filter_by(id=carrier).first()
-        return table_to_json(models.Junk_item.query.filter_by(Carrier=Carrier).all())
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            client = request.args['id']
+            Client = models.Client.query.filter_by(id=client).first()
+            return table_to_json(models.Junk_item.query.filter_by(Client=Client).all())
+        elif request.args['category'] == 'provider':
+            provider = request.args['id']
+            Provider = models.Provider.query.filter_by(id=provider).first()
+            return table_to_json(models.Junk_item.query.filter_by(Provider=Provider).all())
+        elif request.args['category'] == 'carrier':
+            carrier = request.args['id']
+            Carrier = models.Provider.query.filter_by(id=carrier).first()
+            return table_to_json(models.Junk_item.query.filter_by(Carrier=Carrier).all())
+        else:
+            return 'ERROR 400 BAD REQUEST'
     else:
-        return 'ERROR 400 BAD REQUEST'
+        return redirect('/', code=302)
 
 
 @app.route('/getProviders', methods=['GET'])
 def getProviders():
-    return table_to_json(models.Provider.query.all())
+    if 'username' in session:
+        return table_to_json(models.Provider.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getTasks', methods=['GET'])
 def getTasks(login):
-    user = models.User.query.filter_by(login=login).first()
-    return user.get_task_by_login()
+    if 'username' in session:
+        user = models.User.query.filter_by(login=login).first()
+        return user.get_task_by_login()
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getUsers', methods=['GET'])
 def getUsers():
-    return table_to_json(models.User.query.all())
+    if 'username' in session:
+        return table_to_json(models.User.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getCarriers', methods=['GET'])
 def getCarriers():
-    return table_to_json(models.Carrier.query.all())
+    if 'username' in session:
+        return table_to_json(models.Carrier.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/addProvider', methods=['GET'])
 def addProvider():
-    data = request.args
-    if data['provider_data'] != 'new':
-        new = False
+    if 'username' in session:
+        data = request.args
+        if data['provider_data'] != 'new':
+            new = False
+        else:
+            new = True
+
+        if not new:
+            Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
+        else:
+            Provider = models.Provider()
+
+        Provider.Name = data['provider_name']
+        Provider.Rayon = data['provider_area']
+        Provider.Category = data['provider_category']
+        Provider.Distance = data['provider_distance']
+        Provider.UHH = data['provider_inn']
+        Provider.Price = data['provider_price']
+        Provider.Oblast = data['provider_region']
+        Provider.Train = data['provider_station']
+        Provider.Tag = data['provider_tag']
+        Provider.Adress = data['provider_address']
+        Provider.NDS = data['provider_vat']
+        Provider.Merc = data['provider_merc']
+        Provider.Volume = data['provider_volume']
+        Provider.Holding = data['provider_holding']
+
+        if new:
+            db.session.add(Provider)
+
+        db.session.commit()
+
+        return 'OK'
     else:
-        new = True
-
-    if not new:
-        Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
-    else:
-        Provider = models.Provider()
-
-    Provider.Name = data['provider_name']
-    Provider.Rayon = data['provider_area']
-    Provider.Category = data['provider_category']
-    Provider.Distance = data['provider_distance']
-    Provider.UHH = data['provider_inn']
-    Provider.Price = data['provider_price']
-    Provider.Oblast = data['provider_region']
-    Provider.Train = data['provider_station']
-    Provider.Tag = data['provider_tag']
-    Provider.Adress = data['provider_address']
-    Provider.NDS = data['provider_vat']
-    Provider.Merc = data['provider_merc']
-    Provider.Volume = data['provider_volume']
-    Provider.Holding = data['provider_holding']
-
-    if new:
-        db.session.add(Provider)
-
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/addComment', methods=['GET'])
 def addComment():
-    if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'carrier':
-        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
-    else:
-        return '400 BAD REQUEST'
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            Owner = models.Client.query.filter_by(id=request.args['id']).first()
+        elif request.args['category'] == 'provider':
+            Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+        elif request.args['category'] == 'carrier':
+            Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+        else:
+            return '400 BAD REQUEST'
 
-    Owner.Comment = request['comment']
-    db.session.commit()
+        Owner.Comment = request['comment']
+        db.session.commit()
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getComment', methods=['GET'])
 def getComment():
-    if request.args['category'] == 'client':
-        Owner = models.Client.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'provider':
-        Owner = models.Provider.query.filter_by(id=request.args['id']).first()
-    elif request.args['category'] == 'carrier':
-        Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            Owner = models.Client.query.filter_by(id=request.args['id']).first()
+        elif request.args['category'] == 'provider':
+            Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+        elif request.args['category'] == 'carrier':
+            Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+        else:
+            return '400 BAD REQUEST'
+        return Owner.Comment
     else:
-        return '400 BAD REQUEST'
-    return Owner.Comment
+        return redirect('/', code=302)
 
 
 @app.route('/addCarrier', methods=['GET'])
 def addCarier():
-    data = request.args
-    if data['carrier_data'] != 'new':
-        new = False
+    if 'username' in session:
+        data = request.args
+        if data['carrier_data'] != 'new':
+            new = False
+        else:
+            new = True
+        if not new:
+            Carrier = models.Carrier.query.filter_by(id=data['carrier_data']).first()
+        else:
+            Carrier = models.Carrier()
+
+        Carrier.Name = data['carrier_name']
+        Carrier.Address = data['carrier_address']
+        Carrier.Area = data['carrier_area']
+        Carrier.Capacity = data['carrier_capacity']
+        Carrier.UHH = data['carrier_inn']
+        Carrier.Region = data['carrier_region']
+        Carrier.View = data['carrier_view']
+
+        if new:
+            db.session.add(Carrier)
+
+        db.session.commit()
+
+        return 'OK'
     else:
-        new = True
-    if not new:
-        Carrier = models.Carrier.query.filter_by(id=data['carrier_data']).first()
-    else:
-        Carrier = models.Carrier()
-
-    Carrier.Name = data['carrier_name']
-    Carrier.Address = data['carrier_address']
-    Carrier.Area = data['carrier_area']
-    Carrier.Capacity = data['carrier_capacity']
-    Carrier.UHH = data['carrier_inn']
-    Carrier.Region = data['carrier_region']
-    Carrier.View = data['carrier_view']
-
-    if new:
-        db.session.add(Carrier)
-
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
 
 
 @app.route('/addClient', methods=['GET'])
 def addClient():
-    data = request.args
-    if data['client_data'] != 'new':
-        new = False
+    if 'username' in session:
+        data = request.args
+        if data['client_data'] != 'new':
+            new = False
+        else:
+            new = True
+
+        if not new:
+            Client = models.Client.query.filter_by(id=data['client_data']).first()
+        else:
+            Client = models.Client()
+
+        Client.Name = data['client_name']
+        Client.Rayon = data['client_area']
+        Client.Category = data['client_category']
+        Client.Distance = data['client_distance']
+        Client.Segment = data['client_industry']
+        Client.UHH = data['client_inn']
+        Client.Price = data['client_price']
+        Client.Oblast = data['client_region']
+        Client.Station = data['client_station']
+        Client.Tag = data['client_tag']
+        Client.Adress = data['client_address']
+        Client.Holding = data['client_holding']
+        Client.Site = data['client_site']
+        Client.Demand_item = data['demand_product']
+        Client.Demand_volume = data['demand_volume']
+        Client.Livestock_all = data['livestock_general']
+        Client.Livestock_milking = data['livestock_milking']
+        Client.Livestock_milkyield = data['livestock_milkyield']
+
+        if new:
+            db.session.add(Client)
+
+        db.session.commit()
+
+        return 'OK'
     else:
-        new = True
-
-    if not new:
-        Client = models.Client.query.filter_by(id=data['client_data']).first()
-    else:
-        Client = models.Client()
-
-    Client.Name = data['client_name']
-    Client.Rayon = data['client_area']
-    Client.Category = data['client_category']
-    Client.Distance = data['client_distance']
-    Client.Segment = data['client_industry']
-    Client.UHH = data['client_inn']
-    Client.Price = data['client_price']
-    Client.Oblast = data['client_region']
-    Client.Station = data['client_station']
-    Client.Tag = data['client_tag']
-    Client.Adress = data['client_address']
-    Client.Holding = data['client_holding']
-    Client.Site = data['client_site']
-    Client.Demand_item = data['demand_product']
-    Client.Demand_volume = data['demand_volume']
-    Client.Livestock_all = data['livestock_general']
-    Client.Livestock_milking = data['livestock_milking']
-    Client.Livestock_milkyield = data['livestock_milkyield']
-
-    if new:
-        db.session.add(Client)
-
-    db.session.commit()
-
-    return 'OK'
+        return redirect('/', code=302)
