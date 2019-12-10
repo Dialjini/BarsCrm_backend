@@ -391,7 +391,7 @@ def addItems():
     args = json.loads(request.args['item'])
     for i in args:
         if i['item_product']:
-            Item = models.Item()
+            Item = models.Junk_item()
             if isClient:
                 Item.Volume = i['item_volume']
                 Item.Creator = i['item_creator']
@@ -408,7 +408,7 @@ def addItems():
 
             Items.append(Item)
 
-    Owner.Items = Items
+    Owner.Junk_items = Items
     db.session.commit()
 
     return 'OK'
@@ -419,15 +419,15 @@ def getItems():
     if request.args['category'] == 'client':
         client = request.args['id']
         Client = models.Client.query.filter_by(id=client).first()
-        return table_to_json(models.Item.query.filter_by(Client=Client).all())
+        return table_to_json(models.Junk_item.query.filter_by(Client=Client).all())
     elif request.args['category'] == 'provider':
         provider = request.args['id']
         Provider = models.Provider.query.filter_by(id=provider).first()
-        return table_to_json(models.Item.query.filter_by(Provider=Provider).all())
+        return table_to_json(models.Junk_item.query.filter_by(Provider=Provider).all())
     elif request.args['category'] == 'carrier':
         carrier = request.args['id']
         Carrier = models.Provider.query.filter_by(id=carrier).first()
-        return table_to_json(models.Item.query.filter_by(Carrier=Carrier).all())
+        return table_to_json(models.Junk_item.query.filter_by(Carrier=Carrier).all())
     else:
         return 'ERROR 400 BAD REQUEST'
 

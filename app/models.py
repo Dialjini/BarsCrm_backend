@@ -65,6 +65,20 @@ class Item(db.Model):
     Prefix = db.Column(db.String)
 
 
+class Junk_item(db.Model):
+    Item_id = db.Column(db.Integer, primary_key=True)
+    Client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    Provider_id = db.Column(db.Integer, db.ForeignKey('provider.id'))
+    Name = db.Column(db.String)
+    Creator = db.Column(db.String)
+    Weight = db.Column(db.String)
+    Fraction = db.Column(db.String)
+    Packing = db.Column(db.String)
+    Cost = db.Column(db.String)
+    NDS = db.Column(db.String)
+    Volume = db.Column(db.String)
+
+
 class EmptyClients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -89,6 +103,7 @@ class Client(db.Model):
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
     Adress = db.Column(db.String)
+    Junk_items = db.relationship('Junk_item', backref='Client', lazy='dynamic')
     Notes = db.relationship('Notes', backref='Author', lazy='dynamic')
     Tag = db.Column(db.String)
     Station = db.Column(db.String)
@@ -154,6 +169,7 @@ class Provider(db.Model):
     Group = db.Column(db.String)
     Price = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
+    Junk_items = db.relationship('Junk_item', backref='Provider', lazy='dynamic')
     Contacts = db.relationship('Contacts', backref='Provider', lazy='dynamic')
     Item_ids = db.Column(db.String)
     UTC = db.Column(db.Integer)

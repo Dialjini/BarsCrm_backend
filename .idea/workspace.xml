@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="rebuild dbase">
+    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="add user methods">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.db" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="263">
-              <caret line="136" column="13" lean-forward="true" selection-start-line="136" selection-start-column="13" selection-end-line="136" selection-end-column="13" />
+            <state relative-caret-position="387">
+              <caret line="396" column="48" lean-forward="true" selection-start-line="396" selection-start-column="48" selection-end-line="396" selection-end-column="48" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -39,8 +39,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="198" lean-forward="true" selection-start-line="198" selection-end-line="198" />
+            <state relative-caret-position="210">
+              <caret line="171" column="34" lean-forward="true" selection-start-line="171" selection-start-column="34" selection-end-line="171" selection-end-column="43" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -51,10 +51,24 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/db_fill.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3434">
-              <caret line="210" column="2" selection-start-line="210" selection-start-column="2" selection-end-line="210" selection-end-column="2" />
+            <state relative-caret-position="448">
+              <caret line="206" selection-start-line="206" selection-end-line="206" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="448">
+              <caret line="36" column="12" selection-start-line="36" selection-start-column="12" selection-end-line="36" selection-end-column="12" />
+              <folding>
+                <element signature="n#style#0;n#span#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -80,6 +94,9 @@
       <find>g</find>
       <find>contacts</find>
       <find>delivery</find>
+      <find>account</find>
+      <find>addAccount</find>
+      <find>addDelivery</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -112,8 +129,9 @@
         <option value="$PROJECT_DIR$/app/config.py" />
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/app/static/js/login.js" />
-        <option value="$PROJECT_DIR$/app/db_fill.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/app/db_fill.py" />
+        <option value="$PROJECT_DIR$/../../index.html" />
         <option value="$PROJECT_DIR$/app/models.py" />
         <option value="$PROJECT_DIR$/app/routes.py" />
       </list>
@@ -131,7 +149,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-114" />
+    <option name="x" value="-115" />
     <option name="y" value="260" />
     <option name="width" value="1940" />
     <option name="height" value="1050" />
@@ -142,6 +160,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -158,7 +177,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -177,7 +195,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.db_fill">
     <configuration name="db_fill" type="PythonConfigurationType" factoryName="Python">
       <module name="BARS" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -257,97 +275,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1571908541946</updated>
-    </task>
-    <task id="LOCAL-00022" summary="fix client table bug">
-      <created>1574599620819</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1574599620819</updated>
-    </task>
-    <task id="LOCAL-00023" summary="rename addProvider(s) method">
-      <created>1574600015772</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1574600015772</updated>
-    </task>
-    <task id="LOCAL-00024" summary="fix provider bug and add getCarriers method">
-      <created>1574600726952</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1574600726952</updated>
-    </task>
-    <task id="LOCAL-00025" summary="fix provider bug and add getCarriers method">
-      <created>1574601758022</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1574601758022</updated>
-    </task>
-    <task id="LOCAL-00026" summary="clear dbase">
-      <created>1574603934272</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1574603934272</updated>
-    </task>
-    <task id="LOCAL-00027" summary="fix Provider bug">
-      <created>1574608716333</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1574608716333</updated>
-    </task>
-    <task id="LOCAL-00028" summary="rebuild new card recognition">
-      <created>1574672712650</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1574672712651</updated>
-    </task>
-    <task id="LOCAL-00029" summary="rebuild test database">
-      <created>1574673558869</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1574673558869</updated>
-    </task>
-    <task id="LOCAL-00030" summary="rebuild test dbase and add .xlsx files">
-      <created>1574762216467</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1574762216467</updated>
-    </task>
-    <task id="LOCAL-00031" summary="rebuild test dbase">
-      <created>1574763068135</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1574763068135</updated>
-    </task>
-    <task id="LOCAL-00032" summary="add Contacts to every card and methods to work with them">
-      <created>1574858481539</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1574858481539</updated>
-    </task>
-    <task id="LOCAL-00033" summary="fix bug">
-      <created>1574869419795</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1574869419796</updated>
-    </task>
-    <task id="LOCAL-00034" summary="fix bug">
-      <created>1574927850301</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1574927850301</updated>
     </task>
     <task id="LOCAL-00035" summary="add contacts fill">
       <created>1574932452957</created>
@@ -601,7 +528,98 @@
       <option name="project" value="LOCAL" />
       <updated>1575736039223</updated>
     </task>
-    <option name="localTasksCounter" value="71" />
+    <task id="LOCAL-00071" summary="probably fix delivery table">
+      <created>1575790378182</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1575790378183</updated>
+    </task>
+    <task id="LOCAL-00072" summary="add volume to account">
+      <created>1575792059397</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1575792059397</updated>
+    </task>
+    <task id="LOCAL-00073" summary="rename volume">
+      <created>1575792243516</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1575792243517</updated>
+    </task>
+    <task id="LOCAL-00074" summary="now item in clients gets by id">
+      <created>1575792714575</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1575792714575</updated>
+    </task>
+    <task id="LOCAL-00075" summary="fix client and provider items">
+      <created>1575793699009</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1575793699009</updated>
+    </task>
+    <task id="LOCAL-00076" summary="now id can be str">
+      <created>1575793796881</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1575793796881</updated>
+    </task>
+    <task id="LOCAL-00077" summary="fix item ids">
+      <created>1575795107727</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1575795107727</updated>
+    </task>
+    <task id="LOCAL-00078" summary="rebuild shitty item table">
+      <created>1575795398890</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1575795398890</updated>
+    </task>
+    <task id="LOCAL-00079" summary="add account_id into delivery card">
+      <created>1575803961560</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1575803961560</updated>
+    </task>
+    <task id="LOCAL-00080" summary="rebuild database">
+      <created>1575804093971</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1575804093972</updated>
+    </task>
+    <task id="LOCAL-00081" summary="add user methods but WITHOUT any items">
+      <created>1575820670180</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1575820670181</updated>
+    </task>
+    <task id="LOCAL-00082" summary="add user second and third names">
+      <created>1575821418804</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1575821418805</updated>
+    </task>
+    <task id="LOCAL-00083" summary="add item_ids to delivery">
+      <created>1575898623593</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1575898623594</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="TodoView">
@@ -696,19 +714,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add addMessages method" />
-    <MESSAGE value="refresh database" />
-    <MESSAGE value="add time compare" />
-    <MESSAGE value="remake table_to_json" />
-    <MESSAGE value="debug for ofswg" />
-    <MESSAGE value="fix date bug" />
-    <MESSAGE value="that's better" />
-    <MESSAGE value="try this" />
-    <MESSAGE value="lol missclick" />
-    <MESSAGE value="now it should work" />
-    <MESSAGE value="add Stock" />
-    <MESSAGE value="add getStockItems method" />
-    <MESSAGE value="add getStockTable method" />
     <MESSAGE value="add some Stock, Items_group, Items features" />
     <MESSAGE value="Add Account methods" />
     <MESSAGE value="Now send each account like an object" />
@@ -721,7 +726,20 @@
     <MESSAGE value="oopsie" />
     <MESSAGE value="add transferred_volume" />
     <MESSAGE value="rebuild dbase" />
-    <option name="LAST_COMMIT_MESSAGE" value="rebuild dbase" />
+    <MESSAGE value="probably fix delivery table" />
+    <MESSAGE value="add volume to account" />
+    <MESSAGE value="rename volume" />
+    <MESSAGE value="now item in clients gets by id" />
+    <MESSAGE value="fix client and provider items" />
+    <MESSAGE value="now id can be str" />
+    <MESSAGE value="fix item ids" />
+    <MESSAGE value="rebuild shitty item table" />
+    <MESSAGE value="add account_id into delivery card" />
+    <MESSAGE value="rebuild database" />
+    <MESSAGE value="add user methods but WITHOUT any items" />
+    <MESSAGE value="add user second and third names" />
+    <MESSAGE value="add item_ids to delivery" />
+    <option name="LAST_COMMIT_MESSAGE" value="add item_ids to delivery" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -880,16 +898,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/db_fill.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3434">
-          <caret line="210" column="2" selection-start-line="210" selection-start-column="2" selection-end-line="210" selection-end-column="2" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -897,10 +905,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="36" column="12" selection-start-line="36" selection-start-column="12" selection-end-line="36" selection-end-column="12" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/db_fill.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="206" selection-start-line="206" selection-end-line="206" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="198" lean-forward="true" selection-start-line="198" selection-end-line="198" />
+        <state relative-caret-position="210">
+          <caret line="171" column="34" lean-forward="true" selection-start-line="171" selection-start-column="34" selection-end-line="171" selection-end-column="43" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
@@ -909,8 +939,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="263">
-          <caret line="136" column="13" lean-forward="true" selection-start-line="136" selection-start-column="13" selection-end-line="136" selection-end-column="13" />
+        <state relative-caret-position="387">
+          <caret line="396" column="48" lean-forward="true" selection-start-line="396" selection-start-column="48" selection-end-line="396" selection-end-column="48" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
