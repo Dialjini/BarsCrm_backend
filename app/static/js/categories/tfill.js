@@ -34,16 +34,34 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDefault = (id) => {
         table.append(getTitleTable());
+        let managers;
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
 
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this)'});
+            let managerSecondName;
+            for (let j = 0; j < managers.length; j++) {
+                if (+managers[j].id == +object[1][i].Manager_id && object[1][i].Manager_active) {
+                    managerSecondName = managers[j].second_name;
+                    break;
+                } else {
+                    managerSecondName = 'Не выбран';
+                }
+            }
             // Получать для разных таблиц - разные переменные
             let name, data = [
-                { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, object[1][i].Manager_id]},
-                { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, object[1][i].Manager_id]},
-                { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, object[1][i].Manager_id]},
+                { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, managerSecondName]},
+                { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, managerSecondName]},
+                { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, managerSecondName]},
                 { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id, object[1][i].Manager_id]},
-                { id: 'account', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id]},
             ]
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id === id) {
@@ -67,7 +85,6 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
-        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
             let carrier_name = object[1][i].carrier == null ? 'Не выбран' : object[1][i].carrier.Name
@@ -146,23 +163,34 @@ let rowFilling = (object, id, table) => {
         }
     }
 }
-
+function sortTableByManagers(element) {
+    let searchWord = element.innerHTML;
+    console.log(searchWord);
+    // Сортировать таблицу по searchWord;
+}
 function selectManager(element) {
     function listManager() {
         let ul = $('<ul>', { class: 'list'});
-        const data = [
-            { id: 0, name: 'Петров' },
-            { id: 1, name: 'Пупсин' },
-            { id: 2, name: 'Кустов' },
-            { id: 3, name: 'Сидоров' },
-        ]
-        // data = массив фамилий менеджеров
+        let data;
+
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                data = JSON.parse(result);
+            }
+        });
+
         for (let i = 0; i < data.length; i++) {
-            ul.append($('<li>', {
-                html: data[i].name,
-                id: data[i].id,
-                onclick: ''
-            }))
+            if (data[i].role == 'manager') {
+                ul.append($('<li>', {
+                    html: data[i].second_name,
+                    id: data[i].id,
+                    onclick: 'sortTableByManagers(this)'
+                }))
+            }
         }
         return ul;
     }

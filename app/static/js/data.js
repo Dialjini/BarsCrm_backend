@@ -1,4 +1,4 @@
-const username = convertName();
+let username;
 
 // Данные по подкатегории 'Клиенты' категории 'Список' (Название, Таблица с данными)
 const categoryInListClient = [

@@ -291,8 +291,8 @@ $('input, textarea').blur(function() {
     $(this).attr('placeholder', $(this).data('placeholder'));
 });
 
-function convertName() {
-    let username = $('.fieldInfo .name').html().split(' ');
+function convertName(username) {
+    username = username.split(' ');
     username[0] = username[0][0];
     username[0] += '.';
     return username.reverse().join(' ');

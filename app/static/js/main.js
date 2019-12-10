@@ -5,8 +5,35 @@ $(document).ready(function() {
     createCategoryMenu();
     createCTButtons();
     linkField();
+    getUserInfo()
     $('#clientButton, #category-0').addClass('active');
 });
+
+function getUserInfo() {
+    $.ajax({
+        url: '/getThisUser',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);
+            let role = data.role;
+            let surname = data.second_name;
+            
+            if (role == 'admin') 
+                 role = 'Администратор'
+            else role = 'Менеджер'
+            if (surname == undefined) 
+                 surname = ''
+
+            $('#username').append(`
+                <div class="name">${surname + data.name}</div>
+            `)
+            $('#username').append(`
+                <div class="descr">${role}</div>
+            `)
+        }
+    });
+}
 
 // Отсылаем данные для получения данных по таблице
 function getTableData(table, input = false, close = false) {
@@ -62,12 +89,111 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
+                    $.ajax({
+                        url: '/getUsers',
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function(data) {
+                            $('#empty_customer_cards').empty();
+                            if (table[0].id == 'client') {
+                                fillingDisableCardClient(JSON.parse(data));
+                            } else if (table[0].id == 'provider') {
+                                fillingDisableCardProvider(JSON.parse(data));
+                            }
+                        }
+                    });
+                    ;
                 }
             }
         }
     })();
     requestTableData.getRequest(table, input, close)
 }
+
+function fillingDisableCardClient(managers) {
+    let dataClient = categoryInListClient[1][1];
+
+    function fillName(id) {
+        for (let i = 0; i < managers.length; i++) {
+            if (managers[i].id == id) {
+                return `Снято с ${managers[i].second_name}`;
+            }
+        }
+        return ``;
+    }
+
+    function fillDate(date) {
+        if (date == null) {
+            return `За этой карточкой ни разу не был закреплен менеджер`;
+        } else {
+            return `Свободна с <span id="free_card_date" class="bold">${date}</span>`;
+        }
+    }
+
+    for (let i = 0; i < dataClient.length; i++) {
+        if (!dataClient[i].Manager_active) {
+            $('#empty_customer_cards').prepend($('<div>', {
+                class: 'fieldInfo padd',
+                id: `client_${dataClient[i].id}`,
+                onclick: 'createCardMenu(this)',
+                append: $('<div>', { class: 'name', html: dataClient[i].Name })
+                .add($('<div>', {
+                    class: 'row',
+                    append: $('<div>', {
+                        class: 'descr',
+                        html: fillName(dataClient[i].Manager_id)
+                    }).add($('<div>', {
+                        class: 'time',
+                        html: fillDate(dataClient[i].Manager_date)
+                    }))
+                }))
+            }));
+        }
+    }
+}
+
+function fillingDisableCardProvider(managers) {
+    let dataProvider = categoryInListProvider[1][1];
+
+    function fillName(id) {
+        for (let i = 0; i < managers.length; i++) {
+            if (managers[i].id == id) {
+                return `Снято с ${managers[i].second_name}`;
+            }
+        }
+        return ``;
+    }
+
+    function fillDate(date) {
+        if (date == null) {
+            return `За этой карточкой ни разу не был закреплен менеджер`;
+        } else {
+            return `Свободна с <span id="free_card_date" class="bold">${date}</span>`;
+        }
+    }
+
+    for (let i = 0; i < dataProvider.length; i++) {
+        if (!dataProvider[i].Manager_active) {
+            $('#empty_customer_cards').prepend($('<div>', {
+                class: 'fieldInfo padd',
+                id: `provider_${dataProvider[i].id}`,
+                onclick: 'createCardMenu(this)',
+                append: $('<div>', { class: 'name', html: dataProvider[i].Name })
+                .add($('<div>', {
+                    class: 'row',
+                    append: $('<div>', {
+                        class: 'descr',
+                        html: fillName(dataProvider[i].Manager_id)
+                    }).add($('<div>', {
+                        class: 'time',
+                        html: fillDate(dataProvider[i].Manager_date)
+                    }))
+                }))
+            }));
+        }
+    }
+}
+
 // Отсылаем данные для сохранения данных по таблице
 function saveInfoCard(id, close = false, elem = null) {
     let createOrSaveCard = (function() {
@@ -159,7 +285,6 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == array.length) items.pop();
         });
-        console.log({category: data[0], id: card, item: JSON.stringify(items)})
         $.ajax({
             url: '/addItems',
             type: 'GET',

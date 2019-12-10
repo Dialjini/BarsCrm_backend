@@ -1,6 +1,4 @@
-// Смущают глобальные переменные
 let saveTableAndCard;
-
 // Отслеживание нажатия для всплывающей карточки "Открепить менеджера..."
 $(document).mouseup(function(e) {
     let container = $('.drop_menu');
@@ -189,7 +187,7 @@ function createCardMenu(element, index = 0) {
         let container = $('<div>', {
             class: 'card_menu',
             id: 'card_menu',
-            append: getTitleInfo(infoElement).add(getContentInfo(infoElement))
+            append: getTitleInfo(infoElement, selectedLine).add(getContentInfo(infoElement))
         })
         return container;
     }
@@ -225,7 +223,7 @@ function createCardMenu(element, index = 0) {
         content.append(infoElement.link(selectedLine));
         return content;
     }
-    
+
     $('.info').append(cardMenu());
     $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
     if (getInfo[0] !== 'client') itemSelection(getInfo[0], selectedLine);
@@ -763,8 +761,6 @@ function createCardMenu(element, index = 0) {
                 <div id="stock_items_list" style="display: none" data-stock="${list_stock_id}" data-items="${list_items_id}"></div>
             `)
 
-            console.log(list_stock_id, list_items_id);
-
             list_items[0].NDS = list_items[0].NDS[0] + list_items[0].NDS[1];
             vat = sum > 0 ? sum - ((sum * +list_items[0].NDS) / 100) : 0;
 
@@ -1266,8 +1262,8 @@ function createCardMenu(element, index = 0) {
                         <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
-
-    function addItemsInStockContent(selectedLine) {
+    // Контентная часть добавления товара
+    function addItemsInStockContent() {
         function fillListStock() {
             let info;
             $.ajax({
@@ -1688,7 +1684,6 @@ function completionCard(elem) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
                         if (account.Item_id == idProduct) {
-                            console.log(account, +$(`#invoiled_volume_${idProduct}`).val())
                             if (+account.Volume < +$(`#invoiled_volume_${idProduct}`).val()) {
                                 alert(`Введенный объем товара "${account.Name}" больше, чем имеется на складе`);
                                 return;
@@ -1756,7 +1751,7 @@ function closeCardMenu(id = '') {
     }
 };
 // Заполняем Заголовок карточки
-function getTitleInfo(element) {
+function getTitleInfo(element, selectedLine) {
     let title = $('<div>', { class: 'title' });
     let left = $('<div>', { class: 'left_side' });
     title.append(left);
@@ -1777,10 +1772,62 @@ function getTitleInfo(element) {
         }
 
         function getUserInfo() {
-            return $('<div>', { class: 'gray', id: 'user',
+            let data;
+            
+            $.ajax({
+                url: '/getUsers',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    data = JSON.parse(result);
+                }
+            });
+            console.log(selectedLine);
+            if (!selectedLine.Manager_active) {
+                function listManager() {
+                    let ul = $('<ul>', { class: 'list'});
+            
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].role == 'manager') {
+                            ul.append($('<li>', {
+                                html: data[i].second_name,
+                                id: data[i].id,
+                                card: `${element.id}_${element.status}`,
+                                onclick: 'selectManagerInCard(this)'
+                            }))
+                        }
+                    }
+                    return ul;
+                }
+                return $('<div>', { class: 'gray', id: 'user',
+                        append: $('<div>', {
+                            class: 'drop_menu none',
+                            id: `${element.id}-user-${element.status}`,
+                            html: listManager(),
+                        }).add($('<div>', {
+                            onclick: 'unfastenCard(this)',
+                            class: 'hover',
+                            id: `remove-${element.id}-${element.status}`,
+                            append: $('<img>', {
+                                src: 'static/images/dropmenu_black.svg',
+                                class: 'drop_down_img padl',
+                            }).add($('<span>', { html: 'Прикрепить карточку к менеджеру', class: 'marl' }))
+                        }))
+                    })
+            } else {
+                let name;
+                for (let i = 0; i < data.length; i++) {
+                    if (+data[i].id == +selectedLine.Manager_id) {
+                        name = convertName(`${data[i].name} ${data[i].second_name}`);
+                        username = name;
+                        break;
+                    }
+                }
+                return $('<div>', { class: 'gray', id: 'user',
                         append: $('<div>', {
                             class: 'drop_menu',
-                            id: `${element.id}-user-${element.status}`,
+                            id: `${element.id}_${element.status}`,
                             html: 'Открепить карточку от менеджера',
                             onclick: 'detachmentCard(this)'
                         }).add($('<div>', {
@@ -1790,9 +1837,11 @@ function getTitleInfo(element) {
                             append: $('<img>', {
                                 src: 'static/images/dropmenu_black.svg',
                                 class: 'drop_down_img padl',
-                            }).add($('<span>', { html: username, class: 'marl' }))
+                            }).add($('<span>', { html: name, class: 'marl' }))
                         }))
                     })
+            }
+            
         }
         if (element.id === 'client' || element.id === 'provider') {
             let block = $('<div>', { class: 'right_side' });

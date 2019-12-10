@@ -178,7 +178,6 @@ function arrangeDelivery(element) {
     list_stock_acc = $(element).attr('data-stock');
     list_items_acc = $(element).attr('data-items').split(',');
     closeModal();
-    console.log(element.name);
     categoryInFinanceAccount[0].lastCard[0] = null;         
     createDelCardMenu(element);
 }
@@ -246,11 +245,18 @@ function calculationIndicators() {
 }
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
+    function getUsername() {
+        if (username == undefined) {
+            return `<td class="bold">Менеджер</td><td>Не выбран</td>`
+        } else {
+            return `<td class="bold">Менеджер</td><td>${username}</td>`
+        }
+    }
     return `
         <div class="row_card column">
             <table class="fit gray">
                 <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
-                <tr><td class="bold">Менеджер</td><td>${username}</td></tr>
+                <tr>${getUsername()}</tr>
             </table>
             <div class="list" id="list_contract">
 
@@ -898,14 +904,29 @@ function addRow(id, selectedLine = '') {
     function trFill(table) {
         let tr = $('<tr>');
         for (let i = 0; i < table.count; i++) {
-            tr.append($('<td>', {
-                append: $('<input>', {
-                    css: { width: table.widthInput[i].width + 'px', padding: '0' },
-                    id: table.widthInput[i].id, 
-                    value: selectedLine[table.html[i]],
-                    type: table.widthInput[i].type
+            if (table.widthInput[i].id == 'item_product') {
+                let count = 0;
+                $('.hmax #group [name="items_list"]').each(function() {
+                    count++;
                 })
-            }));            
+                tr.append($('<td>', {
+                    append: $('<select>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: 'item_product_' + count,
+                        name: 'items_list',
+                        append: getItemsList('item_product_' + count, selectedLine , id.split('-')[0])
+                    })
+                }));
+            } else {
+                tr.append($('<td>', {
+                    append: $('<input>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: table.widthInput[i].id, 
+                        value: selectedLine[table.html[i]],
+                        type: table.widthInput[i].type
+                    })
+                }));      
+            }      
         }
         return tr;
     }
@@ -998,18 +1019,43 @@ function itemSelection(element, select) {
     }
     saveCard();
 }
+// Закрепление менеджера за карточкой
+function selectManagerInCard(element) {
+    let idManager = element.id;
+    let idCard = $(element).attr('card');
+
+    closeCardMenu(idCard);
+    idCard = idCard.split('_');
+
+    console.log(idManager, idCard);
+    $.ajax({
+        url: '/addManagerToCard',
+        type: 'GET',
+        data: {category: idCard[0], card_id: +idCard[1], manager_id: idManager},
+        dataType: 'html',
+        success: function() {}
+    });
+} 
 // Открепление карточки от менеджера
 function unfastenCard() {
     $('.drop_menu').fadeIn(200);
 }
 function detachmentCard(element) {
-    let idName = element.id.replace(/remove-/g, '').split('-');
+    let idName = element.id.split('_');
     // Добавить карточку в список Карточки клиентов
-    closeCardMenu(idName);
+    closeCardMenu(element.id);
+    $.ajax({
+        url: '/deleteManagerFromCard',
+        type: 'GET',
+        data: {category: idName[0], card_id: idName[1], date: getCurrentDate('year')},
+        dataType: 'html',
+        success: function() {}
+    });
 
     $('#empty_customer_cards').append($('<div>', {
         class: 'fieldInfo padd',
-        id: `detached_card_${idName[1]}`, // Number
+        id: `${idName[0]}_${idName[1]}`,
+        onclick: 'createCardMenu(this)',
         append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
         .add($('<div>', {
             class: 'row',

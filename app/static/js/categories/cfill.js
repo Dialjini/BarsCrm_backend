@@ -376,7 +376,6 @@ function createNewMember() {
     }
     data['create_email']
     data['id'] = 'new';
-    console.log(data);
     $.ajax({
         url: '/addUser',
         data: data,
