@@ -1,8 +1,17 @@
 from app import app
-from flask import render_template, redirect, session, request
+from flask import render_template, redirect, session, request, Flask
 from app import models, db
 import json
+from flask_socketio import SocketIO
 
+# socketio = SocketIO(app)
+
+# if __name__ == '__main__':
+ #    socketio.run(app)
+
+# @socketio.on('message')
+# def handle_message(message):
+ #    print('received message: ' + message)
 
 def table_to_json(query):
     result = []
@@ -81,6 +90,31 @@ def getClients():
         return table_to_json(models.Client.query.all())
     else:
         return redirect('/', code=302)
+
+
+@app.route('/findContacts', methods=['GET'])
+def findContacts():
+    result = []
+    data = request.args['data']
+    Contacts = models.Contacts.query.all()
+    Deliveryies = models.Delivery.query.all()
+    Users = models.User.query.all()
+
+    for i in Deliveryies:
+        if i['Contact_End'] == data or i['Contact_Number'] == data:
+            result.append(json.loads(table_to_json([i]))[0])
+
+    for i in Contacts:
+        if i.Number == data or i.Email == data:
+            result.append(json.loads(table_to_json([i]))[0])
+
+    for i in Users:
+        if i.email == data:
+            subres = json.loads(table_to_json([i]))[0]
+            subres.pop('password', None)
+            result.append(subres)
+
+    return json.dumps(result)
 
 
 @app.route('/getMessages', methods=['GET'])
