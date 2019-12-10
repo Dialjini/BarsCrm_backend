@@ -376,6 +376,32 @@ def addContacts():
     return 'OK'
 
 
+@app.route('/addManagerToCard', methods=['GET'])
+def addManagerToCard():
+    if request.args['category'] == 'client':
+        Owner = models.Client.query.filter_by(id=request.args['card_id']).first()
+    elif request.args['category'] == 'provider':
+        Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+    else:
+        return '400 BAD REQUEST'
+    Owner.Manager_id = request.args['manager_id']
+    db.session.commit()
+    return 'OK'
+
+
+@app.route('/deleteManagerFromCard', methods=['GET'])
+def deleteManagerFromCard():
+    if request.args['category'] == 'client':
+        Owner = models.Client.query.filter_by(id=request.args['card_id']).first()
+    elif request.args['category'] == 'provider':
+        Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+    else:
+        return '400 BAD REQUEST'
+    Owner.Manager_id = None
+    db.session.commit()
+    return 'OK'
+
+
 @app.route('/addItems', methods=['GET'])
 def addItems():
     if request.args['category'] == 'client':
