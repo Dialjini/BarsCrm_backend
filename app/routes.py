@@ -384,6 +384,7 @@ def addManagerToCard():
         Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
     else:
         return '400 BAD REQUEST'
+    Owner.Manager_active = True
     Owner.Manager_id = request.args['manager_id']
     db.session.commit()
     return 'OK'
@@ -397,7 +398,8 @@ def deleteManagerFromCard():
         Owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
     else:
         return '400 BAD REQUEST'
-    Owner.Manager_id = None
+    Owner.Manager_active = False
+    Owner.Manager_date = request.args['date']
     db.session.commit()
     return 'OK'
 
