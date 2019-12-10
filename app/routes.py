@@ -404,6 +404,17 @@ def deleteManagerFromCard():
     return 'OK'
 
 
+@app.route('/getThisUser', methods=['GET'])
+def getThisUser():
+    if models.User.query.filter_by(login=session['username']).first():
+        user = models.User.query.filter_by(login=session['username']).first()
+    else:
+        user = models.User.query.filter_by(email=session['username']).first()
+    result = json.loads(table_to_json([user]))[0]
+    result.pop('password', None)
+    return json.dumps(result)
+
+
 @app.route('/addItems', methods=['GET'])
 def addItems():
     if request.args['category'] == 'client':
