@@ -253,6 +253,8 @@ function createCardMenu(element, index = 0) {
                 });
             } else {
                 // Запрос для перевозчиков
+                // Такие же как и в доставке
+                // Можно привязывать их при makeRequest()
                 inputItems([])
             }
             $.ajax({
@@ -267,7 +269,6 @@ function createCardMenu(element, index = 0) {
             getCommentsInfo.getRequest(getInfo);
         }
         function inputItems(items) {
-            // Запрос на получение товаров из счета
             if (items.length == 0) 
                 addRow(`${category}-group`);
             else {
@@ -1083,6 +1084,7 @@ function createCardMenu(element, index = 0) {
         }
         function fillFlights() {
             let listAllItems = [];
+            let listStocks;
             $.ajax({
                 url: '/getAllItems',
                 type: 'GET',
@@ -1092,9 +1094,17 @@ function createCardMenu(element, index = 0) {
                     listAllItems = JSON.parse(data);
                 }
             });
+            $.ajax({
+                url: '/getStocks',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    listStocks = JSON.parse(data);
+                }
+            });
 
             let tr = '';
-            console.log(123);
             for (let i = 0; i < listAllItems.length; i++) {
                 if (list_items_acc == undefined) {
                     if (selectedLine.Item_ids != '') {
@@ -1103,36 +1113,21 @@ function createCardMenu(element, index = 0) {
                         return '';
                     }
                 }
-                console.log(list_items_acc);
+                
                 for (let j = 0; j < list_items_acc.length; j++) {
-                    if (+list_items_acc[j] == +listAllItems[i].Item_id) {
-                        let stocks;
-                        let stock;
-                        $.ajax({
-                            url: '/getStocks',
-                            type: 'GET',
-                            async: false,
-                            dataType: 'html',
-                            success: function(data) {
-                                stocks = JSON.parse(data);
-                            }
-                        });
-                        for (let i = 0; i < stocks.length; i++) {
-                            if (stocks[i].id == listAllItems[i].Stock_id) {
-                                stock = stocks[i].Name;
-                                break;
-                            }
+                    for (let k = 0; k < listStocks.length; k++) {
+                        if (+list_items_acc[j] == +listAllItems[i].Item_id && +listAllItems[i].Stock_id == listStocks[k].id) {
+                            tr += `
+                            <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                <td>${listAllItems[i].Name}</td>
+                                <td>${listStocks[k].Name}</td>
+                                <td>${listAllItems[i].Weight}</td>
+                                <td>${listAllItems[i].Packing}</td>
+                                <td><input type="number"></td>
+                                <td></td>
+                            </tr>
+                            `
                         }
-                        tr += `
-                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                            <td>${listAllItems[i].Name}</td>
-                            <td>${stock}</td>
-                            <td>${listAllItems[i].Weight}</td>
-                            <td>${listAllItems[i].Packing}</td>
-                            <td><input type="number"></td>
-                            <td></td>
-                        </tr>
-                        `
                     }
                 }
             }
@@ -1271,6 +1266,7 @@ function createCardMenu(element, index = 0) {
                         <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
+
     function addItemsInStockContent(selectedLine) {
         function fillListStock() {
             let info;
@@ -1487,6 +1483,7 @@ function createNewItem() {
 }
 function createNewStock() {
     let data = {};
+    if ($('#create_stock').val() == '') return;
     data['stock_name'] = $('#create_stock').val();
     $.ajax({
         url: '/addStock',
@@ -1500,6 +1497,7 @@ function createNewStock() {
 }
 function createNewGroup() {
     let data = {};
+    if ($('#create_group').val() == '') return;
     data['group_name'] = $('#create_group').val();
     $.ajax({
         url: '/addItemGroup',
@@ -1551,6 +1549,8 @@ function makeRequest(element) {
         data: data,
         dataType: 'html',
         success: function() {
+            list_items_acc = null;
+            list_stock_acc = null;
             closeCardMenu(element.id);
         }
     });
@@ -1589,6 +1589,12 @@ function selectDrivers(value, select = {Contact_Name: ''}) {
             
         }
     });
+}
+function reloadStockItems(element) {
+    list_items_acc = null;
+    list_stock_acc = null;
+
+    createDelCardMenu(element);
 }
 function createDelCardMenu(element) {
     $.ajax({
