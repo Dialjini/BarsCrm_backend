@@ -239,6 +239,7 @@ class Delivery(db.Model):
     Type = db.Column(db.String)
     Comment = db.Column(db.String)
     Client = db.Column(db.String)
+    Payment_list = db.Column(db.String)
 
 
 class Carrier(db.Model):

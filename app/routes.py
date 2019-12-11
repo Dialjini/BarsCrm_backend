@@ -4,14 +4,14 @@ from app import models, db
 import json
 from flask_socketio import SocketIO
 
-# socketio = SocketIO(app)
+socketio = SocketIO(app)
 
-# if __name__ == '__main__':
- #    socketio.run(app)
+if __name__ == '__main__':
+    socketio.run(app)
 
-# @socketio.on('message')
-# def handle_message(message):
- #    print('received message: ' + message)
+@socketio.on('connect')
+def handle_message():
+    print('connected')
 
 def table_to_json(query):
     result = []
@@ -217,6 +217,7 @@ def addDelivery():
         table.Stock = data['delivery_stock']
         table.Type = data['delivery_type']
         table.Item_ids = data['delivery_item_ids']
+        table.Payment_list = data['payment_list']
 
         if data['delivery_id'] == 'new':
             db.session.add(table)
