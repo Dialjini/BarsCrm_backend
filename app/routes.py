@@ -12,9 +12,9 @@ if __name__ == '__main__':
     socketio.run(app)
 
 
-@socketio.on('connect')
-def handle_message():
-    print('connected')
+@socketio.on('message')
+def handle_message(message):
+    print('received message: ' + message)
 
 
 def table_to_json(query):
@@ -102,22 +102,27 @@ def logout():
 
 @app.route('/getTemplates', methods=['GET'])
 def getTemplates():
-    return table_to_json(models.Template.query.all())
+    if 'username' in session:
+        return table_to_json(models.Template.query.all())
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/downloadDoc', methods=['GET'])
 def downloadDoc():
-    if request.args['category'] == 'client':
-        owner = models.Client.query.filter_by(id=request.args['card_id']).first()
-    elif request.args['category'] == 'provider':
-        owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
-    elif request.args['category'] == 'carrier':
-        owner = models.Carrier.query.filter_by(id=request.args['card_id']).first()
+    if 'username' in session:
+        if request.args['category'] == 'client':
+            owner = models.Client.query.filter_by(id=request.args['card_id']).first()
+        elif request.args['category'] == 'provider':
+            owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+        elif request.args['category'] == 'carrier':
+            owner = models.Carrier.query.filter_by(id=request.args['card_id']).first()
+        else:
+            return 'Error 400'
+
+        return to_PDF(owner, request.args['name'])
     else:
-        return 'Error 400'
-
-    return to_PDF(owner, request.args['name'])
-
+        return redirect('/', code=302)
 
 @app.route('/getClients', methods=['GET'])
 def getClients():
@@ -129,27 +134,30 @@ def getClients():
 
 @app.route('/findContacts', methods=['GET'])
 def findContacts():
-    result = []
-    data = request.args['data']
-    Contacts = models.Contacts.query.all()
-    Deliveryies = models.Delivery.query.all()
-    Users = models.User.query.all()
+    if 'username' in session:
+        result = []
+        data = request.args['data']
+        Contacts = models.Contacts.query.all()
+        Deliveryies = models.Delivery.query.all()
+        Users = models.User.query.all()
 
-    for i in Deliveryies:
-        if i['Contact_End'] == data or i['Contact_Number'] == data:
-            result.append(json.loads(table_to_json([i]))[0])
+        for i in Deliveryies:
+            if i['Contact_End'] == data or i['Contact_Number'] == data:
+                result.append(json.loads(table_to_json([i]))[0])
 
-    for i in Contacts:
-        if i.Number == data or i.Email == data:
-            result.append(json.loads(table_to_json([i]))[0])
+        for i in Contacts:
+            if i.Number == data or i.Email == data:
+                result.append(json.loads(table_to_json([i]))[0])
 
-    for i in Users:
-        if i.email == data:
-            subres = json.loads(table_to_json([i]))[0]
-            subres.pop('password', None)
-            result.append(subres)
+        for i in Users:
+            if i.email == data:
+                subres = json.loads(table_to_json([i]))[0]
+                subres.pop('password', None)
+                result.append(subres)
 
-    return json.dumps(result)
+        return json.dumps(result)
+    else:
+        return redirect('/', code=302)
 
 
 @app.route('/getMessages', methods=['GET'])
