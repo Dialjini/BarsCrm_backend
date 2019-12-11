@@ -1,8 +1,11 @@
 from app import app
-from flask import render_template, redirect, session, request, Flask
+from flask import render_template, redirect, session, request, send_from_directory
 from app import models, db
-import json
 from flask_socketio import SocketIO
+import json
+from xhtml2pdf import pisa
+import os
+
 
 socketio = SocketIO(app)
 
@@ -28,6 +31,18 @@ def table_to_json(query):
 
         result.append(subres)
     return json.dumps(result)
+
+
+def to_PDF(owner, name):
+    f = open('app/upload/{}.pdf'.format(owner.__name__ + str(owner.id)), "w+b")
+    html = render_template('{}.html'.format(name))
+
+    pisa.CreatePDF(html, dest=f, encoding='utf-8')
+    f.close()
+    dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
+    print(dir_u)
+
+    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__name__ + str(owner.id)))
 
 
 @app.route('/')
@@ -217,7 +232,8 @@ def addDelivery():
         table.Stock = data['delivery_stock']
         table.Type = data['delivery_type']
         table.Item_ids = data['delivery_item_ids']
-        table.Payment_list = data['payment_list']
+        if len(data['payment_list']) != 2:
+            table.Payment_list = data['payment_list']
 
         if data['delivery_id'] == 'new':
             db.session.add(table)

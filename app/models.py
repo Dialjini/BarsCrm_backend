@@ -1,13 +1,4 @@
 from app import db
-import json
-from xhtml2pdf import pisa
-from io import StringIO, BytesIO
-from xhtml2pdf.config.httpconfig import httpConfig
-import xlsxwriter
-import xlrd
-import openpyxl
-from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORDER_MEDIUM, DEFAULT_BORDER
-
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,6 +32,11 @@ class Order(db.Model):
     Item_id = db.Column(db.String)
     Props = db.Column(db.String)
     Cost = db.Column(db.Float)
+
+
+class Template(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
 
 
 class Item_groups(db.Model):
