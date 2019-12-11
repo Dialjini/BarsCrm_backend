@@ -39,9 +39,10 @@ def to_PDF(owner, name):
         name = "Dogovor"
     else:
         name = "Zayavka"
-    f = open(os.path.dirname(__file__) + '/upload/{}'.format(owner.__tablename__ + str(owner.id)) + '.pdf', "w+b")
-    html = render_template('{}.html'.format(name))
+    f = open(os.path.dirname(__file__) + '/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
+    html = render_template('{}.html'.format(name), name='HERE-> Переменная')
     print('{}.html'.format(name))
+
 
     pisa.CreatePDF(html, dest=f, encoding='utf-8')
     f.close()
