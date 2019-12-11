@@ -273,7 +273,6 @@ function contractContentCard(elem) {
     `
 }
 function downloadDocument(elem) {
-    console.log($(elem).attr('name'));
     let data = $(elem).attr('name').split('_');
     $.ajax({
         url: '/downloadDoc',
