@@ -6,15 +6,16 @@ import json
 from xhtml2pdf import pisa
 import os
 
-
 socketio = SocketIO(app)
 
 if __name__ == '__main__':
     socketio.run(app)
 
+
 @socketio.on('connect')
 def handle_message():
     print('connected')
+
 
 def table_to_json(query):
     result = []
@@ -34,7 +35,7 @@ def table_to_json(query):
 
 
 def to_PDF(owner, name):
-    f = open('app/upload/{}.pdf'.format(owner.__name__ + str(owner.id)), "w+b")
+    f = open('app/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
     html = render_template('{}.html'.format(name))
 
     pisa.CreatePDF(html, dest=f, encoding='utf-8')
@@ -42,7 +43,7 @@ def to_PDF(owner, name):
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
     print(dir_u)
 
-    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__name__ + str(owner.id)))
+    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
 
 
 @app.route('/')
@@ -97,6 +98,25 @@ def logout():
     if 'username' in session:
         session.pop('username', None)
     return redirect('/', code=302)
+
+
+@app.route('/getTemplates', methods=['GET'])
+def getTemplates():
+    return table_to_json(models.Template.query.all())
+
+
+@app.route('/downloadDoc', methods=['GET'])
+def downloadDoc():
+    if request.args['type'] == 'client':
+        owner = models.Client.query.all()
+    elif request.args['type'] == 'provider':
+        owner = models.Provider.query.all()
+    elif request.args['type'] == 'carrier':
+        owner = models.Carrier.query.all()
+    else:
+        return 'Error 400'
+
+    return to_PDF(owner, request.args['name'])
 
 
 @app.route('/getClients', methods=['GET'])
@@ -193,7 +213,8 @@ def getDeliveries():
             if delivery.Carrier_id:
                 print(len(carriers))
                 carrier = carriers[delivery.Carrier_id - 1]
-                result.append({'carrier': json.loads(table_to_json([carrier]))[0], 'delivery': json.loads(table_to_json([delivery]))[0]})
+                result.append({'carrier': json.loads(table_to_json([carrier]))[0],
+                               'delivery': json.loads(table_to_json([delivery]))[0]})
             else:
                 result.append({'carrier': None, 'delivery': json.loads(table_to_json([delivery]))[0]})
         return json.dumps(result)
@@ -232,8 +253,10 @@ def addDelivery():
         table.Stock = data['delivery_stock']
         table.Type = data['delivery_type']
         table.Item_ids = data['delivery_item_ids']
-        if len(data['payment_list']) != 2:
+        if 'payment_list' in data:
             table.Payment_list = data['payment_list']
+        else:
+            table.Payment_list = None
 
         if data['delivery_id'] == 'new':
             db.session.add(table)
@@ -285,7 +308,7 @@ def getStockTable():
         result = []
         Stocks = models.Stock.query.all()
         for stock in Stocks:
-            subres = {'items':json.loads(table_to_json(stock.Items))}
+            subres = {'items': json.loads(table_to_json(stock.Items))}
 
             subres['stock_address'] = stock.Name
             result.append(subres)
@@ -337,6 +360,7 @@ def getAllItems():
     else:
         return redirect('/', code=302)
 
+
 @app.route('/getAccounts', methods=['GET'])
 def getAccounts():
     if 'username' in session:
@@ -382,7 +406,7 @@ def addUser():
         return 'OK'
     else:
         return redirect('/', code=302)
-    
+
 
 @app.route('/addAccount', methods=['GET'])
 def addAccount():
@@ -397,7 +421,6 @@ def addAccount():
         table.Shipping = data['shipping']
         table.Sum = data['sum']
         table.Item_ids = data['item_ids']
-
 
         db.session.add(table)
         db.session.commit()

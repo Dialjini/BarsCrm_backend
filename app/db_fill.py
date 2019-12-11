@@ -188,6 +188,14 @@ def add_items_from_xlsx():
     get_groups_from_xlsx(col=1, sheet=sheet, parent_table=models.Item_groups, child_table=table)
 
 
+# ----------------------------------------------------Templates---------------------------------------------------------
+def addTemplate(name):
+    table = models.Template()
+    table.name = name
+
+    db.session.add(table)
+    db.session.commit()
+
 # ----------------------------------------------------Testing_Room------------------------------------------------------
 def table_to_json(query):
     result = []
@@ -208,5 +216,7 @@ add_client_from_xlsx()
 add_user(login='Dialjini', password='DaniLKA210', email='kustovdanil2@gmail.com', role='admin', name='Василий Пупкин')
 add_user(login='admin', password='qwerzy132', email='лысый', role='admin', name='Василий Пупкин')
 add_provider_from_xlsx()
+addTemplate('Договор')
+addTemplate('Заявка')
 # db.session.delete(models.Account.query.filter_by(id=1).first())
-# db.session.commit()
+db.session.commit()
