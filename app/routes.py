@@ -107,12 +107,12 @@ def getTemplates():
 
 @app.route('/downloadDoc', methods=['GET'])
 def downloadDoc():
-    if request.args['type'] == 'client':
-        owner = models.Client.query.all()
-    elif request.args['type'] == 'provider':
-        owner = models.Provider.query.all()
-    elif request.args['type'] == 'carrier':
-        owner = models.Carrier.query.all()
+    if request.args['category'] == 'client':
+        owner = models.Client.query.filter_by(id=request.args['card_id']).first()
+    elif request.args['category'] == 'provider':
+        owner = models.Provider.query.filter_by(id=request.args['card_id']).first()
+    elif request.args['category'] == 'carrier':
+        owner = models.Carrier.query.filter_by(id=request.args['card_id']).first()
     else:
         return 'Error 400'
 
