@@ -58,10 +58,10 @@ let rowFilling = (object, id, table) => {
             }
             // Получать для разных таблиц - разные переменные
             let name, data = [
-                { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, managerSecondName]},
-                { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, managerSecondName]},
-                { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, managerSecondName]},
-                { id: 'debit', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Product, object[1][i].Price, object[1][i].Manager_id, object[1][i].Manager_id, object[1][i].Manager_id]},
+                { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, managerSecondName] },
+                { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, managerSecondName] },
+                { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, managerSecondName] },
+                { id: 'debit', list: [] },
             ]
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id === id) {
@@ -211,10 +211,12 @@ function selectManager(element) {
     $('.list_manager').fadeIn(200);
 }
 
-function fillingTables(object) {
+function fillingTables(object, filter = false) {
     if (object[0].id !== 'filter_stock') {
         object[0].active = true;
-        saveTableAndCard = object;
+        if (!filter) {
+            saveTableAndCard = object;
+        }
     }
 
     for (let i = object[0].lastCard.length - 1; i >= 0; i--) {

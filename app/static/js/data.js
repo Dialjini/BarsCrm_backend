@@ -35,10 +35,10 @@ const categoryInListCarrier = [
     { id: 'carrier', name: 'Список', active: false, lastCard: [null, null] },
     [
         [
-            { name: 'Наименование', width: 25 },
+            { name: 'Наименование', width: 20 },
             { name: 'Область', width: 15 },
             { name: 'Район', width: 15 },
-            { name: 'Груз.', width: 5 },
+            { name: 'Груз.', width: 10 },
             { name: 'Вид перевозки', width: 15 },
             { name: 'Менеджер', width: 15 },
         ],
@@ -127,6 +127,75 @@ const categoryInFilterStock = [
             { name: 'Склад', width: 15 },
         ],
         []
+    ]
+]
+
+const filterClient = [
+    { id: 'client', name: 'Список', active: true, lastCard: [null, null] },
+    [
+        [
+            { name: 'Код', width: 5 },
+            { name: 'Название', width: 20 },
+            { name: 'Область', width: 15 },
+            { name: 'Район', width: 20 },
+            { name: 'Категория', width: 15 },
+            { name: 'Менеджер', width: 10 }
+        ],
+    ]
+]
+const filterProvider = [
+    { id: 'provider', name: 'Список', active: false, lastCard: [null, null] },
+    [
+        [
+            { name: 'Область', width: 20 },
+            { name: 'Район', width: 20 },
+            { name: 'Наименование', width: 20 },
+            { name: 'Группа товаров', width: 15 },
+            { name: 'Цена', width: 10 },
+            { name: 'Менеджер', width: 15 },
+        ],
+    ]
+]
+const filterCarrier = [
+    { id: 'carrier', name: 'Список', active: false, lastCard: [null, null] },
+    [
+        [
+            { name: 'Наименование', width: 20 },
+            { name: 'Область', width: 15 },
+            { name: 'Район', width: 15 },
+            { name: 'Груз.', width: 10 },
+            { name: 'Вид перевозки', width: 15 },
+            { name: 'Менеджер', width: 15 },
+        ],
+    ]
+]
+const filterAccount = [
+    { id: 'account', name: 'Финансы', active: false, lastCard: [null] },
+    [
+        [
+            { name: 'Юр. лицо', width: 5 },
+            { name: 'Дата выставления', width: 10 },
+            { name: 'Наименование', width: 30 },
+            { name: 'Сумма', width: 10 },
+            { name: 'Статус', width: 10 },
+            { name: 'Приветы', width: 10 },
+            { name: 'Менеджер', width: 10 },
+        ],
+    ]
+]
+const filterDelivery = [
+    { id: 'delivery', name: 'Доставка', active: true, lastCard: [null] },
+    [
+        [
+            { name: 'Дата', width: 5 },
+            { name: 'Наименование', width: 15 },
+            { name: 'Склад', width: 15 },
+            { name: 'Перевозчик', width: 15 },
+            { name: 'Юр. лицо', width: 5 },
+            { name: 'Цена с НДС', width: 10 },
+            { name: 'Цена без НДС', width: 10 },
+            { name: 'Дата оплаты', width: 10 },
+        ],
     ]
 ]
 

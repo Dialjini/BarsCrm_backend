@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script src="static/js/datepicker.min.js"></script>
     <link href="static/css/reset.css" rel="stylesheet" type="text/css">
     <link href="static/css/style.css" rel="stylesheet" type="text/css">
@@ -32,8 +32,8 @@
                     </a>
                 </div>
                 <div class="search">
-                    <img src="static/images/search.png" class="search_img" alt="">
-                    <input type="search" name="search" placeholder="Например: жир" maxlength="50">
+                    <img src="static/images/search.png" id="search_button" class="search_img" alt="">
+                    <input type="search" id="search" name="search" placeholder="Поиск" maxlength="50">
                 </div>
             </header>
             <div class="container">
@@ -60,12 +60,6 @@
                     </div>
                 </div>
                 <div class="infoblock" id="createCT"></div>
-                <div class="infoblock">
-                    <div class="title">
-                        <span>Карточки клиентов</span>
-                    </div>
-                    <div class="item empty_cards fd-c" id="empty_customer_cards"></div>
-                </div>
                 <div class="infoblock" id="tasks_list">
                     <div class="title">
                         <span>Действующие задачи</span>
@@ -77,6 +71,12 @@
                         <span>Просроченные задачи</span>
                     </div>
                     <div class="empty">Нет просроченных задач</div>
+                </div>
+                <div class="infoblock">
+                    <div class="title">
+                        <span>Карточки клиентов</span>
+                    </div>
+                    <div class="item empty_cards fd-c" id="empty_customer_cards"></div>
                 </div>
             </div>
         </div>
