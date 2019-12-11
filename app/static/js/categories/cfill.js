@@ -239,133 +239,143 @@ function closePersonCard() {
 }
 
 function adminPanel() {
-    // Проверка на полномочия пользователя
-    $('.info').empty();
-    $('[name="linkCategory"]').removeClass('active');
-    $('#mini_logo').addClass('active');
+    $.ajax({
+        url: '/getThisUser',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);
+            if (data.role == 'admin') {
+                $('.info').empty();
+                $('[name="linkCategory"]').removeClass('active');
+                $('#mini_logo').addClass('active');
 
-    function fillingTable() {
-        $.ajax({
-            url: '/getUsers',
-            type: 'GET',
-            dataType: 'html',
-            success: function(data) {
-                data = JSON.parse(data);
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].role == 'admin') data[i].role = 'Администратор';
-                    if (data[i].role == 'manager') data[i].role = 'Менеджер';
-                    $('#admin').append(`
-                    <tr>
-                        <td>${data[i].second_name}</td>
-                        <td>${data[i].name}</td>
-                        <td>${data[i].third_name}</td>
-                        <td>${data[i].role}</td>
-                        <td>${data[i].email}</td>
-                        <td>${data[i].login}</td>
-                        <td>${data[i].password}</td>
-                    </tr>
-                `)
+                function fillingTable() {
+                    $.ajax({
+                        url: '/getUsers',
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function(data) {
+                            data = JSON.parse(data);
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i].role == 'admin') data[i].role = 'Администратор';
+                                if (data[i].role == 'manager') data[i].role = 'Менеджер';
+                                $('#admin').append(`
+                                <tr>
+                                    <td>${data[i].second_name}</td>
+                                    <td>${data[i].name}</td>
+                                    <td>${data[i].third_name}</td>
+                                    <td>${data[i].role}</td>
+                                    <td>${data[i].email}</td>
+                                    <td>${data[i].login}</td>
+                                    <td>${data[i].password}</td>
+                                </tr>
+                            `)
+                            }
+                        }
+                    });
                 }
-            }
-        });
-    }
-    getContent();
-    function getContent() {
-        $('.info').append(`
-        <div class="row">
-            <div class="fields">
-                <div class="btn btn-main btn-div" id="addNewPerson">Добавить сотрудника</div>
-            </div>
-            <div class="category">АДМИН ПАНЕЛЬ</div>
-        </div>
-        <table class="table" id="admin">
-            <tr>
-                <th width="170">Фамилия</th>
-                <th width="170">Имя</th>
-                <th width="170">Отчество</th>
-                <th width="130">Должность</th>
-                <th width="170">Email</th>
-                <th width="120">Логин</th>
-                <th width="150">Пароль</th>
-            </tr>
-        </table>`)
-        fillingTable();
-    }
+                getContent();
+                function getContent() {
+                    $('.info').append(`
+                        <div class="row">
+                            <div class="fields">
+                                <div class="btn btn-main btn-div" id="addNewPerson">Добавить сотрудника</div>
+                            </div>
+                            <div class="category">АДМИН ПАНЕЛЬ</div>
+                        </div>
+                        <table class="table" id="admin">
+                            <tr>
+                                <th width="170">Фамилия</th>
+                                <th width="170">Имя</th>
+                                <th width="170">Отчество</th>
+                                <th width="130">Должность</th>
+                                <th width="170">Email</th>
+                                <th width="120">Логин</th>
+                                <th width="150">Пароль</th>
+                            </tr>
+                        </table>`)
+                        fillingTable();
+                    }
 
-    $('#addNewPerson').click(function() {
-        $('.table').remove();
-        $('.info').append(`
-        <div class="card_menu persons" id="card_menu">
-            <div class="title">
-                <div class="left_side">
-                    <span>Добавление сотрудника</span>
-                </div>
-                <div class="right_side">
-                    <div class="close" onclick="closePersonCard()">
-                        <img src="static/images/cancel.png">
-                    </div>
-                </div>
-            </div>
-            <div class="content">
-                <div class="row_card">
-                    <table class="table_block">
-                        <tr>
-                            <td>Фамилия</td>
-                            <td>
-                                <input type="text" id="create_last_name">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Имя</td>
-                            <td>
-                                <input type="name" id="create_first_name">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Отчество</td>
-                            <td>
-                                <input type="text" id="create_patronymic">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Должность</td>
-                            <td>
-                                <select type="text" id="create_role">
-                                    <option value="none" selected disabled>Не выбран</option>
-                                    <option value="admin">Администратор</option>
-                                    <option value="manager">Менеджер</option>
-                                    <option>Еще кто-то</option>
-                                </select>
-                            </td>
-                        </tr>
-                    </table>
-                    <table class="table_block">
-                        <tr>
-                            <td>Email</td>
-                            <td>
-                                <input type="email" id="create_email">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Логин</td>
-                            <td>
-                                <input type="login" id="create_login">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Пароль</td>
-                            <td>
-                                <input type="text" id="create_password">
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="next">
-                    <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
-                </div>
-            </div>
-        </div>`)
-    })
+                    $('#addNewPerson').click(function() {
+                        $('.table').remove();
+                        $('.info').append(`
+                        <div class="card_menu persons" id="card_menu">
+                            <div class="title">
+                                <div class="left_side">
+                                    <span>Добавление сотрудника</span>
+                                </div>
+                                <div class="right_side">
+                                    <div class="close" onclick="closePersonCard()">
+                                        <img src="static/images/cancel.png">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="row_card">
+                                    <table class="table_block">
+                                        <tr>
+                                            <td>Фамилия</td>
+                                            <td>
+                                                <input type="text" id="create_last_name">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Имя</td>
+                                            <td>
+                                                <input type="name" id="create_first_name">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Отчество</td>
+                                            <td>
+                                                <input type="text" id="create_patronymic">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Должность</td>
+                                            <td>
+                                                <select type="text" id="create_role">
+                                                    <option value="none" selected disabled>Не выбран</option>
+                                                    <option value="admin">Администратор</option>
+                                                    <option value="manager">Менеджер</option>
+                                                    <option>Еще кто-то</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="table_block">
+                                        <tr>
+                                            <td>Email</td>
+                                            <td>
+                                                <input type="email" id="create_email">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Логин</td>
+                                            <td>
+                                                <input type="login" id="create_login">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Пароль</td>
+                                            <td>
+                                                <input type="text" id="create_password">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="next">
+                                    <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
+                                </div>
+                            </div>
+                        </div>`)
+                    })
+            }
+            return;
+        }
+    });
 }
 
 function createNewMember() {

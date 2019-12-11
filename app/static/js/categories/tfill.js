@@ -6,11 +6,28 @@ let rowFilling = (object, id, table) => {
         let element = $('<tr>');
         for (let i = 0; i < object[0].length - 1; i++) {
             if (i == 1 && id == 'stock') {
+                function checkRole() {
+                    let data;
+                    $.ajax({
+                        url: '/getThisUser',
+                        type: 'GET',
+                        dataType: 'html',
+                        async: false,
+                        success: function(result) {
+                            data = JSON.parse(result);
+                        }
+                    });
+                    console.log(data);
+                    if (data.role == 'admin') {
+                        return `<button class="btn btn-main btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>`
+                    }
+                    return '';
+                }
                 elementTr = `
                 <th width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <button class="btn btn-main btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>
+                        ${checkRole()}
                     </div>
                 </th>`;
             } else {

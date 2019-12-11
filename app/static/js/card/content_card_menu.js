@@ -260,17 +260,30 @@ function contractContentCard(elem) {
             </table>
             <div class="list" id="list_contract">
 
-                <div class="contract flex">
+                <div class="contract flex" name="${elem.name}" onclick="downloadDocument(this)">
                     <span>Новый договор</span>
                 </div>
 
             </div>
         </div>
         <div class="next">
-            <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this)">Назад</button> 
+            <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
             <button class="btn btn-main" id="${elem.id}" onclick="invoiceCard(this)">Выставить счёт</button> 
         </div>
     `
+}
+function downloadDocument(elem) {
+    console.log($(elem).attr('name'));
+    let data = $(elem).attr('name').split('_');
+    $.ajax({
+        url: '/downloadDoc',
+        type: 'GET',
+        data: {category: data[0], card_id: data[1], name: 'Договор'},
+        dataType: 'html',
+        success: function(data) {
+            console.log(data);
+        }
+    });
 }
 // Контентная часть вкладки Выставления счета
 function invoicingContentCard(elem, data) {

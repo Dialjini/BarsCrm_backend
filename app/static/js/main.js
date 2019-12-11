@@ -7,10 +7,10 @@ $(document).ready(function() {
     linkField();
     getUserInfo()
     $('#clientButton, #category-0').addClass('active');
-    // let socket = io();
-    // socket.on('connect', function() {
-    //     socket.emit('my event', {data: 'Im connected!'});
-    // });
+    let socket = io();
+    socket.on('connect', function() {
+        socket.emit('my event', {data: 'Im connected!'});
+    });
 });
 
 function getUserInfo() {
