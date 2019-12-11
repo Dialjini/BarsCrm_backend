@@ -34,7 +34,7 @@ def table_to_json(query):
 
 
 def to_PDF(owner, name):
-    f = open('app/upload/{}.pdf'.format(owner.__name__ + str(owner.id)), "w+b")
+    f = open('app/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
     html = render_template('{}.html'.format(name))
 
     pisa.CreatePDF(html, dest=f, encoding='utf-8')
@@ -42,7 +42,7 @@ def to_PDF(owner, name):
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
     print(dir_u)
 
-    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__name__ + str(owner.id)))
+    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
 
 
 @app.route('/')
@@ -97,6 +97,25 @@ def logout():
     if 'username' in session:
         session.pop('username', None)
     return redirect('/', code=302)
+
+
+@app.route('/getTemplates', methods=['GET'])
+def getTemplates():
+    return table_to_json(models.Template.query.all())
+
+
+@app.route('/downloadDoc', methods=['GET'])
+def downloadDoc():
+    if request.args['type'] == 'client':
+        owner = models.Client.query.all()
+    elif request.args['type'] == 'provider':
+        owner = models.Provider.query.all()
+    elif request.args['type'] == 'carrier':
+        owner = models.Carrier.query.all()
+    else:
+        return 'Error 400'
+
+    return to_PDF(owner, request.args['name'])
 
 
 @app.route('/getClients', methods=['GET'])
@@ -234,6 +253,8 @@ def addDelivery():
         table.Item_ids = data['delivery_item_ids']
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']
+        else:
+            table.Payment_list = None
 
         if data['delivery_id'] == 'new':
             db.session.add(table)
