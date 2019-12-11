@@ -668,6 +668,7 @@ function addComment(manager = '', data) {
                     </td>`
             })
         )
+        $('#comment_date').datepicker({minDate: new Date(), position: 'right bottom'})
         $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
         function getRoleList() {
             let list = '';
@@ -885,17 +886,17 @@ function addRow(id, selectedLine = '') {
                 ],
                 html: []
         }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
-                    {id: 'delivery_date', width: 45, type: 'text'},
-                    {id: 'delivery_price', width: 43, type: 'number'}
+                    {id: 'delivery_date', width: 60, type: 'text'},
+                    {id: 'delivery_price', width: 60, type: 'number'}
                 ],
-                html: []
+                html: ['date', 'price']
         }, { id: 'flight-group', tbody: 'flight', count: 6, widthInput: [
                     {id: 'delivery_flight_product', width: 100, type: 'text'},
                     {id: 'delivery_flight_stock', width: 160, type: 'text'},
                     {id: 'delivery_flight_weight', width: 28, type: 'number'},
                     {id: 'delivery_flight_type', width: 160, type: 'text'},
                     {id: 'delivery_flight_sum', width: 70, type: 'number'},
-                    {id: 'delivery_flight_client', width: 100, type: 'text'}
+                    {id: 'delivery_flight_client', width: 300, type: 'text'}
                 ],
                 html: []
         }
@@ -903,6 +904,7 @@ function addRow(id, selectedLine = '') {
 
     function trFill(table) {
         let tr = $('<tr>');
+
         for (let i = 0; i < table.count; i++) {
             if (table.widthInput[i].id == 'item_product') {
                 let count = 0;
@@ -925,9 +927,10 @@ function addRow(id, selectedLine = '') {
                         value: selectedLine[table.html[i]],
                         type: table.widthInput[i].type
                     })
-                }));      
+                }));  
             }      
         }
+
         return tr;
     }
 
@@ -937,6 +940,10 @@ function addRow(id, selectedLine = '') {
             $(`[name="remove_last_group"]`).fadeIn(0);
             break;
         }
+    }
+
+    if ($(`#group`).children().length <= 1) {
+        $(`[name="remove_last_group"]`).fadeOut(0);
     }
     saveCard();
 }

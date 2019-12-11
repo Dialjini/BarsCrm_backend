@@ -232,7 +232,7 @@ def addDelivery():
         table.Stock = data['delivery_stock']
         table.Type = data['delivery_type']
         table.Item_ids = data['delivery_item_ids']
-        if len(data['payment_list']) != 2:
+        if 'payment_list' in data:
             table.Payment_list = data['payment_list']
 
         if data['delivery_id'] == 'new':

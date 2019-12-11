@@ -7,10 +7,10 @@ $(document).ready(function() {
     linkField();
     getUserInfo()
     $('#clientButton, #category-0').addClass('active');
-    let socket = io();
-    socket.on('connect', function() {
-        socket.emit('my event', {data: 'Im connected!'});
-    });
+    // let socket = io();
+    // socket.on('connect', function() {
+    //     socket.emit('my event', {data: 'Im connected!'});
+    // });
 });
 
 function getUserInfo() {
@@ -30,7 +30,7 @@ function getUserInfo() {
                  surname = ''
 
             $('#username').append(`
-                <div class="name">${surname + data.name}</div>
+                <div class="name">${surname} ${data.name}</div>
             `)
             $('#username').append(`
                 <div class="descr">${role}</div>
@@ -127,7 +127,7 @@ function fillingDisableCardClient(managers) {
     }
 
     function fillDate(date) {
-        if (date == null) {
+        if (date == null || date == '') {
             return `За этой карточкой ни разу не был закреплен менеджер`;
         } else {
             return `Свободна с <span id="free_card_date" class="bold">${date}</span>`;
@@ -435,3 +435,78 @@ let getCommentsInfo = (function() {
         }
     }
 })();
+
+$('#search').keydown(function(e) {
+    if (e.keyCode === 13) {
+        searchCategoryInfo();
+    }
+});
+
+$('#search_button').click(function() {
+    searchCategoryInfo();
+})
+
+function searchCategoryInfo() {
+    let searchInfo = $('#search').val();
+    let data = saveTableAndCard[1][1];
+    let listData = [
+        { id: 'client', list: ['id', 'Name', 'Oblast', 'Rayon', 'Category'], filter: filterClient },
+        { id: 'provider', list: ['Oblast', 'Rayon', 'Name', 'Group', 'Price'], filter: filterProvider },
+        { id: 'carrier', list: ['Name', 'Region', 'Area', 'Capacity', 'View'], filter: filterCarrier },
+        { id: 'account', list: ['Prefix', 'Date', 'Name', 'Sum', 'Status', 'Hello'], filter: filterAccount },
+        { id: 'delivery', list: ['Date', 'Name', 'Stock', 'Carrier_id', 'Prefix', 'Price', 'Payment_date'], filter: filterDelivery },
+    ]
+    let searchCards = [];
+    for (let i = 0; i < listData.length; i++) {
+        if (listData[i].id == saveTableAndCard[0].id && saveTableAndCard[0].id == 'account') {
+            for (let j = 0; j < data.length; j++) {
+                for (let k = 0; k < listData[i].list.length; k++) {
+                    let string;
+                    if (listData[i].list[k] == 'Prefix') {
+                        string = String(data[j].items[0][listData[i].list[k]]).toLowerCase()
+                    } else {
+                        string = String(data[j].account[listData[i].list[k]]).toLowerCase();
+                    }
+                    if (string.includes(searchInfo.toLowerCase())) {
+                        searchCards.push(data[j]);
+                        break;
+                    }
+                }
+            }
+            listData[i].filter[1][1] = searchCards;
+            $('.table').remove();
+            $('.info').append(fillingTables(listData[i].filter, true));
+            break;
+        }
+        if (listData[i].id == saveTableAndCard[0].id && saveTableAndCard[0].id == 'delivery') {
+            for (let j = 0; j < data.length; j++) {
+                for (let k = 0; k < listData[i].list.length; k++) {
+                    let string = String(data[j].delivery[listData[i].list[k]]).toLowerCase();
+                    if (string.includes(searchInfo.toLowerCase())) {
+                        searchCards.push(data[j]);
+                        break;
+                    }
+                }
+            }
+            listData[i].filter[1][1] = searchCards;
+            $('.table').remove();
+            $('.info').append(fillingTables(listData[i].filter, true));
+            break;
+        }
+        if (listData[i].id == saveTableAndCard[0].id) {
+            for (let j = 0; j < data.length; j++) {
+                for (let k = 0; k < listData[i].list.length; k++) {
+                    let string = String(data[j][listData[i].list[k]]).toLowerCase();
+                    if (string.includes(searchInfo.toLowerCase())) {
+                        searchCards.push(data[j]);
+                        break;
+                    }
+                }
+            }
+            listData[i].filter[1][1] = searchCards;
+            $('.table').remove();
+            $('.info').append(fillingTables(listData[i].filter, true));
+            break;
+        }
+    }
+}

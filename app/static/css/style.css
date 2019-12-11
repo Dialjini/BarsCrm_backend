@@ -290,6 +290,10 @@ body {
   margin-right: 15px;
 }
 
+.page .centerBlock .header .search .search_img:hover {
+  cursor: pointer;
+}
+
 .page .centerBlock .header .search input {
   width: 100%;
   height: 35px;
@@ -299,6 +303,7 @@ body {
   background-color: transparent;
   border: none;
   outline: none;
+  font-family: 'Montserrat', sans-serif;
   border-bottom: 1px solid #7d53cc;
 }
 

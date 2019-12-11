@@ -146,6 +146,7 @@ function linkField() {
                     ]
                     return functions[this.id.split('_')[2]]();
                 } else {
+                    // Фильтрация как общая (449 строка main.js)
                     categoryInFilterStock[1][1] = [];
                     for (let i = 0; i < categoryInStock[1][1].length; i++) {
                         for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {

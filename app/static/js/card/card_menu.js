@@ -154,7 +154,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
-                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids']}
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -231,6 +231,22 @@ function createCardMenu(element, index = 0) {
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
+    else if (getInfo[0] == 'delivery') {
+        let list = selectedLine.Payment_list;
+        if (list.length == 0) {
+            addRow(`delivery-group`);
+        } else {
+            list = JSON.parse(selectedLine.Payment_list);
+            for (let i = 0; i < list.length; i++) {
+                addRow(`delivery-group`, list[i]);
+            }
+        }
+    };
+    if (getInfo[0] === 'delivery') {
+        $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top'})
+        $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top'})
+        $('#delivery_date').datepicker({minDate: new Date(), position: 'right top'})
+    }
     function getContactsAndItems() {
         let category = getInfo[0];
         let idElement = getInfo[1];
@@ -273,9 +289,6 @@ function createCardMenu(element, index = 0) {
                 for (let i = 0; i < items.length; i++) {
                     addRow(`${category}-group`, items[i]);
                 }
-            }
-            if ($(`#group`).children().length <= 1) {
-                $(`[name="remove_last_group"]`).fadeOut(0);
             }
         }
         function inputContacts(contacts) {
@@ -1522,13 +1535,35 @@ function makeRequest(element) {
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
-    data['delivery_payment_date'] = '';
     data['delivery_contact_number'] = '';
     data['delivery_contact_name'] = $('#delivery_driver').val();
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
     data['delivery_account_id'] = +$('#delivery_account')[0].value;
     data['delivery_client'] = $('#delivery_client')[0].value;
 
+    let payment_list = [];
+    for (let element of $('#group #delivery_date')) {
+        if ($(element).val() != '') {
+            payment_list.push({ date: $(element).val(), price: '' });
+            data['delivery_payment_date'] = $(element).val();
+        } else {
+            payment_list.push({ date: '', price: '' });
+        }
+    }
+    for (let i = 0; i < $('#group #delivery_price').length; i++) {
+        if ($('#group #delivery_price')[i].value != '') {
+            payment_list[i]['price'] = $('#group #delivery_price')[i].value;
+        } else if ($('#group #delivery_price')[i].value == '' && $('#group #delivery_date')[i].value == '') {
+            payment_list.splice(i, 1);
+        }
+    }
+
+    if (payment_list.length > 0) {
+        data['payment_list'] = JSON.stringify(payment_list);
+    } else {
+        data['delivery_payment_date'] = '';
+
+    }
     data['delivery_prefix'] = infoAccount.items[0].Prefix;
     data['delivery_price'] = infoAccount.account.Sum;
     data['delivery_vat'] = infoAccount.items[0].NDS;
