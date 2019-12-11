@@ -12,9 +12,9 @@ if __name__ == '__main__':
     socketio.run(app)
 
 
-@socketio.on('message')
+@socketio.on('my event')
 def handle_message(message):
-    print('received message: ' + message)
+    print('received message: ' + message['data'])
 
 
 def table_to_json(query):
@@ -35,8 +35,13 @@ def table_to_json(query):
 
 
 def to_PDF(owner, name):
-    f = open('app/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
+    if name == "Договор":
+        name = "Dogovor"
+    else:
+        name = "Zayavka"
+    f = open(os.path.dirname(__file__) + '/upload/{}'.format(owner.__tablename__ + str(owner.id)) + '.pdf', "w+b")
     html = render_template('{}.html'.format(name))
+    print('{}.html'.format(name))
 
     pisa.CreatePDF(html, dest=f, encoding='utf-8')
     f.close()
