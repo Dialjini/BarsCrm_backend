@@ -155,6 +155,9 @@ class Tasks(db.Model):
     User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     Task = db.Column(db.String)
     Type = db.Column(db.String)
+    Date = db.Column(db.String)
+    Time = db.Column(db.String)
+    Comment = db.Column(db.String)
     Visibility = db.Column(db.String)
 
 

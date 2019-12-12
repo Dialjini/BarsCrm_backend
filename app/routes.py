@@ -14,7 +14,34 @@ if __name__ == '__main__':
 
 @socketio.on('addTask')
 def handle_message(message):
-    print(message)
+    Tasks = models.Tasks.query.all()
+    task = models.Tasks()
+    task.Visibility = message['data']['task_whom']
+    task.User_id = int(message['data']['task_who'])
+    task.Type = message['data']['task_type']
+    task.Date = message['data']['task_date']
+    task.Time = message['data']['task_time']
+    task.Comment = message['data']['task_comment']
+
+    Tasks.append(task)
+
+@socketio.on('showTasks')
+def showTasks():
+    tasks = []
+    Tasks = models.Tasks.query.all()
+    name = session['username']
+    if models.User.query.filter_by(login=session['username']).first():
+        user = models.User.query.filter_by(login=session['username']).first()
+    else:
+        user = models.User.query.filter_by(email=session['username']).first()
+
+    for i in Tasks:
+        if i.Visibility == 'all':
+            tasks.append(json.loads(table_to_json([i]))[0])
+        elif user.id in json.loads(i.Visibility):
+            tasks.append(json.loads(table_to_json([i]))[0])
+
+    return json.dumps(tasks)
 
 
 def table_to_json(query):
