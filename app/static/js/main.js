@@ -9,9 +9,7 @@ $(document).ready(function() {
     linkField();
     getUserInfo()
     $('#clientButton, #category-0').addClass('active');
-    socket.on('connect', function() {
-        socket.emit('showTasks');
-    });
+    socket.emit('showTasks');
     socket.on('showTasks', function(data) {
         console.log(data)
     });

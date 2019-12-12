@@ -73,7 +73,7 @@ function taskCreate(tasks = 'new') {
     if (tasks != 'new') {
         taskInfo = {
             task_type: tasks[task_type],
-            task_whom: tasks[task_whom],
+            task_whom: [tasks[task_whom]],
             task_who: tasks[task_who],
             task_date: tasks[task_date],
             task_time: tasks[task_time],
@@ -82,7 +82,7 @@ function taskCreate(tasks = 'new') {
     } else {
         taskInfo = {
             task_type: $('#task_type').val(),
-            task_whom: $('#task_whom').val(),
+            task_whom: [$('#task_whom').val()],
             task_who: $('#task_who').val(),
             task_date: $('#task_date').val(),
             task_time: $('#task_time').val(),

@@ -11,36 +11,44 @@ socketio = SocketIO(app)
 if __name__ == '__main__':
     socketio.run(app)
 
-
-@socketio.on('addTask')
-def handle_message(message):
-    Tasks = models.Tasks.query.all()
-    task = models.Tasks()
-    task.Visibility = message['data']['task_whom']
-    task.User_id = int(message['data']['task_who'])
-    task.Type = message['data']['task_type']
-    task.Date = message['data']['task_date']
-    task.Time = message['data']['task_time']
-    task.Comment = message['data']['task_comment']
-
-    Tasks.append(task)
-
-@socketio.on('connect')
-def showTasks():
+def sendTasks():
     tasks = []
     Tasks = models.Tasks.query.all()
     if models.User.query.filter_by(login=session['username']).first():
         user = models.User.query.filter_by(login=session['username']).first()
     else:
         user = models.User.query.filter_by(email=session['username']).first()
-
     for i in Tasks:
-        if i.Visibility == 'all':
-            tasks.append(json.loads(table_to_json([i]))[0])
-        elif user.id in json.loads(i.Visibility):
-            tasks.append(json.loads(table_to_json([i]))[0])
+        try:
+            if 'all' in json.loads(i.Visibility):
+                tasks.append(json.loads(table_to_json([i]))[0])
+            elif str(user.id) in json.loads(i.Visibility):
+                tasks.append(json.loads(table_to_json([i]))[0])
+        except Exception as er:
+            print(er)
 
-    send(json.dumps(tasks))
+    emit('showTasks', json.dumps(tasks))
+
+
+
+@socketio.on('addTask')
+def addTask(message):
+    task = models.Tasks()
+    task.Visibility = json.dumps(message['data']['task_whom'])
+    task.User_id = int(message['data']['task_who'])
+    task.Type = message['data']['task_type']
+    task.Date = message['data']['task_date']
+    task.Time = message['data']['task_time']
+    task.Comment = message['data']['task_comment']
+
+    db.session.add(task)
+    db.session.commit()
+    sendTasks()
+
+
+@socketio.on('showTasks')
+def showTasks():
+    sendTasks()
 
 
 def table_to_json(query):
@@ -90,6 +98,11 @@ def index():
         return render_template('index.html')
     else:
         return render_template('login.html')
+
+
+@app.route('/getAllTasks')
+def getAllTasks():
+    return table_to_json(models.Tasks.query.all())
 
 
 @app.route('/auth', methods=['GET'])
