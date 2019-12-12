@@ -25,7 +25,7 @@ def handle_message(message):
 
     Tasks.append(task)
 
-@socketio.on('showTasks')
+@socketio.on('connect')
 def showTasks():
     tasks = []
     Tasks = models.Tasks.query.all()
