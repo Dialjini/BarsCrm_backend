@@ -130,12 +130,46 @@ def downloadDoc():
     else:
         return redirect('/', code=302)
 
+
 @app.route('/getClients', methods=['GET'])
 def getClients():
     if 'username' in session:
         return table_to_json(models.Client.query.all())
     else:
         return redirect('/', code=302)
+
+
+@app.route('/stockTransit', methods=['GET'])
+def stockTransit():
+    Item = models.Item.query.filter_by(id=request.args['id_product']).first()
+    Stock = models.Stock.query.filter_by(Name=request.args['stock_select']).first()
+
+    for i in Stock.Items:
+        if i.Name == Item.Name:
+            Item.Volume = Item.Volume - request.args['product_volume']
+            i.Volume = i.Volume + request.args['product_volume']
+
+            db.session.commit()
+            return 'OK'
+    item = models.Item()
+
+    item.Weight = Item.Weight
+    item.Packing = Item.Packing
+    item.Fraction = Item.Fraction
+    item.Creator = Item.Creator
+    item.Name = Item.Name
+    item.Cost = Item.Cost
+    Item.Volume = Item.Volume - request.args['product_volume']
+    item.Volume = request.args['product_volume']
+    item.NDS = Item.NDS
+    item.Group_id = Item.Group_id
+    item.Prefix = Item.Prefix
+    item.Group_name = Item.Group_name
+
+    Stock.Items.append(item)
+    db.session.commit()
+
+    return 'OK'
 
 
 @app.route('/findContacts', methods=['GET'])
