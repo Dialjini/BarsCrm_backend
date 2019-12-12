@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="add user methods">
+    <list default="true" id="f5e04e2b-6375-4bee-b9fa-30141288a7fe" name="Default Changelist" comment="try to merge">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,23 +13,38 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" selection-start-line="2" selection-end-line="2" />
+            <state relative-caret-position="166">
+              <caret line="144" column="60" selection-start-line="144" selection-start-column="60" selection-end-line="144" selection-end-column="60" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/routes.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="396" column="48" lean-forward="true" selection-start-line="396" selection-start-column="48" selection-end-line="396" selection-end-column="48" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="34">
+              <caret line="2" column="19" lean-forward="true" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/templates/Zayavka.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="34" column="16" selection-start-line="34" selection-start-column="16" selection-end-line="34" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/templates/Dogovor.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -39,11 +52,35 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="171" column="34" lean-forward="true" selection-start-line="171" selection-start-column="34" selection-end-line="171" selection-end-column="43" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="146">
+              <caret line="48" column="8" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/static/js/main.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="9" selection-start-column="9" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reqs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -51,24 +88,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/db_fill.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="206" selection-start-line="206" selection-end-line="206" />
+            <state relative-caret-position="436">
+              <caret line="219" selection-start-line="219" selection-end-line="219" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../index.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="36" column="12" selection-start-line="36" selection-start-column="12" selection-end-line="36" selection-end-column="12" />
-              <folding>
-                <element signature="n#style#0;n#span#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,10 +116,19 @@
       <find>g.user</find>
       <find>g</find>
       <find>contacts</find>
-      <find>delivery</find>
       <find>account</find>
       <find>addAccount</find>
       <find>addDelivery</find>
+      <find>get</find>
+      <find>getuser</find>
+      <find>getthis</find>
+      <find>delivery</find>
+      <find>list</find>
+      <find>payment_list</find>
+      <find>getThis</find>
+      <find>send_from_directory</find>
+      <find>stock</find>
+      <find>Item</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -125,14 +157,21 @@
         <option value="$PROJECT_DIR$/app/static/js/categories/cfill.js" />
         <option value="$PROJECT_DIR$/app/static/js/other/card_menu.js" />
         <option value="$PROJECT_DIR$/app/static/js/other/content_card_menu.js" />
-        <option value="$USER_HOME$/Downloads/models.py" />
         <option value="$PROJECT_DIR$/app/config.py" />
-        <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/app/static/js/login.js" />
-        <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/app/db_fill.py" />
         <option value="$PROJECT_DIR$/../../index.html" />
+        <option value="$PROJECT_DIR$/requests.py" />
+        <option value="$PROJECT_DIR$/reqs.py" />
+        <option value="$PROJECT_DIR$/config.py" />
+        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/app/models.py" />
+        <option value="$PROJECT_DIR$/app/db_fill.py" />
+        <option value="$PROJECT_DIR$/app/templates/Заявка.html" />
+        <option value="$PROJECT_DIR$/app/static/js/main.js" />
+        <option value="$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/reportlab/platypus/tables.py" />
+        <option value="$USER_HOME$/Downloads/models.py" />
+        <option value="$PROJECT_DIR$/app/templates/Dogovor.html" />
+        <option value="$PROJECT_DIR$/app/templates/Zayavka.html" />
         <option value="$PROJECT_DIR$/app/routes.py" />
       </list>
     </option>
@@ -180,7 +219,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/main.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/reqs.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -238,7 +277,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python">
+    <configuration name="reqs" type="PythonConfigurationType" factoryName="Python">
       <module name="BARS" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -246,11 +285,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="C:\Users\Dialjini\AppData\Local\Programs\Python\Python37-32\python.exe" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reqs.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -262,7 +301,7 @@
     <list>
       <item itemvalue="Python.db_fill" />
       <item itemvalue="Python.dbase_create" />
-      <item itemvalue="Python.main" />
+      <item itemvalue="Python.reqs" />
     </list>
   </component>
   <component name="SvnConfiguration">
@@ -275,132 +314,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1571908541946</updated>
-    </task>
-    <task id="LOCAL-00035" summary="add contacts fill">
-      <created>1574932452957</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1574932452958</updated>
-    </task>
-    <task id="LOCAL-00036" summary="refresh database">
-      <created>1574932467531</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1574932467531</updated>
-    </task>
-    <task id="LOCAL-00037" summary="fix adding all Contacts">
-      <created>1574943879152</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1574943879152</updated>
-    </task>
-    <task id="LOCAL-00038" summary="add table fields in client table">
-      <created>1575016723231</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1575016723231</updated>
-    </task>
-    <task id="LOCAL-00039" summary="refresh dbase">
-      <created>1575021511254</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1575021511254</updated>
-    </task>
-    <task id="LOCAL-00040" summary="now locate users with id">
-      <created>1575024357962</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1575024357962</updated>
-    </task>
-    <task id="LOCAL-00041" summary="add addItems method, addComment method, restruct dbase">
-      <created>1575093303746</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1575093303746</updated>
-    </task>
-    <task id="LOCAL-00042" summary="fill test dbase">
-      <created>1575093315290</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1575093315290</updated>
-    </task>
-    <task id="LOCAL-00043" summary="add get(Items/Message) methods">
-      <created>1575096817747</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1575096817748</updated>
-    </task>
-    <task id="LOCAL-00044" summary="fix owner bug">
-      <created>1575098082577</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1575098082577</updated>
-    </task>
-    <task id="LOCAL-00045" summary="add addMessages method">
-      <created>1575175664777</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1575175664777</updated>
-    </task>
-    <task id="LOCAL-00046" summary="refresh database">
-      <created>1575214191027</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1575214191027</updated>
-    </task>
-    <task id="LOCAL-00047" summary="add time compare">
-      <created>1575215992537</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1575215992537</updated>
-    </task>
-    <task id="LOCAL-00048" summary="remake table_to_json">
-      <created>1575216202182</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1575216202182</updated>
-    </task>
-    <task id="LOCAL-00049" summary="debug for ofswg">
-      <created>1575216323972</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1575216323972</updated>
-    </task>
-    <task id="LOCAL-00050" summary="fix date bug">
-      <created>1575217736049</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1575217736050</updated>
-    </task>
-    <task id="LOCAL-00051" summary="that's better">
-      <created>1575217836572</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1575217836572</updated>
-    </task>
-    <task id="LOCAL-00052" summary="try this">
-      <created>1575217956486</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1575217956486</updated>
     </task>
     <task id="LOCAL-00053" summary="lol missclick">
       <created>1575218069653</created>
@@ -619,7 +532,133 @@
       <option name="project" value="LOCAL" />
       <updated>1575898623594</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="rebuild junk items LAST F***ING TIME!">
+      <created>1575976270198</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1575976270198</updated>
+    </task>
+    <task id="LOCAL-00085" summary="0 conflicts">
+      <created>1575976460698</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1575976460698</updated>
+    </task>
+    <task id="LOCAL-00086" summary="rebuild database">
+      <created>1575976535917</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1575976535917</updated>
+    </task>
+    <task id="LOCAL-00087" summary="add delete/add Manager From/To Card">
+      <created>1575977851574</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1575977851574</updated>
+    </task>
+    <task id="LOCAL-00088" summary="upgrade users in cards">
+      <created>1575980225435</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1575980225435</updated>
+    </task>
+    <task id="LOCAL-00089" summary="add getThisUser method">
+      <created>1575981630200</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1575981630200</updated>
+    </task>
+    <task id="LOCAL-00090" summary="add INN request and only authorized methods">
+      <created>1575984354353</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1575984354353</updated>
+    </task>
+    <task id="LOCAL-00091" summary="add backend contact search">
+      <created>1575993083694</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1575993083694</updated>
+    </task>
+    <task id="LOCAL-00092" summary="add payment_list">
+      <created>1576061058073</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1576061058074</updated>
+    </task>
+    <task id="LOCAL-00093" summary="fix payment_list bug and restructure files">
+      <created>1576063543231</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1576063543232</updated>
+    </task>
+    <task id="LOCAL-00094" summary="connect with frontend">
+      <created>1576066854811</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1576066854811</updated>
+    </task>
+    <task id="LOCAL-00095" summary="add downloadDoc method">
+      <created>1576069063832</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1576069063832</updated>
+    </task>
+    <task id="LOCAL-00096" summary="make websocket work">
+      <created>1576072224154</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1576072224154</updated>
+    </task>
+    <task id="LOCAL-00097" summary="make pdf work">
+      <created>1576074937692</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1576074937692</updated>
+    </task>
+    <task id="LOCAL-00098" summary="add fonts and templates to repo">
+      <created>1576075008568</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1576075008568</updated>
+    </task>
+    <task id="LOCAL-00099" summary="fix pisa font errors">
+      <created>1576083078854</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1576083078854</updated>
+    </task>
+    <task id="LOCAL-00100" summary="add upload path to repo">
+      <created>1576084135822</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1576084135823</updated>
+    </task>
+    <task id="LOCAL-00101" summary="add stockTransit method">
+      <created>1576157204915</created>
+      <option name="number" value="00101" />
+      <option name="presentableId" value="LOCAL-00101" />
+      <option name="project" value="LOCAL" />
+      <updated>1576157204916</updated>
+    </task>
+    <option name="localTasksCounter" value="102" />
     <servers />
   </component>
   <component name="TodoView">
@@ -646,8 +685,8 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32956153" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32956153" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.4980185" visible="true" weight="0.26449788" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5006605" side_tool="true" weight="0.32956153" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" sideWeight="0.4980185" visible="true" weight="0.26732674" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5019815" side_tool="true" weight="0.26732674" />
       <window_info anchor="bottom" id="Python Console" order="10" weight="0.32956153" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -714,42 +753,32 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add some Stock, Items_group, Items features" />
-    <MESSAGE value="Add Account methods" />
-    <MESSAGE value="Now send each account like an object" />
-    <MESSAGE value="fix same items in accounts bug" />
-    <MESSAGE value="fix 500 error" />
-    <MESSAGE value="add delivery methods" />
-    <MESSAGE value="fix delivery names" />
-    <MESSAGE value="fix ???" />
-    <MESSAGE value="fix TABLE DESTROYER bug" />
-    <MESSAGE value="oopsie" />
-    <MESSAGE value="add transferred_volume" />
-    <MESSAGE value="rebuild dbase" />
-    <MESSAGE value="probably fix delivery table" />
-    <MESSAGE value="add volume to account" />
-    <MESSAGE value="rename volume" />
-    <MESSAGE value="now item in clients gets by id" />
-    <MESSAGE value="fix client and provider items" />
-    <MESSAGE value="now id can be str" />
     <MESSAGE value="fix item ids" />
     <MESSAGE value="rebuild shitty item table" />
     <MESSAGE value="add account_id into delivery card" />
-    <MESSAGE value="rebuild database" />
     <MESSAGE value="add user methods but WITHOUT any items" />
     <MESSAGE value="add user second and third names" />
     <MESSAGE value="add item_ids to delivery" />
-    <option name="LAST_COMMIT_MESSAGE" value="add item_ids to delivery" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/routes.py</url>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="rebuild junk items LAST F***ING TIME!" />
+    <MESSAGE value="0 conflicts" />
+    <MESSAGE value="rebuild database" />
+    <MESSAGE value="add delete/add Manager From/To Card" />
+    <MESSAGE value="upgrade users in cards" />
+    <MESSAGE value="add getThisUser method" />
+    <MESSAGE value="add INN request and only authorized methods" />
+    <MESSAGE value="add backend contact search" />
+    <MESSAGE value="add payment_list" />
+    <MESSAGE value="fix payment_list bug and restructure files" />
+    <MESSAGE value="connect with frontend" />
+    <MESSAGE value="add downloadDoc method" />
+    <MESSAGE value="make websocket work" />
+    <MESSAGE value="make pdf work" />
+    <MESSAGE value="add fonts and templates to repo" />
+    <MESSAGE value="fix pisa font errors" />
+    <MESSAGE value="try to merge" />
+    <MESSAGE value="add upload path to repo" />
+    <MESSAGE value="add stockTransit method" />
+    <option name="LAST_COMMIT_MESSAGE" value="add stockTransit method" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main" />
@@ -777,11 +806,6 @@
     <entry file="file://$PROJECT_DIR$/app/db_methods.py" />
     <entry file="file://$PROJECT_DIR$/app/static/script/script.js" />
     <entry file="file://$PROJECT_DIR$/app/static/js/table/tfill.js" />
-    <entry file="file://$PROJECT_DIR$/app/static/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-31" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/static/js/other/dm.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -824,16 +848,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Downloads/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6936">
-          <caret line="6" column="54" lean-forward="true" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/db_create.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -857,13 +871,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="461">
           <caret line="28" column="7" selection-start-line="28" selection-start-column="7" selection-end-line="28" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="8" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -898,13 +905,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
@@ -917,33 +917,96 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/db_fill.py">
+    <entry file="file://$PROJECT_DIR$/requests.py" />
+    <entry file="file://$PROJECT_DIR$/app/templates/Договор.html" />
+    <entry file="file://$PROJECT_DIR$/app/templates/Заявка.html" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/site-packages/reportlab/platypus/tables.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="206" selection-start-line="206" selection-end-line="206" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1206">
+          <caret line="625" column="24" lean-forward="true" selection-start-line="625" selection-start-column="24" selection-end-line="625" selection-end-column="24" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models.py">
+    <entry file="file://$USER_HOME$/Downloads/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="171" column="34" lean-forward="true" selection-start-line="171" selection-start-column="34" selection-end-line="171" selection-end-column="43" />
+        <state relative-caret-position="306">
+          <caret line="491" column="20" lean-forward="true" selection-start-line="491" selection-start-column="20" selection-end-line="491" selection-end-column="20" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/static/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="20" selection-start-line="18" selection-start-column="20" selection-end-line="18" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="9" selection-start-column="9" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reqs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/db_fill.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="436">
+          <caret line="219" selection-start-line="219" selection-end-line="219" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/Zayavka.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="34" column="16" selection-start-line="34" selection-start-column="16" selection-end-line="34" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="19" lean-forward="true" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/Dogovor.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="12" column="20" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="48" column="8" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="396" column="48" lean-forward="true" selection-start-line="396" selection-start-column="48" selection-end-line="396" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="166">
+          <caret line="144" column="60" selection-start-line="144" selection-start-column="60" selection-end-line="144" selection-end-column="60" />
         </state>
       </provider>
     </entry>

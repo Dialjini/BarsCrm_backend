@@ -141,7 +141,7 @@ def getClients():
 
 @app.route('/stockTransit', methods=['GET'])
 def stockTransit():
-    Item = models.Item.query.filter_by(id=request.args['id_product']).first()
+    Item = models.Item.query.filter_by(Item_id=request.args['id_product']).first()
     Stock = models.Stock.query.filter_by(Name=request.args['stock_select']).first()
 
     for i in Stock.Items:
