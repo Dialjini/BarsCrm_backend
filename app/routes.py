@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
 from app import models, db
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, send, emit
 import json
 from xhtml2pdf import pisa
 import os
@@ -40,7 +40,7 @@ def showTasks():
         elif user.id in json.loads(i.Visibility):
             tasks.append(json.loads(table_to_json([i]))[0])
 
-    return json.dumps(tasks)
+    send(json.dumps(tasks))
 
 
 def table_to_json(query):
