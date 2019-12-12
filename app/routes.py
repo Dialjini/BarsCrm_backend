@@ -146,8 +146,8 @@ def stockTransit():
 
     for i in Stock.Items:
         if i.Name == Item.Name:
-            Item.Volume = Item.Volume - request.args['product_volume']
-            i.Volume = i.Volume + request.args['product_volume']
+            Item.Volume = str(int(Item.Volume) - int(request.args['product_volume']))
+            i.Volume = str(int(i.Volume) + int(request.args['product_volume']))
 
             db.session.commit()
             return 'OK'
@@ -159,8 +159,8 @@ def stockTransit():
     item.Creator = Item.Creator
     item.Name = Item.Name
     item.Cost = Item.Cost
-    Item.Volume = Item.Volume - request.args['product_volume']
-    item.Volume = request.args['product_volume']
+    Item.Volume = str(int(Item.Volume) - int(request.args['product_volume']))
+    item.Volume = str(request.args['product_volume'])
     item.NDS = Item.NDS
     item.Group_id = Item.Group_id
     item.Prefix = Item.Prefix
