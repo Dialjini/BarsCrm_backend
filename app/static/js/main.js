@@ -1,3 +1,5 @@
+let socket = io();
+
 $(document).ready(function() {
     addButtonsSubcategory(0);
     getTableData(categoryInListClient);
@@ -7,11 +9,14 @@ $(document).ready(function() {
     linkField();
     getUserInfo()
     $('#clientButton, #category-0').addClass('active');
-    let socket = io();
     socket.on('connect', function() {
-        socket.emit('my event', {data: 'Im connected!'});
+        socket.emit('showTasks');
+    });
+    socket.on('showTasks', function(data) {
+        console.log(data)
     });
 });
+
 
 function getUserInfo() {
     $.ajax({

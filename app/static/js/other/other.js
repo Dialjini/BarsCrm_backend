@@ -90,6 +90,8 @@ function taskCreate(tasks = 'new') {
         }
     }
 
+    socket.emit('addTask', {data: taskInfo});
+
     console.log(taskInfo);
     
     // $.ajax({
