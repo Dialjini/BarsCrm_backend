@@ -29,7 +29,6 @@ def handle_message(message):
 def showTasks():
     tasks = []
     Tasks = models.Tasks.query.all()
-    name = session['username']
     if models.User.query.filter_by(login=session['username']).first():
         user = models.User.query.filter_by(login=session['username']).first()
     else:
