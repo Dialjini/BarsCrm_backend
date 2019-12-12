@@ -297,7 +297,6 @@ function invoicingContentCard(elem, data) {
                         html: name[k]
                     }))
                 }
-                tr.append($('<td>', {html: ''}));
                 tbody.append(tr);
             }
         }
@@ -336,7 +335,6 @@ function invoicingContentCard(elem, data) {
                     <th>НДС</th>
                     <th>Цена прайса</th>
                     <th>Склад</th>
-                    <th></th>
                 </tr>`
     }
     // Вывод контента основной таблицы
@@ -487,7 +485,9 @@ function invoiceInTable(element) {
                     let account = data[i].items[j];
                     if (account.Prefix == prefixAccount) {
                         if (account.Item_id == element.id.split('_')[1]) {
-                            tr.append($('<td>', { id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)' }))
+                            tr.append($('<td>', { id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)', append:
+                            $('<img>', { src: '../static/images/returnBack.png', width: 12 })
+                        }))
                             let idProduct = element.id.split('_')[1];
                             let list = [
                                 {id: ``, html: account.Name}, {id: ``, html: account.Packing},
@@ -560,7 +560,6 @@ function returnBack(element) {
                         for (let k = 0; k < list.length; k++) {
                             tr.append($('<td>', { html: list[k] }));
                         }
-                        tr.append($('<td>', {html: ''}));
 
                         let sum = 0;
                         $('#exposed_list .invoiled').each(function(i, element) {
@@ -790,7 +789,9 @@ function addMember(id = 'client', selectedLine = '') {
                 }).add('<input>',    { placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', onblur: 'checkEmail()', value: selectedLine.Email, type: 'email'
                 })
             }))
-        }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)' }))
+        }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)', append:
+        $('<img>', { src: '../static/images/visible.png'})
+    }))
     }));
     if (selectedLine.Visible == null) {
         selectedLine.Visible = true;
@@ -811,6 +812,9 @@ function visOrHidContact(idElem) {
         $(`#member_${id[1]} #last_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #first_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #email`).attr('disabled', 'disabled')
+        console.log(idElem);
+        $(`#hidden_${id[1]}`).empty();
+        $(`#hidden_${id[1]}`).append($('<img>', { src: '../static/images/hidden.png' }));
 
         let save = $(`#member_${id[1]}`).remove();
         $('#member').append(save);
@@ -823,6 +827,8 @@ function visOrHidContact(idElem) {
         $(`#member_${id[1]} #last_name`).removeAttr('disabled')
         $(`#member_${id[1]} #first_name`).removeAttr('disabled')
         $(`#member_${id[1]} #email`).removeAttr('disabled')
+        $(`#visible_${id[1]}`).empty();
+        $(`#visible_${id[1]}`).append($('<img>', { src: '../static/images/visible.png' }));
 
         let save = $(`#member_${id[1]}`).remove();
         $('#member').prepend(save);

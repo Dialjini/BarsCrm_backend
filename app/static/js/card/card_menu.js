@@ -885,7 +885,7 @@ function createCardMenu(element, index = 0) {
                 options += `<option value="${list[i]}">${list[i]}</option>`
             }
             if (list.length == 0) {
-                options = `<option disabled selected>Нет другого склада</option>`
+                options = `<option value="null" disabled selected>Нет другого склада</option>`
             }
             return options;
         }
@@ -926,13 +926,13 @@ function createCardMenu(element, index = 0) {
                     <div class="info_block full">
                         <div>
                             <span class="bold">На склад</span>
-                            <select class="margin">
+                            <select id="stock_select" class="margin">
                                 ${listStock()}
                             </select>
                         </div>
                         <div class="mb">
                             <span class="bold">Объем</span>
-                            <input style="width: 60px" class="margin" oninput="fillVolume(this.value)">
+                            <input style="width: 60px" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
                         </div>
                         <div>
                             <table class="full">
@@ -959,7 +959,7 @@ function createCardMenu(element, index = 0) {
                     </div>     
                 </div>
                 <div class="next">
-                    <button class="btn btn-main" onclick="closeCardMenu('stock_new')">Оформить</button>
+                    <button class="btn btn-main" id="transit" onclick="transitProduct(this)">Оформить</button>
                 </div>
                 `
     }
@@ -1384,6 +1384,45 @@ function createCardMenu(element, index = 0) {
             </div>
         `;
     }
+}
+function transitProduct(element) {
+    let products;
+    $.ajax({
+        url: '/getAllItems',
+        type: 'GET',
+        dataType: 'html',
+        success: function(result) {
+            products = JSON.parse(result);
+
+            let idProduct = element.name.split('_')[1];
+            let stock_select = $('#stock_select').val();
+            let product_volume = $('#volume_transit').val();
+
+            if (stock_select == null) {
+                return alert('Выберите склад!');
+            }
+
+            for (let i = 0; i < products.length; i++) {
+                if (products[i].Item_id == idProduct) {
+                    if (products[i].Volume < product_volume) {
+                        return alert('На складе нет такого объема этого продукта!')
+                    }
+                }
+            }
+
+            let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +product_volume};
+
+            $.ajax({
+                url: '/stockTransit',
+                type: 'GET',
+                data: data,
+                dataType: 'html',
+                success: function() {
+                    closeCardMenu('stock_new');
+                }
+            });
+        }
+    });
 }
 function selectAccount(value) {
     let data = categoryInFinanceAccount[1][1];
