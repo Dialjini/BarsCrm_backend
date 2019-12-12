@@ -12,9 +12,9 @@ if __name__ == '__main__':
     socketio.run(app)
 
 
-@socketio.on('my event')
+@socketio.on('addTask')
 def handle_message(message):
-    print('received message: ' + message['data'])
+    print(message)
 
 
 def table_to_json(query):
