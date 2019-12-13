@@ -7,12 +7,12 @@
     <style>
         @font-face {
             font-family: 'Montserrat';
-            src: url("../static/fonts/Montserrat-Regular.ttf");
+            src: url("/Users/ofswg/Desktop/Projects/Layouts/crmbars/app/static/fonts/Montserrat-Regular.ttf");
             font-weight: normal;
         }
         @font-face {
             font-family: 'Montserrat';
-            src: url("../static/fonts/Montserrat-Bold.ttf");
+            src: url("/Users/ofswg/Desktop/Projects/Layouts/crmbars/app/static/fonts/Montserrat-Bold.ttf");
             font-weight: bold;
         }
         html, body {
@@ -27,18 +27,10 @@
             display: flex;
             justify-content: space-between;
         }
-        .page {
-            width: 750px;
-            margin: 0 auto;
-            padding: 50px 0;
-        }
         .title {
             font-weight: bold;
             text-align: center;
             margin: 20px 0;
-        }
-        .right {
-            text-align: right;
         }
         .table {
             width: 750px;
@@ -52,15 +44,12 @@
             font-weight: bold;
         }
         .table td {
-            box-sizing: border-box;
-            border: 1px solid #cecece;
-            padding: 5px;
-
+            height: 35px;
         }
         .bb {
             border: none;
             border-bottom: 1px solid #cecece;
-            width: 200px;
+            width: 50px;
         }
         .text p {
             text-indent: 50px;
@@ -74,12 +63,11 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="page">
         <div class="title bold">ДОГОВОР ПОСТАВКИ № 40/12/2019</div>
         <div class="info">
-            <span>г. Новосибирск</span>
-            <span>«24» декабря 2019</span>
-        </div>
+            <div>г. Новосибирск</div>
+            <div>«24» декабря 2019</div>
+        </div><br>
         <div class="text" style="margin-top: 30px">
             <p><span class="bold">ООО «БАРС»</span>, в дальнейшем именуемое «Поставщик», в лице генерального директора Войта Сергея Олеговича, действующей на основании Устава, с одной стороны, и, именуемое в дальнейшем «Покупатель», в лице генерального директора , действующего на основании Устава, с другой стороны, заключили настоящий договор о нижеследующем:</p>    
         </div>
@@ -134,7 +122,7 @@
             <p>7.6. Настоящий договор составлен в двух экземплярах, имеющих одинаковую юридическую силу, по одному экземпляру для каждой из сторон. Настоящий договор и приложения к нему, заключенные посредством факсимильной или электронной связи имеет юридическую силу.</p>
         </div>
         <div class="title bold">8. Реквизиты сторон</div>
-        <table width="750">
+        <table class="table">
             <tr>
                 <td width="360" class="title bold">ПОСТАВЩИК:</td>
                 <td class="title bold">ПОКУПАТЕЛЬ:</td>
@@ -144,23 +132,31 @@
                 <td class="bold"></td>
             </tr>
             <tr>
-                <td><span class="bold">Юридический адрес:</span> 630024, г. Новосибирск, ул. Сибиряков-Гвардейцев, 45, офис 409, (8383)-286-20-65, 8-913-380-40-16, 8-913-469-89-89, Bars-nsk@bk.r</td>
+                <td><span class="bold">Юридический адрес:</span></td>
                 <td><span class="bold"></span></td>
             </tr>
             <tr>
-                <td style="padding: 20px 0;"><span class="bold">Почтовый адрес:</span> 630098, г. Новосибирск, а/я 12</td>
+                <td>630024, г. Новосибирск, ул. Сибиряков-Гвардейцев, 45, офис 409,</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>(8383)-286-20-65, 8-913-380-40-16, 8-913-469-89-89, Bars-nsk@bk.ru</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><span class="bold">Почтовый адрес:</span> 630098, г. Новосибирск, а/я 12</td>
                 <td><span class="bold"></span></td>
             </tr>
             <tr>
-                <td>ИНН 5406504400</td>
+                <td class="ttt">ИНН 5406504400</td>
                 <td></td>
             </tr>
             <tr>
-                <td>КПП 540301001</td>
+                <td class="ttt">КПП 540301001</td>
                 <td></td>
             </tr>
             <tr>
-                <td>р/с 40702810508230008942</td>
+                <td class="ttt">р/с 40702810508230008942</td>
                 <td></td>
             </tr>
             <tr>
@@ -168,16 +164,16 @@
                 <td></td>
             </tr>
             <tr>
-                <td>к/с 30101810250040000867</td>
+                <td class="ttt">к/с 30101810250040000867</td>
                 <td></td>
             </tr>
             <tr>
-                <td>БИК 045004867</td>
+                <td class="ttt">БИК 045004867</td>
                 <td></td>
             </tr>
         </table>
         <div class="title bold">Подписи и печати сторон.</div>
-        <table width="750">
+        <table class="table">
             <tr>
                 <td class="title bold">«От Поставщика»</td>
                 <td class="title bold">«От Покупателя»</td>
@@ -191,6 +187,5 @@
                 <td style="text-align: center;" class="bold">м.п.</td>
             </tr>
         </table>
-    </div>
     </body>
 </html>
