@@ -83,54 +83,103 @@ function taskCreate(tasks = 'new') {
             data = JSON.parse(data);
             if (tasks != 'new') {
                 tasks = JSON.parse(tasks);
-                if (tasks.length > 0) {
-                    $('#tasks_list').empty();
-                }
                 for (let i = 0; i < tasks.length; i++) {
                     function typeTask() {
                         if (tasks[i].Type == 'phone') return 'Звонок';
                         if (tasks[i].Type == 'email') return 'Письмо';
                     }
-                    $('#tasks_list').prepend(
-                        $('<div>', {
-                            class: 'item',
-                            name: `task_id`,
-                            onclick: `editTask(this.name)`,
-                            append: $('<img>', {
-                                src: `static/images/${tasks[i].Type}.svg`,
-                                class: 'importance'
-                            }).add($('<div>', {
-                                class: 'fieldInfo',
-                                append: $('<div>', {
-                                    class: 'row',
-                                    append: $('<div>', {
-                                        class: 'name',
-                                        html: typeTask()
-                                    }).add($('<div>', {
-                                        class: 'time',
-                                        html: tasks[i].Time
-                                    }))
+
+                    let taskDate = tasks[i].Date.split('.');
+                    if (taskDate[2].length > 2) {
+                        taskDate[2] = taskDate[2].slice(2, 4)
+                    }
+                    let firstDate = `${taskDate.join('.')} ${tasks[i].Time}`;
+                    let secondDate = `${getCurrentDate('year')} ${getCurrentTime()}`;
+
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)\s(\d\d):(\d\d)/;
+
+                    let first_date_arr = datetime_regex.exec(firstDate);
+                    let first_datetime = new Date(first_date_arr[3], first_date_arr[2], first_date_arr[1], first_date_arr[4], first_date_arr[5]);
+
+                    let second_date_arr = datetime_regex.exec(secondDate);
+                    let second_datetime = new Date(second_date_arr[3], second_date_arr[2], second_date_arr[1], second_date_arr[4], second_date_arr[5]);
+
+                    if (first_datetime.getTime() > second_datetime.getTime()) {
+                        $('#tasks_list .empty').remove();
+                        $('#current_tasks').prepend(
+                            $('<div>', {
+                                class: 'item',
+                                name: `task_id`,
+                                onclick: `editTask(this.name)`,
+                                append: $('<img>', {
+                                    src: `static/images/${tasks[i].Type}.svg`,
+                                    class: 'importance'
                                 }).add($('<div>', {
-                                    class: 'row',
+                                    class: 'fieldInfo',
                                     append: $('<div>', {
-                                        class: 'descr',
-                                        html: tasks[i].Comment
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'name',
+                                            html: typeTask()
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            html: tasks[i].Time
+                                        }))
                                     }).add($('<div>', {
-                                        class: 'time',
-                                        append: $('<span>', {
-                                            class: 'bold',
-                                            html: tasks[i].Date
-                                        })
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'descr',
+                                            html: tasks[i].Comment
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            append: $('<span>', {
+                                                class: 'bold',
+                                                html: tasks[i].Date
+                                            })
+                                        }))
                                     }))
                                 }))
-                            }))
-                        })
-                    )
+                            })
+                        )
+                    } else {
+                        $('#tasks_list_e .empty').remove();
+                        $('#expired_tasks').prepend(
+                            $('<div>', {
+                                class: 'item',
+                                name: `task_id`,
+                                onclick: `editTask(this.name)`,
+                                append: $('<img>', {
+                                    src: `static/images/${tasks[i].Type}.svg`,
+                                    class: 'importance'
+                                }).add($('<div>', {
+                                    class: 'fieldInfo',
+                                    append: $('<div>', {
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'name',
+                                            html: typeTask()
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            html: tasks[i].Time
+                                        }))
+                                    }).add($('<div>', {
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'descr',
+                                            html: tasks[i].Comment
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            append: $('<span>', {
+                                                class: 'bold',
+                                                html: tasks[i].Date
+                                            })
+                                        }))
+                                    }))
+                                }))
+                            })
+                        )
+                    }
                 }
-                $('#tasks_list').prepend(`
-                    <div class="title">
-                        <span>Действующие задачи</span>
-                    </div>`)
             } else {
                 taskInfo = {
                     task_type: $('#task_type').val(),
@@ -140,14 +189,30 @@ function taskCreate(tasks = 'new') {
                     task_time: $('#task_time').val(),
                     task_comment: $('#task_comment').val(),
                 }
+                let date = $('#task_date').val();
+                let time = $('#task_time').val();
+
+                try {
+                    if (date.split('.').length != 3) {
+                        return alert('Введите дату в формате дд.мм.гггг или дд.мм.гг')
+                    }
+    
+                    if (time.split(':').length != 2) {
+                        return alert('Введите время в формате чч:мм')
+                    }
+                } catch {
+                    return alert('Проверьте введенные данные!')
+                }
+
                 socket.emit('addTask', {data: taskInfo});
                 function typeTask() {
                     if (taskInfo.task_type == 'phone') return 'Звонок';
                     if (taskInfo.task_type == 'email') return 'Письмо';
                 }
                 $('#tasks_list .empty').remove();
+                $('#current_tasks').empty();
                 if ($('#task_whom').val() == data.id) {
-                    $('#tasks_list').append(
+                    $('#current_tasks').append(
                         $('<div>', {
                             class: 'item',
                             name: `task_id`,
