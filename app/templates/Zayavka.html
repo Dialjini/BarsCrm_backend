@@ -7,12 +7,12 @@
 
         @font-face {
             font-family: 'Montserrat';
-            src: url("/Users/ofswg/Desktop/Projects/Layouts/crmbars/app/static/fonts/Montserrat-Regular.ttf");
+            src: url("C:/Users/Dialjini/Desktop/Projects/BARS/app/static/fonts/Montserrat-Regular.ttf");
             font-weight: normal;
         }
         @font-face {
             font-family: 'Montserrat';
-            src: url("/Users/ofswg/Desktop/Projects/Layouts/crmbars/app/static/fonts/Montserrat-Bold.ttf");
+            src: url("C:/Users/Dialjini/Desktop/Projects/BARS/app/static/fonts/Montserrat-Bold.ttf");
             font-weight: bold;
         }
         html, body {
@@ -70,7 +70,7 @@
         <div class="title">ЗАЯВКА НА ПЕРЕВОЗКУ ГРУЗА АВТОТРАНСПОРТОМ</div>
         <div class="info">
             <span>г. Новосибирск</span>
-            <span>"10" декабря 2019г.</span>
+            <span>«{{date.d}}» {{date.m}} {{date.y}}.</span>
         </div>
         <table class="table">
             <tr>
@@ -96,12 +96,12 @@
             </tr>
             <tr>
                 <td width="160">Наименование</td>
-                <td>{{name}}</td>
-                <td>ОГРН 1176658114280</td>
+                <td>{{document.name}}</td>
+                <td>ОГРН {{document.OGRN}}</td>
             </tr>
             <tr>
                 <td>Юридический адрес</td>
-                <td colspan="2">623111, Свердловская обл., г. Первоуральск, ул. Вайнера 47а-34</td>
+                <td colspan="2">{{document.Client_prefix_address}}</td>
             </tr>
         </table>
         <table class="table next">
@@ -112,7 +112,7 @@
                 <td width="193" class="bold">Паспортные данные</td>
             </tr>
             <tr>
-                <td>IVEKO STRALIS АТ440S45 Т/Р В 882 ХК196 п/п БЗАП ВА 833266</td>
+                <td>owner.</td>
                 <td>Кошеваров Юрий Николаевич тел 8-912-688-71-81.</td>
                 <td>65 13 № 743632 выдан ОУФМС по Свердловской области в г. Первоуральске 21.01.2014 в/у 99 02 640834</td>
             </tr>

@@ -116,6 +116,26 @@ class Client(db.Model):
     Demand_item = db.Column(db.String)
     Demand_volume = db.Column(db.String)
     Last_comment = db.Column(db.String)
+    Bik = db.Column(db.String)
+    kc = db.Column(db.String)
+    rc = db.Column(db.String)
+
+
+class Document(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Type = db.Column(db.String)
+    Date = db.Column(db.String)
+    Client_name = db.Column(db.String)
+    Client_prefix_address = db.Column(db.String)
+    Client_mail_address = db.Column(db.String)
+    UHH = db.Column(db.String)
+    OGRN = db.Column(db.String)
+    KPP = db.Column(db.String)
+    rc = db.Column(db.String)
+    kc = db.Column(db.String)
+    Bik = db.Column(db.String)
+    Client_contact_name = db.Column(db.String)
+    Owner_id = db.Column(db.Integer)
 
 
 class Contacts(db.Model):
@@ -187,6 +207,9 @@ class Provider(db.Model):
     Holding = db.Column(db.String)
     Last_comment = db.Column(db.String)
     Notes = db.relationship('Notes', backref='Provider', lazy='dynamic')
+    Bik = db.Column(db.String)
+    kc = db.Column(db.String)
+    rc = db.Column(db.String)
 
 
 class Debt(db.Model):
@@ -239,6 +262,9 @@ class Delivery(db.Model):
     Comment = db.Column(db.String)
     Client = db.Column(db.String)
     Payment_list = db.Column(db.String)
+    Bik = db.Column(db.String)
+    kc = db.Column(db.String)
+    rc = db.Column(db.String)
 
 
 class Carrier(db.Model):

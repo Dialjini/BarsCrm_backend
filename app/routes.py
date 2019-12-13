@@ -1,15 +1,26 @@
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
-from app import models, db
+from app import models, db, reqs
 from flask_socketio import SocketIO, send, emit
 import json
 from xhtml2pdf import pisa
 import os
+from datetime import datetime
 
 socketio = SocketIO(app)
 
 if __name__ == '__main__':
     socketio.run(app)
+
+
+class Inside_date:
+    def __init__(self, d, m, y):
+        months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа',
+                  'сентября', 'октября', 'ноября', 'декабря']
+        self.d = d
+        self.m = months[m - 1]
+        self.y = y
+
 
 def sendTasks():
     tasks = []
@@ -69,19 +80,38 @@ def table_to_json(query):
 
 
 def to_PDF(owner, name):
+    document = models.Document()
     if name == "Договор":
         name = "Dogovor"
+        document.Type = 'Dogovor'
     else:
         name = "Zayavka"
-    f = open(os.path.dirname(__file__) + '/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
-    html = render_template('{}.html'.format(name), name='HERE-> Переменная')
-    print('{}.html'.format(name))
+        document.Type = 'Zayavka'
 
+    f = open(os.path.dirname(__file__) + '/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
+    info = reqs.getINNinfo(owner.UHH)['suggestions'][0]
+    date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
+
+    document.Client_name = info['value']
+    document.UHH = owner.UHH
+    document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Client_name = info['data']['management']['name']
+    document.Bik = owner.Bik
+    document.KPP = info['data']['kpp']
+    document.rc = owner.rc
+    document.kc = owner.kc
+    document.Owner_id = owner.id
+    document.MonthNum = document.query.all().length()
+    document.OGRN = info['data']['ogrn']
+
+    db.session.add(document)
+    db.session.commit()
+
+    html = render_template('{}.html'.format(name), document=document, date=date, owner=owner)
 
     pisa.CreatePDF(html, dest=f, encoding='utf-8')
     f.close()
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
-    print(dir_u)
 
     return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
 
