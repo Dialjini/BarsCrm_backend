@@ -1132,9 +1132,10 @@ function createCardMenu(element, index = 0) {
                                 <td>${listStocks[k].Name}</td>
                                 <td>${listAllItems[i].Weight}</td>
                                 <td>${listAllItems[i].Packing}</td>
-                                <td><input type="number"></td>
+                                <td><input id="item_sum" type="number"></td>
                             </tr>
                             `
+                            // Сюда выводить amounts
                         }
                     }
                 }
@@ -1568,8 +1569,6 @@ function makeRequest(element) {
         else { return };
     }
 
-    // Передавать массив сумм товаров
-
     let idDelivery = element.id.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
@@ -1579,6 +1578,13 @@ function makeRequest(element) {
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
     data['delivery_account_id'] = +$('#delivery_account')[0].value;
     data['delivery_client'] = $('#delivery_client')[0].value;
+
+    let amounts = [];
+    for (let element of $('#flight #item_sum')) {
+        amounts.push(element.value);
+    }
+
+    data['delivery_amounts'] = amounts;
 
     let payment_list = [];
     for (let element of $('#group #delivery_date')) {
@@ -1683,7 +1689,7 @@ function createDelCardMenu(element) {
 // Переход на предыдущую вкладку карточки
 function comeBack(elem) {
     for (let i = 0; i < dataName.length; i++) {
-        if (dataName[i].name === elem.id) { // Переход по вкладкам карточки в одной категории и подкатегории
+        if (dataName[i].name === elem) { // Переход по вкладкам карточки в одной категории и подкатегории
             $('.card_menu').remove();
             for (let j = dataName[i].link[0].lastCard.length - 1; j >= 0; j--) {
                 if (dataName[i].link[0].lastCard[j] !== null) {
@@ -1692,16 +1698,18 @@ function comeBack(elem) {
                 }
             }
             $('.info').append(fillingTables(dataName[i].link));
-        } else if (dataName[i].name + '-inv' === elem.id) { // Переход по вкладкам карточки из категории Финансы в категорию Рабочий стол
+            break;
+        } else if (dataName[i].name + '-inv' === elem) { // Переход по вкладкам карточки из категории Финансы в категорию Рабочий стол
             for (let i = 0; i < linkCategoryInfo[0].subcategories.length; i++) {
                 linkCategoryInfo[0].subcategories[i][0].active = false;
-                if (linkCategoryInfo[0].subcategories[i][0].id == elem.id.replace(/-inv/g, '')) {
+                if (linkCategoryInfo[0].subcategories[i][0].id == elem.replace(/-inv/g, '')) {
                     linkCategoryInfo[0].subcategories[i][0].active = true;
                 }
             }
             categoryInFinanceAccount[0].lastCard[0] = null;            
             $('.card_menu').remove();
             linkCategory('category-0');
+            break;
         }
     }
 }

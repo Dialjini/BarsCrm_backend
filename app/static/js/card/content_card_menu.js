@@ -913,8 +913,7 @@ function addRow(id, selectedLine = '') {
                     {id: 'delivery_flight_stock', width: 160, type: 'text'},
                     {id: 'delivery_flight_weight', width: 28, type: 'number'},
                     {id: 'delivery_flight_type', width: 160, type: 'text'},
-                    {id: 'delivery_flight_sum', width: 70, type: 'number'},
-                    {id: 'delivery_flight_client', width: 300, type: 'text'}
+                    {id: 'delivery_flight_sum', width: 70, type: 'number'}
                 ],
                 html: []
         }

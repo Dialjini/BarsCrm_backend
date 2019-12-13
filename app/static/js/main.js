@@ -12,6 +12,9 @@ $(document).ready(function() {
     socket.on('showTasks', function(data) {
         taskCreate(data);
     });
+    socket.on('refreshTasks', function() {
+        socket.emit('showTasks');
+    });
 });
 
 
