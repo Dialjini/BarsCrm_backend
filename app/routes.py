@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
 from app import models, db, reqs
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO, join_room, emit
 import json
 from xhtml2pdf import pisa
 import os
@@ -11,7 +11,6 @@ socketio = SocketIO(app)
 
 if __name__ == '__main__':
     socketio.run(app)
-
 
 class Inside_date:
     def __init__(self, d, m, y):
@@ -37,7 +36,6 @@ def sendTasks():
                 tasks.append(json.loads(table_to_json([i]))[0])
         except Exception as er:
             print(er)
-
     emit('showTasks', json.dumps(tasks))
 
 
@@ -54,7 +52,7 @@ def addTask(message):
 
     db.session.add(task)
     db.session.commit()
-    sendTasks()
+    emit('refreshTasks', room='all')
 
 
 @socketio.on('showTasks')
@@ -152,6 +150,7 @@ def auth():
 
         if user.password == password:
             session['username'] = login
+            join_room('all')
             return redirect('/', code=302)
 
         return json.dumps({'message': 'Неверный пароль', 'success': False})
