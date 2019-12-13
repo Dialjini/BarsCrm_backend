@@ -3,7 +3,6 @@ let socket = io();
 $(document).ready(function() {
     addButtonsSubcategory(0);
     getTableData(categoryInListClient);
-    getTaskList();
     createCategoryMenu();
     createCTButtons();
     linkField();
@@ -11,7 +10,7 @@ $(document).ready(function() {
     $('#clientButton, #category-0').addClass('active');
     socket.emit('showTasks');
     socket.on('showTasks', function(data) {
-        console.log(data)
+        taskCreate(data);
     });
 });
 

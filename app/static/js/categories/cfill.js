@@ -299,7 +299,7 @@ function adminPanel() {
                     }
 
                     $('#addNewPerson').click(function() {
-                        $('.table').remove();
+                        $('.table, .card_menu').remove();
                         $('.info').append(`
                         <div class="card_menu persons" id="card_menu">
                             <div class="title">
