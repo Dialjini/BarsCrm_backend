@@ -208,6 +208,17 @@ def getClients():
         return redirect('/', code=302)
 
 
+@app.route('/deleteMember', methods=['GET'])
+def deleteMember():
+    user = models.User.query.filter_by(id=request.args['id']).first()
+
+    db.session.delete(user)
+    db.session.commit()
+    return 'OK'
+
+
+
+
 @app.route('/stockTransit', methods=['GET'])
 def stockTransit():
     Item = models.Item.query.filter_by(Item_id=request.args['id_product']).first()
