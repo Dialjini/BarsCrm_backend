@@ -241,7 +241,20 @@ function createCardMenu(element, index = 0) {
                 addRow(`delivery-group`, list[i]);
             }
         }
-    };
+    } else if (getInfo[0] == 'account') {
+        let payment_list;
+        console.log(selectedLine.account.Payment_history);
+        if (selectedLine.account.Payment_history != undefined) {
+            payment_list = JSON.parse(selectedLine.account.Payment_history);
+        } else {
+            payment_list = [{position: '', date: '', sum: ''}];
+        }
+        console.log(payment_list);
+        for (let i = 0; i < payment_list.length; i++) {
+            addRow('account-group', payment_list[i]);
+        }
+    }
+
     if (getInfo[0] === 'delivery') {
         $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
         $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
@@ -1122,20 +1135,36 @@ function createCardMenu(element, index = 0) {
                         return '';
                     }
                 }
+
+                let amounts;
+                if (selectedLine.Amounts != undefined) {
+                    amounts = JSON.parse(selectedLine.Amounts);
+                }
                 
                 for (let j = 0; j < list_items_acc.length; j++) {
                     for (let k = 0; k < listStocks.length; k++) {
                         if (+list_items_acc[j] == +listAllItems[i].Item_id && +listAllItems[i].Stock_id == listStocks[k].id) {
-                            tr += `
-                            <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                <td>${listAllItems[i].Name}</td>
-                                <td>${listStocks[k].Name}</td>
-                                <td>${listAllItems[i].Weight}</td>
-                                <td>${listAllItems[i].Packing}</td>
-                                <td><input id="item_sum" type="number"></td>
-                            </tr>
-                            `
-                            // Сюда выводить amounts
+                            if (amounts == undefined) {
+                                tr += `
+                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                    <td>${listAllItems[i].Name}</td>
+                                    <td>${listStocks[k].Name}</td>
+                                    <td>${listAllItems[i].Weight}</td>
+                                    <td>${listAllItems[i].Packing}</td>
+                                    <td><input id="item_sum" type="number"></td>
+                                </tr>
+                                `
+                            } else {
+                                tr += `
+                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                    <td>${listAllItems[i].Name}</td>
+                                    <td>${listStocks[k].Name}</td>
+                                    <td>${listAllItems[i].Weight}</td>
+                                    <td>${listAllItems[i].Packing}</td>
+                                    <td><input id="item_sum" value="${amounts[i]}" type="number"></td>
+                                </tr>
+                                `
+                            }
                         }
                     }
                 }
@@ -1584,7 +1613,7 @@ function makeRequest(element) {
         amounts.push(element.value);
     }
 
-    data['delivery_amounts'] = amounts;
+    data['delivery_amounts'] = JSON.stringify(amounts);
 
     let payment_list = [];
     for (let element of $('#group #delivery_date')) {

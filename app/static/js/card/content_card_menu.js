@@ -81,93 +81,115 @@ function analyticsContent() {
 }
 let list_items_acc, list_stock_acc;
 function checkStocks(element) {
-    list_stock_acc = $('#stock_items_list').attr('data-stock').split(',');
-    list_items_acc = $('#stock_items_list').attr('data-items').split(',');
-    let sortItemsStock = [];
+    let idAccount = element.name.split('_')[1];
+    let payment_history = [];
 
-    let dataStock, dataItem;
-    $.ajax({
-        url: '/getStocks',
-        type: 'GET',
-        async: false,
-        dataType: 'html',
-        success: function(result) {
-            dataStock = JSON.parse(result);
-        }
-    });
-
-    $.ajax({
-        url: '/getAllItems',
-        type: 'GET',
-        async: false,
-        dataType: 'html',
-        success: function(result) {
-            dataItem = JSON.parse(result);
-        }
-    });
-
-    for (let i = 0; i < dataStock.length; i++) {
-        for (let j = 0; j < list_stock_acc.length; j++) {
-            if (list_stock_acc[j] == dataStock[i].id) {
-                sortItemsStock.push({ stock: dataStock[i].id, items: [] });
-            }
-        }
-    }
-    for (let i = 0; i < sortItemsStock.length; i++) {
-        for (let j = 0; j < dataItem.length; j++) {
-            if (sortItemsStock[i].stock == dataItem[j].Stock_id) {
-                sortItemsStock[i]['items'].push(dataItem[j].Item_id)
-            }
-        }
+    for (let tr of $('#group tr')) {
+        let position = $(tr)[0].children[0].children[0].value;
+        let date = $(tr)[0].children[1].children[0].value;
+        let sum = $(tr)[0].children[2].children[0].value;
+        payment_history.push({position: position, date: date, sum: sum})
     }
 
-    function fillListStock() {
-        let buttons = '';
-        for (let i = 0; i < dataStock.length; i++) {
-            for (let j = 0; j < sortItemsStock.length; j++) {
-                if (dataStock[i].id == sortItemsStock[j].stock) {
-                    buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)" data-items="${sortItemsStock[j].items}" data-stock="${dataStock[i].Name}">${dataStock[i].Name}</button>`
-                    break;
+    if (payment_history.length == 0) {
+        payment_history.push({position: '', date: '', sum: ''})
+    }
+
+    $.ajax({
+        url: '/addAccountPaymentHistory',
+        data: {account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)},
+        type: 'GET',
+        dataType: 'html',
+        success: function() {
+            list_stock_acc = $('#stock_items_list').attr('data-stock').split(',');
+            list_items_acc = $('#stock_items_list').attr('data-items').split(',');
+            let sortItemsStock = [];
+
+            let dataStock, dataItem;
+            $.ajax({
+                url: '/getStocks',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    dataStock = JSON.parse(result);
+                }
+            });
+
+            $.ajax({
+                url: '/getAllItems',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    dataItem = JSON.parse(result);
+                }
+            });
+
+            for (let i = 0; i < dataStock.length; i++) {
+                for (let j = 0; j < list_stock_acc.length; j++) {
+                    if (list_stock_acc[j] == dataStock[i].id) {
+                        sortItemsStock.push({ stock: dataStock[i].id, items: [] });
+                    }
                 }
             }
-        }
-        return buttons;
-    }
-
-    if (list_stock_acc.length > 1) {
-        $('.page').prepend($('<div>', { class: 'background' }));
-        $('.page').prepend(
-            $('<div>', {
-                class: 'modal_select',
-                append: `
-                    <div class="title">
-                        <span>Выбор склада</span>
-                        <img onclick="closeModal()" src="static/images/cancel.png">
-                    </div>
-                    <div class="content">
-                        <div class="message">
-                            <p>В счёте присутствуют несколько складов. <br> Выберите склад, чтобы создать доставку товаров выбранного склада <br>
-                            (Доставка будет только на те товары, которые находятся в выбранном складе)</p>
-                        </div>
-                        <div class="list_stock">
-                            ${fillListStock()}
-                        </div>
-                    </div>
-                `
-            })
-        );
-    } else {
-        for (let i = 0; i < dataStock.length; i++) {
-            for (let j = 0; j < list_stock_acc.length; j++) {
-                if (dataStock[i].id == list_stock_acc[j]) {
-                    list_stock_acc[j] = dataStock[i].Name;
+            for (let i = 0; i < sortItemsStock.length; i++) {
+                for (let j = 0; j < dataItem.length; j++) {
+                    if (sortItemsStock[i].stock == dataItem[j].Stock_id) {
+                        sortItemsStock[i]['items'].push(dataItem[j].Item_id)
+                    }
                 }
             }
+
+            function fillListStock() {
+                let buttons = '';
+                for (let i = 0; i < dataStock.length; i++) {
+                    for (let j = 0; j < sortItemsStock.length; j++) {
+                        if (dataStock[i].id == sortItemsStock[j].stock) {
+                            buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)" data-items="${sortItemsStock[j].items}" data-stock="${dataStock[i].Name}">${dataStock[i].Name}</button>`
+                            break;
+                        }
+                    }
+                }
+                return buttons;
+            }
+
+            if (list_stock_acc.length > 1) {
+                $('.page').prepend($('<div>', { class: 'background' }));
+                $('.page').prepend(
+                    $('<div>', {
+                        class: 'modal_select',
+                        append: `
+                            <div class="title">
+                                <span>Выбор склада</span>
+                                <img onclick="closeModal()" src="static/images/cancel.png">
+                            </div>
+                            <div class="content">
+                                <div class="message">
+                                    <p>В счёте присутствуют несколько складов. <br> Выберите склад, чтобы создать доставку товаров выбранного склада <br>
+                                    (Доставка будет только на те товары, которые находятся в выбранном складе)</p>
+                                </div>
+                                <div class="list_stock">
+                                    ${fillListStock()}
+                                </div>
+                            </div>
+                        `
+                    })
+                );
+            } else {
+                for (let i = 0; i < dataStock.length; i++) {
+                    for (let j = 0; j < list_stock_acc.length; j++) {
+                        if (dataStock[i].id == list_stock_acc[j]) {
+                            list_stock_acc[j] = dataStock[i].Name;
+                        }
+                    }
+                }
+                $(element).attr('data-stock', list_stock_acc);
+                $(element).attr('data-items', list_items_acc);
+                arrangeDelivery(element);
+            }
         }
-        $(element).attr('data-stock', list_stock_acc);
-        $(element).attr('data-items', list_items_acc);
-        arrangeDelivery(element);
-    }
+    })
 }
 function closeModal() {
     $('.background').remove();
@@ -902,7 +924,7 @@ function addRow(id, selectedLine = '') {
                     {id: 'account_date', width: 42, type: 'text'},
                     {id: 'account_price', width: 43, type: 'number'}
                 ],
-                html: []
+                html: ['position', 'date', 'sum']
         }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'delivery_date', width: 60, type: 'text'},
                     {id: 'delivery_price', width: 60, type: 'number'}
@@ -953,6 +975,7 @@ function addRow(id, selectedLine = '') {
 
     for (let i = 0; i < tableInfo.length; i++) {
         if (id == tableInfo[i].id) {
+            console.log(tableInfo[i].tbody)
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             break;
