@@ -243,9 +243,9 @@ function createCardMenu(element, index = 0) {
         }
     };
     if (getInfo[0] === 'delivery') {
-        $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top'})
-        $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top'})
-        $('#delivery_date').datepicker({minDate: new Date(), position: 'right top'})
+        $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+        $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+        $('#delivery_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
     }
     function getContactsAndItems() {
         let category = getInfo[0];
@@ -1133,7 +1133,6 @@ function createCardMenu(element, index = 0) {
                                 <td>${listAllItems[i].Weight}</td>
                                 <td>${listAllItems[i].Packing}</td>
                                 <td><input type="number"></td>
-                                <td></td>
                             </tr>
                             `
                         }
@@ -1245,7 +1244,6 @@ function createCardMenu(element, index = 0) {
                                         <th>Вес</th>
                                         <th>Вид упаковки</th>
                                         <th>Сумма</th>
-                                        <th>Клиент</th>
                                     </tr>
                                     <tbody id="flight">
                                         ${fillFlights()}
@@ -1570,6 +1568,8 @@ function makeRequest(element) {
         else { return };
     }
 
+    // Передавать массив сумм товаров
+
     let idDelivery = element.id.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
@@ -1785,7 +1785,6 @@ function completionCard(elem) {
                     }
                 }
                 
-                console.log({name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)});
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',

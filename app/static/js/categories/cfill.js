@@ -238,6 +238,154 @@ function closePersonCard() {
     adminPanel();
 }
 
+function userInfo(element) {
+    function fillRoles(role) {
+        if (role == 'admin') {
+            return `
+                <option selected value="admin">Администратор</option>
+                <option value="manager">Менеджер</option>
+            `
+        } else {
+            return `
+                <option value="admin">Администратор</option>
+                <option selected value="manager">Менеджер</option>
+            `
+        }
+    }
+    $.ajax({
+        url: '/getUsers',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id == element.id) {
+                    console.log(data[i]);
+                    $('.table, .card_menu').remove();
+                        $('.info').append(`
+                        <div class="card_menu persons" id="card_menu">
+                            <div class="title">
+                                <div class="left_side">
+                                    <span>Редактирование сотрудника</span>
+                                </div>
+                                <div class="right_side">
+                                    <div class="close" onclick="closePersonCard()">
+                                        <img src="static/images/cancel.png">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="row_card">
+                                    <table class="table_block">
+                                        <tr>
+                                            <td>Фамилия</td>
+                                            <td>
+                                                <input type="text" value="${data[i].second_name}" disabled>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Имя</td>
+                                            <td>
+                                                <input type="name" value="${data[i].name}" disabled>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Отчество</td>
+                                            <td>
+                                                <input type="text" value="${data[i].third_name}" id="edit_patronymic">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Должность</td>
+                                            <td>
+                                                <select type="text" id="edit_role">
+                                                    ${fillRoles(data[i].role)}
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <table class="table_block">
+                                        <tr>
+                                            <td>Email</td>
+                                            <td>
+                                                <input type="email" value="${data[i].email}" id="edit_email">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Логин</td>
+                                            <td>
+                                                <input type="login" value="${data[i].login}" disabled>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Пароль</td>
+                                            <td>
+                                                <input type="text" value="${data[i].password}" id="edit_password">
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="next">
+                                    <button class="btn btn-main" id="${data[i].id}" onclick="deleteMember(this.id)">Удалить</button>
+                                    <button class="btn btn-main" id="${data[i].id}" onclick="editMember(this.id)">Изменить</button>
+                                </div>
+                            </div>
+                        </div>`)
+                }
+            }
+        }
+    });
+}
+
+function deleteMember(idMember) {
+    $.ajax({
+        url: '/deleteMember',
+        type: 'GET',
+        data: {id: idMember},
+        dataType: 'html',
+        success: function() {
+            $('.card_menu').remove();
+            adminPanel();
+        }
+    });
+}
+
+function editMember(idMember) {
+    $.ajax({
+        url: '/getUsers',
+        type: 'GET',
+        dataType: 'html',
+        success: function(result) {
+            result = JSON.parse(result);
+            for (let i = 0; i < result.length; i++) {
+                console.log(idMember, result[i].id)
+                if (result[i].id == +idMember) {
+                    let data = {};
+                    data['create_patronymic'] = $('#edit_patronymic').val();
+                    data['create_email'] = $('#edit_email').val();
+                    data['create_role'] = $('#edit_role').val();
+                    data['create_password'] = $('#edit_password').val();
+                    data['create_last_name'] = result[i].second_name;
+                    data['create_first_name'] = result[i].name;
+                    data['create_login'] = result[i].login;
+                    data['id'] = +idMember;
+                
+                    $.ajax({
+                        url: '/addUser',
+                        type: 'GET',
+                        data: data,
+                        dataType: 'html',
+                        success: function() {
+                            $('.card_menu').remove();
+                            adminPanel();
+                        }
+                    });
+                }
+            }
+        }
+    });
+}
+
 function adminPanel() {
     $.ajax({
         url: '/getThisUser',
@@ -261,16 +409,16 @@ function adminPanel() {
                                 if (data[i].role == 'admin') data[i].role = 'Администратор';
                                 if (data[i].role == 'manager') data[i].role = 'Менеджер';
                                 $('#admin').append(`
-                                <tr>
-                                    <td>${data[i].second_name}</td>
-                                    <td>${data[i].name}</td>
-                                    <td>${data[i].third_name}</td>
-                                    <td>${data[i].role}</td>
-                                    <td>${data[i].email}</td>
-                                    <td>${data[i].login}</td>
-                                    <td>${data[i].password}</td>
-                                </tr>
-                            `)
+                                    <tr id="${data[i].id}" onclick="userInfo(this)">
+                                        <td>${data[i].second_name}</td>
+                                        <td>${data[i].name}</td>
+                                        <td>${data[i].third_name}</td>
+                                        <td>${data[i].role}</td>
+                                        <td>${data[i].email}</td>
+                                        <td>${data[i].login}</td>
+                                        <td>${data[i].password}</td>
+                                    </tr>
+                                `)
                             }
                         }
                     });
@@ -337,10 +485,9 @@ function adminPanel() {
                                             <td>Должность</td>
                                             <td>
                                                 <select type="text" id="create_role">
-                                                    <option value="none" selected disabled>Не выбран</option>
+                                                    <option value="null" selected disabled>Не выбран</option>
                                                     <option value="admin">Администратор</option>
                                                     <option value="manager">Менеджер</option>
-                                                    <option>Еще кто-то</option>
                                                 </select>
                                             </td>
                                         </tr>
@@ -384,8 +531,10 @@ function createNewMember() {
 
     for (let i = 0; i < ids.length; i++) {
         data[ids[i]] = $(`#${ids[i]}`).val();
+        if ($(`#${ids[i]}`).val() == '' && ids[i] != 'create_email' && ids[i] != 'create_patronymic' || $(`#${ids[i]}`).val() == null) {
+            return alert('Все поля, кроме почты и отчества, обязательны к заполнению!');
+        }
     }
-    data['create_email']
     data['id'] = 'new';
     $.ajax({
         url: '/addUser',
@@ -395,8 +544,7 @@ function createNewMember() {
         success: function() {
             closePersonCard();
         }
-    });
-    
+    }); 
 }
 
 // Отчеты

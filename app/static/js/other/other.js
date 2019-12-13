@@ -25,23 +25,40 @@ function createContactsFormTask(values) {
             }))
             if (elementsInfo[i].id == 'task_whom') {
                 $.ajax({
-                    url: '/getUsers',
+                    url: '/getThisUser',
                     type: 'GET',
                     dataType: 'html',
-                    success: function(data) {
-                        data = JSON.parse(data);
-                        for (let i = 0; i < data.length; i++) {
-                            if (data[i].role == 'manager') {
+                    success: function(thisUser) {
+                        let user = JSON.parse(thisUser);
+                        $.ajax({
+                            url: '/getUsers',
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function(data) {
+                                data = JSON.parse(data);
+                                if (user.role == 'admin') {
+                                    for (let i = 0; i < data.length; i++) {
+                                        $('#task_whom').append(`
+                                            <option value="${data[i].id}">${data[i].second_name}</option>
+                                        `)
+                                    }
+                                } else {
+                                    for (let i = 0; i < data.length; i++) {
+                                        if (data[i].role == 'manager') {
+                                            $('#task_whom').append(`
+                                                <option value="${data[i].id}">${data[i].second_name}</option>
+                                            `)
+                                        }
+                                    }
+                                }
+                                
                                 $('#task_whom').append(`
-                                    <option value="${data[i].id}">${data[i].second_name}</option>
+                                    <option value="all">Всем</option>
                                 `)
                             }
-                        }
-                        $('#task_whom').append(`
-                            <option value="all">Всем</option>
-                        `)
+                        });
                     }
-                });
+                })
             }
         }
         return content;
@@ -87,6 +104,7 @@ function taskCreate(tasks = 'new') {
                     function typeTask() {
                         if (tasks[i].Type == 'phone') return 'Звонок';
                         if (tasks[i].Type == 'email') return 'Письмо';
+                        if (tasks[i].Type == 'other') return 'Другое';
                     }
 
                     let taskDate = tasks[i].Date.split('.');
@@ -208,6 +226,7 @@ function taskCreate(tasks = 'new') {
                 function typeTask() {
                     if (taskInfo.task_type == 'phone') return 'Звонок';
                     if (taskInfo.task_type == 'email') return 'Письмо';
+                    if (taskInfo.task_type == 'other') return 'Другое';
                 }
                 $('#tasks_list .empty').remove();
                 $('#current_tasks').empty();
@@ -331,12 +350,13 @@ function createCT(id, values = 'empty') {
     } else if (id == 'addTask') {
         if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: ''}
         $('#createCT').append(createContactsFormTask(values));
-        $('#task_date').datepicker({minDate: new Date(), position: 'left top'})
+        $('#task_date').datepicker({minDate: new Date(), position: 'left top', autoClose: true})
     }
     //$('#task_type').attr('onchange', 'selectTypeTask()')
     $('#task_type').append(`
         <option selected value="email">Письмо</option>
         <option value="phone">Звонок</option>
+        <option value="other">Другое</option>
     `)
 };
 

@@ -679,7 +679,7 @@ function addComment(manager = '', data) {
                     </td>`
             })
         )
-        $('#comment_date').datepicker({minDate: new Date(), position: 'right bottom'})
+        $('#comment_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
         $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
         function getRoleList() {
             let list = '';
