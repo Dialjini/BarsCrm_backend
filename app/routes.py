@@ -174,6 +174,13 @@ def logout():
     return redirect('/', code=302)
 
 
+@app.route('/addAccountPaymentHistory', methods=['GET'])
+def addAccountPaymentHistory():
+    table = models.Account.query.filter_by(id=request.args['account_id'])
+    table.Payment_history = request.args['account_payment_history']
+    table.session.commit()
+    return 'OK'
+
 @app.route('/getTemplates', methods=['GET'])
 def getTemplates():
     if 'username' in session:
@@ -380,6 +387,7 @@ def addDelivery():
         table.Stock = data['delivery_stock']
         table.Type = data['delivery_type']
         table.Item_ids = data['delivery_item_ids']
+        table.Amounts = json.dumps(data['delivery_amounts'])
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']
         else:

@@ -237,6 +237,7 @@ class Account(db.Model):
     Shipping = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
     Item_ids = db.Column(db.String)
+    Payment_history = db.Column(db.String)
 
 
 class Delivery(db.Model):
@@ -265,6 +266,7 @@ class Delivery(db.Model):
     Bik = db.Column(db.String)
     kc = db.Column(db.String)
     rc = db.Column(db.String)
+    Amounts = db.Column(db.String)
 
 
 class Carrier(db.Model):
