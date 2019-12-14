@@ -105,7 +105,7 @@ def to_PDF(owner, name):
     db.session.add(document)
     db.session.commit()
 
-    html = render_template('{}.html'.format(name), document=document, date=date, owner=owner)
+    html = render_template('{}.html'.format(name), document=document, date=date, owner=owner, path=os.path.dirname(__file__))
 
     pisa.CreatePDF(html, dest=f, encoding='utf-8')
     f.close()
@@ -360,6 +360,7 @@ def getDeliveries():
 def addDelivery():
     if 'username' in session:
         data = request.args
+        print(data['delivery_id'])
         if data['delivery_id'] == 'new':
             table = models.Delivery()
         else:
