@@ -61,7 +61,7 @@ function getTableData(table, input = false, close = false) {
                     { table: categoryInListClient, request: '/getClients' },
                     { table: categoryInListProvider, request: '/getProviders' },
                     { table: categoryInListCarrier, request: '/getCarriers' },
-                    { table: categoryInFinanceDebit, request: '/getClients' },
+                    { table: categoryInFinanceDebit, request: '/getAccounts' },
                     { table: categoryInFinanceAccount, request: '/getAccounts' },
                     { table: categoryInDelivery, request: '/getDeliveries' },
                     { table: categoryInStock, request: '/getStockTable' },

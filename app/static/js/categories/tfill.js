@@ -77,7 +77,6 @@ let rowFilling = (object, id, table) => {
                 { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, managerSecondName] },
                 { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, managerSecondName] },
                 { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, managerSecondName] },
-                { id: 'debit', list: [] },
             ]
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id === id) {
@@ -118,8 +117,71 @@ let rowFilling = (object, id, table) => {
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
+            console.log(object[1][i]);
+            if (object[1][i].account.Payment_history != undefined) {
+                let payment_list = JSON.parse(object[1][i].account.Payment_history);
+                let amount = object[1][i].account.Sum;
+                let payment_amount = 0;
+
+                for (let i = 0; i < payment_list.length; i++) {
+                    payment_amount += +payment_list[i].sum
+                }
+
+                if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
+                else status = '<span class="red">Неоплачено</span>'
+            } else {
+                status = '<span class="red">Неоплачено</span>';
+            }
+
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [object[1][i].items[0].Prefix, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, object[1][i].account.Status, object[1][i].account.Hello, object[1][i].account.Manager_id];
+            const name = [object[1][i].items[0].Prefix, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, status, object[1][i].account.Hello, object[1][i].account.Manager_id];
+
+            for (let j = 0; j < name.length; j++) {
+                let elementTr = $('<td>', { html: name[j] });
+                element.append(elementTr);
+            }
+            table.append(element);
+        }
+        return table;
+    }
+
+    let rowFillingDebit = (id) => {
+        let deliveryTable;
+        $.ajax({
+            url: '/getDeliveries',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) { deliveryTable = JSON.parse(result) },
+        });
+        table.append(getTitleTable());
+        for (let i = object[1].length - 1; i >= 0; i--) {
+            let payment_amount = 0;
+            if (object[1][i].account.Payment_history != undefined) {
+                let payment_list = JSON.parse(object[1][i].account.Payment_history);
+                let amount = object[1][i].account.Sum;
+
+                for (let i = 0; i < payment_list.length; i++) {
+                    payment_amount += +payment_list[i].sum
+                }
+            } else {
+                payment_amount = 0;
+            }
+
+            let first_date;
+
+            for (let j = 0; j < deliveryTable.length; j++) {
+                if (deliveryTable[j].delivery.Account_id == i + 1) {
+                    first_date = deliveryTable[j].delivery.Start_date;
+                    break;
+                }
+            }
+            if (first_date == undefined) {
+                first_date = 'Не указано';
+            }
+
+            let element = $('<tr>');
+            const name = [object[1][i].items[0].Prefix, object[1][i].account.Name, first_date, 'xx.xx.xx', object[1][i].account.Sum, payment_amount, +object[1][i].account.Sum - payment_amount, object[1][i].account.Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -166,7 +228,7 @@ let rowFilling = (object, id, table) => {
         { id: 'client', function: rowFillingDefault },
         { id: 'provider', function: rowFillingDefault },
         { id: 'carrier', function: rowFillingDefault },
-        { id: 'debit', function: rowFillingDefault },
+        { id: 'debit', function: rowFillingDebit },
         { id: 'account', function: rowFillingAccount },
         { id: 'delivery', function: rowFillingDelivery },
         { id: 'stock', function: rowFillingStock },

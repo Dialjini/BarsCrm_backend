@@ -746,7 +746,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
-        let sum = 0, vat = 0;
+        let sum = +selectedLine.account.Sale + +selectedLine.account.Hello + +selectedLine.account.Shipping, vat = 0;
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
@@ -763,9 +763,9 @@ function createCardMenu(element, index = 0) {
                         <td>${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
                         <td>${list_items[i].Transferred_volume}</td>
                         <td>${list_items[i].Cost}</td>
-                        <td>${(selectedLine.account.Sale / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
-                        <td>${(selectedLine.account.Hello / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
-                        <td>${(selectedLine.account.Shipping / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${(+selectedLine.account.Sale / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${(+selectedLine.account.Hello / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${(+selectedLine.account.Shipping / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
                         <td>${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
                         <td>${Math.round(list_items[i].Cost * list_items[i].Transferred_volume)}</td>
                     </tr>
@@ -1805,7 +1805,7 @@ function completionCard(elem) {
                 let sale = $('#total_discount_inv').val();
                 let privet = $('#total_privet_inv').val();
                 let delivery = $('#total_delivery_inv').val();
-                let status = 'true';
+                let status = 'false';
                 let date = getCurrentDate('year');
                 let name;
                 let sum = $('#total').html();
