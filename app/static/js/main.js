@@ -1,5 +1,7 @@
 let socket = io();
 
+
+
 $(document).ready(function() {
     addButtonsSubcategory(0);
     getTableData(categoryInListClient);
@@ -8,12 +10,16 @@ $(document).ready(function() {
     linkField();
     getUserInfo()
     $('#clientButton, #category-0').addClass('active');
+    socket.emit('connection')
     socket.emit('showTasks');
     socket.on('showTasks', function(data) {
         taskCreate(data);
     });
     socket.on('refreshTasks', function() {
         socket.emit('showTasks');
+    });
+    socket.on('user joined', function(data) {
+        console.log(data)
     });
 });
 
@@ -40,6 +46,8 @@ function getUserInfo() {
             $('#username').append(`
                 <div class="descr">${role}</div>
             `)
+            console.log("helllo user")
+            socket.emit('add user', surname)
         }
     });
 }
