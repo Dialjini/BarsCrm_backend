@@ -54,7 +54,7 @@ def sendTasks():
                 tasks.append(json.loads(table_to_json([i]))[0])
         except Exception as er:
             print(er)
-    emit('showTasks', json.dumps(tasks), broadcast= True)
+    emit('showTasks', json.dumps(tasks))
 
 
 
@@ -70,7 +70,7 @@ def addTask(message):
 
     db.session.add(task)
     db.session.commit()
-    emit('refreshTasks')
+    emit('refreshTasks', broadcast=True)
 
 
 @socketio.on('showTasks')
