@@ -495,6 +495,8 @@ function cancelSearch() {
 }
 
 function searchFill(element) {
+    $('.centerBlock .header .cancel').remove();
+
     let search = $(element).html();
     let data = saveTableAndCard[1][1];
     let listData = [
@@ -526,6 +528,8 @@ function searchFill(element) {
 }
 
 function searchCategoryInfo() {
+    $('.centerBlock .header .cancel').remove();
+
     let searchInfo = $('#search').val();
     let data = saveTableAndCard[1][1];
     let listData = [

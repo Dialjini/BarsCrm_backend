@@ -60,7 +60,7 @@ function createRegionMenu() {
                 class: 'region',
                 append: $('<span>', {
                     class: '',
-                    html: regions[i].name
+                    html: regions[i].name + ' область'
                 }).add($('<ul>', {
                     class: 'list_regions',
                     html: createLiList(i)
