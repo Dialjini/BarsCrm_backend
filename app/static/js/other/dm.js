@@ -1,8 +1,45 @@
-/**
- * Drop Down и Card меню
- */
+function createRegionMenu() {
+    let regions = [];
+    let data = saveTableAndCard[1][1];
 
-function createDropMenu() {
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].Oblast != null) {
+            console.log(data[i].Oblast);
+            regions.push({ name: data[i].Oblast, areas: [] });
+        }
+    }
+
+    for (let i = 0; i < regions.length - 1; i++) {
+        for (let j = i + 1; j < regions.length; j++) {
+            if (regions[i].name.includes(regions[j].name) || regions[j].name.includes(regions[i].name)) {
+                regions.splice(j, 1);
+                j--;
+            }
+        }
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < regions.length; j++) {
+            if (regions[j].name == data[i].Oblast && data[i].Rayon != null && data[i].Rayon != '') {
+                console.log(data[i].Rayon);
+                regions[j].areas.push(data[i].Rayon)
+            }
+        }
+    } 
+
+    for (let k = 0; k < regions.length; k++) {
+        for (let i = 0; i < regions[k].areas.length - 1; i++) {
+            for (let j = i + 1; j < regions[k].areas.length; j++) {
+                if (regions[k].areas[i].includes(regions[k].areas[j]) || regions[k].areas[j].includes(regions[k].areas[i])) {
+                    regions[k].areas.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+    }
+
+    console.log(regions);
+
     let element = $('<div />', {
         class: 'item drop_down_search'
     });
@@ -11,7 +48,7 @@ function createDropMenu() {
         let liList = '';
 
         for (let j = 0; j < regions[i].areas.length; j++) {
-            let liElement = `<li>${regions[i].areas[j]}</li>`;
+            let liElement = `<li onclick="searchFill(this)">${regions[i].areas[j]}</li>`;
             liList = liList.concat(liElement);
         }
         return liList;

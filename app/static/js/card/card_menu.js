@@ -1199,34 +1199,6 @@ function createCardMenu(element, index = 0) {
                         </table>
                         <table class="table_block">
                             <tr>
-                                <td>Перевозчик</td>
-                                <td>
-                                    ${carrierSelect()}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Вид перевозки</td>
-                                <td>
-                                    <select id="delivery_type" disabled>
-                                        <option selected disabled></option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Водитель</td>
-                                <td>
-                                    <select id="delivery_driver"></select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Комментарий</td>
-                                <td>
-                                    <input type="text" style="width: 200px" id="delivery_comment" value="${selectedLine.Comment}">
-                                </td>
-                            </tr>
-                        </table>
-                        <table class="table_block">
-                            <tr>
                                 <td>Счёт</td>
                                 <td>
                                     <select id="delivery_account" onchange="selectAccount(this.value)">
@@ -1256,6 +1228,46 @@ function createCardMenu(element, index = 0) {
                                     <select id="delivery_stock">
                                         ${fillStocks()}
                                     </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Комментарий</td>
+                                <td>
+                                    <input type="text" style="width: 200px" id="delivery_comment" value="${selectedLine.Comment}">
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="table_block">
+                            <tr>
+                                <td>Перевозчик</td>
+                                <td>
+                                    ${carrierSelect()}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Вид перевозки</td>
+                                <td>
+                                    <select id="delivery_type" disabled>
+                                        <option selected disabled></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Водитель</td>
+                                <td>
+                                    <select id="delivery_driver"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Марка авто</td>
+                                <td>
+                                    <input type="text" style="width: 200px" id="delivery_car">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Паспортные данные</td>
+                                <td>
+                                    <input type="text" style="width: 200px" id="delivery_passport">
                                 </td>
                             </tr>
                         </table>
@@ -1409,6 +1421,84 @@ function createCardMenu(element, index = 0) {
             </div>
         `;
     }
+}
+function makeRequest(element) {
+    let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
+    let data = {};
+    for (let i = 0; i < idCardFields[3].ids.length; i++) {
+        data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
+    }
+
+    if (infoAccount == undefined) {
+        var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
+        if (result) { return closeCardMenu(element.name) }
+        else { return };
+    }
+
+    let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
+    data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
+    data['delivery_date'] = getCurrentDate('year');
+    data['delivery_contact_end'] = +$('#delivery_contact_name').val();
+    data['delivery_contact_number'] = '';
+    data['delivery_contact_name'] = $('#delivery_driver').val();
+    data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
+    data['delivery_account_id'] = +$('#delivery_account')[0].value;
+    data['delivery_client'] = $('#delivery_client')[0].value;
+    data['delivery_car'] = $('#delivery_car').val();
+    data['delivery_passport'] = $('#delivery_passport').val();
+
+    let amounts = [];
+    for (let element of $('#flight #item_sum')) {
+        amounts.push(element.value);
+    }
+
+    data['delivery_amounts'] = JSON.stringify(amounts);
+
+    let payment_list = [];
+    for (let element of $('#group #delivery_date')) {
+        if ($(element).val() != '') {
+            payment_list.push({ date: $(element).val(), price: '' });
+            data['delivery_payment_date'] = $(element).val();
+        } else {
+            payment_list.push({ date: '', price: '' });
+        }
+    }
+    for (let i = 0; i < $('#group #delivery_price').length; i++) {
+        if ($('#group #delivery_price')[i].value != '') {
+            payment_list[i]['price'] = $('#group #delivery_price')[i].value;
+        } else if ($('#group #delivery_price')[i].value == '' && $('#group #delivery_date')[i].value == '') {
+            payment_list.splice(i, 1);
+        }
+    }
+
+    if (payment_list.length > 0) {
+        data['payment_list'] = JSON.stringify(payment_list);
+    } else {
+        data['delivery_payment_date'] = '';
+
+    }
+    data['delivery_prefix'] = infoAccount.items[0].Prefix;
+    data['delivery_price'] = infoAccount.account.Sum;
+    data['delivery_vat'] = infoAccount.items[0].NDS;
+    data['delivery_name'] = infoAccount.account.Name;
+    let items_ids = [];
+    for (let element of $('#flight [name="item_flight"]')) {
+        items_ids.push($(element).attr('id').split('_')[2]);
+    }
+    data['delivery_item_ids'] = JSON.stringify(items_ids);
+    console.log(data);
+    $.ajax({
+        url: '/addDelivery',
+        type: 'GET',
+        data: data,
+        dataType: 'html',
+        success: function() {
+            list_items_acc = null;
+            list_stock_acc = null;
+            closeCardMenu(element.id);
+        }
+    });
+    
 }
 function transitProduct(element) {
     let products;
@@ -1581,81 +1671,6 @@ function createNewGroup() {
             getTableData(categoryInStock);
         }
     });
-}
-function makeRequest(element) {
-    let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
-    let data = {};
-    for (let i = 0; i < idCardFields[3].ids.length; i++) {
-        data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
-    }
-
-    if (infoAccount == undefined) {
-        var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
-        if (result) { return closeCardMenu(element.name) }
-        else { return };
-    }
-
-    let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
-    data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
-    data['delivery_date'] = getCurrentDate('year');
-    data['delivery_contact_end'] = +$('#delivery_contact_name').val();
-    data['delivery_contact_number'] = '';
-    data['delivery_contact_name'] = $('#delivery_driver').val();
-    data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
-    data['delivery_account_id'] = +$('#delivery_account')[0].value;
-    data['delivery_client'] = $('#delivery_client')[0].value;
-
-    let amounts = [];
-    for (let element of $('#flight #item_sum')) {
-        amounts.push(element.value);
-    }
-
-    data['delivery_amounts'] = JSON.stringify(amounts);
-
-    let payment_list = [];
-    for (let element of $('#group #delivery_date')) {
-        if ($(element).val() != '') {
-            payment_list.push({ date: $(element).val(), price: '' });
-            data['delivery_payment_date'] = $(element).val();
-        } else {
-            payment_list.push({ date: '', price: '' });
-        }
-    }
-    for (let i = 0; i < $('#group #delivery_price').length; i++) {
-        if ($('#group #delivery_price')[i].value != '') {
-            payment_list[i]['price'] = $('#group #delivery_price')[i].value;
-        } else if ($('#group #delivery_price')[i].value == '' && $('#group #delivery_date')[i].value == '') {
-            payment_list.splice(i, 1);
-        }
-    }
-
-    if (payment_list.length > 0) {
-        data['payment_list'] = JSON.stringify(payment_list);
-    } else {
-        data['delivery_payment_date'] = '';
-
-    }
-    data['delivery_prefix'] = infoAccount.items[0].Prefix;
-    data['delivery_price'] = infoAccount.account.Sum;
-    data['delivery_vat'] = infoAccount.items[0].NDS;
-    data['delivery_name'] = infoAccount.account.Name;
-    let items_ids = [];
-    for (let element of $('#flight [name="item_flight"]')) {
-        items_ids.push($(element).attr('id').split('_')[2]);
-    }
-    data['delivery_item_ids'] = JSON.stringify(items_ids);
-    $.ajax({
-        url: '/addDelivery',
-        type: 'GET',
-        data: data,
-        dataType: 'html',
-        success: function() {
-            list_items_acc = null;
-            list_stock_acc = null;
-            closeCardMenu(element.id);
-        }
-    });
-    
 }
 function selectDrivers(value, select = {Contact_Name: ''}) {
     $.ajax({

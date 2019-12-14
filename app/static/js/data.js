@@ -248,12 +248,6 @@ const subcategoryButtons = [
     ]
 ];
 
-// Регионы и их районы, с которыми работает компания
-const regions = [
-    { name: 'Алтайский край', areas: ['Баевскиц район', 'Благовещенский район', 'Михайловский район', 'Третьяковский район', 'Солонешенский районе'] },
-    { name: 'Новосибирская область', areas: ['Новосибирский район', 'Коченевский район', 'Ордынский район', 'Красноозерский район', 'Колыванский район'] },
-]
-
 // Данные по кнопкам меню, для перехода на соответствующую категорию
 const linkCategoryInfo = [
     { id: 'category-0', src: 'static/images/list.png', name: 'Рабочий стол', subcategories: [categoryInListClient, categoryInListProvider, categoryInListCarrier], number: 0, subid: ['client', 'provider', 'carrier'] },

@@ -409,7 +409,7 @@ $('#search_dropMenu').click(function() {
         $('.drop_down_search').remove();
     } else {
         $(`.drop-down, #search_dropMenu`).addClass('active');
-        createDropMenu();
+        createRegionMenu();
     }
 });
 

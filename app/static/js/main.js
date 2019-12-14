@@ -1,7 +1,5 @@
 let socket = io();
 
-
-
 $(document).ready(function() {
     addButtonsSubcategory(0);
     getTableData(categoryInListClient);
@@ -106,6 +104,8 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
+                    $(`.drop-down, #search_dropMenu`).removeClass('active');
+                    $('.drop_down_search').remove();
                     $.ajax({
                         url: '/getUsers',
                         type: 'GET',
@@ -488,6 +488,43 @@ $('#search_button').click(function() {
     searchCategoryInfo();
 })
 
+function cancelSearch() {
+    getTableData(saveTableAndCard);
+    $('.centerBlock .header .cancel').remove();
+    $('#search').val('');
+}
+
+function searchFill(element) {
+    let search = $(element).html();
+    let data = saveTableAndCard[1][1];
+    let listData = [
+        { id: 'client', list: 'Rayon', filter: filterClient },
+        { id: 'provider', list: 'Rayon', filter: filterProvider },
+        { id: 'carrier', list: 'Region', filter: filterCarrier },
+    ]
+    let searchCards = [];
+    for (let i = 0; i < listData.length; i++) {
+        if (listData[i].id == saveTableAndCard[0].id) {
+            for (let j = 0; j < data.length; j++) {
+                let string = String(data[j][listData[i].list]).toLowerCase();
+                if (string.includes(search.toLowerCase())) {
+                    searchCards.push(data[j]);
+                }
+            }
+            listData[i].filter[1][1] = searchCards;
+            $('.table').remove();
+            $('.info').append(fillingTables(listData[i].filter, true));
+            break;
+        }
+    }
+    $('.centerBlock .header .cencel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
+
 function searchCategoryInfo() {
     let searchInfo = $('#search').val();
     let data = saveTableAndCard[1][1];
@@ -551,4 +588,10 @@ function searchCategoryInfo() {
             break;
         }
     }
+    $('.centerBlock .header .cencel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
 }
