@@ -237,7 +237,17 @@ function dataСalculation(element) {
     let delivery = $('#total_delivery_inv').val();
     let sum = +sale + +privet + +delivery;
     $('#total_costs_inv').val(sum);
-    all_costs();
+
+    let total_costs = $('#total_costs_inv').val();
+
+    let count = 0;
+    for (let element of $('#exposed_list .invoiled')) {
+        count++;
+    }
+    for (let element of $('#exposed_list .invoiled')) {
+        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
+    }
+    calculationIndicators();
 }
 function calculationIndicators() {
     let list = [
@@ -434,22 +444,22 @@ function invoicingContentCard(elem, data) {
                 class: 'costs gray',
                 html: ` <div class="costs_element">
                             <span>Всего затраты</span>
-                            <input type="number" onkeyup="all_costs()"  id="total_costs_inv" value="0" class="total_count red bold mrl">
+                            <input type="number" onkeyup="all_costs()"  id="total_costs_inv" class="total_count red bold mrl">
                             <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
                         </div> 
                         <div class="costs_element">
                             <span>Скидка</span> 
-                            <input type="number" onkeyup="calculationIndicators()" value="0" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Привет</span> 
-                            <input type="number" onkeyup="calculationIndicators()" value="0" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Доставка</span> 
-                            <input type="number" onkeyup="calculationIndicators()" value="0" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>`,
             })
@@ -568,15 +578,20 @@ function invoiceInTable(element) {
 }
 function tarCalculation(id) {
     let idElement = id.split('_')[2];
-    let volume = $(`#${id}`).val();
-    let weight = $(`#product_weight_${idElement}`).html();
-    let unit = Math.round($(`#product_cost_${idElement}`).html() / volume).toFixed(2);
-    let amount = Math.round($(`#product_cost_${idElement}`).html() * volume).toFixed(2);
+    let volume = +$(`#${id}`).val();
+    let weight = +$(`#product_weight_${idElement}`).html();
+    let unit = Math.round(+$(`#product_cost_${idElement}`).html() / volume).toFixed(2);
+    let amount = Math.round(+$(`#product_cost_${idElement}`).html() * volume).toFixed(2);
+    let count = 0;
+    for (let element of $('#exposed_list .invoiled')) {
+        count++
+    }
+    let average_costs = Math.ceil(+$('#total_costs_inv').val() / count);
 
     $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
     $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
-    $(`#calcSum_${idElement}`).html(amount);
-    all_costs();
+    $(`#calcSum_${idElement}`).html(+amount + average_costs);
+    calculationIndicators();
 }
 function all_costs() {
     let total_costs = $('#total_costs_inv').val();
@@ -601,7 +616,6 @@ function all_costs() {
     for (let element of $('#exposed_list .invoiled')) {
         count++;
     }
-    console.log(count);
     for (let element of $('#exposed_list .invoiled')) {
         $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
     }
