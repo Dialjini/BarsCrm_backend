@@ -1394,13 +1394,13 @@ function createCardMenu(element, index = 0) {
                 <table class="table_block" style="margin-bottom: 15px;">
                     <tr>
                         <td><input id="create_stock" type="text" style="width: 240px; margin-right: 15px;" placeholder="Адрес склада"></td>
-                        <td><button class="btn btn-main btn-add-items" onclick="createNewStock()">Создать</button></td>
+                        <td><button class="btn btn-main" onclick="createNewStock()">Создать</button></td>
                     </tr>
                 </table>
                 <table class="table_block">
                     <tr>
                         <td><input id="create_group" type="text" style="width: 240px; margin-right: 15px;" placeholder="Группа товаров"></td>
-                        <td><button class="btn btn-main btn-add-items" onclick="createNewGroup()">Создать</button></td>
+                        <td><button class="btn btn-main" onclick="createNewGroup()">Создать</button></td>
                     </tr>
                 </table>
             </div>

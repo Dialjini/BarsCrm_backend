@@ -230,6 +230,7 @@ function taskCreate(tasks = 'new') {
                 }
                 $('#tasks_list .empty').remove();
                 $('#current_tasks').empty();
+                $('#expired_tasks').empty();
                 if ($('#task_whom').val() == data.id) {
                     $('#current_tasks').append(
                         $('<div>', {
