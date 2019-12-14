@@ -759,7 +759,7 @@ function createCardMenu(element, index = 0) {
                     <tr class="product" id="product_${list_items[i].Item_id}">
                         <td>${list_items[i].Name}</td>
                         <td>${list_items[i].Packing}</td>
-                        <td>${list_items[i].Weight} кг.</td>
+                        <td>${list_items[i].Weight}</td>
                         <td>${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
                         <td>${list_items[i].Transferred_volume}</td>
                         <td>${list_items[i].Cost}</td>

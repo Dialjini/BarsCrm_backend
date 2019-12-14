@@ -235,10 +235,9 @@ function dataСalculation(element) {
     let sale = $('#total_discount_inv').val();
     let privet = $('#total_privet_inv').val();
     let delivery = $('#total_delivery_inv').val();
-    if ((total == '' || total == '0') && (sale != '' && privet != '' && delivery != '')) {
-        let sum = +sale + +privet + +delivery;
-        $('#total_costs_inv').val(sum);
-    }
+    let sum = +sale + +privet + +delivery;
+    $('#total_costs_inv').val(sum);
+    all_costs();
 }
 function calculationIndicators() {
     let list = [
@@ -259,14 +258,15 @@ function calculationIndicators() {
                         let totalSale = (+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
                         let totalPrivet = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
                         let totalDelivery = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        $(`#calcSale_${data[j].items[k].Item_id}`).html(isNaN(totalSale) || totalSale == Infinity ? '' : totalSale);
-                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity ? '' : totalPrivet);
-                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity ? '' : totalDelivery);
+
+                        $(`#calcSale_${data[j].items[k].Item_id}`).html(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : totalSale);
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
 
                         let sum = 0;
-                        $('#exposed_list .invoiled').each(function(i, element) {
+                        for (let element of $('#exposed_list .invoiled')) {
                             sum += +$(element).children()[11].innerHTML;
-                        });
+                        }
                         data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
                         let vat = sum > 0 ? sum - ((sum * +data[j].items[k].NDS) / 100) : 0;
                         $('#total').html(Math.round(sum));
@@ -434,22 +434,22 @@ function invoicingContentCard(elem, data) {
                 class: 'costs gray',
                 html: ` <div class="costs_element">
                             <span>Всего затраты</span>
-                            <input type="number" id="total_costs_inv" class="total_count red bold mrl">
+                            <input type="number" onkeyup="all_costs()"  id="total_costs_inv" value="0" class="total_count red bold mrl">
                             <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
                         </div> 
                         <div class="costs_element">
                             <span>Скидка</span> 
-                            <input type="number" onkeyup="calculationIndicators()" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" value="0" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Привет</span> 
-                            <input type="number" onkeyup="calculationIndicators()" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" value="0" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Доставка</span> 
-                            <input type="number" onkeyup="calculationIndicators()" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
+                            <input type="number" onkeyup="calculationIndicators()" value="0" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>`,
             })
@@ -463,7 +463,7 @@ function invoicingContentCard(elem, data) {
             prepend: $('<button>', {
                 class: 'btn',
                 id: elem.id + '-inv',
-                onclick: 'comeBack(this)',
+                onclick: 'comeBack(this.id)',
                 html: 'Назад'
             }),
             append: $('<button>', {
@@ -572,9 +572,39 @@ function tarCalculation(id) {
     let weight = $(`#product_weight_${idElement}`).html();
     let unit = Math.round($(`#product_cost_${idElement}`).html() / volume).toFixed(2);
     let amount = Math.round($(`#product_cost_${idElement}`).html() * volume).toFixed(2);
+
     $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
     $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
     $(`#calcSum_${idElement}`).html(amount);
+    all_costs();
+}
+function all_costs() {
+    let total_costs = $('#total_costs_inv').val();
+    
+    let amount = 3, disableValue = 0;
+    for (let i = 0; i < list_inv.length; i++) {
+        if (list_inv[i].disable) {
+            amount--;
+            disableValue += +$(`#${list_inv[i].id}`).val();
+        }
+    }
+    let value = $('#total_costs_inv').val() - disableValue;
+    if (typeof value == typeof '') return;
+    let averageValue = Math.round(value / amount);
+    for (let i = 0; i < list_inv.length; i++) {
+        if (!list_inv[i].disable) {
+            $(`#${list_inv[i].id}`).val(averageValue);
+        }
+    }
+
+    let count = 0;
+    for (let element of $('#exposed_list .invoiled')) {
+        count++;
+    }
+    console.log(count);
+    for (let element of $('#exposed_list .invoiled')) {
+        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
+    }
     calculationIndicators();
 }
 function returnBack(element) {
