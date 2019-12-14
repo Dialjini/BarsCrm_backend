@@ -243,13 +243,11 @@ function createCardMenu(element, index = 0) {
         }
     } else if (getInfo[0] == 'account') {
         let payment_list;
-        console.log(selectedLine.account.Payment_history);
         if (selectedLine.account.Payment_history != undefined) {
             payment_list = JSON.parse(selectedLine.account.Payment_history);
         } else {
             payment_list = [{position: '', date: '', sum: ''}];
         }
-        console.log(payment_list);
         for (let i = 0; i < payment_list.length; i++) {
             addRow('account-group', payment_list[i]);
         }
@@ -978,7 +976,6 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
-        console.log(selectedLine);
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -1594,11 +1591,11 @@ function makeRequest(element) {
 
     if (infoAccount == undefined) {
         var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
-        if (result) { return closeCardMenu(element.id) }
+        if (result) { return closeCardMenu(element.name) }
         else { return };
     }
 
-    let idDelivery = element.id.split('_');
+    let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
     data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
     data['delivery_date'] = getCurrentDate('year');
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
@@ -1647,7 +1644,6 @@ function makeRequest(element) {
         items_ids.push($(element).attr('id').split('_')[2]);
     }
     data['delivery_item_ids'] = JSON.stringify(items_ids);
-    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -1893,7 +1889,6 @@ function getTitleInfo(element, selectedLine) {
                     data = JSON.parse(result);
                 }
             });
-            console.log(selectedLine);
             if (!selectedLine.Manager_active) {
                 function listManager() {
                     let ul = $('<ul>', { class: 'list'});

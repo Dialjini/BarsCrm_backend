@@ -200,7 +200,20 @@ function arrangeDelivery(element) {
     list_stock_acc = $(element).attr('data-stock');
     list_items_acc = $(element).attr('data-items').split(',');
     closeModal();
-    categoryInFinanceAccount[0].lastCard[0] = null;         
+    categoryInFinanceAccount[0].lastCard[0] = null;
+    categoryInFinanceAccount[1].pop();
+    $.ajax({
+        url: '/getAccounts',
+        type: 'GET',
+        async: false,
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);
+            if (categoryInFinanceAccount[1][1] == undefined) {
+                categoryInFinanceAccount[1].push(data);
+            } 
+        }
+    });            
     createDelCardMenu(element);
 }
 // Заполнение объема в карточке категории Склад для переноса груза из одного склада в другой
@@ -834,7 +847,6 @@ function visOrHidContact(idElem) {
         $(`#member_${id[1]} #last_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #first_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #email`).attr('disabled', 'disabled')
-        console.log(idElem);
         $(`#hidden_${id[1]}`).empty();
         $(`#hidden_${id[1]}`).append($('<img>', { src: '../static/images/hidden.png' }));
 
@@ -975,7 +987,6 @@ function addRow(id, selectedLine = '') {
 
     for (let i = 0; i < tableInfo.length; i++) {
         if (id == tableInfo[i].id) {
-            console.log(tableInfo[i].tbody)
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             break;
@@ -1074,7 +1085,6 @@ function selectManagerInCard(element) {
     closeCardMenu(idCard);
     idCard = idCard.split('_');
 
-    console.log(idManager, idCard);
     $.ajax({
         url: '/addManagerToCard',
         type: 'GET',

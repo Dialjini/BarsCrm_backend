@@ -230,8 +230,37 @@ function saveInfoCard(id, close = false, elem = null) {
     if (card !== 'contract') {
         if (!checkEmail()) return
     }
+
+    if (data[0] == 'account') {
+        let idAccount = card;
+        let payment_history = [];
+
+        for (let tr of $('#group tr')) {
+            let position = $(tr)[0].children[0].children[0].value;
+            let date = $(tr)[0].children[1].children[0].value;
+            let sum = $(tr)[0].children[2].children[0].value;
+            payment_history.push({position: position, date: date, sum: sum})
+        }
+
+        if (payment_history.length == 0) {
+            payment_history.push({position: '', date: '', sum: ''})
+        }
+
+        $.ajax({
+            url: '/addAccountPaymentHistory',
+            data: {account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)},
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function() {
+
+            }
+        });
+        getTableData(saveTableAndCard);
+        return;
+    }
                                                      // Временно, пока не будет заполнение счетов и дебита
-    if (card === 'contract' || data[0] == 'stock' || data[0] == 'account' || data[0] == 'debit') {
+    if (card === 'contract' || data[0] == 'stock' || data[0] == 'debit') {
         getTableData(saveTableAndCard);
         return;
     }

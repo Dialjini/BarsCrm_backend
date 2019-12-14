@@ -17,7 +17,6 @@ let rowFilling = (object, id, table) => {
                             data = JSON.parse(result);
                         }
                     });
-                    console.log(data);
                     if (data.role == 'admin') {
                         return `<button class="btn btn-main btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>`
                     }

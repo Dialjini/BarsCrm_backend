@@ -260,7 +260,6 @@ function userInfo(element) {
             data = JSON.parse(data);
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id == element.id) {
-                    console.log(data[i]);
                     $('.table, .card_menu').remove();
                         $('.info').append(`
                         <div class="card_menu persons" id="card_menu">
@@ -358,7 +357,6 @@ function editMember(idMember) {
         success: function(result) {
             result = JSON.parse(result);
             for (let i = 0; i < result.length; i++) {
-                console.log(idMember, result[i].id)
                 if (result[i].id == +idMember) {
                     let data = {};
                     data['create_patronymic'] = $('#edit_patronymic').val();
