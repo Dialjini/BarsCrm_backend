@@ -12,6 +12,9 @@ socketio = SocketIO(app)
 if __name__ == '__main__':
     socketio.run(app)
 
+
+usernames = {}
+
 class Inside_date:
     def __init__(self, d, m, y):
         months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа',
@@ -19,6 +22,21 @@ class Inside_date:
         self.d = d
         self.m = months[m - 1]
         self.y = y
+
+
+@socketio.on('connection')
+def user_connected():
+    print("user connect")
+
+@socketio.on('add user')
+def add_user(data):
+    global usernames
+    print("add user")
+    print(data)
+    session['username'] = data
+    usernames[data] = session['username']
+
+    emit('user joined', {'username': session['username']}, broadcast= True)
 
 
 def sendTasks():
@@ -36,7 +54,7 @@ def sendTasks():
                 tasks.append(json.loads(table_to_json([i]))[0])
         except Exception as er:
             print(er)
-    emit('showTasks', json.dumps(tasks))
+    emit('showTasks', json.dumps(tasks), broadcast= True)
 
 
 
@@ -52,7 +70,7 @@ def addTask(message):
 
     db.session.add(task)
     db.session.commit()
-    emit('refreshTasks', room='all')
+    emit('refreshTasks')
 
 
 @socketio.on('showTasks')
@@ -150,7 +168,7 @@ def auth():
 
         if user.password == password:
             session['username'] = login
-            join_room('all')
+            # join_room('all')
             return redirect('/', code=302)
 
         return json.dumps({'message': 'Неверный пароль', 'success': False})
