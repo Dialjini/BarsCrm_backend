@@ -121,14 +121,13 @@ function taskCreate(tasks = 'new') {
 
                     let second_date_arr = datetime_regex.exec(secondDate);
                     let second_datetime = new Date(second_date_arr[3], second_date_arr[2], second_date_arr[1], second_date_arr[4], second_date_arr[5]);
-
                     if (first_datetime.getTime() > second_datetime.getTime()) {
                         $('#tasks_list .empty').remove();
                         $('#current_tasks').prepend(
                             $('<div>', {
                                 class: 'item',
-                                name: `task_id`,
-                                onclick: `editTask(this.name)`,
+                                name: `task_${tasks[i].Task_id}`,
+                                onclick: `completeTask(this)`,
                                 append: $('<img>', {
                                     src: `static/images/${tasks[i].Type}.svg`,
                                     class: 'importance'
@@ -164,8 +163,8 @@ function taskCreate(tasks = 'new') {
                         $('#expired_tasks').prepend(
                             $('<div>', {
                                 class: 'item',
-                                name: `task_id`,
-                                onclick: `editTask(this.name)`,
+                                name: `task_${tasks[i].Task_id}`,
+                                onclick: `completeTask(this)`,
                                 append: $('<img>', {
                                     src: `static/images/${tasks[i].Type}.svg`,
                                     class: 'importance'
@@ -234,8 +233,8 @@ function taskCreate(tasks = 'new') {
                     $('#current_tasks').append(
                         $('<div>', {
                             class: 'item',
-                            name: `task_id`,
-                            onclick: `editTask(this.name)`,
+                            name: `task_new`,
+                            onclick: `completeTask(this)`,
                             append: $('<img>', {
                                 src: `static/images/${taskInfo.task_type}.svg`,
                                 class: 'importance'
@@ -331,15 +330,57 @@ function сheckSelectedRadioBox() {
         }
     }
 }
-function editTask(id) {
-    // $.ajax({
-    //     url: '/getTask',
-    //     type: 'GET',
-    //     data: {id: id},
-    //     dataType: 'html',
-    //     success: function(data) { createCT('addTask', JSON.parse(data)); },
-    // });
+function completeTask(element) {
+    $(element).addClass('complete');
+    let id = $(element).attr('name').split('_');
+    socket.emit('showTasks');
+ 
+    socket.on('showTasks', function(data) {
+        checkTask(data)
+    });
+
+    let idTask;
+    function checkTask(data) {
+        data = JSON.parse(data);
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].Task_id == id[1]) {
+                idTask = id[1];
+            }
+        }
+
+        for (let element of $('#current_tasks .item')) {
+            $('#current_tasks').empty();
+            break;
+        }
+        for (let element of $('#expired_tasks .item')) {
+            $('#expired_tasks').empty();
+            break;
+        }
+        if (idTask == undefined) {
+            return;
+        }
+    
+        createCT('completeTask', idTask);
+    }
 }
+
+function createCompleteForm(value) {
+    return `
+        <div class="create_empty_card mr">
+            <div class="title mra">Задача выполнена?</div>
+            <div class="select">
+                <button class="btn" id="${value}" onclick="removeTask(this.id)">Да</button>
+                <button class="btn btn-main" id="${value}" onclick="createCTButtons()">Нет</button>
+            </div>
+        </div>
+    `
+}
+
+function removeTask(id) {
+    // Запрос на удаление таска по id
+    createCTButtons();
+}
+
 // Создание кнопок Отменить и Добавить
 function createCT(id, values = 'empty') {
     // id - id кнопки
@@ -351,6 +392,8 @@ function createCT(id, values = 'empty') {
         if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: ''}
         $('#createCT').append(createContactsFormTask(values));
         $('#task_date').datepicker({minDate: new Date(), position: 'left top', autoClose: true})
+    } else if (id == 'completeTask') {
+        $('#createCT').append(createCompleteForm(values));
     }
     //$('#task_type').attr('onchange', 'selectTypeTask()')
     $('#task_type').append(`
