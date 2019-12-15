@@ -214,14 +214,13 @@ function taskCreate(tasks = 'new') {
                     if (date.split('.').length != 3) {
                         return alert('Введите дату в формате дд.мм.гггг или дд.мм.гг')
                     }
-    
-                    if (time.split(':').length != 2) {
-                        return alert('Введите время в формате чч:мм')
+                    if (time == '') {
+                        taskInfo.task_time = '00:00'
                     }
                 } catch {
                     return alert('Проверьте введенные данные!')
                 }
-
+                console.log(taskInfo)
                 socket.emit('addTask', {data: taskInfo});
                 function typeTask() {
                     if (taskInfo.task_type == 'phone') return 'Звонок';

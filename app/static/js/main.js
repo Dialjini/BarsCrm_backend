@@ -119,7 +119,6 @@ function getTableData(table, input = false, close = false) {
                             }
                         }
                     });
-                    ;
                 }
             }
         }
@@ -260,9 +259,7 @@ function saveInfoCard(id, close = false, elem = null) {
             type: 'GET',
             async: false,
             dataType: 'html',
-            success: function() {
-
-            }
+            success: function() {}
         });
         getTableData(saveTableAndCard);
         return;
@@ -365,6 +362,7 @@ function saveInfoCard(id, close = false, elem = null) {
         $.ajax({
             url: '/addContacts',
             type: 'GET',
+            async: false,
             data: {category: data[0], id: card, contacts: JSON.stringify(members)},
             dataType: 'html',
             success: function() {
@@ -374,8 +372,11 @@ function saveInfoCard(id, close = false, elem = null) {
                 getTableData(saveTableAndCard, false, close);
             }
         });
-
+        
         function removeCard(elem) {
+            if ($('.close').is('#client_close_card_new')) {
+                $('#client_close_card_new').attr('id', `client_close_card_${saveTableAndCard[1][1].length + 1}`)
+            }
             $('.card_menu').remove();
             $('.info').append($('<div>', {
                 class: 'card_menu',
@@ -402,6 +403,8 @@ let getCommentsInfo = (function() {
     return {
         getRequest: function (data) {
             if (typeof data === typeof '') {
+                console.log(1);
+
                 // Сохраняем комментарий
                 let list = {
                     comment_date: $('#comment_date').val(),
@@ -429,6 +432,7 @@ let getCommentsInfo = (function() {
                     data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
                     dataType: 'html',
                     success: function(result) {
+                        console.log(2);
                         getComments()
                     }
                 });
@@ -519,7 +523,7 @@ function searchFill(element) {
             break;
         }
     }
-    $('.centerBlock .header .cencel').remove();
+    $('.centerBlock .header .cancel').remove();
     $('.centerBlock .header').append(`
         <div class="cancel">
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -592,7 +596,7 @@ function searchCategoryInfo() {
             break;
         }
     }
-    $('.centerBlock .header .cencel').remove();
+    $('.centerBlock .header .cancel').remove();
     $('.centerBlock .header').append(`
         <div class="cancel">
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>

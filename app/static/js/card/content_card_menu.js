@@ -290,18 +290,19 @@ function calculationIndicators() {
 }
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
-    function getUsername() {
-        if (username == undefined) {
-            return `<td class="bold">Менеджер</td><td>Не выбран</td>`
-        } else {
-            return `<td class="bold">Менеджер</td><td>${username}</td>`
-        }
-    }
     return `
         <div class="row_card column">
             <table class="fit gray">
                 <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
-                <tr>${getUsername()}</tr>
+                <tr>
+                    <td class="bold">Юр. лицо</td><td>
+                        <select>
+                            <option selected disabled value="">Не выбрано</option>
+                            <option value="ООО">ООО</option>
+                            <option value="ИП">ИП</option>
+                        </select>
+                    </td>
+                </tr>
             </table>
             <div class="list" id="list_contract">
 
@@ -1176,5 +1177,7 @@ function detachmentCard(element) {
 }
 // Сохранение изменений в карточке
 function saveCard() {
-    saveTableAndCard[0].lastCard[0] = $('#card_menu');
+    if ($('#card_menu').html() != undefined) {
+        saveTableAndCard[0].lastCard[0] = $('#card_menu');
+    }
 }

@@ -245,7 +245,52 @@ let rowFilling = (object, id, table) => {
 function sortTableByManagers(element) {
     let searchWord = element.innerHTML;
     console.log(searchWord);
-    // Сортировать таблицу по searchWord;
+    $('.centerBlock .header .cancel').remove();
+
+    let managers;
+    $.ajax({
+        url: '/getUsers',
+        type: 'GET',
+        async: false,
+        dataType: 'html',
+        success: function(result) {
+            managers = JSON.parse(result);
+        }
+    });
+
+    for (let i = 0; i < managers.length; i++) {
+        if (managers[i].role == 'manager' && managers[i].second_name == searchWord) {
+            let search = managers[i].id;
+            let data = saveTableAndCard[1][1];
+            let listData = [
+                { id: 'client', list: 'Manager_id', filter: filterClient },
+                { id: 'provider', list: 'Manager_id', filter: filterProvider },
+                { id: 'carrier', list: 'Manager_id', filter: filterCarrier },
+            ]
+            let searchCards = [];
+            for (let i = 0; i < listData.length; i++) {
+                if (listData[i].id == saveTableAndCard[0].id) {
+                    for (let j = 0; j < data.length; j++) {
+                        let string = data[j][listData[i].list];
+                        if (string == search) {
+                            searchCards.push(data[j]);
+                        }
+                    }
+                    listData[i].filter[1][1] = searchCards;
+                    $('.table').remove();
+                    $('.info').append(fillingTables(listData[i].filter, true));
+                    break;
+                }
+            }
+            $('.centerBlock .header .cancel').remove();
+            $('.centerBlock .header').append(`
+                <div class="cancel">
+                    <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+                </div>
+            `)
+            break;
+        }
+    }
 }
 function selectManager(element) {
     function listManager() {
