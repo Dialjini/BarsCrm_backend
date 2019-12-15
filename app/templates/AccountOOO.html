@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        @font-face {
+            font-family: 'Montserrat';
+            src: url("{{path}}\static\fonts\Montserrat-Regular.ttf");
+            font-weight: normal;
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            src: url("{{path}}\static\fonts\Montserrat-Bold.ttf");
+            font-weight: bold;
+        }
+        html, body {
+            font-family: 'Montserrat', sans-serif;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-size: 13px;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+        }
+        .title {
+            text-align: center;
+            width: 700px;
+            margin: 20px auto;
+            font-size: 10px;
+        }
+        .table {
+            width: 750px;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .next {
+            margin-top: -1px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .table td, .table th {
+            height: 20px;
+            border: 1px solid #cecece;
+        }
+        .table td {
+            padding-left: 15px;
+        }
+        .bb {
+            border: none;
+            border-bottom: 1px solid #cecece;
+            width: 200px;
+            text-align: right;
+        }
+        .under {
+            text-decoration: underline;
+        }
+        .flex {
+            display: flex;
+            justify-content: space-between;
+        }
+        .account {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <div class="title">Внимание! Оплата данного счета означает согласие с условиями поставки товара. Уведомление об оплате
+            обязательно, в противном случае не гарантируется наличие товара на складе. Товар отпускается по факту
+            прихода денег на р/с Поставщика, самовывозом, при наличии доверенности и паспорта.</div>
+    <table class="table">
+        <tr>
+            <td width="350" rowspan="2" colspan="2">ФИЛИАЛ СИБИРСКИЙ ПАО БАНКА "ФК ОТКРЫТИЕ" Г.
+                НОВОСИБИРСК</td>
+            <td>БИК</td>
+            <td>045004867</td>
+        </tr>
+        <tr>
+            <td>Сч. №</td>
+            <td>30101810250040000867</td>
+        </tr>
+        <tr>
+            <td>ИНН 5406504400</td>
+            <td>КПП 540301001</td>
+            <td>Сч. №</td>
+            <td>40702810508230008942</td>
+        </tr>
+        <tr>
+            <td rowspan="2" colspan="2">ООО "Барс"</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    <div class="account">Счет на оплату No 250 от 13 декабря 2019</div>
+    <hr noshade size="2" color="black">
+    <table>
+        <tr>
+            <td style="padding-right: 10px;">Поставщик:</td>
+            <td style="padding-top: 18px;" class="bold">ООО "Барс", ИНН 5406504400, КПП 540301001, Новосибирская обл, Новосибирск г, Сибиряков-Гвардейцев, 45,
+                офис 409, 8(383)286-20-65, 8-913-469-89-89, 8-913-380-40-16</td>
+        </tr>
+        <tr>
+            <td style="padding-right: 10px;">Покупатель:</td>
+            <td style="padding-top: 18px;" class="bold">ООО "Агрофирма "Нива", ИНН 2245003323, КПП 224501001, 659410, Алтайский край, Зональный район, село
+                    Шубенка, улица Ленина, 15</td>
+        </tr>
+    </table>
+    <br><br>
+    <table class="table">
+        <tr>
+            <th>№</th>
+            <th>Товары (работы, услуги)</th>
+            <th>Ед. изм</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Сумма</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Соя полножирная (экструдированная)</td>
+            <td>кг</td>
+            <td>4480</td>
+            <td>39,10</td>
+            <td>175 168,00</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Жмых подсолнечный</td>
+            <td>кг</td>
+            <td>5520</td>
+            <td>15,10</td>
+            <td>83 352,00</td>
+        </tr>
+        <tr>
+            <td colspan="3">Итого:</td>
+            <td>10000</td>
+            <td></td>
+            <td>258 520,00</td>
+        </tr>
+    </table>
+    <br><br>
+    <p>Всего наименований на сумму:</p>
+    <p>Шестьсот сорок тысяч рублей 00 копеек, в т. ч. НДС 20% - 106 666 руб. 67 коп.</p>
+    <hr noshade size="2" color="black">
+    <br>
+    <div class="flex">
+        <div class="flex"><div>Руководитель</div><div class="bb"></div></div>
+        <div><div class="bb">Бушмелева Н.В.</div></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        @font-face {
+            font-family: 'Montserrat';
+            src: url("{{path}}\static\fonts\Montserrat-Regular.ttf");
+            font-weight: normal;
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            src: url("{{path}}\static\fonts\Montserrat-Bold.ttf");
+            font-weight: bold;
+        }
+        html, body {
+            font-family: 'Montserrat', sans-serif;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-size: 13px;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+        }
+        .title {
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .table {
+            width: 750px;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .next {
+            margin-top: -1px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        .table td, .table th {
+            height: 20px;
+            border: 1px solid #cecece;
+        }
+        .table td {
+            padding-left: 15px;
+        }
+        .bb {
+            border: none;
+            border-bottom: 1px solid #cecece;
+            width: 200px;
+        }
+        .under {
+            text-decoration: underline;
+        }
+        .flex {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <p>Продавец: Индивидуальный предприниматель Балкина Ирина Николаевна</p>
+    <p>Адрес: г.Новосибирск, ул.Ветлужская д.30, кВ. 209</p>
+    <p>ИНН: 540863594080</p>
+    <p>Расчетный счет: 40802810570010144473</p>
+    <p>Кор. счет: 30101810645250000092</p>
+    <p>БИК: 044525092</p>
+    <p>Банк: МОСКОВСКИЙ ФИЛИАЛ АО КБ "МОДУЛЬБАНК"</p>
+    <br>
+    <p>Покупатель: АО "Заречное"</p>
+    <p>Адрес: 630099, г.Новосибирск, ул.Чаплыгина, д.93, эт.2, КАБИНЕТ 16</p>
+    <p>ИНН: 5443101173</p>
+    <p>КПП: 540601001</p>
+    <p>Расчетный счет: 40702810425130000237</p>
+    <p>Кор. счет: 30101810700000000784</p>
+    <p>БИК: 045004784</p>
+    <p>Банк: НОВОСИБИРСКИЙ РФ АО "РОССЕЛЬХОЗБАНК" Г. Новосибирск</p>
+    <div class="title bold">Счет № 136 от 13.12.2019</div>
+    <table class="table">
+        <tr>
+            <th>№</th>
+            <th>Наименование</th>
+            <th>Ед. изм</th>
+            <th>Кол-во</th>
+            <th>Цена</th>
+            <th>Сумма</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Соя полножирная (экструдированная)</td>
+            <td>кг</td>
+            <td>4480</td>
+            <td>39,10</td>
+            <td>175 168,00</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Жмых подсолнечный</td>
+            <td>кг</td>
+            <td>5520</td>
+            <td>15,10</td>
+            <td>83 352,00</td>
+        </tr>
+        <tr>
+            <td colspan="3">Итого:</td>
+            <td>10000</td>
+            <td></td>
+            <td>258 520,00</td>
+        </tr>
+    </table>
+    <p>Сумма прописью: Двести пятьдесят восемь тысяч пятьсот двадцать рублей 00 копеек. Без НДС.</p>
+    <br><br>
+    <div class="flex">
+        <div class="flex"><div>Руководитель предприятия</div><div class="bb"></div></div>
+        <div class="flex"><div>Бухгалтер</div><div class="bb"></div></div>
+    </div>
+</body>
+</html>
