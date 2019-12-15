@@ -172,6 +172,7 @@ let rowFilling = (object, id, table) => {
 
             for (let j = 0; j < deliveryTable.length; j++) {
                 if (deliveryTable[j].delivery.Account_id == i + 1) {
+                    console.log(deliveryTable[j].delivery);
                     first_date = deliveryTable[j].delivery.Start_date;
                     break;
                 }

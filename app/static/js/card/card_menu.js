@@ -154,7 +154,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
-                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list']}
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -976,6 +976,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
+        console.log(selectedLine);
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -1261,13 +1262,13 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td>Марка авто</td>
                                 <td>
-                                    <input type="text" style="width: 200px" id="delivery_car">
+                                    <input type="text" style="width: 200px" value="${selectedLine.Auto}" id="delivery_car">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Паспортные данные</td>
                                 <td>
-                                    <input type="text" style="width: 200px" id="delivery_passport">
+                                    <input type="text" style="width: 200px" value="${selectedLine.Passport_data}" id="delivery_passport">
                                 </td>
                             </tr>
                         </table>
