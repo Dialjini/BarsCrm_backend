@@ -6,8 +6,6 @@ import json
 from xhtml2pdf import pisa
 import os
 from datetime import datetime
-from num2t4ru import num2text
-
 
 socketio = SocketIO(app)
 
@@ -122,11 +120,9 @@ def to_PDF(owner, name, delivery):
     document.MonthNum = document.getMonthNum()
     document.OGRN = info['data']['ogrn']
 
-    account = models.Account.query.filter_by(id=delivery.Account_id).first()
     if delivery != '':
         Client = models.Client.query.filter_by(Name=delivery.Client).first()
-        Delivery_client_info = {'Name': Client.Name, 'Address': Client.Adress,
-                                'Sum2text': num2text(account.Sum), 'Sum': account.Sum}
+        Delivery_client_info = {'Name': Client.Name, 'Address': Client.Adress}
     else:
         Delivery_client_info = ''
 

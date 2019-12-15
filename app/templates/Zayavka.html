@@ -112,17 +112,17 @@
                 <td width="193" class="bold">Паспортные данные</td>
             </tr>
             <tr>
-                <td>owner.</td>
+                <td>{{delivery.Auto}}</td>
                 <td>Кошеваров Юрий Николаевич тел 8-912-688-71-81.</td>
-                <td>65 13 № 743632 выдан ОУФМС по Свердловской области в г. Первоуральске 21.01.2014 в/у 99 02 640834</td>
+                <td>{{delivery.Passport_data}}</td>
             </tr>
             <tr>
                 <td>Адрес погрузки</td>
-                <td class="bold" colspan="3">Куйбышев. Омская 1</td>
+                <td class="bold" colspan="3">{{delivery.Stock}}</td>
             </tr>
             <tr>
                 <td>Тел/факс, Конт. лицо</td>
-                <td class="bold" colspan="3">8-913-473-34-25 Дмитрий</td>
+                <td class="bold" colspan="3"></td>
             </tr>
         </table>
         <table class="table next">
@@ -131,19 +131,19 @@
             </tr>
             <tr>
                 <td width="240">Наименование грузополучателя</td>
-                <td>ООО «Агрофирма «Заря»</td>
+                <td>{{Delivery_client_info['Name']}}</td>
             </tr>
             <tr>
                 <td width="240">Адрес разгрузки</td>
-                <td>623815, Свердловская область, Ирбитский район, деревня Ретнева, улица Дорожная д. 29</td>
+                <td>{{Delivery_client_info['Address']}}</td>
             </tr>
             <tr>
                 <td width="240">Дата и время разгрузки</td>
-                <td>22.07.2019</td>
+                <td>{{delivery.Date}}</td>
             </tr>
             <tr>
                 <td width="240">Контактное лицо на выгрузке</td>
-                <td>8-900-208-86-52 Игорь Анатольевич</td>
+                <td></td>
             </tr>
         </table>
         <table class="table next">
@@ -161,20 +161,20 @@
                 <td width="240">Корм продуктивным животным</td>
                 <td width="100">20 тонн</td>
                 <td>мешки</td>
-                <td>задняя</td>
+                <td>{{delivery.Load_type}}</td>
                 <td></td>
             </tr>
             <tr>
                 <td colspan="2">Дата и время подачи транспортного средства</td>
-                <td colspan="3" class="right">19.07.2019</td>
+                <td colspan="3" class="right">{{delivery.End_date}}</td>
             </tr>
             <tr>
                 <td colspan="2">Дата и время разгрузки транспортного средства</td>
-                <td colspan="3" class="right">22.07.2019</td>
+                <td colspan="3" class="right">{{delivery.Date}}</td>
             </tr>
             <tr>
                 <td colspan="2" class="bold">Стоимость перевозки</td>
-                <td colspan="3" class="right bold">38 000 (Тридцать восемь тысяч рублей), включая НДС</td>
+                <td colspan="3" class="right bold">{{Delivery_client_info['Sum']}} ({{Delivery_client_info['Sum2text']}}), включая НДС</td>
             </tr>
             <tr>
                 <td colspan="2" class="bold">Срок оплаты</td>
@@ -195,11 +195,11 @@
                 <td class="bold">Заказчик</td>
             </tr>
             <tr>
-                <td>ООО "Гора-Л"</td>
+                <td>{{document.name}}</td>
                 <td>ООО "Барс"</td>
             </tr>
             <tr>
-                <td><div class="bb" style="margin: 20px 0 50px 0">Каун В.А.</div></td>
+                <td><div class="bb" style="margin: 20px 0 50px 0"></div></td>
                 <td><div class="bb" style="margin: 20px 0 50px 0">Войт С.О.</div></td>
             </tr>
         </table>
