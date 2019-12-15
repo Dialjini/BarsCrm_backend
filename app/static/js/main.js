@@ -44,7 +44,6 @@ function getUserInfo() {
             $('#username').append(`
                 <div class="descr">${role}</div>
             `)
-            console.log("helllo user")
             socket.emit('add user', surname)
         }
     });
@@ -362,7 +361,6 @@ function saveInfoCard(id, close = false, elem = null) {
         $.ajax({
             url: '/addContacts',
             type: 'GET',
-            async: false,
             data: {category: data[0], id: card, contacts: JSON.stringify(members)},
             dataType: 'html',
             success: function() {
@@ -374,8 +372,8 @@ function saveInfoCard(id, close = false, elem = null) {
         });
         
         function removeCard(elem) {
-            if ($('.close').is('#client_close_card_new')) {
-                $('#client_close_card_new').attr('id', `client_close_card_${saveTableAndCard[1][1].length + 1}`)
+            if ($('.close').is(`#${saveTableAndCard[0].id}_close_card_new`)) {
+                $(`#${saveTableAndCard[0].id}_close_card_new`).attr('id', `${saveTableAndCard[0].id}_close_card_${saveTableAndCard[1][1].length + 1}`)
             }
             $('.card_menu').remove();
             $('.info').append($('<div>', {
@@ -403,8 +401,6 @@ let getCommentsInfo = (function() {
     return {
         getRequest: function (data) {
             if (typeof data === typeof '') {
-                console.log(1);
-
                 // Сохраняем комментарий
                 let list = {
                     comment_date: $('#comment_date').val(),
@@ -432,7 +428,6 @@ let getCommentsInfo = (function() {
                     data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
                     dataType: 'html',
                     success: function(result) {
-                        console.log(2);
                         getComments()
                     }
                 });

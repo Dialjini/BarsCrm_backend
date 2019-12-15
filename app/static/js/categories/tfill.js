@@ -117,7 +117,6 @@ let rowFilling = (object, id, table) => {
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
-            console.log(object[1][i]);
             if (object[1][i].account.Payment_history != undefined) {
                 let payment_list = JSON.parse(object[1][i].account.Payment_history);
                 let amount = object[1][i].account.Sum;
@@ -172,7 +171,6 @@ let rowFilling = (object, id, table) => {
 
             for (let j = 0; j < deliveryTable.length; j++) {
                 if (deliveryTable[j].delivery.Account_id == i + 1) {
-                    console.log(deliveryTable[j].delivery);
                     first_date = deliveryTable[j].delivery.Start_date;
                     break;
                 }
@@ -244,7 +242,6 @@ let rowFilling = (object, id, table) => {
 }
 function sortTableByManagers(element) {
     let searchWord = element.innerHTML;
-    console.log(searchWord);
     $('.centerBlock .header .cancel').remove();
 
     let managers;

@@ -1739,6 +1739,12 @@ function comeBack(elem) {
                 }
             }
             $('.info').append(fillingTables(dataName[i].link));
+            if ($('.m_comment').is('#comment_content')) {
+                $('#comment_content').remove();
+                let id = $('.close').attr('id').split('_');
+                let data = [id[0], id[3]];
+                getCommentsInfo.getRequest(data);
+            }
             break;
         } else if (dataName[i].name + '-inv' === elem) { // Переход по вкладкам карточки из категории Финансы в категорию Рабочий стол
             for (let i = 0; i < linkCategoryInfo[0].subcategories.length; i++) {
