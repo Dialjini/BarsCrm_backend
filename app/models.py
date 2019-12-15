@@ -267,6 +267,8 @@ class Delivery(db.Model):
     kc = db.Column(db.String)
     rc = db.Column(db.String)
     Amounts = db.Column(db.String)
+    Auto = db.Column(db.String)
+    Passport_data = db.Column(db.String)
 
 
 class Carrier(db.Model):

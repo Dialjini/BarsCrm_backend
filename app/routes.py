@@ -1,7 +1,7 @@
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
 from app import models, db, reqs
-from flask_socketio import SocketIO, join_room, emit
+from flask_socketio import SocketIO, emit
 import json
 from xhtml2pdf import pisa
 import os
@@ -199,6 +199,7 @@ def addAccountPaymentHistory():
     db.session.commit()
     return 'OK'
 
+
 @app.route('/getTemplates', methods=['GET'])
 def getTemplates():
     if 'username' in session:
@@ -239,8 +240,6 @@ def deleteMember():
     db.session.delete(user)
     db.session.commit()
     return 'OK'
-
-
 
 
 @app.route('/stockTransit', methods=['GET'])
@@ -407,6 +406,8 @@ def addDelivery():
         table.Type = data['delivery_type']
         table.Item_ids = data['delivery_item_ids']
         table.Amounts = data['delivery_amounts']
+        table.Auto = data['delivery_car']
+        table.Passport_data = data['delivery_passport']
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']
         else:
