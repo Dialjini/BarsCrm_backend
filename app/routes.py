@@ -163,6 +163,15 @@ def getAllTasks():
     return table_to_json(models.Tasks.query.all())
 
 
+@app.route('/deleteTask')
+def deleteTask():
+    task = models.Tasks.query.filter_by(id=request.args['id']).first()
+    db.session.delete(task)
+    db.session.commit()
+    emit('refreshTasks', broadcast=True)
+    return 'OK'
+
+
 @app.route('/getMyTasks')
 def getMyTasks():
     tasks = []
