@@ -518,6 +518,9 @@ def getStockTable():
             subres['stock_address'] = stock.Name
             result.append(subres)
 
+        subres = {'items': json.loads(table_to_json(models.BadItems.query.all())), 'stock_address': None}
+        result.append(subres)
+
         return json.dumps(result)
     else:
         return redirect('/', code=302)
@@ -643,7 +646,7 @@ def addItemToStock():
         if len(Stocks):
             Stock = Stocks[0]
         else:
-            item = models.Item()
+            item = models.BadItems()
             item.Weight = data['item_weight']
             item.Packing = data['item_packing']
             item.Fraction = data['item_fraction']

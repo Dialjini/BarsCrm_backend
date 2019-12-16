@@ -180,6 +180,21 @@ class Notes(db.Model):
     File_Path = db.Column(db.String)
 
 
+class BadItems(db.Model):
+    Item_id = db.Column(db.Integer, primary_key=True)
+    Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
+    Name = db.Column(db.String)
+    Creator = db.Column(db.String)
+    Weight = db.Column(db.String)
+    Fraction = db.Column(db.String)
+    Packing = db.Column(db.String)
+    Cost = db.Column(db.String)
+    NDS = db.Column(db.String)
+    Volume = db.Column(db.String)
+    Group_name = db.Column(db.String)
+    Prefix = db.Column(db.String)
+
+
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
     User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
