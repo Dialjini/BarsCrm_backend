@@ -163,6 +163,24 @@ def getAllTasks():
     return table_to_json(models.Tasks.query.all())
 
 
+@app.route('/getMyTasks')
+def getMyTasks():
+    tasks = []
+    Tasks = models.Tasks.query.all()
+    if models.User.query.filter_by(login=session['username']).first():
+        user = models.User.query.filter_by(login=session['username']).first()
+    else:
+        user = models.User.query.filter_by(email=session['username']).first()
+    for i in Tasks:
+        try:
+            if 'all' in json.loads(i.Visibility):
+                tasks.append(json.loads(table_to_json([i]))[0])
+            elif str(user.id) in json.loads(i.Visibility):
+                tasks.append(json.loads(table_to_json([i]))[0])
+        except Exception as er:
+            print(er)
+    return json.dumps(tasks)
+
 @app.route('/auth', methods=['GET'])
 def auth():
     if 'login' in request.args:
