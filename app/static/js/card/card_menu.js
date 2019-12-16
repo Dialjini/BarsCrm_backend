@@ -1358,7 +1358,7 @@ function createCardMenu(element, index = 0) {
                 }
             });
             let options = '';
-            options += `<option value="null">Не выбран</option>`
+            options += `<option value="0">Не выбран</option>`
             for (let i = 0; i < info.length; i++) {
                 options += `<option value="${info[i].id}">${info[i].Name}</option>`
             }
@@ -1667,6 +1667,7 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
+    console.log(data);
 
     $.ajax({
         url: '/addItemToStock',

@@ -335,15 +335,17 @@ function invoicingContentCard(elem, data) {
     function getFilterList() {
         let tbody = $('<tbody>', {id: 'filter_list'});
         for (let i = 0; i < data.length; i++) {
-            for (let j = 0; j < data[i].items.length; j++) {
-                let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
-                const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
-                for (let k = 0; k < name.length; k++) {
-                    tr.append($('<td>', {
-                        html: name[k]
-                    }))
+            if (data[i].stock_address !== null) {
+                for (let j = 0; j < data[i].items.length; j++) {
+                    let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
+                    const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
+                    for (let k = 0; k < name.length; k++) {
+                        tr.append($('<td>', {
+                            html: name[k]
+                        }))
+                    }
+                    tbody.append(tr);
                 }
-                tbody.append(tr);
             }
         }
         return tbody;
