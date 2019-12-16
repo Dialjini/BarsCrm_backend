@@ -9,4 +9,9 @@ def getINNinfo(INN):
                       headers={'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': auth_token})
     # print(r.json()['suggestions'][0]['data']['ogrn'])
     return r.json()
+
+def getAreaInfo():
+    result = []
+
+    return result
 # getINNinfo('7707083893')

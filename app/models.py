@@ -5,7 +5,7 @@ from datetime import datetime
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String)
-    email = db.Column(db.String, unique=True)
+    email = db.Column(db.String)
     name = db.Column(db.String)
     second_name = db.Column(db.String)
     third_name = db.Column(db.String)
@@ -34,6 +34,7 @@ class Order(db.Model):
     Item_id = db.Column(db.String)
     Props = db.Column(db.String)
     Cost = db.Column(db.Float)
+    Postponement_date = db.Column(db.String)
 
 
 class Template(db.Model):

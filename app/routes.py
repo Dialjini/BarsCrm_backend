@@ -450,6 +450,8 @@ def addDelivery():
         table.Amounts = data['delivery_amounts']
         table.Auto = data['delivery_car']
         table.Passport_data = data['delivery_passport']
+        table.Postponement_date = data['delivery_postponement_date']
+
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']
         else:
@@ -855,8 +857,10 @@ def addProvider():
 
         if not new:
             Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
+            Stock = models.Stock.query.filter_by(name=data['provider_address']).first()
         else:
             Provider = models.Provider()
+            Stock = models.Stock()
 
         Provider.Name = data['provider_name']
         Provider.Rayon = data['provider_area']
@@ -875,6 +879,7 @@ def addProvider():
 
         if new:
             db.session.add(Provider)
+            db.session.add(Stock)
 
         db.session.commit()
 
