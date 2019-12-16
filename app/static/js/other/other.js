@@ -331,7 +331,6 @@ function сheckSelectedRadioBox() {
     }
 }
 function completeTask(element) {
-    $(element).addClass('complete');
     let id = $(element).attr('name').split('_');
     socket.emit('showTasks');
  
@@ -347,6 +346,8 @@ function completeTask(element) {
                 idTask = id[1];
             }
         }
+
+        console.log(data);
 
         for (let element of $('#current_tasks .item')) {
             $('#current_tasks').empty();
