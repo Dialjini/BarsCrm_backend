@@ -332,15 +332,18 @@ function сheckSelectedRadioBox() {
 }
 function completeTask(element) {
     let id = $(element).attr('name').split('_');
-    socket.emit('showTasks');
- 
-    socket.on('showTasks', function(data) {
-        checkTask(data)
-    });
 
-    let idTask;
+    $.ajax({
+        url: '/getMyTasks',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            checkTask(JSON.parse(data))
+        }
+    });
+        
     function checkTask(data) {
-        data = JSON.parse(data);
+        let idTask;
         for (let i = 0; i < data.length; i++) {
             if (data[i].Task_id == id[1]) {
                 idTask = id[1];
@@ -348,15 +351,6 @@ function completeTask(element) {
         }
 
         console.log(data);
-
-        for (let element of $('#current_tasks .item')) {
-            $('#current_tasks').empty();
-            break;
-        }
-        for (let element of $('#expired_tasks .item')) {
-            $('#expired_tasks').empty();
-            break;
-        }
         if (idTask == undefined) {
             return;
         }
