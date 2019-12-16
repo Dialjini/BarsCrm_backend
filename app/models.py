@@ -236,6 +236,7 @@ class Provider(db.Model):
     Bik = db.Column(db.String)
     kc = db.Column(db.String)
     rc = db.Column(db.String)
+    Postponement_date = db.Column(db.String)
 
 
 class Debt(db.Model):
