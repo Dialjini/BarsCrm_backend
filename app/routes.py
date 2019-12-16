@@ -168,7 +168,6 @@ def deleteTask():
     task = models.Tasks.query.filter_by(Task_id=request.args['id']).first()
     db.session.delete(task)
     db.session.commit()
-    emit('refreshTasks', broadcast=True)
     return 'OK'
 
 
