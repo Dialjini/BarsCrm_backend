@@ -236,7 +236,6 @@ class Provider(db.Model):
     Bik = db.Column(db.String)
     kc = db.Column(db.String)
     rc = db.Column(db.String)
-    Postponement_date = db.Column(db.String)
 
 
 class Debt(db.Model):
@@ -296,6 +295,7 @@ class Delivery(db.Model):
     Amounts = db.Column(db.String)
     Auto = db.Column(db.String)
     Passport_data = db.Column(db.String)
+    Postponement_date = db.Column(db.String)
 
 
 class Carrier(db.Model):
