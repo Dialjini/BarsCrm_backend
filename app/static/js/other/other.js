@@ -122,10 +122,11 @@ function taskCreate(tasks = 'new') {
                     let second_date_arr = datetime_regex.exec(secondDate);
                     let second_datetime = new Date(second_date_arr[3], second_date_arr[2], second_date_arr[1], second_date_arr[4], second_date_arr[5]);
                     if (first_datetime.getTime() > second_datetime.getTime()) {
+                        let mark = tasks[i].Admin ? 'mark' : '';
                         $('#tasks_list .empty').remove();
                         $('#current_tasks').prepend(
                             $('<div>', {
-                                class: 'item',
+                                class: 'item ' + mark,
                                 name: `task_${tasks[i].Task_id}`,
                                 onclick: `completeTask(this)`,
                                 append: $('<img>', {
