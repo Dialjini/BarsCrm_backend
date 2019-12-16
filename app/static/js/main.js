@@ -16,8 +16,7 @@ $(document).ready(function() {
     socket.on('refreshTasks', function() {
         socket.emit('showTasks');
     });
-    socket.on('user joined', function(data) {
-        console.log(data)
+    socket.on('user joined', function() {
     });
 });
 
@@ -307,7 +306,6 @@ function saveInfoCard(id, close = false, elem = null) {
                     item_creator: $(element).children()[2].children[0].value,
                     item_price: $(element).children()[3].children[0].value,
                 })
-                console.log($(element).children()[2].children[0].value, items)
             } else if (data[0] == 'provider') {
                 items.push({
                     item_product: $(element).children()[0].children[0].value,
@@ -328,7 +326,6 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == array.length) items.pop();
         });
-        console.log(items);
         $.ajax({
             url: '/addItems',
             type: 'GET',

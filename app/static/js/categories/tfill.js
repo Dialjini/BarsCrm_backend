@@ -212,7 +212,7 @@ let rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `stock_${object[1][i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].Group_name, object[1][i].Name, object[1][i].Prefix, object[1][i].Volume, object[1][i].Packing, object[1][i].NDS, object[1][i].Cost, object[1][i].stock_address];
+            const name = [object[1][i].Group_name, object[1][i].Name, object[1][i].Prefix, object[1][i].Weight, object[1][i].Volume, object[1][i].Packing, object[1][i].NDS, object[1][i].Cost, object[1][i].stock_address];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
