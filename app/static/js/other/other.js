@@ -372,8 +372,24 @@ function createCompleteForm(value) {
 }
 
 function removeTask(id) {
-    // Запрос на удаление таска по id
-    createCTButtons();
+    $.ajax({
+        url: '/deleteTask',
+        type: 'GET',
+        data: {id: id},
+        dataType: 'html',
+        success: function() { 
+            for (let element of $('#current_tasks .item')) {
+                $('#current_tasks').empty();
+                break;
+            }
+            for (let element of $('#expired_tasks .item')) {
+                $('#expired_tasks').empty();
+                break;
+            }
+            socket.emit('showTasks');
+            createCTButtons();
+        }
+    });
 }
 
 // Создание кнопок Отменить и Добавить
