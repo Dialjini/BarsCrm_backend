@@ -4,7 +4,6 @@ function createRegionMenu() {
 
     for (let i = 0; i < data.length; i++) {
         if (data[i].Oblast != null) {
-            console.log(data[i].Oblast);
             regions.push({ name: data[i].Oblast, areas: [] });
         }
     }
@@ -21,7 +20,6 @@ function createRegionMenu() {
     for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < regions.length; j++) {
             if (regions[j].name == data[i].Oblast && data[i].Rayon != null && data[i].Rayon != '') {
-                console.log(data[i].Rayon);
                 regions[j].areas.push(data[i].Rayon)
             }
         }
@@ -37,8 +35,6 @@ function createRegionMenu() {
             }
         }
     }
-
-    console.log(regions);
 
     let element = $('<div />', {
         class: 'item drop_down_search'

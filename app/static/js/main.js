@@ -307,6 +307,7 @@ function saveInfoCard(id, close = false, elem = null) {
                     item_creator: $(element).children()[2].children[0].value,
                     item_price: $(element).children()[3].children[0].value,
                 })
+                console.log($(element).children()[2].children[0].value, items)
             } else if (data[0] == 'provider') {
                 items.push({
                     item_product: $(element).children()[0].children[0].value,
@@ -327,6 +328,7 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == array.length) items.pop();
         });
+        console.log(items);
         $.ajax({
             url: '/addItems',
             type: 'GET',
@@ -512,6 +514,17 @@ function searchFill(element) {
                     searchCards.push(data[j]);
                 }
             }
+            let clientCards = [];
+            for (let j = 0; j < searchCards.length; j++) {
+                if (searchCards[j].Category === 'Клиент') {
+                    clientCards.push(searchCards[j]);
+                    searchCards.splice(j, 1);
+                    j--;
+                }
+            }
+            for (let j = 0; j < clientCards.length; j++) {
+                searchCards.push(clientCards[j]);
+            }
             listData[i].filter[1][1] = searchCards;
             $('.table').remove();
             $('.info').append(fillingTables(listData[i].filter, true));
@@ -584,6 +597,17 @@ function searchCategoryInfo() {
                         break;
                     }
                 }
+            }
+            let clientCards = [];
+            for (let j = 0; j < searchCards.length; j++) {
+                if (searchCards[j].Category === 'Клиент') {
+                    clientCards.push(searchCards[j]);
+                    searchCards.splice(j, 1);
+                    j--;
+                }
+            }
+            for (let j = 0; j < clientCards.length; j++) {
+                searchCards.push(clientCards[j]);
             }
             listData[i].filter[1][1] = searchCards;
             $('.table').remove();
