@@ -165,7 +165,7 @@ def getAllTasks():
 
 @app.route('/deleteTask')
 def deleteTask():
-    task = models.Tasks.query.filter_by(id=request.args['id']).first()
+    task = models.Tasks.query.filter_by(Task_id=request.args['id']).first()
     db.session.delete(task)
     db.session.commit()
     emit('refreshTasks', broadcast=True)
