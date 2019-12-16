@@ -771,6 +771,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        console.log(selectedLine);
         let sum = +selectedLine.account.Sale + +selectedLine.account.Hello + +selectedLine.account.Shipping, vat = 0;
         function fillingProducts() {
             let list_items = selectedLine.items;
@@ -968,7 +969,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="mb">
                             <span class="bold">Объем</span>
-                            <input style="width: 60px" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
+                            <input style="width: 60px" type="number" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
                         </div>
                         <div>
                             <table class="full">
@@ -1150,6 +1151,8 @@ function createCardMenu(element, index = 0) {
             });
 
             let tr = '';
+            let dataAccount = categoryInFinanceAccount[1][1];
+
             for (let i = 0; i < listAllItems.length; i++) {
                 if (list_items_acc == undefined) {
                     if (selectedLine.Item_ids != '') {
@@ -1166,27 +1169,35 @@ function createCardMenu(element, index = 0) {
                 
                 for (let j = 0; j < list_items_acc.length; j++) {
                     for (let k = 0; k < listStocks.length; k++) {
-                        if (+list_items_acc[j] == +listAllItems[i].Item_id && +listAllItems[i].Stock_id == listStocks[k].id) {
-                            if (amounts == undefined) {
-                                tr += `
-                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                    <td>${listAllItems[i].Name}</td>
-                                    <td>${listStocks[k].Name}</td>
-                                    <td>${listAllItems[i].Weight}</td>
-                                    <td>${listAllItems[i].Packing}</td>
-                                    <td><input id="item_sum" type="number"></td>
-                                </tr>
-                                `
-                            } else {
-                                tr += `
-                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                    <td>${listAllItems[i].Name}</td>
-                                    <td>${listStocks[k].Name}</td>
-                                    <td>${listAllItems[i].Weight}</td>
-                                    <td>${listAllItems[i].Packing}</td>
-                                    <td><input id="item_sum" value="${amounts[i]}" type="number"></td>
-                                </tr>
-                                `
+                        for (let l = 0; l < dataAccount.length; l++) {
+                            let inputVolume = JSON.parse(dataAccount[l].account.Item_ids);
+                            for (let m = 0; m < inputVolume.length; m++) {
+                                if (+list_items_acc[j] == +listAllItems[i].Item_id 
+                                    && +listAllItems[i].Stock_id == listStocks[k].id
+                                    && dataAccount[l].account.id == selectedLine.Account_id
+                                    && +listAllItems[i].Item_id == inputVolume[m].id) {
+                                    if (amounts == undefined) {
+                                        tr += `
+                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                            <td>${listAllItems[i].Name}</td>
+                                            <td>${listStocks[k].Name}</td>
+                                            <td>${inputVolume[m].volume}</td>
+                                            <td>${listAllItems[i].Packing}</td>
+                                            <td><input id="item_sum" type="number"></td>
+                                        </tr>
+                                        `
+                                    } else {
+                                        tr += `
+                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                            <td>${listAllItems[i].Name}</td>
+                                            <td>${listStocks[k].Name}</td>
+                                            <td>${inputVolume[m].volume}</td>
+                                            <td>${listAllItems[i].Packing}</td>
+                                            <td><input id="item_sum" value="${amounts[i]}" type="number"></td>
+                                        </tr>
+                                        `
+                                    }
+                                }
                             }
                         }
                     }
@@ -1551,9 +1562,13 @@ function transitProduct(element) {
                 return alert('Выберите склад!');
             }
 
+            if (Math.sign(product_volume) != 1) {
+                return alert('Введите положительное число!')
+            }
+
             for (let i = 0; i < products.length; i++) {
                 if (products[i].Item_id == idProduct) {
-                    if (products[i].Volume < product_volume) {
+                    if (+products[i].Volume < +product_volume) {
                         return alert('На складе нет такого объема этого продукта!')
                     }
                 }
