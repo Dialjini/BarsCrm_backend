@@ -188,6 +188,7 @@ class Tasks(db.Model):
     Date = db.Column(db.String)
     Time = db.Column(db.String)
     Comment = db.Column(db.String)
+    Admin = db.Column(db.Boolean)
     Visibility = db.Column(db.String)
 
 

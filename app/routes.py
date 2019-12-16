@@ -63,6 +63,12 @@ def sendTasks():
 @socketio.on('addTask')
 def addTask(message):
     task = models.Tasks()
+    user = models.User.query.filter_by(id=int(message['data']['task_who'])).first()
+    if user.role == 'admin':
+        task.Admin = True
+    else:
+        task.Admin = False
+
     task.Visibility = json.dumps(message['data']['task_whom'])
     task.User_id = int(message['data']['task_who'])
     task.Type = message['data']['task_type']
@@ -637,7 +643,24 @@ def addItemToStock():
         if len(Stocks):
             Stock = Stocks[0]
         else:
-            return 'Bad Stock'
+            item = models.Item()
+            item.Weight = data['item_weight']
+            item.Packing = data['item_packing']
+            item.Fraction = data['item_fraction']
+            item.Creator = data['item_creator']
+            item.Name = data['item_product']
+            item.Cost = data['item_price']
+            item.Volume = data['item_volume']
+            item.NDS = data['item_vat']
+            item.Group_id = data['group_id']
+            item.Prefix = data['item_prefix']
+            item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
+
+            db.session.add(item)
+            db.session.commit()
+
+            return 'OK no stock'
+
 
         item = models.Item()
         item.Weight = data['item_weight']
