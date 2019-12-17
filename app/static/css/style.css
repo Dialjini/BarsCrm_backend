@@ -539,20 +539,20 @@ body {
   font-weight: 700;
 }
 
-.page .centerBlock .container .info .table #manager {
+.page .centerBlock .container .info .table #pd_group {
   position: relative;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }
 
-.page .centerBlock .container .info .table #manager .manager {
+.page .centerBlock .container .info .table #pd_group .pd_group {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
   margin-right: 10px;
 }
 
-.page .centerBlock .container .info .table #manager .list_manager {
+.page .centerBlock .container .info .table #pd_group .list_group {
   display: none;
   position: absolute;
   width: 101%;
@@ -564,7 +564,7 @@ body {
           box-sizing: border-box;
 }
 
-.page .centerBlock .container .info .table #manager .list_manager .list li {
+.page .centerBlock .container .info .table #pd_group .list_group .list li {
   font-weight: 500;
   padding: 5px;
   -webkit-transition: 0.3s all;
@@ -572,14 +572,108 @@ body {
   font-size: 12px;
 }
 
-.page .centerBlock .container .info .table #manager .list_manager .list li:hover {
+.page .centerBlock .container .info .table #pd_group .list_group .list li:hover {
   cursor: pointer;
   -webkit-transition: 0.3s all;
   transition: 0.3s all;
   background-color: whitesmoke;
 }
 
-.page .centerBlock .container .info .table #manager:hover {
+.page .centerBlock .container .info .table #pd_group:hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #FFFEED;
+}
+
+.page .centerBlock .container .info .table #pd_price {
+  position: relative;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .table #pd_price .pd_price {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-right: 10px;
+}
+
+.page .centerBlock .container .info .table #pd_price .list_price {
+  display: none;
+  position: absolute;
+  width: 101%;
+  left: -1px;
+  background: #fff;
+  border: 1px solid #cecece;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.page .centerBlock .container .info .table #pd_price .list_price .list li {
+  font-weight: 500;
+  padding: 5px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  font-size: 12px;
+}
+
+.page .centerBlock .container .info .table #pd_price .list_price .list li:hover {
+  cursor: pointer;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  background-color: whitesmoke;
+}
+
+.page .centerBlock .container .info .table #pd_price:hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #FFFEED;
+}
+
+.page .centerBlock .container .info .table #pd_manager {
+  position: relative;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .table #pd_manager .pd_manager {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-right: 10px;
+}
+
+.page .centerBlock .container .info .table #pd_manager .list_manager {
+  display: none;
+  position: absolute;
+  width: 101%;
+  left: -1px;
+  background: #fff;
+  border: 1px solid #cecece;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.page .centerBlock .container .info .table #pd_manager .list_manager .list li {
+  font-weight: 500;
+  padding: 5px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  font-size: 12px;
+}
+
+.page .centerBlock .container .info .table #pd_manager .list_manager .list li:hover {
+  cursor: pointer;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  background-color: whitesmoke;
+}
+
+.page .centerBlock .container .info .table #pd_manager:hover {
   cursor: pointer;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
@@ -1981,6 +2075,10 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
 }
 
 ::-webkit-scrollbar {

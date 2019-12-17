@@ -332,19 +332,36 @@ def findContacts():
         Deliveryies = models.Delivery.query.all()
         Users = models.User.query.all()
 
-        for i in Deliveryies:
-            if i['Contact_End'] == data or i['Contact_Number'] == data:
-                result.append(json.loads(table_to_json([i]))[0])
+        if len(data) > 8:
+            for i in Deliveryies:
+                if i['Contact_End'] == data or i['Contact_Number'] == data:
+                    result.append(json.loads(table_to_json([i]))[0])
 
-        for i in Contacts:
-            if i.Number == data or i.Email == data:
-                result.append(json.loads(table_to_json([i]))[0])
+            for i in Contacts:
+                if i.Number == data or i.Email == data:
+                    result.append(json.loads(table_to_json([i]))[0])
 
-        for i in Users:
-            if i.email == data:
-                subres = json.loads(table_to_json([i]))[0]
-                subres.pop('password', None)
-                result.append(subres)
+            for i in Users:
+                if i.email == data:
+                    subres = json.loads(table_to_json([i]))[0]
+                    subres.pop('password', None)
+                    result.append(subres)
+        else:
+            for i in Deliveryies:
+                if i['Contact_End'][len(i['Contact_End'])-len(data):len(i['Contact_End'])] == data\
+                        or i['Contact_Number'][len(i['Contact_Number'])-len(data):len(i['Contact_Number'])] == data:
+                    result.append(json.loads(table_to_json([i]))[0])
+
+            for i in Contacts:
+                if i.Number[len(i.Number)-len(data):len(i.Number)] == data \
+                        or i.Email[len(i.Email)-len(data):len(i.Email)] == data:
+                    result.append(json.loads(table_to_json([i]))[0])
+
+            for i in Users:
+                if i.email[len(i.email)-len(data):len(i.email)] == data:
+                    subres = json.loads(table_to_json([i]))[0]
+                    subres.pop('password', None)
+                    result.append(subres)
 
         return json.dumps(result)
     else:
@@ -800,6 +817,7 @@ def addItems():
                     Item.Creator = i['item_creator']
                     Item.Client_id = request.args['id']
                 else:
+                    Item.Date = i['item_date']
                     Item.NDS = i['item_vat']
                     Item.Fraction = i['item_fraction']
                     Item.Packing = i['item_packing']

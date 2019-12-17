@@ -10,7 +10,7 @@ function createRegionMenu() {
 
     for (let i = 0; i < regions.length - 1; i++) {
         for (let j = i + 1; j < regions.length; j++) {
-            if (regions[i].name.includes(regions[j].name) || regions[j].name.includes(regions[i].name)) {
+            if (regions[i].name == regions[j].name) {
                 regions.splice(j, 1);
                 j--;
             }
@@ -56,7 +56,7 @@ function createRegionMenu() {
                 class: 'region',
                 append: $('<span>', {
                     class: '',
-                    html: regions[i].name + ' область'
+                    html: regions[i].name
                 }).add($('<ul>', {
                     class: 'list_regions',
                     html: createLiList(i)

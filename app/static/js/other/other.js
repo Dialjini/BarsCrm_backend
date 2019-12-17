@@ -220,7 +220,6 @@ function taskCreate(tasks = 'new') {
                 } catch {
                     return alert('Проверьте введенные данные!')
                 }
-                console.log(taskInfo)
                 socket.emit('addTask', {data: taskInfo});
                 function typeTask() {
                     if (taskInfo.task_type == 'phone') return 'Звонок';
@@ -350,8 +349,6 @@ function completeTask(element) {
                 idTask = id[1];
             }
         }
-
-        console.log(data);
         if (idTask == undefined) {
             return;
         }
