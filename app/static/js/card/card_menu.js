@@ -785,8 +785,19 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
-        console.log(selectedLine);
-        let sum = +selectedLine.account.Sale + +selectedLine.account.Hello + +selectedLine.account.Shipping, vat = 0;
+        let sum = 0, vat = 0;
+
+        let sale = JSON.parse(selectedLine.account.Sale);
+        let privet = JSON.parse(selectedLine.account.Hello);
+        let delivery = JSON.parse(selectedLine.account.Shipping);
+        let items_amount = JSON.parse(selectedLine.account.Items_amount);
+
+        for (let i = 0; i < sale; i++) {
+            sum += +sale[i] + +privet[i] + +delivery[i];
+        }
+
+        console.log(sale, privet, delivery, items_amount);
+
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
@@ -794,7 +805,7 @@ function createCardMenu(element, index = 0) {
             for (let i = 0; i < list_items.length; i++) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
-                sum += Math.round(list_items[i].Cost * list_items[i].Transferred_volume);
+                sum += +items_amount[i];
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
                         <td>${list_items[i].Name}</td>
@@ -803,11 +814,11 @@ function createCardMenu(element, index = 0) {
                         <td>${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
                         <td>${list_items[i].Transferred_volume}</td>
                         <td>${list_items[i].Cost}</td>
-                        <td>${(+selectedLine.account.Sale / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
-                        <td>${(+selectedLine.account.Hello / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
-                        <td>${(+selectedLine.account.Shipping / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${+sale[i]}</td>
+                        <td>${+privet[i]}</td>
+                        <td>${+delivery[i]}</td>
                         <td>${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
-                        <td>${Math.round(list_items[i].Cost * list_items[i].Transferred_volume)}</td>
+                        <td>${+items_amount[i]}</td>
                     </tr>
                 `)
             }
@@ -1924,9 +1935,17 @@ function completionCard(elem) {
             }
             
             if (idsItems.length > 0) {
-                let sale = $('#total_discount_inv').val();
-                let privet = $('#total_privet_inv').val();
-                let delivery = $('#total_delivery_inv').val();
+                // Работает
+                let sale = [], privet = [], delivery = [], items_amount = [];
+                for (let element of $('#exposed_list .invoiled')) {
+                    sale.push($(element).children()[7].children[0].value);
+                    privet.push($(element).children()[8].children[0].value);
+                    delivery.push($(element).children()[9].children[0].value);
+                    items_amount.push($(element).children()[11].innerHTML);
+                }
+
+                console.log(items_amount);
+
                 let status = 'false';
                 let date = getCurrentDate('year');
                 let name;
@@ -1943,7 +1962,7 @@ function completionCard(elem) {
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',
-                    data: {name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)},
+                    data: {name: name, status: status, date: date, hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery), items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems)},
                     dataType: 'html',
                     success: function() {
                         closeCardMenu('account_new');
