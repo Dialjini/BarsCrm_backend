@@ -167,20 +167,20 @@ let rowFilling = (object, id, table) => {
                 payment_amount = 0;
             }
 
-            let first_date;
+            let first_date, postponement_date;
 
             for (let j = 0; j < deliveryTable.length; j++) {
                 if (deliveryTable[j].delivery.Account_id == i + 1) {
                     first_date = deliveryTable[j].delivery.Start_date;
+                    postponement_date = deliveryTable[j].delivery.Postponement_date;
                     break;
                 }
             }
-            if (first_date == undefined) {
-                first_date = 'Не указано';
-            }
+            if (first_date == undefined) first_date = 'Не указано';
+            if (postponement_date == undefined) postponement_date = 'Не указано';
 
             let element = $('<tr>');
-            const name = [object[1][i].items[0].Prefix, object[1][i].account.Name, first_date, 'xx.xx.xx', object[1][i].account.Sum, payment_amount, +object[1][i].account.Sum - payment_amount, object[1][i].account.Manager_id];
+            const name = [object[1][i].items[0].Prefix, object[1][i].account.Name, first_date, postponement_date, object[1][i].account.Sum, payment_amount, +object[1][i].account.Sum - payment_amount, object[1][i].account.Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -212,7 +212,7 @@ let rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `stock_${object[1][i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].Group_name, object[1][i].Name, object[1][i].Prefix, object[1][i].Volume, object[1][i].Packing, object[1][i].NDS, object[1][i].Cost, object[1][i].stock_address];
+            const name = [object[1][i].Group_name, object[1][i].Name, object[1][i].Prefix, object[1][i].Weight, object[1][i].Volume, object[1][i].Packing, object[1][i].NDS, object[1][i].Cost, object[1][i].stock_address];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -272,6 +272,17 @@ function sortTableByManagers(element) {
                         if (string == search) {
                             searchCards.push(data[j]);
                         }
+                    }
+                    let clientCards = [];
+                    for (let j = 0; j < searchCards.length; j++) {
+                        if (searchCards[j].Category === 'Клиент') {
+                            clientCards.push(searchCards[j]);
+                            searchCards.splice(j, 1);
+                            j--;
+                        }
+                    }
+                    for (let j = 0; j < clientCards.length; j++) {
+                        searchCards.push(clientCards[j]);
                     }
                     listData[i].filter[1][1] = searchCards;
                     $('.table').remove();

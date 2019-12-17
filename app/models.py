@@ -5,7 +5,7 @@ from datetime import datetime
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String)
-    email = db.Column(db.String, unique=True)
+    email = db.Column(db.String)
     name = db.Column(db.String)
     second_name = db.Column(db.String)
     third_name = db.Column(db.String)
@@ -34,6 +34,7 @@ class Order(db.Model):
     Item_id = db.Column(db.String)
     Props = db.Column(db.String)
     Cost = db.Column(db.Float)
+    Postponement_date = db.Column(db.String)
 
 
 class Template(db.Model):
@@ -179,6 +180,21 @@ class Notes(db.Model):
     File_Path = db.Column(db.String)
 
 
+class BadItems(db.Model):
+    Item_id = db.Column(db.Integer, primary_key=True)
+    Group_id = db.Column(db.Integer, db.ForeignKey('item_groups.id'))
+    Name = db.Column(db.String)
+    Creator = db.Column(db.String)
+    Weight = db.Column(db.String)
+    Fraction = db.Column(db.String)
+    Packing = db.Column(db.String)
+    Cost = db.Column(db.String)
+    NDS = db.Column(db.String)
+    Volume = db.Column(db.String)
+    Group_name = db.Column(db.String)
+    Prefix = db.Column(db.String)
+
+
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
     User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -187,6 +203,7 @@ class Tasks(db.Model):
     Date = db.Column(db.String)
     Time = db.Column(db.String)
     Comment = db.Column(db.String)
+    Admin = db.Column(db.Boolean)
     Visibility = db.Column(db.String)
 
 
@@ -278,6 +295,7 @@ class Delivery(db.Model):
     Amounts = db.Column(db.String)
     Auto = db.Column(db.String)
     Passport_data = db.Column(db.String)
+    Postponement_date = db.Column(db.String)
 
 
 class Carrier(db.Model):

@@ -154,7 +154,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
-                    { id: 'delivery', list: ['Customer', 'Start_date', 'End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -257,6 +257,7 @@ function createCardMenu(element, index = 0) {
         $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
         $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
         $('#delivery_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+        $('#delivery_postponement_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
     }
     function getContactsAndItems() {
         let category = getInfo[0];
@@ -374,6 +375,7 @@ function createCardMenu(element, index = 0) {
                                     <option value="category_1">Потенциальный клиент</option>
                                     <option value="category_2">Лидер</option>
                                     <option value="category_3">Неперспективный клиент</option>
+                                    <option value="category_4">Конкурент</option>
                                 </select>
                             </td>
                         </tr>
@@ -635,6 +637,27 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Перевозчиков
     function carrierContentCard(selectedLine) {
+        function listView() {
+            if (selectedLine.View == '') {
+                return `
+                    <option selected disabled value="">Не выбран</option>
+                    <option value="Авто">Авто</option>
+                    <option value="Ж/Д">Ж/Д</option>
+                `
+            } else {
+                if (selectedLine.View == 'Авто') {
+                    return `
+                        <option selected value="Авто">Авто</option>
+                        <option value="Ж/Д">Ж/Д</option>
+                    `
+                } if (selectedLine.View == 'Ж/Д') {
+                    return `
+                        <option value="Авто">Авто</option>
+                        <option selected value="Ж/Д">Ж/Д</option>
+                    `
+                }
+            }
+        }
         let content = $('<div>', {
             class: 'row_card',
             css: { 'justify-content': 'flex-start' },
@@ -656,26 +679,26 @@ function createCardMenu(element, index = 0) {
                 }).add(`<tr>
                             <td>Район</td>
                             <td>
-                                <input type="text" id="carrier_area" onchange="saveCard()" value="${selectedLine.Area}">
+                                <input type="text" id="carrier_area" onchange="saveCard()" class="string" value="${selectedLine.Area}">
                             </td>
                         </tr>
                         <tr>
                             <td>Область/Край</td>
                             <td>
-                                <input type="text" id="carrier_region" onchange="saveCard()" value="${selectedLine.Region}">
+                                <input type="text" id="carrier_region" onchange="saveCard()" class="string" value="${selectedLine.Region}">
                             </td>
                         </tr>
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="carrier_address" onchange="saveCard()" value="${selectedLine.Address}">
+                                <input type="text" id="carrier_address" onchange="saveCard()" class="string" value="${selectedLine.Address}">
                             </td>
                         </tr>`)
             }).add(`<table class="table_block">
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" id="carrier_inn" onchange="saveCard()" value="${selectedLine.UHH}">
+                                <input type="text" id="carrier_inn" onchange="saveCard()" class="string" value="${selectedLine.UHH}">
                             </td>
                         </tr>
                         <tr>
@@ -687,7 +710,9 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Вид перевозки</td>
                             <td>
-                                <input type="text" id="carrier_view" onchange="saveCard()" value="${selectedLine.View}" class="string">
+                                <select id="carrier_view">
+                                    ${listView()}
+                                </select>
                             </td>
                         </tr>
                     </table>`)
@@ -746,6 +771,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        console.log(selectedLine);
         let sum = +selectedLine.account.Sale + +selectedLine.account.Hello + +selectedLine.account.Shipping, vat = 0;
         function fillingProducts() {
             let list_items = selectedLine.items;
@@ -943,7 +969,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="mb">
                             <span class="bold">Объем</span>
-                            <input style="width: 60px" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
+                            <input style="width: 60px" type="number" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
                         </div>
                         <div>
                             <table class="full">
@@ -1125,6 +1151,8 @@ function createCardMenu(element, index = 0) {
             });
 
             let tr = '';
+            let dataAccount = categoryInFinanceAccount[1][1];
+
             for (let i = 0; i < listAllItems.length; i++) {
                 if (list_items_acc == undefined) {
                     if (selectedLine.Item_ids != '') {
@@ -1141,27 +1169,35 @@ function createCardMenu(element, index = 0) {
                 
                 for (let j = 0; j < list_items_acc.length; j++) {
                     for (let k = 0; k < listStocks.length; k++) {
-                        if (+list_items_acc[j] == +listAllItems[i].Item_id && +listAllItems[i].Stock_id == listStocks[k].id) {
-                            if (amounts == undefined) {
-                                tr += `
-                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                    <td>${listAllItems[i].Name}</td>
-                                    <td>${listStocks[k].Name}</td>
-                                    <td>${listAllItems[i].Weight}</td>
-                                    <td>${listAllItems[i].Packing}</td>
-                                    <td><input id="item_sum" type="number"></td>
-                                </tr>
-                                `
-                            } else {
-                                tr += `
-                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                    <td>${listAllItems[i].Name}</td>
-                                    <td>${listStocks[k].Name}</td>
-                                    <td>${listAllItems[i].Weight}</td>
-                                    <td>${listAllItems[i].Packing}</td>
-                                    <td><input id="item_sum" value="${amounts[i]}" type="number"></td>
-                                </tr>
-                                `
+                        for (let l = 0; l < dataAccount.length; l++) {
+                            let inputVolume = JSON.parse(dataAccount[l].account.Item_ids);
+                            for (let m = 0; m < inputVolume.length; m++) {
+                                if (+list_items_acc[j] == +listAllItems[i].Item_id 
+                                    && +listAllItems[i].Stock_id == listStocks[k].id
+                                    && dataAccount[l].account.id == selectedLine.Account_id
+                                    && +listAllItems[i].Item_id == inputVolume[m].id) {
+                                    if (amounts == undefined) {
+                                        tr += `
+                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                            <td>${listAllItems[i].Name}</td>
+                                            <td>${listStocks[k].Name}</td>
+                                            <td>${inputVolume[m].volume}</td>
+                                            <td>${listAllItems[i].Packing}</td>
+                                            <td><input id="item_sum" type="number"></td>
+                                        </tr>
+                                        `
+                                    } else {
+                                        tr += `
+                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                            <td>${listAllItems[i].Name}</td>
+                                            <td>${listStocks[k].Name}</td>
+                                            <td>${inputVolume[m].volume}</td>
+                                            <td>${listAllItems[i].Packing}</td>
+                                            <td><input id="item_sum" value="${amounts[i]}" type="number"></td>
+                                        </tr>
+                                        `
+                                    }
+                                }
                             }
                         }
                     }
@@ -1177,6 +1213,12 @@ function createCardMenu(element, index = 0) {
                                     <select id="delivery_customer">
                                         ${fillCustomer()}
                                     </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Дата отсрочки</td>
+                                <td>
+                                    <input type="text" style="width: 200px" id="delivery_postponement_date" value="${selectedLine.Postponement_date}">
                                 </td>
                             </tr>
                             <tr>
@@ -1327,6 +1369,7 @@ function createCardMenu(element, index = 0) {
                 }
             });
             let options = '';
+            options += `<option value="0">Не выбран</option>`
             for (let i = 0; i < info.length; i++) {
                 options += `<option value="${info[i].id}">${info[i].Name}</option>`
             }
@@ -1447,6 +1490,7 @@ function makeRequest(element) {
     data['delivery_client'] = $('#delivery_client')[0].value;
     data['delivery_car'] = $('#delivery_car').val();
     data['delivery_passport'] = $('#delivery_passport').val();
+    data['delivery_postponement_date'] = $('#delivery_postponement_date').val();
 
     let amounts = [];
     for (let element of $('#flight #item_sum')) {
@@ -1518,9 +1562,13 @@ function transitProduct(element) {
                 return alert('Выберите склад!');
             }
 
+            if (Math.sign(product_volume) != 1) {
+                return alert('Введите положительное число!')
+            }
+
             for (let i = 0; i < products.length; i++) {
                 if (products[i].Item_id == idProduct) {
-                    if (products[i].Volume < product_volume) {
+                    if (+products[i].Volume < +product_volume) {
                         return alert('На складе нет такого объема этого продукта!')
                     }
                 }
@@ -1634,6 +1682,7 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
+    console.log(data);
 
     $.ajax({
         url: '/addItemToStock',
@@ -1813,10 +1862,6 @@ function completionCard(elem) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
                         if (account.Item_id == idProduct) {
-                            if (+account.Volume < +$(`#invoiled_volume_${idProduct}`).val()) {
-                                alert(`Введенный объем товара "${account.Name}" больше, чем имеется на складе`);
-                                return;
-                            }
                             idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
                         }
                     }

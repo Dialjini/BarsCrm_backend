@@ -335,15 +335,17 @@ function invoicingContentCard(elem, data) {
     function getFilterList() {
         let tbody = $('<tbody>', {id: 'filter_list'});
         for (let i = 0; i < data.length; i++) {
-            for (let j = 0; j < data[i].items.length; j++) {
-                let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
-                const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
-                for (let k = 0; k < name.length; k++) {
-                    tr.append($('<td>', {
-                        html: name[k]
-                    }))
+            if (data[i].stock_address !== null) {
+                for (let j = 0; j < data[i].items.length; j++) {
+                    let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
+                    const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
+                    for (let k = 0; k < name.length; k++) {
+                        tr.append($('<td>', {
+                            html: name[k]
+                        }))
+                    }
+                    tbody.append(tr);
                 }
-                tbody.append(tr);
             }
         }
         return tbody;
@@ -732,7 +734,7 @@ function addComment(manager = '', data) {
         let list_role = [];
         $('#member .member').each(function(i, element) {
             if ($(element).children()[0].children[0].children[0].value != '') {
-                list_role.push($(element).children()[0].children[0].children[0].value)
+                list_role.push({ role: $(element).children()[0].children[0].children[0].value, surname: $(element).children()[0].children[1].children[0].value })
             }
         });
         $('#messages').append(
@@ -765,14 +767,14 @@ function addComment(manager = '', data) {
             let list = '';
             for (let i = 0; i < list_role.length - 1; i++) {
                 for (let j = i + 1; j < list_role.length; j++) {
-                    if (list_role[i] === list_role[j]) {
+                    if (list_role[i].role === list_role[j].role && list_role[i].surname == list_role[j].surname) {
                         list_role.splice(j, 1);
                         j--;
                     }
                 }
             }
             for (let i = 0; i < list_role.length; i++) {
-                list = list.concat(`<option value="${list_role[i]}">${list_role[i]}</option>`)
+                list = list.concat(`<option value="${list_role[i].role} | ${list_role[i].surname}">${list_role[i].role} | ${list_role[i].surname}</option>`)
             }
             return list;
         }
@@ -954,7 +956,7 @@ function addRow(id, selectedLine = '') {
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
                 {id: 'item_volume', width: 43, type: 'number'},
-                {id: 'item_creator', width: 104, type: 'text'},
+                {id: 'item_creator', width: 180, type: 'text'},
                 {id: 'item_price', width: 43, type: 'number'}
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
@@ -1001,6 +1003,48 @@ function addRow(id, selectedLine = '') {
     function trFill(table) {
         let tr = $('<tr>');
 
+        function getListCompetitor(id) {
+            $.ajax({
+                url: '/getClients',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data) {
+                    data = JSON.parse(data);
+                    let competitors = [];
+                    let options = '';
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].Category == 'Конкурент') {
+                            let name = data[i].Name
+                            competitors.push(name);
+                        }
+                    }
+                    options += `<option disabled selected>Не выбран</option>`
+                    for (let i = 0; i < competitors.length; i++) {
+                        options += `<option value='${competitors[i]}'>${competitors[i]}</option>`
+                    }
+                    if (competitors.length == 0) {
+                        options = `<option disabled selected>Конкурентов нет</option>`
+                    }
+                    $(`#${id}`).empty();
+                    $(`#${id}`).append(options);
+                    let count = 0;
+                    $('.hmax #group [name="items_creator"]').each(function() {
+                        if (selectedLine.Creator == '') {
+                            $(`#${id} option:contains('Выбрать')`).attr('selected', true)
+                        } else {
+                            $(`#${id} option`).each(function(i, element) {
+                                if ($(element).html() == selectedLine.Creator) {
+                                    $(element).attr('selected', true);
+                                }
+                            });
+                            $(`#${id} :selected`).val($(`#${id} :selected`).html());       
+                        }
+                        count++;
+                    })
+                }
+            });
+        }
+
         for (let i = 0; i < table.count; i++) {
             if (table.widthInput[i].id == 'item_product') {
                 let count = 0;
@@ -1015,6 +1059,19 @@ function addRow(id, selectedLine = '') {
                         append: getItemsList('item_product_' + count, selectedLine , id.split('-')[0])
                     })
                 }));
+            } else if (table.widthInput[i].id == 'item_creator') {
+                let count = 0;
+                $('.hmax #group [name="items_creator"]').each(function() {
+                    count++;
+                })
+                tr.append($('<td>', {
+                    append: $('<select>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: 'item_creator_' + count,
+                        name: 'items_creator',
+                        append: getListCompetitor('item_creator_' + count)
+                    })
+                }));  
             } else {
                 tr.append($('<td>', {
                     append: $('<input>', {
@@ -1023,8 +1080,8 @@ function addRow(id, selectedLine = '') {
                         value: selectedLine[table.html[i]],
                         type: table.widthInput[i].type
                     })
-                }));  
-            }      
+                }));
+            }  
         }
 
         return tr;

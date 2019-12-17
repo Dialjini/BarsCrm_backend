@@ -63,6 +63,12 @@ def sendTasks():
 @socketio.on('addTask')
 def addTask(message):
     task = models.Tasks()
+    user = models.User.query.filter_by(id=int(message['data']['task_who'])).first()
+    if user.role == 'admin':
+        task.Admin = True
+    else:
+        task.Admin = False
+
     task.Visibility = json.dumps(message['data']['task_whom'])
     task.User_id = int(message['data']['task_who'])
     task.Type = message['data']['task_type']
@@ -450,6 +456,8 @@ def addDelivery():
         table.Amounts = data['delivery_amounts']
         table.Auto = data['delivery_car']
         table.Passport_data = data['delivery_passport']
+        table.Postponement_date = data['delivery_postponement_date']
+
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']
         else:
@@ -509,6 +517,9 @@ def getStockTable():
 
             subres['stock_address'] = stock.Name
             result.append(subres)
+
+        # subres = {'items': json.loads(table_to_json(models.BadItems.query.all())), 'stock_address': None}
+        # result.append(subres)
 
         return json.dumps(result)
     else:
@@ -635,7 +646,24 @@ def addItemToStock():
         if len(Stocks):
             Stock = Stocks[0]
         else:
-            return 'Bad Stock'
+            item = models.BadItems()
+            item.Weight = data['item_weight']
+            item.Packing = data['item_packing']
+            item.Fraction = data['item_fraction']
+            item.Creator = data['item_creator']
+            item.Name = data['item_product']
+            item.Cost = data['item_price']
+            item.Volume = data['item_volume']
+            item.NDS = data['item_vat']
+            item.Group_id = data['group_id']
+            item.Prefix = data['item_prefix']
+            item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
+
+            db.session.add(item)
+            db.session.commit()
+
+            return 'OK no stock'
+
 
         item = models.Item()
         item.Weight = data['item_weight']
@@ -855,8 +883,12 @@ def addProvider():
 
         if not new:
             Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
+            Stock = models.Stock()
         else:
             Provider = models.Provider()
+            Stock = models.Stock()
+            Stock.Name = data['provider_address']
+            Stock.NDS = data['provider_vat']
 
         Provider.Name = data['provider_name']
         Provider.Rayon = data['provider_area']
@@ -875,6 +907,7 @@ def addProvider():
 
         if new:
             db.session.add(Provider)
+            db.session.add(Stock)
 
         db.session.commit()
 

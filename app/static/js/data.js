@@ -120,6 +120,7 @@ const categoryInFilterStock = [
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
             { name: 'Юр. лицо', width: 5 },
+            { name: 'Вес', width: 5 },
             { name: 'Объем', width: 5 },
             { name: 'Фасовка', width: 15 },
             { name: 'НДС', width: 5 },

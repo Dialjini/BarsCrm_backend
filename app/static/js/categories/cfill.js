@@ -36,13 +36,12 @@ function linkField() {
             { width: 90.656, id: 'stock_product', list: [] },
             { width: 110.328, id: 'stock_packing', list: [] },
             { width: 92.297, id: 'stock_stock', list: [] },
-            { width: 97.281, id: 'stock_volume', list: ['10', '20', '30'] },
+            { width: 97.281, id: 'stock_volume', list: [] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
             { width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
         ]
 
         let info = ['Group_name', 'Name', 'Packing', 'stock_address'];
-
         for (let k = 0; k < info.length; k++) {
             for (let i = 0; i < categoryInStock[1][1].length; i++) {
                 for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
@@ -87,7 +86,6 @@ function linkField() {
         function fillingList() {
             for (let i = 0; i < list.length; i++) {
                 if (list[i].id == idList) {
-                    
                     namesList = list[i].list;
                     let ul = $('<ul>');
                     for (let j = 0; j < list[i].list.length; j++) {
@@ -146,24 +144,190 @@ function linkField() {
                     ]
                     return functions[this.id.split('_')[2]]();
                 } else {
+                    let filter_ids = [
+                        { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
+                        { id: 'stock_product', filterName: 'Name', name: 'Товар'},
+                        { id: 'stock_packing', filterName: 'Packing', name: 'Фасовка'},
+                        { id: 'stock_volume', filterName: 'Volume', name: 'Объем'},
+                        { id: 'stock_stock', filterName: 'stock_address', name: 'Склад'},
+                    ]
                     // Фильтрация как общая (449 строка main.js)
-                    categoryInFilterStock[1][1] = [];
-                    for (let i = 0; i < categoryInStock[1][1].length; i++) {
-                        for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                            let test;
-                            if (idList === 'stock_product') {
-                                test = categoryInStock[1][1][i].items[j].Name
-                            } else if (idList = 'stock_group') {
-                                test = categoryInStock[1][1][i].items[j].Group_name
+                    if (lastData.last_id == idList) {
+                        if (lastData.last_table[0].id == 'filter_stock') {
+                            let data = lastData.last_table;
+                            lastData.last_table = [
+                                { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
+                                [[
+                                    { name: 'Группа товаров', width: 15 },
+                                    { name: 'Товар', width: 15 },
+                                    { name: 'Юр. лицо', width: 5 },
+                                    { name: 'Вес', width: 5 },
+                                    { name: 'Объем', width: 5 },
+                                    { name: 'Фасовка', width: 15 },
+                                    { name: 'НДС', width: 5 },
+                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Склад', width: 15 },
+                                ]],
+                            ];
+                            lastData.last_table[1][1] = data[1][1];
+                            let filterTable = [];
+                            for (let i = 0; i < data[1][1].length; i++) {
+                                for (let k = 0; k < filter_ids.length; k++) {
+                                    if (filter_ids[k].id == idList) {
+                                        if (data[1][1][i][filter_ids[k].filterName] == filterName) {
+                                            data[1][1][i].stock_address = data[1][1][i].stock_address;
+                                            filterTable.push(data[1][1][i]);
+                                        }   
+                                    }
+                                }
                             }
-                            if (test.toLowerCase() === filterName.toLowerCase()) {
-                                let element = categoryInStock[1][1][i].items[j];
-                                element['stock_address'] = categoryInStock[1][1][categoryInStock[1][1][i].items[j].Stock_id - 1].stock_address;
-                                categoryInFilterStock[1][1].push(categoryInStock[1][1][i].items[j])
+                            data[1][1] = [];
+                            for (let i = 0; i < filterTable.length; i++) {
+                                data[1][1].push(filterTable[i]);
                             }
+                            lastData.last_id = idList;
+                            return fillingTables(data);
+                        } else if (lastData.last_table[0].id == 'stock') {
+                            let data = lastData.last_table;
+                            lastData.last_table = [
+                                { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
+                                [[
+                                    { name: 'Группа товаров', width: 15 },
+                                    { name: 'Товар', width: 15 },
+                                    { name: 'Юр. лицо', width: 5 },
+                                    { name: 'Вес', width: 5 },
+                                    { name: 'Объем', width: 5 },
+                                    { name: 'Фасовка', width: 15 },
+                                    { name: 'НДС', width: 5 },
+                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Склад', width: 15 },
+                                ]],
+                            ];
+                            lastData.last_table[1][1] = data[1][1];
+                            let filterTable = [];
+
+                            for (let i = 0; i < data[1][1].length; i++) {
+                                for (let j = 0; j < data[1][1][i].items.length; j++) {
+                                    for (let k = 0; k < filter_ids.length; k++) {
+                                        if (idList == 'stock_stock') {
+                                            if (data[1][1][i][filter_ids[k].filterName] == filterName) {
+                                                data[1][1][i].items[j].stock_address = data[1][1][i].stock_address;
+                                                filterTable.push(data[1][1][i].items[j]);
+                                            }   
+                                        } else if (filter_ids[k].id == idList) {
+                                            if (data[1][1][i].items[j][filter_ids[k].filterName] == filterName) {
+                                                data[1][1][i].items[j].stock_address = data[1][1][i].stock_address;
+                                                filterTable.push(data[1][1][i].items[j]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            data[1][1] = [];
+                            for (let i = 0; i < filterTable.length; i++) {
+                                data[1][1].push(filterTable[i]);
+                            }
+                            data[0].id = 'filter_stock';
+                            lastData.last_id = idList;
+                            return fillingTables(data);
                         }
-                    }
-                    return fillingTables(categoryInFilterStock);
+                    } else {
+                        if (categoryInFilterStock[1][1].length == 0) {
+                            // Фильтровать от inStock
+                            let data = categoryInStock[1][1];
+                            let filterTable = [];
+
+                            lastData.last_table = [
+                                { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
+                                [[
+                                    { name: 'Группа товаров', width: 15 },
+                                    { name: 'Товар', width: 15 },
+                                    { name: 'Юр. лицо', width: 5 },
+                                    { name: 'Вес', width: 5 },
+                                    { name: 'Объем', width: 5 },
+                                    { name: 'Фасовка', width: 15 },
+                                    { name: 'НДС', width: 5 },
+                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Склад', width: 15 },
+                                ]],
+                            ];
+                            lastData.last_table[1][1] = categoryInStock[1][1];
+                            for (let i = 0; i < data.length; i++) {
+                                for (let j = 0; j < data[i].items.length; j++) {
+                                    for (let k = 0; k < filter_ids.length; k++) {
+                                        if (idList == 'stock_stock') {
+                                            if (data[i][filter_ids[k].filterName] == filterName) {
+                                                data[i].items[j].stock_address = data[i].stock_address;
+                                                filterTable.push(data[i].items[j]);
+                                            }
+                                        } else if (filter_ids[k].id == idList) {
+                                            if (data[i].items[j][filter_ids[k].filterName] == filterName) {
+                                                data[i].items[j].stock_address = data[i].stock_address;
+                                                filterTable.push(data[i].items[j]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            data = [];
+                            for (let i = 0; i < filterTable.length; i++) {
+                                data.push(filterTable[i]);
+                            }
+                            lastData.last_id = idList;
+                            categoryInFilterStock[1][1] = data;
+                            data = [
+                                { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
+                                [[
+                                    { name: 'Группа товаров', width: 15 },
+                                    { name: 'Товар', width: 15 },
+                                    { name: 'Юр. лицо', width: 5 },
+                                    { name: 'Вес', width: 5 },
+                                    { name: 'Объем', width: 5 },
+                                    { name: 'Фасовка', width: 15 },
+                                    { name: 'НДС', width: 5 },
+                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Склад', width: 15 },
+                                ], data],
+                                
+                            ]
+                            return fillingTables(data);
+                        } else {
+                            // Фильтровать filterStock
+                            let data = categoryInFilterStock;
+                            lastData.last_table = [
+                                { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
+                                [[
+                                    { name: 'Группа товаров', width: 15 },
+                                    { name: 'Товар', width: 15 },
+                                    { name: 'Юр. лицо', width: 5 },
+                                    { name: 'Вес', width: 5 },
+                                    { name: 'Объем', width: 5 },
+                                    { name: 'Фасовка', width: 15 },
+                                    { name: 'НДС', width: 5 },
+                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Склад', width: 15 },
+                                ]],
+                            ];
+                            lastData.last_table[1][1] = categoryInFilterStock[1][1];
+                            let filterTable = [];
+                            for (let i = 0; i < data[1][1].length; i++) {
+                                for (let k = 0; k < filter_ids.length; k++) {
+                                    if (filter_ids[k].id == idList) {
+                                        if (data[1][1][i][filter_ids[k].filterName] == filterName) {
+                                            data[1][1][i].stock_address = data[1][1][i].stock_address;
+                                            filterTable.push(data[1][1][i]);
+                                        }   
+                                    }
+                                }
+                            }
+                            data[1][1] = [];
+                            for (let i = 0; i < filterTable.length; i++) {
+                                data[1][1].push(filterTable[i]);
+                            }
+                            lastData.last_id = idList;
+                            return fillingTables(data);
+                        }
+                    }                    
                 }
             };
 
@@ -171,6 +335,8 @@ function linkField() {
         });
     });
 }
+
+let lastData = {last_id: '', last_table: ''};
 
 // Нажатие на категорию
 function linkCategory(element) {

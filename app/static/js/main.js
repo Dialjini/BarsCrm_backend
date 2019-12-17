@@ -16,8 +16,7 @@ $(document).ready(function() {
     socket.on('refreshTasks', function() {
         socket.emit('showTasks');
     });
-    socket.on('user joined', function(data) {
-        console.log(data)
+    socket.on('user joined', function() {
     });
 });
 
@@ -512,6 +511,17 @@ function searchFill(element) {
                     searchCards.push(data[j]);
                 }
             }
+            let clientCards = [];
+            for (let j = 0; j < searchCards.length; j++) {
+                if (searchCards[j].Category === 'Клиент') {
+                    clientCards.push(searchCards[j]);
+                    searchCards.splice(j, 1);
+                    j--;
+                }
+            }
+            for (let j = 0; j < clientCards.length; j++) {
+                searchCards.push(clientCards[j]);
+            }
             listData[i].filter[1][1] = searchCards;
             $('.table').remove();
             $('.info').append(fillingTables(listData[i].filter, true));
@@ -584,6 +594,17 @@ function searchCategoryInfo() {
                         break;
                     }
                 }
+            }
+            let clientCards = [];
+            for (let j = 0; j < searchCards.length; j++) {
+                if (searchCards[j].Category === 'Клиент') {
+                    clientCards.push(searchCards[j]);
+                    searchCards.splice(j, 1);
+                    j--;
+                }
+            }
+            for (let j = 0; j < clientCards.length; j++) {
+                searchCards.push(clientCards[j]);
             }
             listData[i].filter[1][1] = searchCards;
             $('.table').remove();
