@@ -253,12 +253,6 @@ function createCardMenu(element, index = 0) {
         }
     }
 
-    if (getInfo[0] === 'delivery') {
-        $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-        $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-        $('#delivery_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-        $('#delivery_postponement_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-    }
     function getContactsAndItems() {
         let category = getInfo[0];
         let idElement = getInfo[1];
@@ -346,12 +340,12 @@ function createCardMenu(element, index = 0) {
                         })
                     }))
                 }).add(`<tr>
-                            <td>Район</td>
-                            <td><input type="text" id="client_area" onchange="saveCard()" value="${selectedLine.Rayon}"></td>
-                        </tr>
-                        <tr>
                             <td>Область/Край</td>
                             <td><input type="text" id="client_region" onchange="saveCard()" value="${selectedLine.Oblast}"></td>
+                        </tr>
+                        <tr>
+                            <td>Район</td>
+                            <td><input type="text" id="client_area" onchange="saveCard()" value="${selectedLine.Rayon}"></td>
                         </tr>
                         <tr>
                             <td>Адрес</td>
@@ -507,17 +501,18 @@ function createCardMenu(element, index = 0) {
                         })
                     }))
                 }).add(`<tr>
-                            <td>Район</td>
-                            <td>
-                                <input type="text" id="provider_area" onchange="saveCard()" value="${selectedLine.Rayon}">
-                            </td>
-                        </tr>
-                        <tr>
                             <td>Область/Край</td>
                             <td>
                                 <input type="text" id="provider_region" onchange="saveCard()" value="${selectedLine.Oblast}">
                             </td>
                         </tr>
+                        <tr>
+                            <td>Район</td>
+                            <td>
+                                <input type="text" id="provider_area" onchange="saveCard()" value="${selectedLine.Rayon}">
+                            </td>
+                        </tr>
+                        
                         <tr>
                             <td>Адрес</td>
                             <td>
@@ -588,18 +583,18 @@ function createCardMenu(element, index = 0) {
                             </td>
                         </tr>
                     </table>`)
-        }).add(`<div class="row_card">
+        }).add(`<div class="row_card" id="media">
                     <div class="left_side">
                         <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
                         </div>
                     </div>
-                    <div class="info_block">
+                    <div class="info_block" style="width: fit-content">
                         <span class="lightgray">Группа товаров</span>
                         <div class="hmax">
                             <table>
-                                <tr><td>Товар</td><td>Цена</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
+                                <tr><td>Товар</td><td>Цена</td><td>Дата</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
                                 <tbody id="group"></tbody>
                             </table>
                         </div>
@@ -677,15 +672,15 @@ function createCardMenu(element, index = 0) {
                         })
                     }))
                 }).add(`<tr>
-                            <td>Район</td>
-                            <td>
-                                <input type="text" id="carrier_area" onchange="saveCard()" class="string" value="${selectedLine.Area}">
-                            </td>
-                        </tr>
-                        <tr>
                             <td>Область/Край</td>
                             <td>
                                 <input type="text" id="carrier_region" onchange="saveCard()" class="string" value="${selectedLine.Region}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Район</td>
+                            <td>
+                                <input type="text" id="carrier_area" onchange="saveCard()" class="string" value="${selectedLine.Area}">
                             </td>
                         </tr>
                         <tr>
@@ -884,16 +879,11 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax">
                             <table>
                                 <tr>
-                                    <th>Позиция</th>
                                     <th>Дата</th>
                                     <th>Сумма</th>
                                 </tr>
                                 <tbody id="group"></tbody>
                             </table>
-                        </div>
-                        <div class="events">
-                            <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this.id)">
-                            <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -904,7 +894,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Дебеторки
     function debitContentCard(selectedLine) {
-        return `<div class="row_card"></div>`
+        return `Секретное место. Если вы видите это сообщение, то что-то пошло не так. Сообщите об этом вашему непосредственному руководству.`
     }
     // Контентная часть Склада
     function stockContentCard(selectedLine) {
@@ -1544,6 +1534,26 @@ function makeRequest(element) {
         }
     });
     
+}
+function transferToAccounts(element) {
+    $.ajax({
+        url: '/getAccounts',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            if (categoryInFinanceAccount[1][1] == undefined) {
+                categoryInFinanceAccount[1].push(JSON.parse(data));
+            }
+
+            createCardMenu(element);
+            categoryInFinanceAccount[0].lastCard[0] = $('.card_menu');
+            categoryInFinanceAccount[0].active = true;
+            categoryInFinanceDebit[0].active = false;
+
+            linkCategory('category-1');
+            linkField();
+        }
+    });
 }
 function transitProduct(element) {
     let products;

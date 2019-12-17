@@ -45,6 +45,7 @@ function linkField() {
         for (let k = 0; k < info.length; k++) {
             for (let i = 0; i < categoryInStock[1][1].length; i++) {
                 for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                    // Если value этой айдишки не ее изначально название - брать остальные показатели, у которых есть это неизначальное значение
                     if (k !== 3) list[k].list.push(categoryInStock[1][1][i].items[j][info[k]]);
                     else list[k].list.push(categoryInStock[1][1][i][info[k]])
                 }
@@ -192,14 +193,14 @@ function linkField() {
                             lastData.last_table = [
                                 { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
                                 [[
+                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
-                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Объем', width: 5 },
                                     { name: 'Фасовка', width: 15 },
-                                    { name: 'НДС', width: 5 },
+                                    { name: 'Объем', width: 5 },
                                     { name: 'Цена прайса', width: 5 },
+                                    { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
                             ];
@@ -240,14 +241,14 @@ function linkField() {
                             lastData.last_table = [
                                 { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
                                 [[
+                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
-                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Объем', width: 5 },
                                     { name: 'Фасовка', width: 15 },
-                                    { name: 'НДС', width: 5 },
+                                    { name: 'Объем', width: 5 },
                                     { name: 'Цена прайса', width: 5 },
+                                    { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
                             ];
@@ -278,14 +279,14 @@ function linkField() {
                             data = [
                                 { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
                                 [[
+                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
-                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Объем', width: 5 },
                                     { name: 'Фасовка', width: 15 },
-                                    { name: 'НДС', width: 5 },
+                                    { name: 'Объем', width: 5 },
                                     { name: 'Цена прайса', width: 5 },
+                                    { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ], data],
                                 
@@ -297,14 +298,14 @@ function linkField() {
                             lastData.last_table = [
                                 { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
                                 [[
+                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
-                                    { name: 'Юр. лицо', width: 5 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Объем', width: 5 },
                                     { name: 'Фасовка', width: 15 },
-                                    { name: 'НДС', width: 5 },
+                                    { name: 'Объем', width: 5 },
                                     { name: 'Цена прайса', width: 5 },
+                                    { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
                             ];
@@ -343,6 +344,8 @@ function linkCategory(element) {
     $('.info').empty();
     $('[name="linkCategory"], .mini_logo').removeClass('active');
     $(`#${element}`).addClass('active');
+    lastData = {last_id: '', last_table: ''};
+    categoryInFilterStock[1][1] = [];
     for (let i = 0; i < linkCategoryInfo.length; i++) {
         if (element == linkCategoryInfo[i].id) {
             for (let j = 0; j < linkCategoryInfo[i].subcategories.length; j++) {

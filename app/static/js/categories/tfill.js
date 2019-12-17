@@ -5,7 +5,7 @@ let rowFilling = (object, id, table) => {
     let getTitleTable = () => {
         let element = $('<tr>');
         for (let i = 0; i < object[0].length - 1; i++) {
-            if (i == 1 && id == 'stock') {
+            if (i == 2 && id == 'stock') {
                 function checkRole() {
                     let data;
                     $.ajax({
@@ -29,6 +29,22 @@ let rowFilling = (object, id, table) => {
                         ${checkRole()}
                     </div>
                 </th>`;
+            } else if (i == 3 && id == 'provider') {
+                elementTr = `
+                <th id="pd_group" onclick="selectGroupProduct(this)" width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_group">
+                    </div>
+                </th>`
+            } else if (i == 4 && id == 'provider') {
+                elementTr = `
+                <th id="pd_price" onclick="selectFilterPrice(this)" width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_price">
+                    </div>
+                </th>`
             } else {
                 elementTr = `<th width="${object[0][i].width}%">${object[0][i].name}</th>`;
             }
@@ -36,10 +52,10 @@ let rowFilling = (object, id, table) => {
         }
         if (id !== 'delivery' && id !== 'stock') {
             element.append(`
-            <th id="manager" onclick="selectManager(this)" width="${object[0][object[0].length - 1].width}%">
+            <th id="pd_manager" onclick="selectManager(this)" width="${object[0][object[0].length - 1].width}%">
                 <div class="flex jc-sb">
                     <span>${object[0][object[0].length - 1].name}</span>
-                    <img src="static/images/dropmenu_black.svg" class="drop_down_img manager">
+                    <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_manager">
                 </div>
             </th>`);
         } else {
@@ -179,7 +195,7 @@ let rowFilling = (object, id, table) => {
             if (first_date == undefined) first_date = 'Не указано';
             if (postponement_date == undefined) postponement_date = 'Не указано';
 
-            let element = $('<tr>');
+            let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
             const name = [object[1][i].items[0].Prefix, object[1][i].account.Name, first_date, postponement_date, object[1][i].account.Sum, payment_amount, +object[1][i].account.Sum - payment_amount, object[1][i].account.Manager_id];
 
             for (let j = 0; j < name.length; j++) {
@@ -193,10 +209,11 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
+        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
-            for (let k = 0; k < object[1][i].items.length; k++) {
+            for (let k = object[1][i].items.length - 1; k >= 0; k--) {
                 let element = $('<tr>', {id: `stock_${object[1][i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-                const name = [object[1][i].items[k].Group_name, object[1][i].items[k].Name, object[1][i].items[k].Prefix, object[1][i].items[k].Weight, object[1][i].items[k].Volume, object[1][i].items[k].Packing, object[1][i].items[k].NDS, object[1][i].items[k].Cost, object[1][i].stock_address];
+                const name = [object[1][i].items[k].Prefix, object[1][i].items[k].Group_name, object[1][i].items[k].Name, object[1][i].items[k].Weight, object[1][i].items[k].Packing, object[1][i].items[k].Volume, object[1][i].items[k].Cost, object[1][i].items[k].NDS, object[1][i].stock_address];
 
                 for (let j = 0; j < name.length; j++) {
                     let elementTr = $('<td>', { html: name[j] });
@@ -212,7 +229,7 @@ let rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `stock_${object[1][i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].Group_name, object[1][i].Name, object[1][i].Prefix, object[1][i].Weight, object[1][i].Volume, object[1][i].Packing, object[1][i].NDS, object[1][i].Cost, object[1][i].stock_address];
+            const name = [object[1][i].Prefix, object[1][i].Group_name, object[1][i].Name, object[1][i].Weight, object[1][i].Packing, object[1][i].Volume, object[1][i].Cost, object[1][i].NDS, object[1][i].stock_address];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -300,6 +317,52 @@ function sortTableByManagers(element) {
         }
     }
 }
+function selectFilterPrice(element) {
+    function listPrice() {
+        let ul = $('<ul>', { class: 'list'});
+        let data;
+        // получить список групп товаров
+        return ul;
+    }
+    if ($('.table .pd_price').hasClass('drop_active')) {
+        $('.table .pd_price').removeClass('drop_active');
+        $('.list_price').fadeOut(200);
+        setTimeout(function() {
+            $('.list_price').remove();
+        }, 200);
+        return;
+    }
+    $('.table .pd_price').addClass('drop_active');
+    $(element).append($('<div>', { 
+        class: 'list_price',
+        css: {'top': `${$(element).height() + 20}px`},
+        append: listPrice()
+    }))
+    $('.list_price').fadeIn(200);
+}
+function selectGroupProduct(element) {
+    function listGroup() {
+        let ul = $('<ul>', { class: 'list'});
+        let data;
+        // получить список групп товаров
+        return ul;
+    }
+    if ($('.table .pd_group').hasClass('drop_active')) {
+        $('.table .pd_group').removeClass('drop_active');
+        $('.list_group').fadeOut(200);
+        setTimeout(function() {
+            $('.list_group').remove();
+        }, 200);
+        return;
+    }
+    $('.table .pd_group').addClass('drop_active');
+    $(element).append($('<div>', { 
+        class: 'list_group',
+        css: {'top': `${$(element).height() + 20}px`},
+        append: listGroup()
+    }))
+    $('.list_group').fadeIn(200);
+}
 function selectManager(element) {
     function listManager() {
         let ul = $('<ul>', { class: 'list'});
@@ -326,15 +389,15 @@ function selectManager(element) {
         }
         return ul;
     }
-    if ($('.table .manager').hasClass('drop_active')) {
-        $('.table .manager').removeClass('drop_active');
+    if ($('.table .pd_manager').hasClass('drop_active')) {
+        $('.table .pd_manager').removeClass('drop_active');
         $('.list_manager').fadeOut(200);
         setTimeout(function() {
             $('.list_manager').remove();
         }, 200);
         return;
     }
-    $('.table .manager').addClass('drop_active');
+    $('.table .pd_manager').addClass('drop_active');
     $(element).append($('<div>', { 
         class: 'list_manager',
         css: {'top': `${$(element).height() + 20}px`},

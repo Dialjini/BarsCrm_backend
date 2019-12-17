@@ -241,14 +241,13 @@ function saveInfoCard(id, close = false, elem = null) {
         let payment_history = [];
 
         for (let tr of $('#group tr')) {
-            let position = $(tr)[0].children[0].children[0].value;
-            let date = $(tr)[0].children[1].children[0].value;
-            let sum = $(tr)[0].children[2].children[0].value;
-            payment_history.push({position: position, date: date, sum: sum})
+            let date = $(tr)[0].children[0].children[0].value;
+            let sum = $(tr)[0].children[1].children[0].value;
+            payment_history.push({date: date, sum: sum})
         }
 
         if (payment_history.length == 0) {
-            payment_history.push({position: '', date: '', sum: ''})
+            payment_history.push({date: '', sum: ''})
         }
 
         $.ajax({
@@ -310,10 +309,11 @@ function saveInfoCard(id, close = false, elem = null) {
                 items.push({
                     item_product: $(element).children()[0].children[0].value,
                     item_price: $(element).children()[1].children[0].value,
-                    item_vat: $(element).children()[2].children[0].value,
-                    item_packing: $(element).children()[3].children[0].value,
-                    item_weight: $(element).children()[4].children[0].value,
-                    item_fraction: $(element).children()[5].children[0].value,
+                    item_date: $(element).children()[2].children[0].value,
+                    item_vat: $(element).children()[3].children[0].value,
+                    item_packing: $(element).children()[4].children[0].value,
+                    item_weight: $(element).children()[5].children[0].value,
+                    item_fraction: $(element).children()[6].children[0].value,
                 })
             } else {
                 // Переводчики
