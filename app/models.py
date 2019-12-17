@@ -76,7 +76,7 @@ class Junk_item(db.Model):
     Cost = db.Column(db.String)
     NDS = db.Column(db.String)
     Volume = db.Column(db.String)
-    Date = db.Date(db.String)
+    Date = db.Column(db.String)
 
 
 class EmptyClients(db.Model):
