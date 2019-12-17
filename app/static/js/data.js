@@ -100,14 +100,14 @@ const categoryInStock = [
     { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
     [
         [
+            { name: 'Юр. лицо', width: 5 },
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
-            { name: 'Юр. лицо', width: 5 },
             { name: 'Вес', width: 5 },
-            { name: 'Объем', width: 5 },
             { name: 'Фасовка', width: 15 },
-            { name: 'НДС', width: 5 },
+            { name: 'Объем', width: 5 },
             { name: 'Цена прайса', width: 5 },
+            { name: 'НДС', width: 5 },
             { name: 'Склад', width: 15 },
         ],
     ]
@@ -117,14 +117,14 @@ const categoryInFilterStock = [
     { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
     [
         [
+            { name: 'Юр. лицо', width: 5 },
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
-            { name: 'Юр. лицо', width: 5 },
             { name: 'Вес', width: 5 },
-            { name: 'Объем', width: 5 },
             { name: 'Фасовка', width: 15 },
-            { name: 'НДС', width: 5 },
+            { name: 'Объем', width: 5 },
             { name: 'Цена прайса', width: 5 },
+            { name: 'НДС', width: 5 },
             { name: 'Склад', width: 15 },
         ],
         []

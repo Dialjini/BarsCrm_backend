@@ -952,47 +952,48 @@ function removeMemberOrRow(id) {
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
+    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
-                {id: 'item_volume', width: 43, type: 'number'},
+                {id: 'item_volume', width: 45, type: 'number'},
                 {id: 'item_creator', width: 180, type: 'text'},
-                {id: 'item_price', width: 43, type: 'number'}
+                {id: 'item_price', width: 65, type: 'number'}
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
         },
-        { id: 'provider-group', tbody: 'group', count: 6, widthInput: [
+        { id: 'provider-group', tbody: 'group', count: 7, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
-                {id: 'item_price', width: 33, type: 'number'},
+                {id: 'item_price', width: 65, type: 'number'},
+                {id: 'item_date', width: 60, type: 'text'},
                 {id: 'item_vat', width: 28, type: 'number'},
-                {id: 'item_packing', width: 59, type: 'text'},
-                {id: 'item_weight', width: 28, type: 'text'},
-                {id: 'item_fraction', width: 57, type: 'text'}
+                {id: 'item_packing', width: 60, type: 'text'},
+                {id: 'item_weight', width: 30, type: 'text'},
+                {id: 'item_fraction', width: 60, type: 'text'}
             ],
-            html: ['Name', 'Cost', 'NDS', 'Packing', 'Weight', 'Fraction']
+            html: ['Name', 'Cost', 'Date', 'NDS', 'Packing', 'Weight', 'Fraction']
         }, { id: 'carrier-group', tbody: 'group', count: 5, widthInput: [
                     {id: 'carrier_date', width: 50, type: 'text'},
                     {id: 'carrier_client', width: 100, type: 'text'},
                     {id: 'carrier_stock', width: 160, type: 'text'},
                     {id: 'carrier_driver', width: 90, type: 'text'},
-                    {id: 'carrier_price', width: 33, type: 'number'}
+                    {id: 'carrier_price', width: 65, type: 'number'}
                 ],
                 html: []
-        }, { id: 'account-group', tbody: 'group', count: 3, widthInput: [
-                    {id: 'account_position', width: 58, type: 'text'},
-                    {id: 'account_date', width: 42, type: 'text'},
-                    {id: 'account_price', width: 43, type: 'number'}
+        }, { id: 'account-group', tbody: 'group', count: 2, widthInput: [
+                    {id: 'account_date', width: 70, type: 'text'},
+                    {id: 'account_price', width: 65, type: 'number'}
                 ],
-                html: ['position', 'date', 'sum']
+                html: ['date', 'sum']
         }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'delivery_date', width: 60, type: 'text'},
-                    {id: 'delivery_price', width: 60, type: 'number'}
+                    {id: 'delivery_price', width: 65, type: 'number'}
                 ],
                 html: ['date', 'price']
         }, { id: 'flight-group', tbody: 'flight', count: 6, widthInput: [
                     {id: 'delivery_flight_product', width: 100, type: 'text'},
                     {id: 'delivery_flight_stock', width: 160, type: 'text'},
-                    {id: 'delivery_flight_weight', width: 28, type: 'number'},
+                    {id: 'delivery_flight_weight', width: 30, type: 'number'},
                     {id: 'delivery_flight_type', width: 160, type: 'text'},
                     {id: 'delivery_flight_sum', width: 70, type: 'number'}
                 ],
@@ -1091,7 +1092,21 @@ function addRow(id, selectedLine = '') {
         if (id == tableInfo[i].id) {
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
-            break;
+            if (id === 'provider-group') {
+                console.log(123);
+                for (let element of $('#item_date')) {
+                    $(element).datepicker({minDate: new Date(), position: 'left top', autoClose: true})
+                }
+            }
+            if (id === 'delivery-group') {
+                $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+                $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+                $('#delivery_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+                $('#delivery_postponement_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+            }
+            if (id === 'account-group') {
+                $('#account_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+            }
         }
     }
 
