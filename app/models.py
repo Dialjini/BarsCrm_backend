@@ -166,7 +166,6 @@ class Contacts(db.Model):
     Date = db.Column(db.Date)
     Birthday = db.Column(db.Date)
     Visible = db.Column(db.Boolean)
-    Item_list = db.Column(db.String)
 
 
 class Notes(db.Model):
@@ -238,6 +237,7 @@ class Provider(db.Model):
     Bik = db.Column(db.String)
     kc = db.Column(db.String)
     rc = db.Column(db.String)
+    Item_list = db.Column(db.String)
 
 
 class Debt(db.Model):
