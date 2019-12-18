@@ -315,6 +315,7 @@ function saveInfoCard(id, close = false, elem = null) {
                     item_weight: $(element).children()[5].children[0].value,
                     item_fraction: $(element).children()[6].children[0].value,
                 })
+                console.log(items[i].item_date);
             } else {
                 // Переводчики
                 return;

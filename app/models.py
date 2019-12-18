@@ -265,6 +265,7 @@ class Account(db.Model):
     Shipping = db.Column(db.String)
     Manager_id = db.Column(db.Integer)
     Item_ids = db.Column(db.String)
+    Items_amount = db.Column(db.String)
     Payment_history = db.Column(db.String)
 
 

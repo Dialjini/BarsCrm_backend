@@ -147,9 +147,15 @@ let rowFilling = (object, id, table) => {
             } else {
                 status = '<span class="red">Неоплачено</span>';
             }
+            
+            let hello_sum = 0;
+            let hello_list = JSON.parse(object[1][i].account.Hello);
+            for (let i = 0; i < hello_list.length; i++) {
+                hello_sum += +hello_list[i];
+            }
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [object[1][i].items[0].Prefix, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, status, object[1][i].account.Hello, object[1][i].account.Manager_id];
+            const name = [object[1][i].items[0].Prefix, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, status, hello_sum, object[1][i].account.Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });

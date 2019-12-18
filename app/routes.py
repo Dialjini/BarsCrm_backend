@@ -646,6 +646,7 @@ def addAccount():
         table.Shipping = data['shipping']
         table.Sum = data['sum']
         table.Item_ids = data['item_ids']
+        table.Items_amount = data['items_amount']
 
         db.session.add(table)
         db.session.commit()
