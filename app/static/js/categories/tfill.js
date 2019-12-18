@@ -85,7 +85,7 @@ let rowFilling = (object, id, table) => {
                 managers = JSON.parse(result);
             }
         });
-
+        console.log(selectTableData);
         for (let i = 0; i < selectTableData.length; i++) {
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
@@ -566,12 +566,13 @@ function sortTableByProduct(filter) {
         </div>
     `)
 }
-function sortTableByArea(filter) {
-    let newTableData = saveTableAndCard.slice();
+let newTableData;
+function sortTableByArea(filter, input = true) {
+    newTableData = saveTableAndCard.slice();
     let filter_table = [];
     let sort = filter.id == undefined ? filter : filter.id;
 
-    for (let i = 0; i < newTableData[1][1].length - 1; i++) {
+    for (let i = 0; i < newTableData[1][1].length; i++) {
         let oneRegion_data = [newTableData[1][1][i]]
         for (let j = i + 1; j < newTableData[1][1].length; j++) {
             if (newTableData[1][1][i].Oblast === newTableData[1][1][j].Oblast) {
@@ -623,11 +624,13 @@ function sortTableByArea(filter) {
     $('.info').append(fillingTables(newTableData, true));
 
     $('.centerBlock .header .cancel').remove();
-    $('.centerBlock .header').append(`
+    if (input) {
+        $('.centerBlock .header').append(`
         <div class="cancel">
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
         </div>
     `)
+    }
 }
 function selectFilterArea(element) {
     function listPrice() {

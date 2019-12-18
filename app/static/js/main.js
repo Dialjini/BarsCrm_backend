@@ -103,7 +103,7 @@ function getTableData(table, input = false, close = false) {
                     }
                     if (!input) $('.info').append(fillingTables(table));
                     if (table[0].id == 'client' || table[0].id == 'carrier') {
-                        sortTableByArea('min');
+                        sortTableByArea('min', false);
                     }
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
                     $('.drop_down_search').remove();
