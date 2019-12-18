@@ -551,6 +551,53 @@ body {
   font-weight: 700;
 }
 
+.page .centerBlock .container .info .table #all_area {
+  position: relative;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .table #all_area .all_area {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-right: 10px;
+}
+
+.page .centerBlock .container .info .table #all_area .list_area {
+  display: none;
+  position: absolute;
+  width: 101%;
+  left: -1px;
+  background: #fff;
+  border: 1px solid #cecece;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.page .centerBlock .container .info .table #all_area .list_area .list li {
+  font-weight: 500;
+  padding: 5px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  font-size: 12px;
+}
+
+.page .centerBlock .container .info .table #all_area .list_area .list li:hover {
+  cursor: pointer;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  background-color: whitesmoke;
+}
+
+.page .centerBlock .container .info .table #all_area:hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #FFFEED;
+}
+
 .page .centerBlock .container .info .table #pd_group {
   position: relative;
   -webkit-transition: 0.2s all;

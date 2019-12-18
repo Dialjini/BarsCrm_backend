@@ -1488,7 +1488,6 @@ function createCardMenu(element, index = 0) {
         `;
     }
 }
-
 function getListAreas(element, area = '') {
     let region = element.value;
     let category;
@@ -1513,7 +1512,6 @@ function getListAreas(element, area = '') {
         saveCard();
     });
 }
-
 function makeRequest(element) {
     let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
     let data = {};
@@ -1974,7 +1972,6 @@ function completionCard(elem) {
         }
     })
 }
-
 // Закрытие карточки
 function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
