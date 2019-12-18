@@ -166,6 +166,7 @@ class Contacts(db.Model):
     Date = db.Column(db.Date)
     Birthday = db.Column(db.Date)
     Visible = db.Column(db.Boolean)
+    Item_list = db.Column(db.String)
 
 
 class Notes(db.Model):

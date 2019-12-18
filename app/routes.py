@@ -922,6 +922,7 @@ def addProvider():
         Provider.Merc = data['provider_merc']
         Provider.Volume = data['provider_volume']
         Provider.Holding = data['provider_holding']
+        Provider.Item_list = data['provider_item_list']
 
         if new:
             db.session.add(Provider)
