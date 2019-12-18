@@ -23,7 +23,7 @@ const categoryInListProvider = [
             { name: 'Область', width: 20 },
             { name: 'Район', width: 20 },
             { name: 'Наименование', width: 20 },
-            { name: 'Группа товаров', width: 15 },
+            { name: 'Товар', width: 15 },
             { name: 'Цена', width: 10 },
             { name: 'Менеджер', width: 15 },
         ],
@@ -145,13 +145,13 @@ const filterClient = [
     ]
 ]
 const filterProvider = [
-    { id: 'provider', name: 'Список', active: false, lastCard: [null, null] },
+    { id: 'filter_provider', name: 'Список', active: false, lastCard: [null, null] },
     [
         [
             { name: 'Область', width: 20 },
             { name: 'Район', width: 20 },
             { name: 'Наименование', width: 20 },
-            { name: 'Группа товаров', width: 15 },
+            { name: 'Товар', width: 15 },
             { name: 'Цена', width: 10 },
             { name: 'Менеджер', width: 15 },
         ],

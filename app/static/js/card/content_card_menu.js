@@ -949,7 +949,6 @@ function removeMemberOrRow(id) {
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
-    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
@@ -1071,7 +1070,6 @@ function addRow(id, selectedLine = '') {
                     })
                 }));  
             } else {
-                console.log(selectedLine[table.html[i]]);
                 tr.append($('<td>', {
                     append: $('<input>', {
                         css: { width: table.widthInput[i].width + 'px', padding: '0' },

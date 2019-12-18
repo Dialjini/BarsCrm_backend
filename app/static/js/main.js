@@ -273,6 +273,21 @@ function saveInfoCard(id, close = false, elem = null) {
             for (let j = 0; j < idCardFields[i].ids.length; j++) {
                 idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
             }
+            if (data[0] === 'provider') {
+                let items = [];
+                for (let element of $('#group tr')) {
+                    items.push({
+                        item_product: $(element).children()[0].children[0].value,
+                        item_price: $(element).children()[1].children[0].value,
+                        item_date: $(element).children()[2].children[0].value,
+                        item_vat: $(element).children()[3].children[0].value,
+                        item_packing: $(element).children()[4].children[0].value,
+                        item_weight: $(element).children()[5].children[0].value,
+                        item_fraction: $(element).children()[6].children[0].value,
+                    })
+                }
+                idData['provider_item_list'] = JSON.stringify(items);
+            }
             additionalData(i);
             createOrSaveCard.getRequest(idData, request);
             break;
@@ -315,7 +330,6 @@ function saveInfoCard(id, close = false, elem = null) {
                     item_weight: $(element).children()[5].children[0].value,
                     item_fraction: $(element).children()[6].children[0].value,
                 })
-                console.log(items[i].item_date);
             } else {
                 // Переводчики
                 return;
@@ -491,6 +505,10 @@ function cancelSearch() {
     getTableData(saveTableAndCard);
     $('.centerBlock .header .cancel').remove();
     $('#search').val('');
+    sortStatus = {
+        product: {status: false, filter: null},
+        price: {status: false, filter: null}
+    }
 }
 
 function searchFill(element) {

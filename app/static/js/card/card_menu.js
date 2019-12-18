@@ -27,6 +27,10 @@ function getCurrentDate(year = 'none') {
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
+    sortStatus = {
+        product: {status: false, filter: null, last: null},
+        price: {status: false, filter: null}
+    }
     // Вывод обычной карточки или карточки-окна
     if (index == 0) {
         $('.table, .blockCreateEmptyCard').remove();
@@ -454,14 +458,14 @@ function createCardMenu(element, index = 0) {
                             </tbody>
                         </table>
                     </div>`)
-        }).add(`<div class="row_card">
+        }).add(`<div class="row_card" id="media">
                     <div class="left_side">
                         <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
                         </div>
                     </div>
-                    <div class="info_block">
+                    <div class="info_block" style="width: fit-content">
                         <span class="lightgray">Группа товаров</span>
                         <div class="hmax">
                             <table>
@@ -795,8 +799,6 @@ function createCardMenu(element, index = 0) {
         for (let i = 0; i < sale; i++) {
             sum += +sale[i] + +privet[i] + +delivery[i];
         }
-
-        console.log(sale, privet, delivery, items_amount);
 
         function fillingProducts() {
             let list_items = selectedLine.items;
@@ -1748,7 +1750,6 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
-    console.log(data);
 
     $.ajax({
         url: '/addItemToStock',
@@ -1943,8 +1944,6 @@ function completionCard(elem) {
                     delivery.push($(element).children()[9].children[0].value);
                     items_amount.push($(element).children()[11].innerHTML);
                 }
-
-                console.log(items_amount);
 
                 let status = 'false';
                 let date = getCurrentDate('year');

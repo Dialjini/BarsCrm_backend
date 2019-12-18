@@ -29,7 +29,7 @@ let rowFilling = (object, id, table) => {
                         ${checkRole()}
                     </div>
                 </th>`;
-            } else if (i == 3 && id == 'provider') {
+            } else if (i == 3 && id == 'provider' || i == 3 && id == 'filter_provider') {
                 elementTr = `
                 <th id="pd_group" onclick="selectGroupProduct(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
@@ -37,7 +37,7 @@ let rowFilling = (object, id, table) => {
                         <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_group">
                     </div>
                 </th>`
-            } else if (i == 4 && id == 'provider') {
+            } else if (i == 4 && id == 'provider' || i == 4 && id == 'filter_provider') {
                 elementTr = `
                 <th id="pd_price" onclick="selectFilterPrice(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
@@ -114,6 +114,124 @@ let rowFilling = (object, id, table) => {
         return table;
     }
 
+    let rowFillingFilterProvider = (id) => {
+        table.append(getTitleTable());
+        let managers;
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
+
+        console.log(object[1]);
+        for (let i = object[1].length - 1; i >= 0; i--) {
+            let tbody = $('<tbody>', { id: `provider_${object[1][i].id}`, name: 'provider' , onclick: 'createCardMenu(this)' });
+            let managerSecondName;
+            for (let j = 0; j < managers.length; j++) {
+                if (+managers[j].id == +object[1][i].Manager_id && object[1][i].Manager_active) {
+                    managerSecondName = managers[j].second_name;
+                    break;
+                } else {
+                    managerSecondName = 'Не выбран';
+                }
+            }
+            let item_list = JSON.parse(object[1][i].Item_list);
+            console.log(item_list);
+            if (item_list == null) item_list = [{item_product: '', item_price: ''}];
+            let region = object[1][i].Oblast == null ? 'Не указано' : object[1][i].Oblast;
+            let area = object[1][i].Rayon == null ? 'Не указано' : object[1][i].Rayon;
+            let name = object[1][i].Name == null ? 'Не указано' : object[1][i].Name;
+            tbody.append(`
+                <tr>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${region}</td>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${area}</td>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${name}</td>
+                    <td>${item_list[0].item_product}</td>
+                    <td>${item_list[0].item_price}</td>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${managerSecondName}</td>
+                </tr>
+            `)
+
+            item_list = JSON.parse(object[1][i].Item_list);
+
+            if (item_list != null) {
+                for (let j = 1; j < item_list.length; j++) {
+                    tbody.append(`
+                    <tr>
+                        <td>${item_list[j].item_product}</td>
+                        <td>${item_list[j].item_price}</td>
+                    </tr>
+                    `)
+                }
+            }
+            table.append(tbody);
+        }
+        return table;
+    }
+
+    let rowFillingProvider = (id) => {
+        table.append(getTitleTable());
+        let managers;
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
+
+        console.log(object[1]);
+        for (let i = object[1].length - 1; i >= 0; i--) {
+            let tbody = $('<tbody>', { id: `provider_${i + 1}`, name: 'provider' , onclick: 'createCardMenu(this)' });
+            let managerSecondName;
+            for (let j = 0; j < managers.length; j++) {
+                if (+managers[j].id == +object[1][i].Manager_id && object[1][i].Manager_active) {
+                    managerSecondName = managers[j].second_name;
+                    break;
+                } else {
+                    managerSecondName = 'Не выбран';
+                }
+            }
+            let item_list = JSON.parse(object[1][i].Item_list);
+            console.log(item_list);
+            if (item_list == null) item_list = [{item_product: '', item_price: ''}];
+            let region = object[1][i].Oblast == null ? 'Не указано' : object[1][i].Oblast;
+            let area = object[1][i].Rayon == null ? 'Не указано' : object[1][i].Rayon;
+            let name = object[1][i].Name == null ? 'Не указано' : object[1][i].Name;
+            tbody.append(`
+                <tr>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${region}</td>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${area}</td>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${name}</td>
+                    <td>${item_list[0].item_product}</td>
+                    <td>${item_list[0].item_price}</td>
+                    <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${managerSecondName}</td>
+                </tr>
+            `)
+
+            item_list = JSON.parse(object[1][i].Item_list);
+
+            if (item_list != null) {
+                for (let j = 1; j < item_list.length; j++) {
+                    tbody.append(`
+                    <tr>
+                        <td>${item_list[j].item_product}</td>
+                        <td>${item_list[j].item_price}</td>
+                    </tr>
+                    `)
+                }
+            }
+            table.append(tbody);
+        }
+        return table;
+    }
+
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
         for (let i = object[1].length - 1; i >= 0; i--) {
@@ -147,7 +265,7 @@ let rowFilling = (object, id, table) => {
             } else {
                 status = '<span class="red">Неоплачено</span>';
             }
-            
+
             let hello_sum = 0;
             let hello_list = JSON.parse(object[1][i].account.Hello);
             for (let i = 0; i < hello_list.length; i++) {
@@ -215,7 +333,6 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
-        console.log(object[1]);
         for (let i = object[1].length - 1; i >= 0; i--) {
             for (let k = object[1][i].items.length - 1; k >= 0; k--) {
                 let element = $('<tr>', {id: `stock_${object[1][i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
@@ -248,7 +365,8 @@ let rowFilling = (object, id, table) => {
 
     const tableFunctiouns = [
         { id: 'client', function: rowFillingDefault },
-        { id: 'provider', function: rowFillingDefault },
+        { id: 'provider', function: rowFillingProvider },
+        { id: 'filter_provider', function: rowFillingFilterProvider },
         { id: 'carrier', function: rowFillingDefault },
         { id: 'debit', function: rowFillingDebit },
         { id: 'account', function: rowFillingAccount },
@@ -323,10 +441,129 @@ function sortTableByManagers(element) {
         }
     }
 }
+let sortStatus = {
+    product: {status: false, filter: null, last: null},
+    price: {status: false, filter: null}
+}
+function sortTableByPrice(filter) {
+    let data;
+    if (!sortStatus.product.status) {
+        if (filterProvider[1][1] != undefined) filterProvider[1].pop();
+        data = categoryInListProvider[1][1];
+    } else {
+        data = filterProvider[1][1];
+    }
+
+    let filter_data = [];
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let j = 0; j < item_list.length; j++) {
+            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
+        }
+    }
+        
+    let table_data = []
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let k = 0; k < item_list.length; k++) {
+            for (let j = 0; j < filter_data.length; j++) {
+                if (filter_data[j].id == data[i].id
+                    && filter_data[j].product == item_list[k].item_product
+                    && filter_data[j].price == item_list[k].item_price) {
+                        table_data.push({
+                            Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
+                            Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
+                            Manager_id: data[i].Manager_id, id: data[i].id, Manager_active: true
+                        });
+                }
+            }
+        }
+    }
+
+    table_data.sort(function (a, b) {
+        if (+JSON.parse(a.Item_list)[0].item_price > +JSON.parse(b.Item_list)[0].item_price) return 1;
+        if (+JSON.parse(a.Item_list)[0].item_price < +JSON.parse(b.Item_list)[0].item_price) return -1;
+        return 0;
+    });
+
+    if (filter.id == 'min') {
+        table_data.reverse();
+    }
+
+    if (sortStatus.product.status) filterProvider[1].pop();
+    filterProvider[1].push(table_data)
+    $('.table').remove();
+    $('.info').append(fillingTables(filterProvider, true));
+
+    sortStatus.price.status = true;
+    sortStatus.price.filter = filter.id;
+    $('.centerBlock .header .cancel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
+function sortTableByProduct(filter) {
+    let data;
+    if (!sortStatus.price.status) {
+        if (filterProvider[1][1] != undefined) filterProvider[1].pop();
+        data = categoryInListProvider[1][1];
+    } else {
+        data = sortStatus.product.last == null ? filterProvider[1][1] : sortStatus.product.last;
+    }
+
+    sortStatus.product.last = categoryInListProvider[1][1];
+
+    let filter_data = [];
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let j = 0; j < item_list.length; j++) {
+            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
+        }
+    }
+
+    let table_data = []
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let k = 0; k < item_list.length; k++) {
+            for (let j = 0; j < filter_data.length; j++) {
+                if (filter_data[j].id == data[i].id
+                    && filter_data[j].product == item_list[k].item_product
+                    && filter_data[j].price == item_list[k].item_price && filter.innerHTML == item_list[k].item_product) {
+                        table_data.push({
+                            Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
+                            Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
+                            Manager_id: data[i].Manager_id, id: data[i].id, Manager_active: true
+                        });
+                }
+            }
+        }
+    }
+
+    if (sortStatus.product.status) filterProvider[1].pop();
+
+    filterProvider[1].push(table_data)
+    $('.table').remove();
+    $('.info').append(fillingTables(filterProvider, true));
+
+    sortStatus.product.status = true;
+    sortStatus.product.filter = filter.innerHTML;
+    $('.centerBlock .header .cancel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
 function selectFilterPrice(element) {
     function listPrice() {
         let ul = $('<ul>', { class: 'list'});
         let data;
+        ul.append(`
+            <li id="min" onclick="sortTableByPrice(this)">От мен. к бол.</li>
+            <li id="max" onclick="sortTableByPrice(this)">От бол. к мен.</li>
+        `)
         // получить список групп товаров
         return ul;
     }
@@ -349,8 +586,30 @@ function selectFilterPrice(element) {
 function selectGroupProduct(element) {
     function listGroup() {
         let ul = $('<ul>', { class: 'list'});
-        let data;
-        // получить список групп товаров
+        let data = categoryInListProvider[1][1];
+        let list = [];
+        for (let i = 0; i < data.length; i++) {
+            let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+            if (item_list.length > 0) {
+                for (let j = 0; j < item_list.length; j++) {
+                    list.push(item_list[j].item_product);
+                }
+            }
+        }
+        for (let i = 0; i < list.length - 1; i++) {
+            for (let j = i + 1; j < list.length; j++) {
+                if (list[i] == list[j]) {
+                    list.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        for (let j = 0; j < list.length; j++) {
+            ul.append(`
+                <li onclick="sortTableByProduct(this)">${list[j]}</li>
+            `)
+        }
+        
         return ul;
     }
     if ($('.table .pd_group').hasClass('drop_active')) {

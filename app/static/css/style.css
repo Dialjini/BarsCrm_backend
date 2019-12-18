@@ -514,6 +514,18 @@ body {
   top: 13px;
 }
 
+.page .centerBlock .container .info .table [name='provider'] {
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .table [name='provider']:hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #FFFEED;
+}
+
 .page .centerBlock .container .info .table tr:not(:first-child) {
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
