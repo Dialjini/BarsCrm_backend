@@ -140,6 +140,7 @@ class Document(db.Model):
     Bik = db.Column(db.String)
     Client_contact_name = db.Column(db.String)
     Owner_id = db.Column(db.Integer)
+    MonthNum = db.Column(db.Integer)
     def getMonthNum(self):
         Docs = Document.query.all()
         result = 1
