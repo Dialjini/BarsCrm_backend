@@ -679,8 +679,8 @@ function selectFilterPrice(element) {
     function listPrice() {
         let ul = $('<ul>', { class: 'list'});
         ul.append(`
-            <li id="min" onclick="sortTableByPrice(this)">От мен. к бол.</li>
-            <li id="max" onclick="sortTableByPrice(this)">От бол. к мен.</li>
+            <li id="min" onclick="sortTableByPrice(this)">По возраст.</li>
+            <li id="max" onclick="sortTableByPrice(this)">По убыванию</li>
         `)
         // получить список групп товаров
         return ul;

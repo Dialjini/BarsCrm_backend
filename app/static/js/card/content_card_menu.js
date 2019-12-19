@@ -1091,13 +1091,13 @@ function addRow(id, selectedLine = '') {
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             if (id === 'provider-group') {
-                //$('#item_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+                $('#group #item_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
             }
             if (id === 'delivery-group') {
                 $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
                 $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-                $('#delivery_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
                 $('#delivery_postponement_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
+                $('#group #delivery_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
             }
             if (id === 'account-group') {
                 $('#account_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
