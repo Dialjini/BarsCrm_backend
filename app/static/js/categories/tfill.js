@@ -85,7 +85,6 @@ let rowFilling = (object, id, table) => {
                 managers = JSON.parse(result);
             }
         });
-        console.log(selectTableData);
         for (let i = 0; i < selectTableData.length; i++) {
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
@@ -137,7 +136,6 @@ let rowFilling = (object, id, table) => {
             }
         });
 
-        console.log(selectTableData);
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             let tbody = $('<tbody>', { id: `provider_${selectTableData[i].id}`, name: 'provider' , onclick: 'createCardMenu(this)' });
             let managerSecondName;
@@ -150,7 +148,6 @@ let rowFilling = (object, id, table) => {
                 }
             }
             let item_list = JSON.parse(selectTableData[i].Item_list);
-            console.log(item_list);
             if (item_list == null) item_list = [{item_product: '', item_price: ''}];
             let region = selectTableData[i].Oblast == null ? 'Не указано' : selectTableData[i].Oblast;
             let area = selectTableData[i].Rayon == null ? 'Не указано' : selectTableData[i].Rayon;
@@ -196,7 +193,6 @@ let rowFilling = (object, id, table) => {
             }
         });
 
-        console.log(selectTableData);
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             let tbody = $('<tbody>', { id: `provider_${i + 1}`, name: 'provider' , onclick: 'createCardMenu(this)' });
             let managerSecondName;
@@ -209,7 +205,6 @@ let rowFilling = (object, id, table) => {
                 }
             }
             let item_list = JSON.parse(selectTableData[i].Item_list);
-            console.log(item_list);
             if (item_list == null) item_list = [{item_product: '', item_price: ''}];
             let region = selectTableData[i].Oblast == null ? 'Не указано' : selectTableData[i].Oblast;
             let area = selectTableData[i].Rayon == null ? 'Не указано' : selectTableData[i].Rayon;
@@ -566,9 +561,8 @@ function sortTableByProduct(filter) {
         </div>
     `)
 }
-let newTableData;
 function sortTableByArea(filter, input = true) {
-    newTableData = saveTableAndCard.slice();
+    let newTableData = saveTableAndCard.slice();
     let filter_table = [];
     let sort = filter.id == undefined ? filter : filter.id;
 
@@ -584,11 +578,22 @@ function sortTableByArea(filter, input = true) {
         oneRegion_data.sort(function (a, b) {
             if (a.Rayon != undefined) {
                 if (sort == 'min') {
-                    if (a.Rayon > b.Rayon) return 1;
-                    if (a.Rayon < b.Rayon) return -1;
+                    if (newTableData[0].id == 'provider') {
+                        if (a.Rayon < b.Rayon) return 1;
+                        if (a.Rayon > b.Rayon) return -1;
+                    } else {
+                        if (a.Rayon > b.Rayon) return 1;
+                        if (a.Rayon < b.Rayon) return -1;
+                    }
+                    
                 } else {
-                    if (a.Rayon < b.Rayon) return 1;
-                    if (a.Rayon > b.Rayon) return -1;
+                    if (newTableData[0].id == 'provider') {
+                        if (a.Rayon > b.Rayon) return 1;
+                        if (a.Rayon < b.Rayon) return -1;
+                    } else {
+                        if (a.Rayon < b.Rayon) return 1;
+                        if (a.Rayon > b.Rayon) return -1;
+                    }
                 }
             } else {
                 if (sort == 'min') {
@@ -608,8 +613,13 @@ function sortTableByArea(filter, input = true) {
     }
     filter_table.sort(function (a, b) {
         if (a.Oblast != undefined) {
-            if (a.Oblast > b.Oblast) return 1;
-            if (a.Oblast < b.Oblast) return -1;
+            if (newTableData[0].id == 'provider') {
+                if (a.Oblast < b.Oblast) return 1;
+                if (a.Oblast > b.Oblast) return -1;
+            } else {
+                if (a.Oblast > b.Oblast) return 1;
+                if (a.Oblast < b.Oblast) return -1;
+            }
         } else {
             if (a.Region > b.Region) return 1;
             if (a.Region < b.Region) return -1;

@@ -102,7 +102,7 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
-                    if (table[0].id == 'client' || table[0].id == 'carrier') {
+                    if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
                         sortTableByArea('min', false);
                     }
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
