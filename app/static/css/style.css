@@ -27,7 +27,7 @@ body {
 
 .page .modal_select {
   width: 500px;
-  background-color: #fff;
+  background-color: #f8f8f8;
   border-radius: 10px;
   -webkit-box-shadow: 0 1px 2px lightgray;
           box-shadow: 0 1px 2px lightgray;
@@ -111,6 +111,48 @@ body {
 
 .page .modal_select .content .list_stock .selectStock:hover {
   cursor: pointer;
+}
+
+.page .modal_search {
+  left: 43%;
+  width: 60%;
+}
+
+.page .modal_search .content {
+  width: 100%;
+  margin: 0;
+}
+
+.page .modal_search .content .table_search {
+  background-color: #f8f8f8;
+  margin-bottom: 40px;
+  width: 100%;
+  color: #595959;
+}
+
+.page .modal_search .content .table_search tr:not(:first-child) {
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .modal_search .content .table_search tr:not(:first-child):hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #FFFEED;
+}
+
+.page .modal_search .content .table_search td,
+.page .modal_search .content .table_search th {
+  text-align: left;
+  border: 1px solid #e9e9e9;
+  padding: 10px 5px 10px 15px;
+  vertical-align: middle;
+  font-size: 12px;
+}
+
+.page .modal_search .content .table_search th {
+  font-weight: 700;
 }
 
 .page .leftBlock {

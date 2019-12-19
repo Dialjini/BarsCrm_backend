@@ -43,6 +43,7 @@ function createCardMenu(element, index = 0) {
     let getInfo = element.id.split('_');
     let selectedLine = new Object();
     let accountInfoInDelivery = null;
+    console.log(getInfo);
 
     // Информация по всем карточкам подкатегорий
     // Подставить актуальные данные
@@ -265,6 +266,7 @@ function createCardMenu(element, index = 0) {
         getListRegions(selectedLine, getInfo[0])
         let category = getInfo[0];
         let idElement = getInfo[1];
+        console.log(getInfo);
         if (idElement == 'new') {
             addMember(category);
             addRow(`${category}-group`);
@@ -293,9 +295,9 @@ function createCardMenu(element, index = 0) {
                 dataType: 'html',
                 success: function(result) {
                     inputContacts(JSON.parse(result));
+                    getCommentsInfo.getRequest(getInfo);
                 }
             });
-            getCommentsInfo.getRequest(getInfo);
         }
         function inputItems(items) {
             if (items.length == 0) 
@@ -307,6 +309,7 @@ function createCardMenu(element, index = 0) {
             }
         }
         function inputContacts(contacts) {
+            console.log('contacts');
             if (contacts.length == 0) 
                 addMember(category);
             else {
@@ -320,6 +323,7 @@ function createCardMenu(element, index = 0) {
     // Модальное окно для Склада
     if (getInfo[0] === 'stock') {
         $('.info').prepend($('<div>', {class: 'overflow'}));
+        $('.overflow').height($('.container')[0].scrollHeight);
         $('#card_menu').addClass('modal');
     // Проверка на заполненность Контактов и строк таблиц (Не у Склада)
     } else { 
