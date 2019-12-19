@@ -27,6 +27,10 @@ function getCurrentDate(year = 'none') {
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
+    sortStatus = {
+        product: {status: false, filter: null, last: null},
+        price: {status: false, filter: null}
+    }
     // Вывод обычной карточки или карточки-окна
     if (index == 0) {
         $('.table, .blockCreateEmptyCard').remove();
@@ -125,7 +129,11 @@ function createCardMenu(element, index = 0) {
                         }
                     }
                 } else {
-                    selectedLine = data_list[titleObject[i].status - 1];
+                    for (let l = 0; l < data_list.length; l++) {
+                        if (data_list[l].id == titleObject[i].status) {
+                            selectedLine = data_list[l];
+                        }
+                    }
                 }
 
                 // Передать данные счета в карточку доставки
@@ -454,14 +462,14 @@ function createCardMenu(element, index = 0) {
                             </tbody>
                         </table>
                     </div>`)
-        }).add(`<div class="row_card">
+        }).add(`<div class="row_card" id="media">
                     <div class="left_side">
                         <div class="hmax" id="member"></div>
                         <div class="events">
                             <img class="add_something" src="static/images/add.png" onclick="addMember()">
                         </div>
                     </div>
-                    <div class="info_block">
+                    <div class="info_block" style="width: fit-content">
                         <span class="lightgray">Группа товаров</span>
                         <div class="hmax">
                             <table>
@@ -785,8 +793,17 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
-        console.log(selectedLine);
-        let sum = +selectedLine.account.Sale + +selectedLine.account.Hello + +selectedLine.account.Shipping, vat = 0;
+        let sum = 0, vat = 0;
+
+        let sale = JSON.parse(selectedLine.account.Sale);
+        let privet = JSON.parse(selectedLine.account.Hello);
+        let delivery = JSON.parse(selectedLine.account.Shipping);
+        let items_amount = JSON.parse(selectedLine.account.Items_amount);
+
+        for (let i = 0; i < sale; i++) {
+            sum += +sale[i] + +privet[i] + +delivery[i];
+        }
+
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
@@ -794,7 +811,7 @@ function createCardMenu(element, index = 0) {
             for (let i = 0; i < list_items.length; i++) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
-                sum += Math.round(list_items[i].Cost * list_items[i].Transferred_volume);
+                sum += +items_amount[i];
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
                         <td>${list_items[i].Name}</td>
@@ -803,11 +820,11 @@ function createCardMenu(element, index = 0) {
                         <td>${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
                         <td>${list_items[i].Transferred_volume}</td>
                         <td>${list_items[i].Cost}</td>
-                        <td>${(+selectedLine.account.Sale / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
-                        <td>${(+selectedLine.account.Hello / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
-                        <td>${(+selectedLine.account.Shipping / list_items[i].Transferred_volume / list_items.length).toFixed(2)}</td>
+                        <td>${+sale[i]}</td>
+                        <td>${+privet[i]}</td>
+                        <td>${+delivery[i]}</td>
                         <td>${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
-                        <td>${Math.round(list_items[i].Cost * list_items[i].Transferred_volume)}</td>
+                        <td>${+items_amount[i]}</td>
                     </tr>
                 `)
             }
@@ -1475,7 +1492,6 @@ function createCardMenu(element, index = 0) {
         `;
     }
 }
-
 function getListAreas(element, area = '') {
     let region = element.value;
     let category;
@@ -1500,7 +1516,6 @@ function getListAreas(element, area = '') {
         saveCard();
     });
 }
-
 function makeRequest(element) {
     let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
     let data = {};
@@ -1737,7 +1752,6 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
-    console.log(data);
 
     $.ajax({
         url: '/addItemToStock',
@@ -1924,9 +1938,15 @@ function completionCard(elem) {
             }
             
             if (idsItems.length > 0) {
-                let sale = $('#total_discount_inv').val();
-                let privet = $('#total_privet_inv').val();
-                let delivery = $('#total_delivery_inv').val();
+                // Работает
+                let sale = [], privet = [], delivery = [], items_amount = [];
+                for (let element of $('#exposed_list .invoiled')) {
+                    sale.push($(element).children()[7].children[0].value);
+                    privet.push($(element).children()[8].children[0].value);
+                    delivery.push($(element).children()[9].children[0].value);
+                    items_amount.push($(element).children()[11].innerHTML);
+                }
+
                 let status = 'false';
                 let date = getCurrentDate('year');
                 let name;
@@ -1943,7 +1963,7 @@ function completionCard(elem) {
                 $.ajax({
                     url: '/addAccount',
                     type: 'GET',
-                    data: {name: name, status: status, date: date, hello: privet, sale: sale, shipping: delivery, sum: sum, item_ids: JSON.stringify(idsItems)},
+                    data: {name: name, status: status, date: date, hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery), items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems)},
                     dataType: 'html',
                     success: function() {
                         closeCardMenu('account_new');
@@ -1956,7 +1976,6 @@ function completionCard(elem) {
         }
     })
 }
-
 // Закрытие карточки
 function closeCardMenu(id = '') {
     // Сохраняет данные на сервер

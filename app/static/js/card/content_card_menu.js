@@ -225,69 +225,6 @@ function fillVolume(value) {
     if (spaceIndex > 0) { value = value.substring(0, spaceIndex) }
     $('#volume_goods').html(value);
 }
-function dataСalculation(element) {
-    for (let i = 0; i < list_inv.length; i++) {
-        if (list_inv[i].id == element.id) {
-            list_inv[i].value = $(element).val();
-        }
-    }
-    let total = $('#total_costs_inv').val();
-    let sale = $('#total_discount_inv').val();
-    let privet = $('#total_privet_inv').val();
-    let delivery = $('#total_delivery_inv').val();
-    let sum = +sale + +privet + +delivery;
-    $('#total_costs_inv').val(sum);
-
-    let total_costs = $('#total_costs_inv').val();
-
-    let count = 0;
-    for (let element of $('#exposed_list .invoiled')) {
-        count++;
-    }
-    for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
-    }
-    calculationIndicators();
-}
-function calculationIndicators() {
-    let list = [
-        {id: 'total_discount_inv', tr: 'calcSale'},
-        {id: 'total_privet_inv', tr: 'calcPrivet'},
-        {id: 'total_delivery_inv', tr: 'calcDelivery'},
-    ]
-    let count = 0;
-    $('#exposed_list .invoiled').each(function(i, element) {
-        count++;
-    });
-    for (let i = 0; i < list.length; i++) {
-        let data = categoryInStock[1][1];
-        for (let j = 0; j < data.length; j++) {
-            for (let k = 0; k < data[j].items.length; k++) {
-                $('#exposed_list .invoiled').each(function(i, element) {
-                    if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
-                        let totalSale = (+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        let totalPrivet = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        let totalDelivery = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-
-                        $(`#calcSale_${data[j].items[k].Item_id}`).html(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : totalSale);
-                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
-                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
-
-                        let sum = 0;
-                        for (let element of $('#exposed_list .invoiled')) {
-                            sum += +$(element).children()[11].innerHTML;
-                        }
-                        data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
-                        let vat = sum > 0 ? sum - ((sum * +data[j].items[k].NDS) / 100) : 0;
-                        $('#total').html(Math.round(sum));
-                        $('#vat').html(Math.round(sum - vat));
-                        $('#without-vat').html(Math.round(vat));
-                    }
-                });
-            }
-        }
-    }
-}
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
     return `
@@ -553,6 +490,12 @@ function invoiceInTable(element) {
                                             type: 'number', onkeyup: 'tarCalculation(this.id)', id: list[k].id, max: account.Volume
                                         })
                                     }))
+                                } else if (list[k].id.includes('calcSale') || list[k].id.includes('calcPrivet') || list[k].id.includes('calcDelivery')) {
+                                    tr.append($('<td>', {
+                                        append: $('<input>', {
+                                            type: 'number', id: list[k].id
+                                        })
+                                    }))
                                 } else {
                                     tr.append($('<td>', { id: list[k].id, html: list[k].html }));
                                 }
@@ -579,25 +522,83 @@ function invoiceInTable(element) {
         },
     });
 }
+function dataСalculation(element) {
+    for (let i = 0; i < list_inv.length; i++) {
+        if (list_inv[i].id == element.id) {
+            list_inv[i].value = $(element).val();
+        }
+    }
+    let total = $('#total_costs_inv').val();
+    let sale = Math.abs($('#total_discount_inv').val());
+    let privet = $('#total_privet_inv').val();
+    let delivery = $('#total_delivery_inv').val();
+    let sum = +sale + +privet + +delivery;
+    $('#total_costs_inv').val(sum);
+
+    let total_costs = $('#total_costs_inv').val();
+
+    let count = 0;
+    for (let element of $('#exposed_list .invoiled')) {
+        count++;
+    }
+    for (let element of $('#exposed_list .invoiled')) {
+        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
+    }
+    calculationIndicators();
+}
+function calculationIndicators() {
+    let list = [
+        {id: 'total_discount_inv', tr: 'calcSale'},
+        {id: 'total_privet_inv', tr: 'calcPrivet'},
+        {id: 'total_delivery_inv', tr: 'calcDelivery'},
+    ]
+    let count = 0;
+    $('#exposed_list .invoiled').each(function(i, element) {
+        count++;
+    });
+    for (let i = 0; i < list.length; i++) {
+        let data = categoryInStock[1][1];
+        for (let j = 0; j < data.length; j++) {
+            for (let k = 0; k < data[j].items.length; k++) {
+                $('#exposed_list .invoiled').each(function(i, element) {
+                    if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
+                        let totalSale = Math.abs((+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2));
+                        let totalPrivet = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let totalDelivery = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+
+                        $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : -totalSale);
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
+                        let total = +$(`#calcDelivery_${data[j].items[k].Item_id}`).val() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).val() + +$(`#calcSale_${data[j].items[k].Item_id}`).val();
+                        let amount = Math.round(+$(`#product_cost_${data[j].items[k].Item_id}`).html() * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val()).toFixed(2);
+                        $(`#calcSum_${data[j].items[k].Item_id}`).html(+amount + total);
+
+                        let sum = 0;
+                        for (let element of $('#exposed_list .invoiled')) {
+                            sum += +$(element).children()[11].innerHTML;
+                        }
+                        data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
+                        let vat = sum > 0 ? sum - ((sum * +data[j].items[k].NDS) / 100) : 0;
+                        $('#total').html(Math.round(sum));
+                        $('#vat').html(Math.round(sum - vat));
+                        $('#without-vat').html(Math.round(vat));
+                    }
+                });
+            }
+        }
+    }
+}
 function tarCalculation(id) {
     let idElement = id.split('_')[2];
     let volume = +$(`#${id}`).val();
     let weight = +$(`#product_weight_${idElement}`).html();
     let unit = Math.round(+$(`#product_cost_${idElement}`).html() / volume).toFixed(2);
-    let amount = Math.round(+$(`#product_cost_${idElement}`).html() * volume).toFixed(2);
-    let count = 0;
-    for (let element of $('#exposed_list .invoiled')) {
-        count++
-    }
-    let average_costs = Math.ceil(+$('#total_costs_inv').val() / count);
 
     $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
     $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
-    $(`#calcSum_${idElement}`).html(+amount + average_costs);
     calculationIndicators();
 }
 function all_costs() {
-    let total_costs = $('#total_costs_inv').val();
     
     let amount = 3, disableValue = 0;
     for (let i = 0; i < list_inv.length; i++) {
@@ -614,13 +615,9 @@ function all_costs() {
             $(`#${list_inv[i].id}`).val(averageValue);
         }
     }
-
-    let count = 0;
     for (let element of $('#exposed_list .invoiled')) {
-        count++;
-    }
-    for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
+        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML)
+        + (+$(element).children()[7].children[0].value + +$(element).children()[8].children[0].value + +$(element).children()[9].children[0].value);
     }
     calculationIndicators();
 }
@@ -952,7 +949,6 @@ function removeMemberOrRow(id) {
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
-    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
@@ -1093,10 +1089,7 @@ function addRow(id, selectedLine = '') {
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             if (id === 'provider-group') {
-                console.log(123);
-                for (let element of $('#item_date')) {
-                    $(element).datepicker({minDate: new Date(), position: 'left top', autoClose: true})
-                }
+                //$('#item_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
             }
             if (id === 'delivery-group') {
                 $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})

@@ -6,6 +6,10 @@ let test = 0;
 function linkField() {
     // Обычная подкатегория
     $('.field').click(function() {
+        sortStatus = {
+            product: {status: false, filter: null, last: null},
+            price: {status: false, filter: null}
+        }
         $('.table').remove();
 
         function activityReassignment(array) {
@@ -345,6 +349,10 @@ function linkCategory(element) {
     $('[name="linkCategory"], .mini_logo').removeClass('active');
     $(`#${element}`).addClass('active');
     lastData = {last_id: '', last_table: ''};
+    sortStatus = {
+        product: {status: false, filter: null, last: null},
+        price: {status: false, filter: null}
+    }
     categoryInFilterStock[1][1] = [];
     for (let i = 0; i < linkCategoryInfo.length; i++) {
         if (element == linkCategoryInfo[i].id) {

@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
-from app import models, db, reqs
+from app import models, db, reqs, DocCreator
 from flask_socketio import SocketIO, emit
 import json
 from xhtml2pdf import pisa
@@ -103,51 +103,22 @@ def table_to_json(query):
     return json.dumps(result)
 
 
-def to_PDF(owner, name, delivery):
-    document = models.Document()
-    if name == "Договор":
-        name = "Dogovor"
-        document.Type = 'Dogovor'
-    else:
-        name = "Zayavka"
-        document.Type = 'Zayavka'
-
-    f = open(os.path.dirname(__file__) + '/upload/{}.pdf'.format(owner.__tablename__ + str(owner.id)), "w+b")
+def to_PDF(name, owner):
+    f = open(os.path.dirname(__file__) + '/upload/{}.docx'.format(owner.__tablename__ + str(owner.id)), "w+b")
     info = reqs.getINNinfo(owner.UHH)['suggestions'][0]
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
-
-    document.Client_name = info['value']
-    document.UHH = owner.UHH
-    document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
-    document.Client_contact_name = info['data']['management']['name']
-    document.Bik = owner.Bik
-    document.KPP = info['data']['kpp']
-    document.rc = owner.rc
-    document.kc = owner.kc
-    document.Owner_id = owner.id
-    document.MonthNum = document.getMonthNum()
-    document.OGRN = info['data']['ogrn']
-
-    account = models.Account.query.filter_by(id=delivery.Account_id).first()
-    if delivery != '':
-        Client = models.Client.query.filter_by(Name=delivery.Client).first()
-        Delivery_client_info = {'Name': Client.Name, 'Address': Client.Adress,
-                                'Sum2text': num2text(account.Sum), 'Sum': account.Sum}
-    else:
-        Delivery_client_info = ''
-
-    db.session.add(document)
-    db.session.commit()
-
-    html = render_template('{}.html'.format(name), document=document, date=date,
-                           owner=owner, path=os.path.dirname(__file__), delivery=delivery,
-                           Delivery_client_info=Delivery_client_info)
-
-    pisa.CreatePDF(html, dest=f, encoding='utf-8')
-    f.close()
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
 
-    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
+    if name == 'AccountIP' or name =='AccountOOO':
+        return DocCreator.Generate_Account(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
+    elif name == 'DogovorNaDostavkuIP' or name == 'DogovorNaDostavkuOOO':
+        return DocCreator.Generate_DogovorNaDostavku(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
+    elif name == 'Dogovor':
+        return DocCreator.Generate_Dogovor(f=f, dir_u=dir_u, info=info, owner=owner, date=date)
+    elif name == 'Zayavka':
+        return DocCreator.Generate_Zayavka(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
+    else:
+        return '400 Bad Request'
 
 
 @app.route('/')
@@ -254,10 +225,6 @@ def getTemplates():
 
 @app.route('/downloadDoc', methods=['GET'])
 def downloadDoc():
-    if request.args['name'] == 'Заявка':
-        delivery = models.Delivery.query.filter_by(id=request.args['delivery_id'])
-    else:
-        delivery = ''
     if 'username' in session:
         if request.args['category'] == 'client':
             owner = models.Client.query.filter_by(id=request.args['card_id']).first()
@@ -268,7 +235,7 @@ def downloadDoc():
         else:
             return 'Error 400'
 
-        return to_PDF(owner, request.args['name'], delivery)
+        return to_PDF(owner=owner, name=request.args['name'])
     else:
         return redirect('/', code=302)
 
@@ -942,6 +909,7 @@ def addProvider():
         Provider.Merc = data['provider_merc']
         Provider.Volume = data['provider_volume']
         Provider.Holding = data['provider_holding']
+        Provider.Item_list = data['provider_item_list']
 
         if new:
             db.session.add(Provider)

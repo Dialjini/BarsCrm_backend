@@ -102,6 +102,9 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
+                    if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
+                        sortTableByArea('min', false);
+                    }
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
                     $('.drop_down_search').remove();
                     $.ajax({
@@ -272,6 +275,21 @@ function saveInfoCard(id, close = false, elem = null) {
             const request = idCardFields[i].request;
             for (let j = 0; j < idCardFields[i].ids.length; j++) {
                 idData[idCardFields[i].ids[j]] = $(`#${idCardFields[i].ids[j]}`).val();
+            }
+            if (data[0] === 'provider') {
+                let items = [];
+                for (let element of $('#group tr')) {
+                    items.push({
+                        item_product: $(element).children()[0].children[0].value,
+                        item_price: $(element).children()[1].children[0].value,
+                        item_date: $(element).children()[2].children[0].value,
+                        item_vat: $(element).children()[3].children[0].value,
+                        item_packing: $(element).children()[4].children[0].value,
+                        item_weight: $(element).children()[5].children[0].value,
+                        item_fraction: $(element).children()[6].children[0].value,
+                    })
+                }
+                idData['provider_item_list'] = JSON.stringify(items);
             }
             additionalData(i);
             createOrSaveCard.getRequest(idData, request);
@@ -490,6 +508,10 @@ function cancelSearch() {
     getTableData(saveTableAndCard);
     $('.centerBlock .header .cancel').remove();
     $('#search').val('');
+    sortStatus = {
+        product: {status: false, filter: null},
+        price: {status: false, filter: null}
+    }
 }
 
 function searchFill(element) {

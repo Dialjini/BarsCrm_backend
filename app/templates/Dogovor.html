@@ -60,10 +60,9 @@
             text-decoration: underline;
         }
     </style>
-    <title>Document</title>
 </head>
 <body>
-        <div class="title bold">ДОГОВОР ПОСТАВКИ № {{document.Month_num}}/{{document.Date}}</div>
+        <div style="Heading 9">ДОГОВОР ПОСТАВКИ № {{document.MonthNum}}/{{document.Date}}</div>
         <div class="info">
             <div>г. Новосибирск</div>
             <div>«{{date.d}}» {{date.m}} {{date.y}}.</div>
@@ -129,7 +128,7 @@
             </tr>
             <tr>
                 <td class="bold">ООО "БАРС"</td>
-                <td class="bold">{{document.Name}}</td>
+                <td class="bold">{{document.Client_name}}</td>
             </tr>
             <tr>
                 <td><span class="bold">Юридический адрес:</span></td>
@@ -137,7 +136,7 @@
             </tr>
             <tr>
                 <td>630024, г. Новосибирск, ул. Сибиряков-Гвардейцев, 45, офис 409,</td>
-                <td>document.Client_prefix_address</td>
+                <td>{{document.Client_prefix_address}}</td>
             </tr>
             <tr>
                 <td>(8383)-286-20-65, 8-913-380-40-16, 8-913-469-89-89, Bars-nsk@bk.ru</td>
@@ -145,7 +144,7 @@
             </tr>
             <tr>
                 <td><span class="bold">Почтовый адрес:</span> 630098, г. Новосибирск, а/я 12</td>
-                <td><span class="bold"></span>{{document.Client_post_address}}</td>
+                <td><span class="bold"></span>{{document.Client_mail_address}}</td>
             </tr>
             <tr>
                 <td class="ttt">ИНН 5406504400</td>
