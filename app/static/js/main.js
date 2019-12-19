@@ -562,6 +562,21 @@ function searchCategoryInfo() {
     $('.centerBlock .header .cancel').remove();
 
     let searchInfo = $('#search').val();
+    let phone = +searchInfo;
+
+    if (!isNaN(phone)) {
+        $.ajax({
+            url: '/findContacts',
+            type: 'GET',
+            data: {data: +searchInfo},
+            dataType: 'html',
+            success: function(result) {
+                console.log(JSON.parse(result));
+            }
+        });
+        return;
+    }
+
     let data = saveTableAndCard[1][1];
     let listData = [
         { id: 'client', list: ['id', 'Name', 'Oblast', 'Rayon', 'Category'], filter: filterClient },

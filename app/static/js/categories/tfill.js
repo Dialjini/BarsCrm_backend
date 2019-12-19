@@ -239,11 +239,18 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
+        console.log(selectTableData)
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
             let carrier_name = selectTableData[i].carrier == null ? 'Не выбран' : selectTableData[i].carrier.Name
             selectTableData[i].delivery.NDS = selectTableData[i].delivery.NDS[0] + selectTableData[i].delivery.NDS[1];
-            const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, selectTableData[i].delivery.Price, selectTableData[i].delivery.Price - ((selectTableData[i].delivery.Price * +selectTableData[i].delivery.NDS) / 100), selectTableData[i].delivery.Payment_date];
+            let amount = 0;
+            let count = selectTableData[i].delivery.Amounts != undefined ? JSON.parse(selectTableData[i].delivery.Amounts) : [];
+            let vat = selectTableData[i].delivery.Customer == 'ООО' ? 0.74 : 1.26;
+            for (let i = 0; i < count.length; i++) {
+                amount += +count[i];
+            }
+            const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, Math.ceil(amount * vat), amount, selectTableData[i].delivery.Payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);

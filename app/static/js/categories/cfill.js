@@ -45,19 +45,20 @@ function linkField() {
             { width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
         ]
 
+        let idList = this.id;
+        let element;
         let info = ['Group_name', 'Name', 'Packing', 'stock_address'];
-        for (let k = 0; k < info.length; k++) {
-            for (let i = 0; i < categoryInStock[1][1].length; i++) {
-                for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                    // Если value этой айдишки не ее изначально название - брать остальные показатели, у которых есть это неизначальное значение
-                    if (k !== 3) list[k].list.push(categoryInStock[1][1][i].items[j][info[k]]);
-                    else list[k].list.push(categoryInStock[1][1][i][info[k]])
+        if (!idList.includes('analytics')) {
+            for (let k = 0; k < info.length; k++) {
+                for (let i = 0; i < categoryInStock[1][1].length; i++) {
+                    for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
+                        // Если value этой айдишки не ее изначально название - брать остальные показатели, у которых есть это неизначальное значение
+                        if (k !== 3) list[k].list.push(categoryInStock[1][1][i].items[j][info[k]]);
+                        else list[k].list.push(categoryInStock[1][1][i][info[k]])
+                    }
                 }
             }
         }
-
-        let idList = this.id;
-        let element;
 
         for (let i = 0; i < list.length; i++) {
             if (list[i].id === idList) {

@@ -85,14 +85,13 @@ function checkStocks(element) {
     let payment_history = [];
 
     for (let tr of $('#group tr')) {
-        let position = $(tr)[0].children[0].children[0].value;
-        let date = $(tr)[0].children[1].children[0].value;
-        let sum = $(tr)[0].children[2].children[0].value;
-        payment_history.push({position: position, date: date, sum: sum})
+        let date = $(tr)[0].children[0].children[0].value;
+        let sum = $(tr)[0].children[1].children[0].value;
+        payment_history.push({date: date, sum: sum})
     }
 
     if (payment_history.length == 0) {
-        payment_history.push({position: '', date: '', sum: ''})
+        payment_history.push({date: '', sum: ''})
     }
 
     $.ajax({
@@ -856,11 +855,9 @@ function addMember(id = 'client', selectedLine = '') {
             class: 'm_info',
             append: $('<div>', {
                 class: 'top',
-                //$('<input>', { value: selectedLine.Position
                 append: $('<select>', {
                     append: fillListRole()
-                }).add('<input>',    { placeholder: category.placeholder, class: category.class, id: 'phone', onchange: 'saveCard()', value: selectedLine.Number, type: 'tel'
-                })
+                }).add('<input>',    { placeholder: category.placeholder, class: category.class, id: category.class, onchange: 'saveCard()', value: selectedLine.Number })
             }).add($('<div>', {
                 class: 'bottom',
                 append: $('<input>', { placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.Last_name, type: 'text'
@@ -877,6 +874,9 @@ function addMember(id = 'client', selectedLine = '') {
     } if (!selectedLine.Visible) {
         visOrHidContact(`visible_${count_members}`);
     }
+    for (let element of $('#member .member #phone')) {
+        $(element).mask('89999999999');
+    }
     saveCard();
 }
 // Скрытие/Показ контакта
@@ -888,6 +888,7 @@ function visOrHidContact(idElem) {
 
         $(`#member_${id[1]} #role`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #phone`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} #car`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #last_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #first_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #email`).attr('disabled', 'disabled')
@@ -901,6 +902,7 @@ function visOrHidContact(idElem) {
         $(`#member_${id[1]}`).removeClass('hidden');
 
         $(`#member_${id[1]} #role`).removeAttr('disabled')
+        $(`#member_${id[1]} #car`).removeAttr('disabled')
         $(`#member_${id[1]} #phone`).removeAttr('disabled')
         $(`#member_${id[1]} #last_name`).removeAttr('disabled')
         $(`#member_${id[1]} #first_name`).removeAttr('disabled')
