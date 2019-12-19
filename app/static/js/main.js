@@ -102,6 +102,9 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
+                    if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
+                        sortTableByArea('min', false);
+                    }
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
                     $('.drop_down_search').remove();
                     $.ajax({
@@ -559,6 +562,21 @@ function searchCategoryInfo() {
     $('.centerBlock .header .cancel').remove();
 
     let searchInfo = $('#search').val();
+    let phone = +searchInfo;
+
+    if (!isNaN(phone)) {
+        $.ajax({
+            url: '/findContacts',
+            type: 'GET',
+            data: {data: +searchInfo},
+            dataType: 'html',
+            success: function(result) {
+                console.log(JSON.parse(result));
+            }
+        });
+        return;
+    }
+
     let data = saveTableAndCard[1][1];
     let listData = [
         { id: 'client', list: ['id', 'Name', 'Oblast', 'Rayon', 'Category'], filter: filterClient },

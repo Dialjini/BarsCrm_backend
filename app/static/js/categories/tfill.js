@@ -2,6 +2,7 @@
  * Функции для работы с таблиц
  */
 let rowFilling = (object, id, table) => {
+    let selectTableData = object[1];
     let getTitleTable = () => {
         let element = $('<tr>');
         for (let i = 0; i < object[0].length - 1; i++) {
@@ -29,6 +30,14 @@ let rowFilling = (object, id, table) => {
                         ${checkRole()}
                     </div>
                 </th>`;
+            } else if (i == 3 && id == 'client' || i == 1 && id == 'provider' || i == 1 && id == 'filter_provider' || i == 2 && id == 'carrier') {
+                elementTr = `
+                <th id="all_area" onclick="selectFilterArea(this)" width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <img src="static/images/dropmenu_black.svg" class="drop_down_img all_area">
+                    </div>
+                </th>`
             } else if (i == 3 && id == 'provider' || i == 3 && id == 'filter_provider') {
                 elementTr = `
                 <th id="pd_group" onclick="selectGroupProduct(this)" width="${object[0][i].width}%">
@@ -76,30 +85,30 @@ let rowFilling = (object, id, table) => {
                 managers = JSON.parse(result);
             }
         });
-
-        for (let i = object[1].length - 1; i >= 0; i--) {
-            let element = $('<tr>', {id: `${id}_${i + 1}`, onclick: 'createCardMenu(this)'});
+        for (let i = 0; i < selectTableData.length; i++) {
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
-                if (+managers[j].id == +object[1][i].Manager_id && object[1][i].Manager_active) {
+                if (+managers[j].id == +selectTableData[i].Manager_id && selectTableData[i].Manager_active) {
                     managerSecondName = managers[j].second_name;
                     break;
                 } else {
                     managerSecondName = 'Не выбран';
                 }
             }
-            // Получать для разных таблиц - разные переменные
+
             let name, data = [
-                { id: 'client', list: [object[1][i].id, object[1][i].Name, object[1][i].Oblast, object[1][i].Rayon, object[1][i].Category, managerSecondName] },
-                { id: 'provider', list: [object[1][i].Oblast, object[1][i].Rayon, object[1][i].Name, object[1][i].Group, object[1][i].Price, managerSecondName] },
-                { id: 'carrier', list: [object[1][i].Name, object[1][i].Region, object[1][i].Area, object[1][i].Capacity, object[1][i].View, managerSecondName] },
+                { id: 'client', list: [selectTableData[i].id, selectTableData[i].Name, selectTableData[i].Oblast, selectTableData[i].Rayon, selectTableData[i].Category, managerSecondName] },
+                { id: 'carrier', list: [selectTableData[i].Name, selectTableData[i].Region, selectTableData[i].Area, selectTableData[i].Capacity, selectTableData[i].View, managerSecondName] },
             ]
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].id === id) {
-                    name = data[i].list;
+
+            for (let j = 0; j < data.length; j++) {
+                if (data[j].id === id) {
+                    name = data[j].list;
                     break;
                 }
             }
+
+            let element = $('<tr>', {id: `${id}_${selectTableData[i].id}`, onclick: 'createCardMenu(this)'});
             for (let j = 0; j < name.length; j++) {
                 let currentInfo = name[j];
                 if (currentInfo === null || currentInfo === '') {
@@ -127,24 +136,22 @@ let rowFilling = (object, id, table) => {
             }
         });
 
-        console.log(object[1]);
-        for (let i = object[1].length - 1; i >= 0; i--) {
-            let tbody = $('<tbody>', { id: `provider_${object[1][i].id}`, name: 'provider' , onclick: 'createCardMenu(this)' });
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
+            let tbody = $('<tbody>', { id: `provider_${selectTableData[i].id}`, name: 'provider' , onclick: 'createCardMenu(this)' });
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
-                if (+managers[j].id == +object[1][i].Manager_id && object[1][i].Manager_active) {
+                if (+managers[j].id == +selectTableData[i].Manager_id && selectTableData[i].Manager_active) {
                     managerSecondName = managers[j].second_name;
                     break;
                 } else {
                     managerSecondName = 'Не выбран';
                 }
             }
-            let item_list = JSON.parse(object[1][i].Item_list);
-            console.log(item_list);
+            let item_list = JSON.parse(selectTableData[i].Item_list);
             if (item_list == null) item_list = [{item_product: '', item_price: ''}];
-            let region = object[1][i].Oblast == null ? 'Не указано' : object[1][i].Oblast;
-            let area = object[1][i].Rayon == null ? 'Не указано' : object[1][i].Rayon;
-            let name = object[1][i].Name == null ? 'Не указано' : object[1][i].Name;
+            let region = selectTableData[i].Oblast == null ? 'Не указано' : selectTableData[i].Oblast;
+            let area = selectTableData[i].Rayon == null ? 'Не указано' : selectTableData[i].Rayon;
+            let name = selectTableData[i].Name == null ? 'Не указано' : selectTableData[i].Name;
             tbody.append(`
                 <tr>
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${region}</td>
@@ -156,7 +163,7 @@ let rowFilling = (object, id, table) => {
                 </tr>
             `)
 
-            item_list = JSON.parse(object[1][i].Item_list);
+            item_list = JSON.parse(selectTableData[i].Item_list);
 
             if (item_list != null) {
                 for (let j = 1; j < item_list.length; j++) {
@@ -186,24 +193,22 @@ let rowFilling = (object, id, table) => {
             }
         });
 
-        console.log(object[1]);
-        for (let i = object[1].length - 1; i >= 0; i--) {
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
             let tbody = $('<tbody>', { id: `provider_${i + 1}`, name: 'provider' , onclick: 'createCardMenu(this)' });
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
-                if (+managers[j].id == +object[1][i].Manager_id && object[1][i].Manager_active) {
+                if (+managers[j].id == +selectTableData[i].Manager_id && selectTableData[i].Manager_active) {
                     managerSecondName = managers[j].second_name;
                     break;
                 } else {
                     managerSecondName = 'Не выбран';
                 }
             }
-            let item_list = JSON.parse(object[1][i].Item_list);
-            console.log(item_list);
+            let item_list = JSON.parse(selectTableData[i].Item_list);
             if (item_list == null) item_list = [{item_product: '', item_price: ''}];
-            let region = object[1][i].Oblast == null ? 'Не указано' : object[1][i].Oblast;
-            let area = object[1][i].Rayon == null ? 'Не указано' : object[1][i].Rayon;
-            let name = object[1][i].Name == null ? 'Не указано' : object[1][i].Name;
+            let region = selectTableData[i].Oblast == null ? 'Не указано' : selectTableData[i].Oblast;
+            let area = selectTableData[i].Rayon == null ? 'Не указано' : selectTableData[i].Rayon;
+            let name = selectTableData[i].Name == null ? 'Не указано' : selectTableData[i].Name;
             tbody.append(`
                 <tr>
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${region}</td>
@@ -215,7 +220,7 @@ let rowFilling = (object, id, table) => {
                 </tr>
             `)
 
-            item_list = JSON.parse(object[1][i].Item_list);
+            item_list = JSON.parse(selectTableData[i].Item_list);
 
             if (item_list != null) {
                 for (let j = 1; j < item_list.length; j++) {
@@ -234,11 +239,18 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
-        for (let i = object[1].length - 1; i >= 0; i--) {
+        console.log(selectTableData)
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
-            let carrier_name = object[1][i].carrier == null ? 'Не выбран' : object[1][i].carrier.Name
-            object[1][i].delivery.NDS = object[1][i].delivery.NDS[0] + object[1][i].delivery.NDS[1];
-            const name = [object[1][i].delivery.Date, object[1][i].delivery.Name, object[1][i].delivery.Stock, carrier_name, object[1][i].delivery.Customer, object[1][i].delivery.Price, object[1][i].delivery.Price - ((object[1][i].delivery.Price * +object[1][i].delivery.NDS) / 100), object[1][i].delivery.Payment_date];
+            let carrier_name = selectTableData[i].carrier == null ? 'Не выбран' : selectTableData[i].carrier.Name
+            selectTableData[i].delivery.NDS = selectTableData[i].delivery.NDS[0] + selectTableData[i].delivery.NDS[1];
+            let amount = 0;
+            let count = selectTableData[i].delivery.Amounts != undefined ? JSON.parse(selectTableData[i].delivery.Amounts) : [];
+            let vat = selectTableData[i].delivery.Customer == 'ООО' ? 0.74 : 1.26;
+            for (let i = 0; i < count.length; i++) {
+                amount += +count[i];
+            }
+            const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, Math.ceil(amount * vat), amount, selectTableData[i].delivery.Payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
@@ -250,10 +262,10 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
-        for (let i = object[1].length - 1; i >= 0; i--) {
-            if (object[1][i].account.Payment_history != undefined) {
-                let payment_list = JSON.parse(object[1][i].account.Payment_history);
-                let amount = object[1][i].account.Sum;
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
+            if (selectTableData[i].account.Payment_history != undefined) {
+                let payment_list = JSON.parse(selectTableData[i].account.Payment_history);
+                let amount = selectTableData[i].account.Sum;
                 let payment_amount = 0;
 
                 for (let i = 0; i < payment_list.length; i++) {
@@ -267,13 +279,13 @@ let rowFilling = (object, id, table) => {
             }
 
             let hello_sum = 0;
-            let hello_list = JSON.parse(object[1][i].account.Hello);
+            let hello_list = JSON.parse(selectTableData[i].account.Hello);
             for (let i = 0; i < hello_list.length; i++) {
                 hello_sum += +hello_list[i];
             }
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [object[1][i].items[0].Prefix, object[1][i].account.Date, object[1][i].account.Name, object[1][i].account.Sum, status, hello_sum, object[1][i].account.Manager_id];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, selectTableData[i].account.Sum, status, hello_sum, selectTableData[i].account.Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -294,11 +306,11 @@ let rowFilling = (object, id, table) => {
             success: function(result) { deliveryTable = JSON.parse(result) },
         });
         table.append(getTitleTable());
-        for (let i = object[1].length - 1; i >= 0; i--) {
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
             let payment_amount = 0;
-            if (object[1][i].account.Payment_history != undefined) {
-                let payment_list = JSON.parse(object[1][i].account.Payment_history);
-                let amount = object[1][i].account.Sum;
+            if (selectTableData[i].account.Payment_history != undefined) {
+                let payment_list = JSON.parse(selectTableData[i].account.Payment_history);
+                let amount = selectTableData[i].account.Sum;
 
                 for (let i = 0; i < payment_list.length; i++) {
                     payment_amount += +payment_list[i].sum
@@ -320,7 +332,7 @@ let rowFilling = (object, id, table) => {
             if (postponement_date == undefined) postponement_date = 'Не указано';
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
-            const name = [object[1][i].items[0].Prefix, object[1][i].account.Name, first_date, postponement_date, object[1][i].account.Sum, payment_amount, +object[1][i].account.Sum - payment_amount, object[1][i].account.Manager_id];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, selectTableData[i].account.Sum, payment_amount, +selectTableData[i].account.Sum - payment_amount, selectTableData[i].account.Manager_id];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -333,10 +345,10 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
-        for (let i = object[1].length - 1; i >= 0; i--) {
-            for (let k = object[1][i].items.length - 1; k >= 0; k--) {
-                let element = $('<tr>', {id: `stock_${object[1][i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-                const name = [object[1][i].items[k].Prefix, object[1][i].items[k].Group_name, object[1][i].items[k].Name, object[1][i].items[k].Weight, object[1][i].items[k].Packing, object[1][i].items[k].Volume, object[1][i].items[k].Cost, object[1][i].items[k].NDS, object[1][i].stock_address];
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
+            for (let k = selectTableData[i].items.length - 1; k >= 0; k--) {
+                let element = $('<tr>', {id: `stock_${selectTableData[i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
+                const name = [selectTableData[i].items[k].Prefix, selectTableData[i].items[k].Group_name, selectTableData[i].items[k].Name, selectTableData[i].items[k].Weight, selectTableData[i].items[k].Packing, selectTableData[i].items[k].Volume, selectTableData[i].items[k].Cost, selectTableData[i].items[k].NDS, selectTableData[i].stock_address];
 
                 for (let j = 0; j < name.length; j++) {
                     let elementTr = $('<td>', { html: name[j] });
@@ -350,9 +362,9 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingFilterStock = (id) => {
         table.append(getTitleTable());
-        for (let i = object[1].length - 1; i >= 0; i--) {
-            let element = $('<tr>', {id: `stock_${object[1][i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [object[1][i].Prefix, object[1][i].Group_name, object[1][i].Name, object[1][i].Weight, object[1][i].Packing, object[1][i].Volume, object[1][i].Cost, object[1][i].NDS, object[1][i].stock_address];
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
+            let element = $('<tr>', {id: `stock_${selectTableData[i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
+            const name = [selectTableData[i].Prefix, selectTableData[i].Group_name, selectTableData[i].Name, selectTableData[i].Weight, selectTableData[i].Packing, selectTableData[i].Volume, selectTableData[i].Cost, selectTableData[i].NDS, selectTableData[i].stock_address];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -556,13 +568,119 @@ function sortTableByProduct(filter) {
         </div>
     `)
 }
+function sortTableByArea(filter, input = true) {
+    let newTableData = saveTableAndCard.slice();
+    let filter_table = [];
+    let sort = filter.id == undefined ? filter : filter.id;
+
+    for (let i = 0; i < newTableData[1][1].length; i++) {
+        let oneRegion_data = [newTableData[1][1][i]]
+        for (let j = i + 1; j < newTableData[1][1].length; j++) {
+            if (newTableData[1][1][i].Oblast === newTableData[1][1][j].Oblast) {
+                oneRegion_data.push(newTableData[1][1][j]);
+                newTableData[1][1].splice(j, 1);
+                j--;
+            }
+        }
+        oneRegion_data.sort(function (a, b) {
+            if (a.Rayon != undefined) {
+                if (sort == 'min') {
+                    if (newTableData[0].id == 'provider') {
+                        if (a.Rayon < b.Rayon) return 1;
+                        if (a.Rayon > b.Rayon) return -1;
+                    } else {
+                        if (a.Rayon > b.Rayon) return 1;
+                        if (a.Rayon < b.Rayon) return -1;
+                    }
+                    
+                } else {
+                    if (newTableData[0].id == 'provider') {
+                        if (a.Rayon > b.Rayon) return 1;
+                        if (a.Rayon < b.Rayon) return -1;
+                    } else {
+                        if (a.Rayon < b.Rayon) return 1;
+                        if (a.Rayon > b.Rayon) return -1;
+                    }
+                }
+            } else {
+                if (sort == 'min') {
+                    if (a.Area > b.Area) return 1;
+                    if (a.Area < b.Area) return -1;
+                } else {
+                    if (a.Area < b.Area) return 1;
+                    if (a.Area > b.Area) return -1;
+                }
+            }
+            
+            return 0;
+        })
+        for (let k = 0; k < oneRegion_data.length; k++) {
+            filter_table.push(oneRegion_data[k]);
+        }
+    }
+    filter_table.sort(function (a, b) {
+        if (a.Oblast != undefined) {
+            if (newTableData[0].id == 'provider') {
+                if (a.Oblast < b.Oblast) return 1;
+                if (a.Oblast > b.Oblast) return -1;
+            } else {
+                if (a.Oblast > b.Oblast) return 1;
+                if (a.Oblast < b.Oblast) return -1;
+            }
+        } else {
+            if (a.Region > b.Region) return 1;
+            if (a.Region < b.Region) return -1;
+        }
+        return 0;
+    })
+    if (newTableData[1][1] != undefined) {
+        newTableData[1].pop();
+    }
+    newTableData[1].push(filter_table);
+    $('.table').remove();
+    $('.info').append(fillingTables(newTableData, true));
+
+    $('.centerBlock .header .cancel').remove();
+    if (input) {
+        $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+    }
+}
+function selectFilterArea(element) {
+    function listPrice() {
+        let ul = $('<ul>', { class: 'list'});
+        ul.append(`
+            <li id="min" onclick="sortTableByArea(this)">От А до Я</li>
+            <li id="max" onclick="sortTableByArea(this)">От Я до А</li>
+        `)
+        // получить список групп товаров
+        return ul;
+    }
+    if ($('.table .all_area').hasClass('drop_active')) {
+        $('.table .all_area').removeClass('drop_active');
+        $('.list_area').fadeOut(200);
+        setTimeout(function() {
+            $('.list_area').remove();
+        }, 200);
+        return;
+    }
+    $('.table .all_area').addClass('drop_active');
+    $(element).append($('<div>', { 
+        class: 'list_area',
+        css: {'top': `${$(element).height() + 20}px`},
+        append: listPrice()
+    }))
+    $('.list_area').fadeIn(200);
+}
 function selectFilterPrice(element) {
     function listPrice() {
         let ul = $('<ul>', { class: 'list'});
-        let data;
         ul.append(`
-            <li id="min" onclick="sortTableByPrice(this)">От мен. к бол.</li>
-            <li id="max" onclick="sortTableByPrice(this)">От бол. к мен.</li>
+            <li id="min" onclick="sortTableByPrice(this)">По возраст.</li>
+            <li id="max" onclick="sortTableByPrice(this)">По убыванию</li>
         `)
         // получить список групп товаров
         return ul;
