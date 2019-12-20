@@ -384,7 +384,7 @@ function removeTask(id) {
                 $('#expired_tasks').empty();
                 break;
             }
-            socket.emit('showTasks');
+            socket.emit('showTasks', broadcast = true);
             createCTButtons();
         }
     });
