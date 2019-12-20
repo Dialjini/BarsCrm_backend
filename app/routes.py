@@ -700,17 +700,22 @@ def getStocks():
 
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
+    del_concacts = []
     if 'username' in session:
         if request.args['category'] == 'client':
             Owner = models.Client.query.filter_by(id=request.args['id']).first()
+            del_contacts = models.Contacts.query.filter_by(Client_id=request.args['id']).all()
         elif request.args['category'] == 'provider':
             Owner = models.Provider.query.filter_by(id=request.args['id']).first()
+            del_contacts = models.Contacts.query.filter_by(Provider_id=request.args['id']).all()
         elif request.args['category'] == 'carrier':
             Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+            del_contacts = models.Contacts.query.filter_by(Carrier_id=request.args['id']).all()
         else:
             return '400 Bad request'
 
-        print(Owner.id)
+        for i in del_contacts:
+            db.session.delete(i)
 
         Contacts = []
         args = json.loads(request.args['contacts'])
@@ -729,7 +734,6 @@ def addContacts():
             elif request.args['category'] == 'carrier':
                 Contact.Carrier_id = Owner.id
             Contacts.append(Contact)
-        db.session.delete(Owner.Contacts)
         Owner.Contacts = Contacts
         db.session.commit()
 
