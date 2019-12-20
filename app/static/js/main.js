@@ -120,6 +120,13 @@ function getTableData(table, input = false, close = false) {
                             }
                         }
                     });
+                    if (saveTableAndCard[0].id == 'client') {
+                        $('.fields').append(`
+                            <div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>
+                        `)
+                    } else {
+                        $('#find_competitor').remove();
+                    }
                 }
             }
         }
@@ -529,14 +536,22 @@ $('#search_button').click(function() {
 })
 
 function cancelSearch() {
-    getTableData(saveTableAndCard);
+    for (let i = 0; i < dataName.length; i++) {
+        if (saveTableAndCard[0].id == dataName[i].name) {
+            getTableData(dataName[i].link);
+            break;
+        }
+    }
     $('.centerBlock .header .cancel').remove();
     $('#search').val('');
     $('.modal_search').remove();
     $('.overflow').remove();
     sortStatus = {
-        product: {status: false, filter: null},
-        price: {status: false, filter: null}
+        product: {status: false, filter: null, last: null},
+        price: {status: false, filter: null},
+        area: {status: false, filter: null},
+        category: {status: false, filter: null, last: null},
+        manager: {status: false, filter: null, last: null}
     }
 }
 
@@ -663,7 +678,12 @@ function searchCategoryInfo() {
                 function createModalMenu() {
                     let modal_menu = $('<div>', { 
                         class: 'modal_select modal_search',
-                        append: $('<div>', { class: 'title', html: '<span>Поиск по номеру телефона</span>' }).add(
+                        append: $('<div>', { class: 'title', html: `
+                            <span>Поиск по номеру телефона</span>
+                            <div class="close" onclick="closeModalMenu()">
+                                <img src="static/images/cancel.png">
+                            </div>
+                        ` }).add(
                             $('<div>', { class: 'content', append: fillTable() })
                         )
                     });

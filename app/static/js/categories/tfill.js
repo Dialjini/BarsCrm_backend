@@ -54,6 +54,14 @@ let rowFilling = (object, id, table) => {
                         <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_price">
                     </div>
                 </th>`
+            } else if (i == 4 && id == 'client') {
+                elementTr = `
+                <th id="cl_category" onclick="selectFilterCategory(this)" width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <img src="static/images/dropmenu_black.svg" class="drop_down_img cl_category">
+                    </div>
+                </th>`
             } else {
                 elementTr = `<th width="${object[0][i].width}%">${object[0][i].name}</th>`;
             }
@@ -392,6 +400,59 @@ let rowFilling = (object, id, table) => {
         }
     }
 }
+function searchByCompetitor() {
+
+}
+let sortStatus = {
+    product: {status: false, filter: null, last: null},
+    price: {status: false, filter: null},
+    area: {status: false, filter: null},
+    category: {status: false, filter: null, last: null},
+    manager: {status: false, filter: null, last: null}
+}
+// Фильтры таблиц Start
+function sortTableByCategory(filter) {
+    let currentCategory = filter.innerHTML;
+    let filter_table = [];
+    let data;
+    if (!sortStatus.manager.status && !sortStatus.area.status) {
+        if (filterClient[1][1] != undefined) filterClient[1].pop();
+        data = categoryInListClient[1][1];
+        console.log('client');
+    } else {
+        if (filterClient[1][1] == undefined) {
+            data = categoryInListClient[1][1];
+            console.log('bad_filter_client');
+        } else {
+            data = sortStatus.category.last == null ? filterClient[1][1] : sortStatus.category.last;
+            console.log('filter_client');
+        }
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        if (data[i].Category === currentCategory) {
+            filter_table.push(data[i]);
+        }
+    }
+    
+    if (filterClient[1][1] != undefined) {
+        filterClient[1].pop();
+    }
+    filterClient[1][1] = filter_table;
+    console.log(filterClient[1]);
+    $('.table').remove();
+    $('.info').append(fillingTables(filterClient));
+
+    sortStatus.category.status = true;
+    sortStatus.category.filter = currentCategory;
+
+    $('.centerBlock .header .cancel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
 function sortTableByManagers(element) {
     let searchWord = element.innerHTML;
     $('.centerBlock .header .cancel').remove();
@@ -410,7 +471,25 @@ function sortTableByManagers(element) {
     for (let i = 0; i < managers.length; i++) {
         if (managers[i].role == 'manager' && managers[i].second_name == searchWord) {
             let search = managers[i].id;
-            let data = saveTableAndCard[1][1];
+            let data;
+            if (saveTableAndCard[0].id == 'client') {
+                if (!sortStatus.category.status && !sortStatus.area.status) {
+                    if (filterClient[1][1] != undefined) filterClient[1].pop();
+                    data = categoryInListClient[1][1];
+                    console.log('client');
+                } else {
+                    if (filterClient[1][1] == undefined) {
+                        data = categoryInListClient[1][1];
+                        console.log('bad_filter_client');
+                    } else {
+                        data = sortStatus.manager.last == null ? filterClient[1][1] : sortStatus.manager.last;
+                        console.log('filter_client');
+                    }
+                }
+                sortStatus.manager.last = categoryInListClient[1][1]
+            } else {
+                data = saveTableAndCard[1][1]
+            }
             let listData = [
                 { id: 'client', list: 'Manager_id', filter: filterClient },
                 { id: 'provider', list: 'Manager_id', filter: filterProvider },
@@ -436,12 +515,17 @@ function sortTableByManagers(element) {
                     for (let j = 0; j < clientCards.length; j++) {
                         searchCards.push(clientCards[j]);
                     }
-                    listData[i].filter[1][1] = searchCards;
+                    listData[i].filter[1][1] = searchCards.reverse();
                     $('.table').remove();
-                    $('.info').append(fillingTables(listData[i].filter, true));
+                    $('.info').append(fillingTables(listData[i].filter));
                     break;
                 }
             }
+            if (saveTableAndCard[0].id == 'client') {
+                sortStatus.manager.status = true;
+                sortStatus.manager.filter = searchWord;
+            }
+            
             $('.centerBlock .header .cancel').remove();
             $('.centerBlock .header').append(`
                 <div class="cancel">
@@ -452,123 +536,20 @@ function sortTableByManagers(element) {
         }
     }
 }
-let sortStatus = {
-    product: {status: false, filter: null, last: null},
-    price: {status: false, filter: null}
-}
-function sortTableByPrice(filter) {
-    let data;
-    if (!sortStatus.product.status) {
-        if (filterProvider[1][1] != undefined) filterProvider[1].pop();
-        data = categoryInListProvider[1][1];
-    } else {
-        data = filterProvider[1][1];
-    }
-
-    let filter_data = [];
-    for (let i = 0; i < data.length; i++) {
-        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
-        for (let j = 0; j < item_list.length; j++) {
-            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
-        }
-    }
-        
-    let table_data = []
-    for (let i = 0; i < data.length; i++) {
-        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
-        for (let k = 0; k < item_list.length; k++) {
-            for (let j = 0; j < filter_data.length; j++) {
-                if (filter_data[j].id == data[i].id
-                    && filter_data[j].product == item_list[k].item_product
-                    && filter_data[j].price == item_list[k].item_price) {
-                        table_data.push({
-                            Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
-                            Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
-                            Manager_id: data[i].Manager_id, id: data[i].id, Manager_active: true
-                        });
-                }
-            }
-        }
-    }
-
-    table_data.sort(function (a, b) {
-        if (+JSON.parse(a.Item_list)[0].item_price > +JSON.parse(b.Item_list)[0].item_price) return 1;
-        if (+JSON.parse(a.Item_list)[0].item_price < +JSON.parse(b.Item_list)[0].item_price) return -1;
-        return 0;
-    });
-
-    if (filter.id == 'min') {
-        table_data.reverse();
-    }
-
-    if (sortStatus.product.status) filterProvider[1].pop();
-    filterProvider[1].push(table_data)
-    $('.table').remove();
-    $('.info').append(fillingTables(filterProvider, true));
-
-    sortStatus.price.status = true;
-    sortStatus.price.filter = filter.id;
-    $('.centerBlock .header .cancel').remove();
-    $('.centerBlock .header').append(`
-        <div class="cancel">
-            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
-        </div>
-    `)
-}
-function sortTableByProduct(filter) {
-    let data;
-    if (!sortStatus.price.status) {
-        if (filterProvider[1][1] != undefined) filterProvider[1].pop();
-        data = categoryInListProvider[1][1];
-    } else {
-        data = sortStatus.product.last == null ? filterProvider[1][1] : sortStatus.product.last;
-    }
-
-    sortStatus.product.last = categoryInListProvider[1][1];
-
-    let filter_data = [];
-    for (let i = 0; i < data.length; i++) {
-        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
-        for (let j = 0; j < item_list.length; j++) {
-            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
-        }
-    }
-
-    let table_data = []
-    for (let i = 0; i < data.length; i++) {
-        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
-        for (let k = 0; k < item_list.length; k++) {
-            for (let j = 0; j < filter_data.length; j++) {
-                if (filter_data[j].id == data[i].id
-                    && filter_data[j].product == item_list[k].item_product
-                    && filter_data[j].price == item_list[k].item_price && filter.innerHTML == item_list[k].item_product) {
-                        table_data.push({
-                            Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
-                            Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
-                            Manager_id: data[i].Manager_id, id: data[i].id, Manager_active: true
-                        });
-                }
-            }
-        }
-    }
-
-    if (sortStatus.product.status) filterProvider[1].pop();
-
-    filterProvider[1].push(table_data)
-    $('.table').remove();
-    $('.info').append(fillingTables(filterProvider, true));
-
-    sortStatus.product.status = true;
-    sortStatus.product.filter = filter.innerHTML;
-    $('.centerBlock .header .cancel').remove();
-    $('.centerBlock .header').append(`
-        <div class="cancel">
-            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
-        </div>
-    `)
-}
 function sortTableByArea(filter, input = true) {
-    let newTableData = saveTableAndCard.slice();
+    let newTableData;
+    if (saveTableAndCard[0].id == 'client') {
+        if (!sortStatus.manager.status && !sortStatus.category.status) {
+            if (filterClient[1][1] != undefined) filterClient[1].pop();
+            newTableData = categoryInListClient.slice();
+            console.log('client');
+        } else {
+            newTableData = filterClient;
+            console.log('filter_client');
+        }
+    } else {
+        newTableData = saveTableAndCard.slice();
+    }
     let filter_table = [];
     let sort = filter.id == undefined ? filter : filter.id;
 
@@ -632,13 +613,30 @@ function sortTableByArea(filter, input = true) {
         }
         return 0;
     })
+    let filter_table_client = [];
+    for (let i = 0; i < filter_table.length; i++) {
+        if (filter_table[i].Category === 'Клиент') {
+            filter_table_client.push(filter_table[i]);
+            filter_table.splice(i, 1);
+            i--;
+        }
+    }
+    for (let i = 0; i < filter_table_client.length; i++) {
+        filter_table.unshift(filter_table_client[i]);
+    }
     if (newTableData[1][1] != undefined) {
         newTableData[1].pop();
     }
+    console.log(filter_table);
     newTableData[1].push(filter_table);
     $('.table').remove();
     $('.info').append(fillingTables(newTableData, true));
 
+    if (saveTableAndCard[0].id == 'client') {
+        sortStatus.area.status = true;
+        sortStatus.area.filter = sort;
+    }
+    
     $('.centerBlock .header .cancel').remove();
     if (input) {
         $('.centerBlock .header').append(`
@@ -647,6 +645,167 @@ function sortTableByArea(filter, input = true) {
         </div>
     `)
     }
+}
+function sortTableByPrice(filter) {
+    let data;
+    if (!sortStatus.product.status) {
+        if (filterProvider[1][1] != undefined) filterProvider[1].pop();
+        data = categoryInListProvider[1][1];
+    } else {
+        data = filterProvider[1][1];
+    }
+
+    let filter_data = [];
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let j = 0; j < item_list.length; j++) {
+            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
+        }
+    }
+        
+    let table_data = []
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let k = 0; k < item_list.length; k++) {
+            for (let j = 0; j < filter_data.length; j++) {
+                if (filter_data[j].id == data[i].id
+                    && filter_data[j].product == item_list[k].item_product
+                    && filter_data[j].price == item_list[k].item_price) {
+                        table_data.push({
+                            Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
+                            Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
+                            Manager_id: data[i].Manager_id, id: data[i].id, Manager_active: true
+                        });
+                }
+            }
+        }
+    }
+
+    table_data.sort(function (a, b) {
+        if (+JSON.parse(a.Item_list)[0].item_price > +JSON.parse(b.Item_list)[0].item_price) return 1;
+        if (+JSON.parse(a.Item_list)[0].item_price < +JSON.parse(b.Item_list)[0].item_price) return -1;
+        return 0;
+    });
+
+    if (filter.id == 'min') {
+        table_data.reverse();
+    }
+
+    if (filterProvider[1][1] != undefined) filterProvider[1].pop();
+
+    filterProvider[1].push(table_data)
+    $('.table').remove();
+    $('.info').append(fillingTables(filterProvider, true));
+
+    sortStatus.price.status = true;
+    sortStatus.price.filter = filter.id;
+    $('.centerBlock .header .cancel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
+function sortTableByProduct(filter) {
+    let data;
+    if (!sortStatus.price.status) {
+        if (filterProvider[1][1] != undefined) filterProvider[1].pop();
+        data = categoryInListProvider[1][1];
+    } else {
+        data = sortStatus.product.last == null ? filterProvider[1][1] : sortStatus.product.last;
+    }
+
+    sortStatus.product.last = categoryInListProvider[1][1];
+
+    console.log(data);
+    let filter_data = [];
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let j = 0; j < item_list.length; j++) {
+            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
+        }
+    }
+
+    let table_data = []
+    for (let i = 0; i < data.length; i++) {
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        for (let k = 0; k < item_list.length; k++) {
+            for (let j = 0; j < filter_data.length; j++) {
+                if (filter_data[j].id == data[i].id
+                    && filter_data[j].product == item_list[k].item_product
+                    && filter_data[j].price == item_list[k].item_price && filter.innerHTML == item_list[k].item_product) {
+                        table_data.push({
+                            Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
+                            Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
+                            Manager_id: data[i].Manager_id, id: data[i].id, Manager_active: true
+                        });
+                }
+            }
+        }
+    }
+
+    if (filterProvider[1][1] != undefined) filterProvider[1].pop();
+    console.log(filterProvider[1])
+    filterProvider[1].push(table_data)
+    $('.table').remove();
+    $('.info').append(fillingTables(filterProvider, true));
+
+    sortStatus.product.status = true;
+    sortStatus.product.filter = filter.innerHTML;
+    $('.centerBlock .header .cancel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
+// End
+// Выпадающие меню Start
+function selectFilterCategory(element) {
+    function listCategory() {
+        let ul = $('<ul>', { class: 'list'});
+        let data = saveTableAndCard[1][1];
+        let filter_table = [];
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].Category != null && data[i].Category != '') {
+                filter_table.push(data[i].Category);
+            }
+        }
+
+        for (let i = 0; i < filter_table.length - 1; i++) {
+            for (let j = i + 1; j < filter_table.length; j++) {
+                if (filter_table[i] == filter_table[j]) {
+                    filter_table.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        console.log(filter_table);
+        for (let i = 0; i < filter_table.length; i++) {
+            ul.append(`
+                <li onclick="sortTableByCategory(this)">${filter_table[i]}</li>
+            `)
+        }
+
+
+        // получить список групп товаров
+        return ul;
+    }
+    if ($('.table .cl_category').hasClass('drop_active')) {
+        $('.table .cl_category').removeClass('drop_active');
+        $('.list_category').fadeOut(200);
+        setTimeout(function() {
+            $('.list_category').remove();
+        }, 200);
+        return;
+    }
+    $('.table .cl_category').addClass('drop_active');
+    $(element).append($('<div>', { 
+        class: 'list_category',
+        css: {'top': `${$(element).height() + 20}px`},
+        append: listCategory()
+    }))
+    $('.list_category').fadeIn(200);
 }
 function selectFilterArea(element) {
     function listPrice() {
@@ -748,7 +907,7 @@ function selectGroupProduct(element) {
 function selectManager(element) {
     function listManager() {
         let ul = $('<ul>', { class: 'list'});
-        let data;
+        let filter_tabledata;
 
         $.ajax({
             url: '/getUsers',
@@ -759,15 +918,28 @@ function selectManager(element) {
                 data = JSON.parse(result);
             }
         });
-
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].role == 'manager') {
-                ul.append($('<li>', {
-                    html: data[i].second_name,
-                    id: data[i].id,
-                    onclick: 'sortTableByManagers(this)'
-                }))
+        let filter_table = [];
+        for (let j = 0; j < saveTableAndCard[1][1].length; j++) {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].role == 'manager' && saveTableAndCard[1][1][j].Manager_id == data[i].id) {
+                    filter_table.push(data[i]);
+                }
             }
+        }
+        for (let i = 0; i < filter_table.length - 1; i++) {
+            for (let j = i + 1; j < filter_table.length; j++) {
+                if (filter_table[i].id == filter_table[j].id) {
+                    filter_table.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        for (let i = 0; i < filter_table.length; i++) {
+            ul.append($('<li>', {
+                html: filter_table[i].second_name,
+                id: filter_table[i].id,
+                onclick: 'sortTableByManagers(this)'
+            }))
         }
         return ul;
     }
@@ -787,7 +959,7 @@ function selectManager(element) {
     }))
     $('.list_manager').fadeIn(200);
 }
-
+// End
 function fillingTables(object, filter = false) {
     if (object[0].id !== 'filter_stock') {
         object[0].active = true;

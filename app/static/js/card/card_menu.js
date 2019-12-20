@@ -29,7 +29,10 @@ function getCurrentDate(year = 'none') {
 function createCardMenu(element, index = 0) {
     sortStatus = {
         product: {status: false, filter: null, last: null},
-        price: {status: false, filter: null}
+        price: {status: false, filter: null},
+        area: {status: false, filter: null},
+        category: {status: false, filter: null, last: null},
+        manager: {status: false, filter: null, last: null}
     }
     // Вывод обычной карточки или карточки-окна
     if (index == 0) {
@@ -266,7 +269,6 @@ function createCardMenu(element, index = 0) {
         getListRegions(selectedLine, getInfo[0])
         let category = getInfo[0];
         let idElement = getInfo[1];
-        console.log(getInfo);
         if (idElement == 'new') {
             addMember(category);
             addRow(`${category}-group`);
@@ -611,7 +613,7 @@ function createCardMenu(element, index = 0) {
                             </td>
                         </tr>
                         <tr>
-                            <td>Мерекурий</td>
+                            <td>Меркурий</td>
                             <td>
                                 <input type="text" id="provider_merc" class="string" onchange="saveCard()" value="${selectedLine.Merc}">
                             </td>
@@ -1246,9 +1248,9 @@ function createCardMenu(element, index = 0) {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Дата отсрочки</td>
+                                <td>Дней отсрочки</td>
                                 <td>
-                                    <input type="text" style="width: 200px" id="delivery_postponement_date" value="${selectedLine.Postponement_date}">
+                                    <input type="number" style="width: 200px" id="delivery_postponement_date" value="${selectedLine.Postponement_date}">
                                 </td>
                             </tr>
                             <tr>
@@ -1527,9 +1529,16 @@ function makeRequest(element) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
 
+    data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
+
     if (infoAccount == undefined) {
         var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
-        if (result) { return closeCardMenu(element.name) }
+        if (result) { return closeCardMenu(element.id) }
+        else { return };
+    }
+    if (data['delivery_carrier_id'] == 0) {
+        var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали перевозчика!');
+        if (result) { return closeCardMenu(element.id) }
         else { return };
     }
 
@@ -1539,7 +1548,6 @@ function makeRequest(element) {
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
     data['delivery_contact_number'] = '';
     data['delivery_contact_name'] = $('#delivery_driver').val();
-    data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
     data['delivery_account_id'] = +$('#delivery_account')[0].value;
     data['delivery_client'] = $('#delivery_client')[0].value;
     data['delivery_car'] = $('#delivery_car').val();
@@ -1946,8 +1954,8 @@ function completionCard(elem) {
                 let sale = [], privet = [], delivery = [], items_amount = [];
                 for (let element of $('#exposed_list .invoiled')) {
                     sale.push($(element).children()[7].children[0].value);
-                    privet.push($(element).children()[8].children[0].value);
-                    delivery.push($(element).children()[9].children[0].value);
+                    privet.push($(element).children()[8].innerHTML);
+                    delivery.push($(element).children()[9].innerHTML);
                     items_amount.push($(element).children()[11].innerHTML);
                 }
 
@@ -1983,6 +1991,7 @@ function completionCard(elem) {
 // Закрытие карточки
 function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
+    console.log(id);
     if (id[1] == 'user') {
         getTableData(saveTableAndCard);
         return;
@@ -2001,6 +2010,11 @@ function closeCardMenu(id = '') {
         }
     }
 };
+function closeModalMenu() {
+    $('.modal_search').remove();
+    $('.overflow').remove();
+    $('.search #search').val('');
+}
 // Заполняем Заголовок карточки
 function getTitleInfo(element, selectedLine) {
     let title = $('<div>', { class: 'title' });

@@ -1,14 +1,16 @@
 /**
  * Функции для работы с категориями и подкатегориями
  */
-let test = 0;
 // Нажатие на подкатегорию
 function linkField() {
     // Обычная подкатегория
     $('.field').click(function() {
         sortStatus = {
             product: {status: false, filter: null, last: null},
-            price: {status: false, filter: null}
+            price: {status: false, filter: null},
+            area: {status: false, filter: null},
+            category: {status: false, filter: null, last: null},
+            manager: {status: false, filter: null, last: null}
         }
         $('.table').remove();
 
@@ -352,7 +354,10 @@ function linkCategory(element) {
     lastData = {last_id: '', last_table: ''};
     sortStatus = {
         product: {status: false, filter: null, last: null},
-        price: {status: false, filter: null}
+        price: {status: false, filter: null},
+        area: {status: false, filter: null},
+        category: {status: false, filter: null, last: null},
+        manager: {status: false, filter: null, last: null}
     }
     categoryInFilterStock[1][1] = [];
     for (let i = 0; i < linkCategoryInfo.length; i++) {

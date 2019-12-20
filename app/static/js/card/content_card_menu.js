@@ -489,10 +489,11 @@ function invoiceInTable(element) {
                                             type: 'number', onkeyup: 'tarCalculation(this.id)', id: list[k].id, max: account.Volume
                                         })
                                     }))
-                                } else if (list[k].id.includes('calcSale') || list[k].id.includes('calcPrivet') || list[k].id.includes('calcDelivery')) {
+                                } else if (list[k].id.includes('calcSale')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
-                                            type: 'number', id: list[k].id
+                                            type: 'number', id: list[k].id,
+                                            onkeyup: 'recountPrice(this.id)'
                                         })
                                     }))
                                 } else {
@@ -545,6 +546,7 @@ function dataСalculation(element) {
     }
     calculationIndicators();
 }
+let currentVatValue = 0;
 function calculationIndicators() {
     let list = [
         {id: 'total_discount_inv', tr: 'calcSale'},
@@ -566,9 +568,9 @@ function calculationIndicators() {
                         let totalDelivery = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
 
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : -totalSale);
-                        $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
-                        $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
-                        let total = +$(`#calcDelivery_${data[j].items[k].Item_id}`).val() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).val() + +$(`#calcSale_${data[j].items[k].Item_id}`).val();
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
+                        let total = +$(`#calcDelivery_${data[j].items[k].Item_id}`).html() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).html() + +$(`#calcSale_${data[j].items[k].Item_id}`).val();
                         let amount = Math.round(+$(`#product_cost_${data[j].items[k].Item_id}`).html() * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val()).toFixed(2);
                         $(`#calcSum_${data[j].items[k].Item_id}`).html(+amount + total);
 
@@ -578,6 +580,7 @@ function calculationIndicators() {
                         }
                         data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
                         let vat = sum > 0 ? sum - ((sum * +data[j].items[k].NDS) / 100) : 0;
+                        currentVatValue = +data[j].items[k].NDS;
                         $('#total').html(Math.round(sum));
                         $('#vat').html(Math.round(sum - vat));
                         $('#without-vat').html(Math.round(vat));
@@ -597,8 +600,27 @@ function tarCalculation(id) {
     $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
     calculationIndicators();
 }
-function all_costs() {
+function recountPrice(id) {
+    let idProduct = id.split('_')[1];
+    let product = $(`#exposed_list #invoiled_${idProduct}_product`);
+
+    product.children().last().html(
+        (+product.children()[5].children[0].value * +product.children()[6].innerHTML)
+        + (+product.children()[7].children[0].value + +product.children()[8].innerHTML + +product.children()[9].innerHTML)
+    );
     
+    let sum = 0;
+    $('#exposed_list .invoiled').each(function(i, element) {
+        sum += +$(element).children()[11].innerHTML;
+    });
+    
+    $('#total').html(Math.round(sum));
+    let vat = sum > 0 ? sum - ((sum * currentVatValue) / 100) : 0;
+    $('#total').html(Math.round(sum));
+    $('#vat').html(Math.round(sum - vat));
+    $('#without-vat').html(Math.round(vat));
+}
+function all_costs() {
     let amount = 3, disableValue = 0;
     for (let i = 0; i < list_inv.length; i++) {
         if (list_inv[i].disable) {
@@ -616,7 +638,7 @@ function all_costs() {
     }
     for (let element of $('#exposed_list .invoiled')) {
         $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML)
-        + (+$(element).children()[7].children[0].value + +$(element).children()[8].children[0].value + +$(element).children()[9].children[0].value);
+        + (+$(element).children()[7].children[0].value + +$(element).children()[8].innerHTML + +$(element).children()[9].innerHTML);
     }
     calculationIndicators();
 }
@@ -955,7 +977,7 @@ function addRow(id, selectedLine = '') {
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
-                {id: 'item_volume', width: 45, type: 'number'},
+                {id: 'item_volume', width: 60, type: 'number'},
                 {id: 'item_creator', width: 180, type: 'text'},
                 {id: 'item_price', width: 65, type: 'number'}
             ],
@@ -1098,7 +1120,6 @@ function addRow(id, selectedLine = '') {
             if (id === 'delivery-group') {
                 $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
                 $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-                $('#delivery_postponement_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
                 $('#group #delivery_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
             }
             if (id === 'account-group') {

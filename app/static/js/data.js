@@ -213,6 +213,7 @@ const dataName = [
     { name: 'account', link: categoryInFinanceAccount },
     { name: 'delivery', link: categoryInDelivery },
     { name: 'stock', link: categoryInStock },
+    { name: 'filter_provider', link: categoryInListProvider },
     { name: 'analytics', link: categoryInAnalytics },
 ]
 
