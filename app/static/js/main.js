@@ -491,6 +491,29 @@ let getCommentsInfo = (function() {
         if ($(`#messages`).children().length <= 1) {
             $(`[name="remove_last_comment"]`).fadeOut(0);
         }
+        if (data[2] == 'search') {
+            if (data[0] == 'client') {
+                categoryInListClient[0].lastCard[0] = $('.card_menu');
+                categoryInListClient[0].active = true;
+                categoryInListProvider[0].active = false;
+                categoryInListCarrier[0].active = false;
+            } else if (data[0] == 'provider') {
+                categoryInListProvider[0].lastCard[0] = $('.card_menu');
+                categoryInListProvider[0].active = true;
+                categoryInListClient[0].active = false;
+                categoryInListCarrier[0].active = false;
+            } else if (data[0] == 'carrier') {
+                categoryInListCarrier[0].lastCard[0] = $('.card_menu');
+                categoryInListCarrier[0].active = true;
+                categoryInListClient[0].active = false;
+                categoryInListProvider[0].active = false;
+            } else {
+                alert('Что-то пошло не так!')
+            }
+        
+            linkCategory('category-0');
+            linkField();
+        }
     }
 })();
 
@@ -557,7 +580,13 @@ function searchFill(element) {
         </div>
     `)
 }
+function openCardMenu(element) {
+    let id = element.id.split('_');
+    $('.modal_select').remove();
+    $('.overflow').remove();
 
+    createCardMenu(element);
+}
 function searchCategoryInfo() {
     $('.centerBlock .header .cancel').remove();
 
@@ -572,6 +601,72 @@ function searchCategoryInfo() {
             dataType: 'html',
             success: function(result) {
                 console.log(JSON.parse(result));
+                let data = JSON.parse(result);
+                function fillTable() {
+                    let table = $('<table>', { class: 'table_search' });
+                    table.append(`
+                        <tr>
+                            <th>Телефон</th>
+                            <th>ФИО</th>
+                            <th width="300">Организация</th>
+                            <th>Должность</th>
+                            <th>Статус</th>
+                        </tr>
+                    `)
+                    for (let i = 0; i < data.length; i++) {
+                        let currentDataBySelectTable, currentRequest;
+                        let tr;
+                        if (data[i].Client_id != null) {
+                            tr = $('<tr>', { id: `client_${data[i].Client_id}_search`, onclick: 'openCardMenu(this)' })
+                            currentRequest = { request: '/getClients', id: data[i].Client_id, mainTable: categoryInListClient };
+                        } else if (data[i].Provider_id != null) {
+                            tr = $('<tr>', { id: `provider_${data[i].Provider_id}_search`, onclick: 'openCardMenu(this)' })
+                            currentRequest = { request: '/getProviders', id: data[i].Provider_id, mainTable: categoryInListProvider };
+                        } else if (data[i].Carrier_id != null) {
+                            tr = $('<tr>', { id: `carrier_${data[i].Carrier_id}_search`, onclick: 'openCardMenu(this)' })
+                            currentRequest = { request: '/getCarriers', id: data[i].Carrier_id, mainTable: categoryInListCarrier };
+                        }
+                        $.ajax({
+                            url: currentRequest.request,
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function(result) {
+                                currentDataBySelectTable = JSON.parse(result);
+                                if (currentRequest.mainTable[1][1] == undefined) {
+                                    currentRequest.mainTable[1].push(currentDataBySelectTable);
+                                }
+                                for (let j = 0; j < currentDataBySelectTable.length; j++) {
+                                    if (currentRequest.id == currentDataBySelectTable[j].id) {
+                                        let status = data[i].Visible ? 'Активен' : 'Архив'
+                                        tr.append(`
+                                            <td>${data[i].Number}</td>
+                                            <td>${data[i].Last_name} ${data[i].Name}</td>
+                                            <td>${currentDataBySelectTable[j].Name}</td>
+                                            <td>${data[i].Position}</td>
+                                            <td>${status}</td>
+                                        `)
+                                        break;
+                                    }
+                                }
+                            }
+                        })
+                        table.append(tr);
+                    }
+                    return table;
+                }
+                function createModalMenu() {
+                    let modal_menu = $('<div>', { 
+                        class: 'modal_select modal_search',
+                        append: $('<div>', { class: 'title', html: '<span>Выберите человека</span>' }).add(
+                            $('<div>', { class: 'content', append: fillTable() })
+                        )
+                    });
+
+                    return modal_menu;
+                }
+                $('.info').prepend($('<div>', {class: 'overflow'}));
+                $('.overflow').height($('.container')[0].scrollHeight);
+                $('.info').append(createModalMenu());
             }
         });
         return;
