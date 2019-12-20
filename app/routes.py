@@ -729,6 +729,7 @@ def addContacts():
             elif request.args['category'] == 'carrier':
                 Contact.Carrier_id = Owner.id
             Contacts.append(Contact)
+        db.session.delete(Owner.Contacts)
         Owner.Contacts = Contacts
         db.session.commit()
 
