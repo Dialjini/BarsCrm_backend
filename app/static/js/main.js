@@ -375,6 +375,7 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == data.length - 1) members.pop();
         });
+        console.log(members);
         $.ajax({
             url: '/addContacts',
             type: 'GET',
@@ -531,6 +532,8 @@ function cancelSearch() {
     getTableData(saveTableAndCard);
     $('.centerBlock .header .cancel').remove();
     $('#search').val('');
+    $('.modal_search').remove();
+    $('.overflow').remove();
     sortStatus = {
         product: {status: false, filter: null},
         price: {status: false, filter: null}
@@ -593,7 +596,7 @@ function searchCategoryInfo() {
     let searchInfo = $('#search').val();
     let phone = +searchInfo;
 
-    if (!isNaN(phone)) {
+    if (!isNaN(phone) && searchInfo.length > 3) {
         $.ajax({
             url: '/findContacts',
             type: 'GET',
@@ -601,6 +604,9 @@ function searchCategoryInfo() {
             dataType: 'html',
             success: function(result) {
                 console.log(JSON.parse(result));
+                $('.modal_search').remove();
+                $('.overflow').remove();
+
                 let data = JSON.parse(result);
                 function fillTable() {
                     let table = $('<table>', { class: 'table_search' });
@@ -657,7 +663,7 @@ function searchCategoryInfo() {
                 function createModalMenu() {
                     let modal_menu = $('<div>', { 
                         class: 'modal_select modal_search',
-                        append: $('<div>', { class: 'title', html: '<span>Выберите человека</span>' }).add(
+                        append: $('<div>', { class: 'title', html: '<span>Поиск по номеру телефона</span>' }).add(
                             $('<div>', { class: 'content', append: fillTable() })
                         )
                     });

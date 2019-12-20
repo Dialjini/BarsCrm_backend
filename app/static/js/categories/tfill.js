@@ -239,7 +239,6 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
-        console.log(selectTableData)
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
             let carrier_name = selectTableData[i].carrier == null ? 'Не выбран' : selectTableData[i].carrier.Name

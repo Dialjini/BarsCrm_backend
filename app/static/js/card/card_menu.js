@@ -294,6 +294,7 @@ function createCardMenu(element, index = 0) {
                 data: {category: category, id: idElement},
                 dataType: 'html',
                 success: function(result) {
+                    console.log(JSON.parse(result));
                     inputContacts(JSON.parse(result));
                     getCommentsInfo.getRequest(getInfo);
                 }
@@ -1133,7 +1134,6 @@ function createCardMenu(element, index = 0) {
                     listContacts = JSON.parse(data);
                 }
             });
-
             if (listContacts.length == 0) {
                 options += '<option selected disabled>Контакты не указаны</option>'
             } else {
