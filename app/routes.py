@@ -723,11 +723,11 @@ def addContacts():
             Contact.Position = i['role']
             Contact.Visible = i['visible']
             if request.args['category'] == 'client':
-                Contact.Client_id = request.args['id']
+                Contact.Client_id = Owner.id
             elif request.args['category'] == 'provider':
-                Contact.Provider_id = request.args['id']
+                Contact.Provider_id = Owner.id
             elif request.args['category'] == 'carrier':
-                Contact.Carrier_id = request.args['id']
+                Contact.Carrier_id = Owner.id
             Contacts.append(Contact)
         Owner.Contacts = Contacts
         db.session.commit()
