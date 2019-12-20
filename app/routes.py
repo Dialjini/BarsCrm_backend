@@ -705,8 +705,12 @@ def addContacts():
             Owner = models.Client.query.filter_by(id=request.args['id']).first()
         elif request.args['category'] == 'provider':
             Owner = models.Provider.query.filter_by(id=request.args['id']).first()
-        else:
+        elif request.args['category'] == 'carrier':
             Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
+        else:
+            return '400 Bad request'
+
+        print(Owner.id)
 
         Contacts = []
         args = json.loads(request.args['contacts'])
