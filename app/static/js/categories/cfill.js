@@ -934,30 +934,57 @@ function createNewMember() {
     }
     // По приветам
     function analyticsFilterTable_3() {
-        // Один tr - один клиент.
+        function fillTable() {
+            let accounts;
+            $.ajax({
+                url: '/getAccounts',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    accounts = JSON.parse(data);
+                }
+            });
+            let table = '';
+            for (let i = accounts.length - 1; i >= 0; i--) {
+                let items_volume = JSON.parse(accounts[i].account.Item_ids);
+                let items_hello = JSON.parse(accounts[i].account.Hello);
+                let sum_volume = items_volume.reduce((a, b) => ({volume: +a.volume + +b.volume}));
+                let sum_hello_volume = 0, id_client = 0;
+                let client_data = categoryInListClient[1][1];
+
+                for (let j = 0; j < client_data.length; j++) {
+                    if (client_data[j].Name === accounts[i].account.Name) {
+                        id_client = client_data[j].id;
+                        break;
+                    }
+                }
+
+                for (let sum = 0; sum < items_volume.length; sum++) {
+                    sum_hello_volume += +items_volume[sum].volume * +items_hello[sum];
+                }
+                table += `
+                    <tr id="client_${id_client}_search" onclick="openCardMenu(this)">
+                        <td>${accounts[i].account.Name}</td>
+                        <td>${sum_volume.volume}</td>
+                        <td>${items_hello[0]}</td>
+                        <td>${Math.ceil(sum_hello_volume)}</td>
+                        <td>${+accounts[i].account.Sum * 0.9}</td>
+                    </tr>
+                `
+            }
+            return table;
+        }
         return `
             <table class="table analytics">
                 <tr>
-                    <th>Клиент</th>
+                    <th width="350">Клиент</th>
                     <th>Объём</th>
                     <th>Сколько</th>
                     <th>Сумма</th>
                     <th>Итого</th>
                 </tr>
-                <tr>
-                    <td>Лютик</td>
-                    <td>Объём</td>
-                    <td>Привет/Объём</td>
-                    <td>Привет из счета</td>
-                    <td>Сумма * 0.9</td>
-                </tr>
-                <tr>
-                    <td>Ромашка</td>
-                    <td>Объём</td>
-                    <td>Привет/Объём</td>
-                    <td>Привет из счета</td>
-                    <td>Сумма * 0.9</td>
-                </tr>
+                ${fillTable()}
             </table>
         `
     }

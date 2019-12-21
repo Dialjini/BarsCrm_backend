@@ -296,7 +296,6 @@ function createCardMenu(element, index = 0) {
                 data: {category: category, id: idElement},
                 dataType: 'html',
                 success: function(result) {
-                    console.log(JSON.parse(result));
                     inputContacts(JSON.parse(result));
                     getCommentsInfo.getRequest(getInfo);
                 }
@@ -312,7 +311,6 @@ function createCardMenu(element, index = 0) {
             }
         }
         function inputContacts(contacts) {
-            console.log('contacts');
             if (contacts.length == 0) 
                 addMember(category);
             else {
@@ -337,24 +335,28 @@ function createCardMenu(element, index = 0) {
         } catch {}
     }
     function getListRegions(select, category) {
-        $.getJSON("static/js/regions/regions.json", function(json) {
-            let dbRegion = select.Oblast != undefined ? select.Oblast : select.Region;
-            let dbArea = select.Rayon != undefined ? select.Rayon : select.Area;
-            let selectRegion = $('<select>');
-            let options = '<option value="">Не выбран</option>';
-            for (let i = 0; i < json.length; i++) {
-                if (json[i].region == dbRegion) {
-                    options += `<option selected value="${json[i].region}">${json[i].region}</option>`
-                    selectRegion.id = `${category}_select`;
-                    selectRegion.value = json[i].region;
-                } else {
-                    options += `<option value="${json[i].region}">${json[i].region}</option>`
+        $.ajax({
+            url: 'static/js/regions/regions.json',
+            async: false,
+            success: function(json) {
+                let dbRegion = select.Oblast != undefined ? select.Oblast : select.Region;
+                let dbArea = select.Rayon != undefined ? select.Rayon : select.Area;
+                let selectRegion = $('<select>');
+                let options = '<option value="">Не выбран</option>';
+                for (let i = 0; i < json.length; i++) {
+                    if (json[i].region == dbRegion) {
+                        options += `<option selected value="${json[i].region}">${json[i].region}</option>`
+                        selectRegion.id = `${category}_select`;
+                        selectRegion.value = json[i].region;
+                    } else {
+                        options += `<option value="${json[i].region}">${json[i].region}</option>`
+                    }
                 }
+                $(`#${category}_region`).empty();
+                $(`#${category}_region`).append(options);
+                getListAreas(selectRegion, dbArea)
             }
-            $(`#${category}_region`).empty();
-            $(`#${category}_region`).append(options);
-            getListAreas(selectRegion, dbArea)
-        });
+        })
     }
 
 
@@ -1504,22 +1506,26 @@ function getListAreas(element, area = '') {
     try {
         category = element.id.split('_')[0];
     } catch {}
-    $.getJSON("static/js/regions/regions.json", function(json) {
-        let options = '<option value="">Не выбран</option>';
-        for (let i = 0; i < json.length; i++) {
-            if (json[i].region == region) {
-                for (let j = 0; j < json[i].areas.length; j++) {
-                    if (json[i].areas[j] == area) {
-                        options += `<option selected value="${json[i].areas[j]}">${json[i].areas[j]}</option>`
-                    } else {
-                        options += `<option value="${json[i].areas[j]}">${json[i].areas[j]}</option>`
+    $.ajax({
+        url: 'static/js/regions/regions.json',
+        async: false,
+        success: function(json) {
+            let options = '<option value="">Не выбран</option>';
+            for (let i = 0; i < json.length; i++) {
+                if (json[i].region == region) {
+                    for (let j = 0; j < json[i].areas.length; j++) {
+                        if (json[i].areas[j] == area) {
+                            options += `<option selected value="${json[i].areas[j]}">${json[i].areas[j]}</option>`
+                        } else {
+                            options += `<option value="${json[i].areas[j]}">${json[i].areas[j]}</option>`
+                        }
                     }
                 }
             }
+            $(`#${category}_area`).empty();
+            $(`#${category}_area`).append(options);
+            saveCard();
         }
-        $(`#${category}_area`).empty();
-        $(`#${category}_area`).append(options);
-        saveCard();
     });
 }
 function makeRequest(element) {
@@ -1971,14 +1977,21 @@ function completionCard(elem) {
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
-                
                 $.ajax({
-                    url: '/addAccount',
+                    url: '/getThisUser',
                     type: 'GET',
-                    data: {name: name, status: status, date: date, hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery), items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems)},
                     dataType: 'html',
-                    success: function() {
-                        closeCardMenu('account_new');
+                    success: function(user) {
+                        let this_user = JSON.parse(user);
+                        $.ajax({
+                            url: '/addAccount',
+                            type: 'GET',
+                            data: {manager_id: this_user.id, name: name, status: status, date: date, hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery), items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems)},
+                            dataType: 'html',
+                            success: function() {
+                                closeCardMenu('account_new');
+                            }
+                        })
                     }
                 })
             } else if (idsItems.length == 0) {

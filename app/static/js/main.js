@@ -120,12 +120,11 @@ function getTableData(table, input = false, close = false) {
                             }
                         }
                     });
+                    $('#find_competitor').remove();
                     if (saveTableAndCard[0].id == 'client') {
                         $('.fields').append(`
                             <div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>
                         `)
-                    } else {
-                        $('#find_competitor').remove();
                     }
                 }
             }
