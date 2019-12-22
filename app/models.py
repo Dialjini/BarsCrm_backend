@@ -62,6 +62,7 @@ class Item(db.Model):
     Volume = db.Column(db.String)
     Group_name = db.Column(db.String)
     Prefix = db.Column(db.String)
+    Purchase_price = db.Column(db.String)
 
 
 class Junk_item(db.Model):

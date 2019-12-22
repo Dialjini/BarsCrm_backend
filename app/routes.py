@@ -103,18 +103,27 @@ def table_to_json(query):
     return json.dumps(result)
 
 
-def to_PDF(name, owner):
-    f = open(os.path.dirname(__file__) + '/upload/{}.docx'.format(owner.__tablename__ + str(owner.id)), "w+b")
-    info = reqs.getINNinfo(owner.UHH)['suggestions'][0]
+def to_PDF(name, owner, address):
+    info = {}
+    for i in reqs.getINNinfo(owner.UHH)['suggestions']:
+        if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
+            info = i
+    if str(info) == '{}':
+        return 'BAD ADDRESS'
+
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
 
     if name == 'AccountIP' or name =='AccountOOO':
         return DocCreator.Generate_Account(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
-    elif name == 'DogovorNaDostavkuIP' or name == 'DogovorNaDostavkuOOO':
-        return DocCreator.Generate_DogovorNaDostavku(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
-    elif name == 'Dogovor':
-        return DocCreator.Generate_Dogovor(f=f, dir_u=dir_u, info=info, owner=owner, date=date)
+    elif name == 'DogovorNaDostavkuIP':
+        return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
+    elif name == 'DogovorNaDostavkuOOO':
+        return DocCreator.Generate_DogovorNaDostavkuOOO(dir_u=dir_u, info=info, owner=owner, date=date)
+    elif name == 'Dogovor_na_tovari_ooo':
+        return DocCreator.Generate_Dogovor_na_tovari_ooo(dir_u=dir_u, info=info, owner=owner, date=date)
+    elif name == 'Dogovor_na_tovari_ip':
+        return DocCreator.Generate_Dogovor_na_tovari_ip(dir_u=dir_u, info=info, owner=owner, date=date)
     elif name == 'Zayavka':
         return DocCreator.Generate_Zayavka(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
     else:
@@ -235,7 +244,7 @@ def downloadDoc():
         else:
             return 'Error 400'
 
-        return to_PDF(owner=owner, name=request.args['name'])
+        return to_PDF(owner=owner, name=request.args['name'], address=request.args['address'])
     else:
         return redirect('/', code=302)
 
@@ -687,6 +696,7 @@ def addItemToStock():
             item.Group_id = data['group_id']
             item.Prefix = data['item_prefix']
             item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
+            item.Purchase_price = data['item_purchase_price']
 
             db.session.add(item)
             db.session.commit()
