@@ -643,14 +643,29 @@ def addAccount():
         return redirect('/', code=302)
 
 
+@app.route('/getAllClientItems', methods=['GET'])
+def getAllClientItems():
+    if 'username' in session:
+        result = []
+        clients = models.Client.query.all()
+        for client in clients:
+            result.append({'client_id': client.id, 'data': json.loads(table_to_json(client.Junk_items))})
+
+        return json.dumps(result)
+
+
 @app.route('/getAllClientContacts', methods=['GET'])
 def getAllClientContacts():
-    result = []
-    clients = models.Client.query.all()
-    for client in clients:
-        result.append({'client_id': client.id, 'data': json.loads(table_to_json(client.Contacts))})
+    if 'username' in session:
+        result = []
+        clients = models.Client.query.all()
+        for client in clients:
+            result.append({'client_id': client.id, 'data': json.loads(table_to_json(client.Contacts))})
 
-    return json.dumps(result)
+        return json.dumps(result)
+    else:
+        return redirect('/', code=302)
+
 
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
