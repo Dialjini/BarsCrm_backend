@@ -633,6 +633,7 @@ def addAccount():
         table.Sum = data['sum']
         table.Item_ids = data['item_ids']
         table.Items_amount = data['items_amount']
+        table.Manager_id = data['manager_id']
 
         db.session.add(table)
         db.session.commit()
@@ -641,6 +642,15 @@ def addAccount():
     else:
         return redirect('/', code=302)
 
+
+@app.route('/getAllClientContacts', methods=['GET'])
+def getAllClientContacts():
+    result = []
+    clients = models.Client.query.all()
+    for client in clients:
+        result.append({'client_id': client.id, 'data': json.loads(table_to_json(client.Contacts))})
+
+    return json.dumps(result)
 
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
