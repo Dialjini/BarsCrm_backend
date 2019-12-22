@@ -703,7 +703,6 @@ def addItemToStock():
 
             return 'OK no stock'
 
-
         item = models.Item()
         item.Weight = data['item_weight']
         item.Packing = data['item_packing']
@@ -716,6 +715,7 @@ def addItemToStock():
         item.Group_id = data['group_id']
         item.Prefix = data['item_prefix']
         item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
+        item.Purchase_price = data['item_purchase_price']
 
         Stock.Items.append(item)
         db.session.commit()
