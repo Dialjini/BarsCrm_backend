@@ -229,43 +229,43 @@ function taskCreate(tasks = 'new') {
                 $('#tasks_list .empty').remove();
                 $('#current_tasks').empty();
                 $('#expired_tasks').empty();
-                if ($('#task_whom').val() == data.id) {
-                    $('#current_tasks').append(
-                        $('<div>', {
-                            class: 'item',
-                            name: `task_new`,
-                            onclick: `completeTask(this)`,
-                            append: $('<img>', {
-                                src: `static/images/${taskInfo.task_type}.svg`,
-                                class: 'importance'
-                            }).add($('<div>', {
-                                class: 'fieldInfo',
-                                append: $('<div>', {
-                                    class: 'row',
-                                    append: $('<div>', {
-                                        class: 'name',
-                                        html: typeTask()
-                                    }).add($('<div>', {
-                                        class: 'time',
-                                        html: taskInfo.task_time
-                                    }))
-                                }).add($('<div>', {
-                                    class: 'row',
-                                    append: $('<div>', {
-                                        class: 'descr',
-                                        html: taskInfo.task_comment
-                                    }).add($('<div>', {
-                                        class: 'time',
-                                        append: $('<span>', {
-                                            class: 'bold',
-                                            html: taskInfo.task_date
-                                        })
-                                    }))
-                                }))
-                            }))
-                        })
-                    )
-                } 
+                // if ($('#task_whom').val() == data.id) {
+                //     $('#current_tasks').append(
+                //         $('<div>', {
+                //             class: 'item',
+                //             name: `task_new`,
+                //             onclick: `completeTask(this)`,
+                //             append: $('<img>', {
+                //                 src: `static/images/${taskInfo.task_type}.svg`,
+                //                 class: 'importance'
+                //             }).add($('<div>', {
+                //                 class: 'fieldInfo',
+                //                 append: $('<div>', {
+                //                     class: 'row',
+                //                     append: $('<div>', {
+                //                         class: 'name',
+                //                         html: typeTask()
+                //                     }).add($('<div>', {
+                //                         class: 'time',
+                //                         html: taskInfo.task_time
+                //                     }))
+                //                 }).add($('<div>', {
+                //                     class: 'row',
+                //                     append: $('<div>', {
+                //                         class: 'descr',
+                //                         html: taskInfo.task_comment
+                //                     }).add($('<div>', {
+                //                         class: 'time',
+                //                         append: $('<span>', {
+                //                             class: 'bold',
+                //                             html: taskInfo.task_date
+                //                         })
+                //                     }))
+                //                 }))
+                //             }))
+                //         })
+                //     )
+                // } 
                 createCTButtons();
             }
         }
@@ -332,29 +332,7 @@ function сheckSelectedRadioBox() {
 }
 function completeTask(element) {
     let id = $(element).attr('name').split('_');
-
-    $.ajax({
-        url: '/getMyTasks',
-        type: 'GET',
-        dataType: 'html',
-        success: function(data) {
-            checkTask(JSON.parse(data))
-        }
-    });
-        
-    function checkTask(data) {
-        let idTask;
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].Task_id == id[1]) {
-                idTask = id[1];
-            }
-        }
-        if (idTask == undefined) {
-            return;
-        }
-    
-        createCT('completeTask', idTask);
-    }
+    createCT('completeTask', id[1]);
 }
 
 function createCompleteForm(value) {
