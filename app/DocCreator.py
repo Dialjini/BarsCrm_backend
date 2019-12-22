@@ -1,21 +1,8 @@
 from app import app, models, db
 from flask import send_from_directory
 from datetime import datetime
-import docx
+# import docx
 import os
-
-
-def Generate_Account(f, date, dir_u, info, owner):
-    html = render_template('Dogovor.html')
-    f.close()
-    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
-
-
-def Generate_DogovorNaDostavku(f, date, dir_u, info, owner):
-    html = render_template('Dogovor.html')
-    f.close()
-    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
-
 
 def Generate_Dogovor(f, dir_u, info, owner, date):
     document = models.Document()
@@ -52,10 +39,4 @@ def Generate_Dogovor(f, dir_u, info, owner, date):
     f.close()
     print(document.__dict__)
     return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
-
-
-def Generate_Zayavka(f, date, dir_u, info, owner):
-    html = render_template('Zayavka.html')
-    f.close()
-    return send_from_directory(directory=dir_u, filename='{}.pdf'.format(owner.__tablename__ + str(owner.id)))
 
