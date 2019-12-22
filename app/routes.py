@@ -26,7 +26,8 @@ class Inside_date:
 
 @socketio.on('delete_task')
 def delete_task(data):
-    task = models.Tasks.query.filter_by(Task_id=data).first()
+    print(data)
+    task = models.Tasks.query.filter_by(Task_id=int(data['data'])).first()
     db.session.delete(task)
     db.session.commit()
     sendTasks()
