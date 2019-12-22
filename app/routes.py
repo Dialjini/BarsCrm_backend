@@ -3,10 +3,8 @@ from flask import render_template, redirect, session, request, send_from_directo
 from app import models, db, reqs, DocCreator
 from flask_socketio import SocketIO, emit
 import json
-from xhtml2pdf import pisa
 import os
 from datetime import datetime
-from num2t4ru import num2text
 
 
 socketio = SocketIO(app)
@@ -103,20 +101,18 @@ def table_to_json(query):
     return json.dumps(result)
 
 
-def to_PDF(name, owner, address):
+def to_PDF(name, owner, address, delivery):
     info = {}
     for i in reqs.getINNinfo(owner.UHH)['suggestions']:
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
     if str(info) == '{}':
-        return 'BAD ADDRESS'
+        return 'BAD ADDRESS or INN'
 
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
 
-    if name == 'AccountIP' or name =='AccountOOO':
-        return DocCreator.Generate_Account(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
-    elif name == 'DogovorNaDostavkuIP':
+    if name == 'DogovorNaDostavkuIP':
         return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
     elif name == 'DogovorNaDostavkuOOO':
         return DocCreator.Generate_DogovorNaDostavkuOOO(dir_u=dir_u, info=info, owner=owner, date=date)
@@ -124,8 +120,10 @@ def to_PDF(name, owner, address):
         return DocCreator.Generate_Dogovor_na_tovari_ooo(dir_u=dir_u, info=info, owner=owner, date=date)
     elif name == 'Dogovor_na_tovari_ip':
         return DocCreator.Generate_Dogovor_na_tovari_ip(dir_u=dir_u, info=info, owner=owner, date=date)
-    elif name == 'Zayavka':
-        return DocCreator.Generate_Zayavka(f=f, date=date, dir_u=dir_u, info=info, owner=owner)
+    elif name == 'ZayavkaOOO':
+        return DocCreator.Generate_Zayavka_OOO(dir_u=dir_u, info=info, owner=owner, date=date, delivery=delivery)
+    elif name == 'ZayavkaIP':
+        return DocCreator.Generate_Zayavka_IP(dir_u=dir_u, info=info, owner=owner, date=date, delivery=delivery)
     else:
         return '400 Bad Request'
 
@@ -244,7 +242,8 @@ def downloadDoc():
         else:
             return 'Error 400'
 
-        return to_PDF(owner=owner, name=request.args['name'], address=request.args['address'])
+        return to_PDF(owner=owner, name=request.args['name'],
+                      address=request.args['address'], delivery=request.args['delivery'])
     else:
         return redirect('/', code=302)
 
