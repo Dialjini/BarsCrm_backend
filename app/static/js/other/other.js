@@ -370,25 +370,17 @@ function createCompleteForm(value) {
 }
 
 function removeTask(id) {
-    $.ajax({
-        url: '/deleteTask',
-        type: 'GET',
-        data: {id: id},
-        dataType: 'html',
-        success: function() { 
-            for (let element of $('#current_tasks .item')) {
-                $('#current_tasks').empty();
-                break;
-            }
-            for (let element of $('#expired_tasks .item')) {
-                $('#expired_tasks').empty();
-                break;
-            }
-            socket.emit('showTasks');
-            socket.emit('delete_task', {data: id})
-            createCTButtons();
-        }
-    });
+    for (let element of $('#current_tasks .item')) {
+        $('#current_tasks').empty();
+        break;
+    }
+    for (let element of $('#expired_tasks .item')) {
+        $('#expired_tasks').empty();
+        break;
+    }
+    socket.emit('showTasks');
+    socket.emit('delete_task', {data: id})
+    createCTButtons();
 }
 
 // Создание кнопок Отменить и Добавить
