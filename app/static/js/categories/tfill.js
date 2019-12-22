@@ -480,6 +480,12 @@ function searchByCompetitor() {
             console.log(filterClient);
             $('.table').remove();
             $('.info').append(fillingTables(filterClient));
+            $('.centerBlock .header .cancel').remove();
+            $('.centerBlock .header').append(`
+                <div class="cancel">
+                    <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+                </div>
+            `)
         }
     });
 }
