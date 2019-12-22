@@ -269,6 +269,16 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingAccount = (id) => {
         table.append(getTitleTable());
+        let managers;
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             if (selectTableData[i].account.Payment_history != undefined) {
                 let payment_list = JSON.parse(selectTableData[i].account.Payment_history);
@@ -284,6 +294,15 @@ let rowFilling = (object, id, table) => {
             } else {
                 status = '<span class="red">Неоплачено</span>';
             }
+            let managerSecondName;
+            for (let j = 0; j < managers.length; j++) {
+                if (+managers[j].id == +selectTableData[i].account.Manager_id) {
+                    managerSecondName = managers[j].second_name == null ? 'Фамилия не указана' : managers[j].second_name;
+                    break;
+                } else {
+                    managerSecondName = 'Не выбран';
+                }
+            }
 
             let hello_sum = 0;
             let hello_list = JSON.parse(selectTableData[i].account.Hello);
@@ -292,7 +311,7 @@ let rowFilling = (object, id, table) => {
             }
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, selectTableData[i].account.Sum, status, hello_sum, selectTableData[i].account.Manager_id];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, selectTableData[i].account.Sum, status, hello_sum, managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -305,6 +324,16 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingDebit = (id) => {
         let deliveryTable;
+        let managers;
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
         $.ajax({
             url: '/getDeliveries',
             type: 'GET',
@@ -314,6 +343,15 @@ let rowFilling = (object, id, table) => {
         });
         table.append(getTitleTable());
         for (let i = selectTableData.length - 1; i >= 0; i--) {
+            let managerSecondName;
+            for (let j = 0; j < managers.length; j++) {
+                if (+managers[j].id == +selectTableData[i].account.Manager_id) {
+                    managerSecondName = managers[j].second_name == null ? 'Фамилия не указана' : managers[j].second_name;
+                    break;
+                } else {
+                    managerSecondName = 'Не выбран';
+                }
+            }
             let payment_amount = 0;
             if (selectTableData[i].account.Payment_history != undefined) {
                 let payment_list = JSON.parse(selectTableData[i].account.Payment_history);
@@ -339,7 +377,7 @@ let rowFilling = (object, id, table) => {
             if (postponement_date == undefined) postponement_date = 'Не указано';
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, selectTableData[i].account.Sum, payment_amount, +selectTableData[i].account.Sum - payment_amount, selectTableData[i].account.Manager_id];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, selectTableData[i].account.Sum, payment_amount, +selectTableData[i].account.Sum - payment_amount, managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -401,7 +439,49 @@ let rowFilling = (object, id, table) => {
     }
 }
 function searchByCompetitor() {
-
+    $.ajax({
+        url: '/getAllClientItems',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            let contacts_list = JSON.parse(data);
+            let competitor_list = [];
+            for (let i = 0; i < contacts_list.length; i++) {
+                for (let j = 0; j < contacts_list[i].data.length; j++) {
+                    if (contacts_list[i].data[j].Name !== 'Выбрать' && contacts_list[i].data[j].Creator !== 'Не выбран' && contacts_list[i].data[j].Creator !== 'Конкурентов нет') {
+                        competitor_list.push(contacts_list[i].data[j].Client_id);
+                    }
+                }
+            }
+            let client_data = categoryInListClient[1][1];
+            let filter_table = [];
+            for (let i = 0; i < competitor_list.length; i++) {
+                for (let j = 0; j < client_data.length; j++) {
+                    if (competitor_list[i] === client_data[j].id) {
+                        filter_table.push(client_data[j]);
+                    }
+                }
+            }
+            if (filterClient[1][1] != undefined) {
+                filterClient[1].pop();
+            }
+            filterClient[1][1] = [];
+            for (let i = 0; i < filter_table.length - 1; i++) {
+                for (let j = i + 1; j < filter_table.length; j++) {
+                    if (filter_table[i].id === filter_table[j].id) {
+                        filter_table.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+            for (let i = 0; i < filter_table.length; i++) {
+                filterClient[1][1].push(filter_table[i]);
+            }
+            console.log(filterClient);
+            $('.table').remove();
+            $('.info').append(fillingTables(filterClient));
+        }
+    });
 }
 let sortStatus = {
     product: {status: false, filter: null, last: null},
@@ -418,14 +498,11 @@ function sortTableByCategory(filter) {
     if (!sortStatus.manager.status && !sortStatus.area.status) {
         if (filterClient[1][1] != undefined) filterClient[1].pop();
         data = categoryInListClient[1][1];
-        console.log('client');
     } else {
         if (filterClient[1][1] == undefined) {
             data = categoryInListClient[1][1];
-            console.log('bad_filter_client');
         } else {
             data = sortStatus.category.last == null ? filterClient[1][1] : sortStatus.category.last;
-            console.log('filter_client');
         }
     }
 
@@ -439,7 +516,6 @@ function sortTableByCategory(filter) {
         filterClient[1].pop();
     }
     filterClient[1][1] = filter_table;
-    console.log(filterClient[1]);
     $('.table').remove();
     $('.info').append(fillingTables(filterClient));
 
