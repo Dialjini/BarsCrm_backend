@@ -340,6 +340,9 @@ function linkField() {
             };
 
             $('.info').append(createFilterTable());
+            if ($('#active_field').html() == 'Сводный по объёмам') {
+                $('.table').width('fit-content');
+            }
         });
     });
 }
@@ -731,204 +734,319 @@ function createNewMember() {
 // Отчеты
     // Прибыль по клиентам
     function analyticsFilterTable_0() {
-        // Получить данные, чтобы заполнить таблицу(-ы)
+        let account_data;
+        $.ajax({
+            url: '/getAccounts',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                account_data = JSON.parse(data);
+            }
+        });
+        let items_list = [];
+        for (let i = 0; i < account_data.length; i++) {
+            for (let j = 0; j < account_data[i].items.length; j++) {
+                items_list.push({ item: account_data[i].items[j], account: [account_data[i].account] })
+            }
+        }
+        for (let i = 0; i < items_list.length - 1; i++) {
+            for (let j = i + 1; j < items_list.length; j++) {
+                if (items_list[i].item.Item_id == items_list[j].item.Item_id) {
+                    for (let k = 0; k < items_list[j].account.length; k++) {
+                        items_list[i].account.push(items_list[j].account[k])
+                    }
+                    items_list.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        console.log(items_list);
+        function fillTable() {
+            let table = '';
+            for (let i = 0; i < items_list.length; i++) {
+                for (let j = 0; j < items_list[i].account.length; j++) {
+                    let volume = JSON.parse(items_list[i].account[j].Item_ids);
+                    let delivery = JSON.parse(items_list[i].account[j].Shipping);
+                    let hello = JSON.parse(items_list[i].account[j].Hello);
+                    for (let v = 0; v < volume.length; v++) {
+                        if (+volume[v].id == +items_list[i].item.Item_id) {
+                            function fillTr() {
+                                let trContent = '';
+                                if (j == 0) {
+                                    trContent += `<td rowspan="${items_list[i].account.length}">${items_list[i].item.Name}</td>`;
+                                }
+                                let price = +delivery[v] + +hello[v] + Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume);
+                                trContent += `<td>${items_list[i].account[j].Name}</td>
+                                            <td>${volume[v].volume}</td>
+                                            <td>${price}</td>
+                                            <td>${delivery[v]}</td>
+                                            <td>${hello[v]}</td>
+                                            <td>${Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume)}</td>
+                                            <td>${items_list[i].item.Purchase_price}</td>
+                                            <td>${Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume) - +items_list[i].item.Purchase_price}</td>
+                                            <td>${(Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume) - +items_list[i].item.Purchase_price) * +volume[v].volume}</td>`
+                                return trContent;
+                            }
+                            let tr = `<tr>${fillTr()}</tr>`
+                            table += tr;
+                        }
+                    }
+                }
+            }
+            return table;
+        }
         return `
             <table class="table analytics">
                 <tr>
                     <th>Товар</th>
-                    <th>Клиент</th>
+                    <th width="270">Клиент</th>
                     <th>Объем</th>
                     <th>Цена</th>
                     <th>Доставка</th>
                     <th>Привет</th>
                     <th>Себестоимость</th>
-                    <th>Купили</th>
+                    <th>Закупочная цена</th>
                     <th>Заработали</th>
                     <th>Прибыль</th>
                 </tr>
-                <tr>
-                    <td rowspan="2">Жмых</td>
-                    <td>Лютик</td>
-                    <td>7904</td>
-                    <td>109</td>
-                    <td>2</td>
-                    <td>6</td>
-                    <td>101</td>
-                    <td>80</td>
-                    <td>21</td>
-                    <td>166000</td>
-                </tr>
-                <tr>
-                    <td>Ромашка</td>
-                    <td>7904</td>
-                    <td>89</td>
-                    <td>3</td>
-                    <td>8</td>
-                    <td>104</td>
-                    <td>65</td>
-                    <td>43</td>
-                    <td>122300</td>
-                </tr>
-            </table>
-
-            <table class="table analytics">
-                <tr>
-                    <th>Товар</th>
-                    <th>Клиент</th>
-                    <th>Объем</th>
-                    <th>Цена</th>
-                    <th>Доставка</th>
-                    <th>Привет</th>
-                    <th>Себестоимость</th>
-                    <th>Купили</th>
-                    <th>Заработали</th>
-                    <th>Прибыль</th>
-                </tr>
-                <tr>
-                    <td rowspan="2">Барда</td>
-                    <td>Лютик</td>
-                    <td>7904</td>
-                    <td>109</td>
-                    <td>2</td>
-                    <td>6</td>
-                    <td>101</td>
-                    <td>80</td>
-                    <td>21</td>
-                    <td>166000</td>
-                </tr>
-                <tr>
-                    <td>Ромашка</td>
-                    <td>7904</td>
-                    <td>89</td>
-                    <td>3</td>
-                    <td>8</td>
-                    <td>104</td>
-                    <td>65</td>
-                    <td>43</td>
-                    <td>122300</td>
-                </tr>
+                ${fillTable()}
             </table>
         `
     }
     // Сводный по объёмам
     function analyticsFilterTable_1() {
-        // Один tr - один клиент
+        let account_data;
+        let stocks;
+        $.ajax({
+            url: '/getStockTable',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                stocks = JSON.parse(data);
+            }
+        });
+        let all_items = [];
+        for (let i = 0; i < stocks.length; i++) {
+            for (let j = 0; j < stocks[i].items.length; j++) {
+                all_items.push(stocks[i].items[j]);
+            }
+        }
+
+        all_items.sort(function(a, b) {
+            if (a.Item_id > b.Item_id) return 1;
+            if (a.Item_id < b.Item_id) return -1;
+            return 0;
+        })
+
+        function outputAllItems() {
+            let th = '';
+            for (let i = 0; i < all_items.length; i++) {
+                th += `<th width="70">${all_items[i].Name}</th>`
+            }
+            return th;
+        }
+        function fillTable() {
+            $.ajax({
+                url: '/getAccounts',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    account_data = JSON.parse(data);
+                }
+            });
+            
+            let amounts = [];
+            for (let i = 0; i < all_items.length; i++) {
+                amounts[i] = 0;
+            }
+
+            let table = '';
+            function fillItemsVolume(account) {
+                let volume_one = JSON.parse(account.Item_ids);
+                for (let i = 0; i < account_data.length; i++) {
+                    let volume_two = JSON.parse(account_data[i].account.Item_ids);
+                    if (account.Name === account_data[i].account.Name && account.id !== account_data[i].account.id) {
+                        for (let g = 0; g < volume_two.length; g++) {
+                            volume_one.push(volume_two[g]);
+                        }
+
+                        for (let l = 0; l < volume_one.length - 1; l++) {
+                            for (let h = l + 1; h < volume_one.length; h++) {
+                                if (volume_one[l].id === volume_one[h].id) {
+                                    volume_one[l].volume = +volume_one[l].volume + +volume_one[h].volume;
+                                    volume_one.splice(h, 1);
+                                    h--;
+                                }
+                            }
+                        }
+                        account_data.splice(i, 1);
+                        i--;
+                        return volume_one;
+                    }
+                }
+                return volume_one;
+            }
+            for (let i = 0; i < account_data.length; i++) {
+                let items_volume = fillItemsVolume(account_data[i].account)
+                items_volume.sort(function(a, b) {
+                    if (a.id > b.id) return 1;
+                    if (a.id < b.id) return -1;
+                    return 0;
+                })
+                table += `
+                    <tr>
+                        <td>${account_data[i].account.Name}</td>
+                        ${fillVolume()}
+                    </tr>
+                `
+                console.log(items_volume);
+                function fillVolume() {
+                    let td = '';
+                    for (let j = 0; j < items_volume.length; j++) {
+                        for (let l = 0; l < all_items.length; l++) {
+                            if (+all_items[l].Item_id == +items_volume[j].id) {
+                                amounts[l] += +items_volume[j].volume;
+                                td += `<td id="item_${l + 1}">${items_volume[j].volume}</td>`
+                                if (items_volume.length - 1 != j) {
+                                    j++;
+                                }
+                            } else {
+                                td += `<td id="item_${l + 1}">0</td>`
+                            }
+                        }
+                    }
+                    return td;
+                }
+            }
+            let amount_tr = `<tr>${fillAmountRow()}</tr>`;
+            function fillAmountRow() {
+                let td = '<td></td>'
+                for (let i = 0; i < amounts.length; i++) {
+                    td += `<td class="bold">${amounts[i]}</td>`
+                }
+                return td;
+            }
+            table += amount_tr;
+            return table;
+        }
         return `
             <table class="table analytics">
                 <tr>
-                    <th>Клиент</th>
-                    <th>Товар 1</th>
-                    <th>Товар 2</th>
-                    <th>Товар 3</th>
-                    <th>Товар 4</th>
-                    <th>Товар 5</th>
-                    <th>Товар 6</th>
+                    <th width="270">Клиент</th>
+                    ${outputAllItems()}
                 </tr>
-                <tr>
-                    <td>Лютик</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Цветик</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Семицветик</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Ромашка</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Антошка</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                </tr>
+                ${fillTable()}
             </table>
         `
     }
     // По клиентам
     function analyticsFilterTable_2() {
-        // Один клиент - один tbody. rowspan - количество товаров
+        let account_data, delivery_data;
+        $.ajax({
+            url: '/getAccounts',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                account_data = JSON.parse(data);
+            }
+        });
+        $.ajax({
+            url: '/getDeliveries',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                delivery_data = JSON.parse(data);
+            }
+        });
+        let items_list = [];
+        for (let i = 0; i < account_data.length; i++) {
+            for (let j = 0; j < account_data[i].items.length; j++) {
+                items_list.push({ items: [account_data[i].items[j]], account: account_data[i].account })
+            }
+        }
+        for (let i = 0; i < items_list.length - 1; i++) {
+            for (let j = i + 1; j < items_list.length; j++) {
+                if (items_list[i].account.Name === items_list[j].account.Name && items_list[i].account.id === items_list[j].account.id) {
+                    for (let k = 0; k < items_list[j].items.length; k++) {
+                        items_list[i].items.push(items_list[j].items[k])
+                    }
+                    if (items_list[i].account.id !== items_list[j].account.id) {
+                        let volume_two = JSON.parse(items_list[j].account.Item_ids);
+                        let amount_two = JSON.parse(items_list[j].account.Items_amount);
+                        let volume_one = JSON.parse(items_list[i].account.Item_ids);
+                        let amount_one = JSON.parse(items_list[i].account.Items_amount);
+
+                        for (let g = 0; g < volume_two.length; g++) {
+                            volume_one.push(volume_two[g]);
+                            amount_one.push(amount_two[g]);
+                        }
+
+                        for (let l = 0; l < volume_one.length - 1; l++) {
+                            for (let h = l + 1; h < volume_one.length; h++) {
+                                if (volume_one[l].id === volume_one[h].id) {
+                                    volume_one[l].volume = +volume_one[l].volume + +volume_one[h].volume;
+                                    volume_one.splice(h, 1);
+                                    h--;
+                                }
+                            }
+                        }
+                        items_list[i].account.Item_ids = JSON.stringify(volume_one);
+                        items_list[i].account.Items_amount = JSON.stringify(amount_one);
+                    }
+                    items_list.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        function fillTable() {
+            let table = '';
+            for (let i = 0; i < items_list.length; i++) {
+                for (let j = 0; j < items_list[i].items.length; j++) {
+                    let volume = JSON.parse(items_list[i].account.Item_ids);
+                    let amounts = JSON.parse(items_list[i].account.Items_amount);
+                    for (let v = 0; v < volume.length; v++) {
+                        for (let delivery = 0; delivery < delivery_data.length; delivery++) {
+                            let deliveries_ids = JSON.parse(delivery_data[delivery].delivery.Item_ids);
+                            for (let id = 0; id < deliveries_ids.length; id++) {
+                                if (+volume[v].id == +items_list[i].items[j].Item_id
+                                    && +items_list[i].items[j].Item_id == +deliveries_ids[id]
+                                    && delivery_data[delivery].delivery.Account_id == +items_list[i].account.id) {
+                                    function fillTr() {
+                                        let trContent = '';
+                                        if (j == 0) {
+                                            trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
+                                        }
+                                        trContent += `<td>${items_list[i].items[j].Name}</td>
+                                                    <td>${volume[v].volume}</td>
+                                                    <td>${delivery_data[delivery].delivery.Start_date != null ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
+                                                    <td>${amounts[v].amount}</td>`
+                                        return trContent;
+                                    }
+                                    let tr = `<tr>${fillTr()}</tr>`
+                                    table += tr;
+                                }
+                            }  
+                        }      
+                    }
+                }
+            }
+            return table;
+        }
         return `
             <table class="table analytics">
                 <tr>
-                    <th>Клиент</th>
+                    <th width="350">Клиент</th>
                     <th>Товары</th>
                     <th>Вес</th>
                     <th>Дата отгрузки</th>
                     <th>Сумма</th>
                 </tr>
-                <tbody>
-                    <tr>
-                        <td rowspan="3">Лютик</td>
-                        <td>Товар 1</td>
-                        <td>Объём</td>
-                        <td>Дата</td>
-                        <td>Сумма</td>
-                    </tr>
-                    <tr>
-                        <td>Товар 2</td>
-                        <td>Объём</td>
-                        <td>Дата</td>
-                        <td>Сумма</td>
-                    </tr>
-                    <tr>
-                        <td>Товар 3</td>
-                        <td>Объём</td>
-                        <td>Дата</td>
-                        <td>Сумма</td>
-                    </tr>
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td rowspan="2">Ромашка</td>
-                        <td>Товар 1</td>
-                        <td>Объём</td>
-                        <td>Дата</td>
-                        <td>Сумма</td>
-                    </tr>
-                    <tr>
-                        <td>Товар 2</td>
-                        <td>Объём</td>
-                        <td>Дата</td>
-                        <td>Сумма</td>
-                    </tr>
-                </tbody>
+                ${fillTable()}
             </table>
         `
     }
@@ -946,7 +1064,8 @@ function createNewMember() {
                 }
             });
             let table = '';
-            for (let i = accounts.length - 1; i >= 0; i--) {
+            let all_data = [];
+            for (let i = 0; i < accounts.length; i++) {
                 let items_volume = JSON.parse(accounts[i].account.Item_ids);
                 let items_hello = JSON.parse(accounts[i].account.Hello);
                 let sum_volume = items_volume.reduce((a, b) => ({volume: +a.volume + +b.volume}));
@@ -963,13 +1082,35 @@ function createNewMember() {
                 for (let sum = 0; sum < items_volume.length; sum++) {
                     sum_hello_volume += +items_volume[sum].volume * +items_hello[sum];
                 }
+                all_data.push({
+                    client_id: id_client,
+                    name: accounts[i].account.Name,
+                    volume: +sum_volume.volume,
+                    average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
+                    amount_hello: Math.ceil(+sum_hello_volume),
+                    amount: Math.round(+accounts[i].account.Sum * 0.9)
+                });
+            }
+            for (let i = 0; i < all_data.length - 1; i++) {
+                for (let j = i + 1; j < all_data.length; j++) {
+                    if (all_data[i].name === all_data[j].name) {
+                        all_data[i].volume += all_data[j].volume;
+                        all_data[i].amount_hello += all_data[j].amount_hello;
+                        all_data[i].average_volume = Math.ceil(all_data[i].amount_hello / all_data[i].volume);
+                        all_data[i].amount = Math.round((all_data[i].amount + all_data[j].amount) * 0.9);
+                        all_data.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+            for (let i = 0; i < all_data.length; i++) {
                 table += `
-                    <tr id="client_${id_client}_search" onclick="openCardMenu(this)">
-                        <td>${accounts[i].account.Name}</td>
-                        <td>${sum_volume.volume}</td>
-                        <td>${items_hello[0]}</td>
-                        <td>${Math.ceil(sum_hello_volume)}</td>
-                        <td>${+accounts[i].account.Sum * 0.9}</td>
+                    <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
+                        <td>${all_data[i].name}</td>
+                        <td>${all_data[i].volume}</td>
+                        <td>${all_data[i].average_volume}</td>
+                        <td>${all_data[i].amount_hello}</td>
+                        <td>${all_data[i].amount}</td>
                     </tr>
                 `
             }

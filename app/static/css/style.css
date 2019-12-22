@@ -852,7 +852,7 @@ body {
   -webkit-transition: none;
   transition: none;
   cursor: default;
-  background-color: #fff;
+  background-color: #f8f8f8;
 }
 
 .page .centerBlock .container .info .card_menu {

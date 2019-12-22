@@ -833,7 +833,7 @@ function createCardMenu(element, index = 0) {
                         <td>${+privet[i]}</td>
                         <td>${+delivery[i]}</td>
                         <td>${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
-                        <td>${+items_amount[i]}</td>
+                        <td>${+items_amount[i].amount}</td>
                     </tr>
                 `)
             }
@@ -1478,7 +1478,11 @@ function createCardMenu(element, index = 0) {
                         <td>Цена прайса</td>
                         <td><input type="number" id="item_price" onchange="saveCard()" class="string"></td>
                     </tr>
-                </table>
+                    <tr>
+                        <td>Закупочная цена</td>
+                        <td><input type="number" id="item_purchase_price" onchange="saveCard()" class="string"></td>
+                    </tr>
+                </table> 
             </div>
             <div> 
                 <table class="table_block" style="margin-bottom: 15px;">
@@ -1762,7 +1766,7 @@ function selectAccount(value) {
     }
 }
 function createNewItem() {
-    let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price'];
+    let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price', 'item_purchase_price'];
     let data = {};
 
     for (let i = 0; i < list.length; i++) {
@@ -1770,7 +1774,7 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
-
+    console.log(data);
     $.ajax({
         url: '/addItemToStock',
         type: 'GET',
@@ -1956,13 +1960,13 @@ function completionCard(elem) {
             }
             
             if (idsItems.length > 0) {
-                // Работает
                 let sale = [], privet = [], delivery = [], items_amount = [];
                 for (let element of $('#exposed_list .invoiled')) {
+                    let idProduct = $(element).attr('id').split('_')[1];
                     sale.push($(element).children()[7].children[0].value);
                     privet.push($(element).children()[8].innerHTML);
                     delivery.push($(element).children()[9].innerHTML);
-                    items_amount.push($(element).children()[11].innerHTML);
+                    items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
                 }
 
                 let status = 'false';
