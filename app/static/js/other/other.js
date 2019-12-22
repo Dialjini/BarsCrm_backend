@@ -379,7 +379,6 @@ function removeTask(id) {
         break;
     }
     socket.emit('delete_task', {data: id})
-    socket.emit('showTasks');
     createCTButtons();
 }
 
