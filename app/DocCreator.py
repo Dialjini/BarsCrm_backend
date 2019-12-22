@@ -1,7 +1,7 @@
 from app import app, models, db
 from flask import send_from_directory
 from datetime import datetime
-from docx import Document
+import docx
 import os
 
 
