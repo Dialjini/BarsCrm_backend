@@ -24,6 +24,14 @@ class Inside_date:
         self.y = y
 
 
+@socketio.on('delete_task')
+def delete_task(data):
+    task = models.Tasks.query.filter_by(Task_id=data).first()
+    db.session.delete(task)
+    db.session.commit()
+    sendTasks()
+
+
 @socketio.on('connection')
 def user_connected():
     print("user connect")
@@ -145,14 +153,6 @@ def index():
 @app.route('/getAllTasks')
 def getAllTasks():
     return table_to_json(models.Tasks.query.all())
-
-
-@app.route('/deleteTask')
-def deleteTask():
-    task = models.Tasks.query.filter_by(Task_id=request.args['id']).first()
-    db.session.delete(task)
-    db.session.commit()
-    return 'OK'
 
 
 @app.route('/getMyTasks')
