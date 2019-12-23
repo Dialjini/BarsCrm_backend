@@ -100,6 +100,9 @@ function taskCreate(tasks = 'new') {
             data = JSON.parse(data);
             if (tasks != 'new') {
                 tasks = JSON.parse(tasks);
+                $('#tasks_list .empty').remove();
+                $('#current_tasks').empty();
+                $('#expired_tasks').empty();
                 for (let i = 0; i < tasks.length; i++) {
                     function typeTask() {
                         if (tasks[i].Type == 'phone') return 'Звонок';
@@ -121,82 +124,82 @@ function taskCreate(tasks = 'new') {
 
                     let second_date_arr = datetime_regex.exec(secondDate);
                     let second_datetime = new Date(second_date_arr[3], second_date_arr[2], second_date_arr[1], second_date_arr[4], second_date_arr[5]);
-                    // if (first_datetime.getTime() > second_datetime.getTime()) {
-                    //     let mark = tasks[i].Admin ? 'mark' : '';
-                    //     $('#tasks_list .empty').remove();
-                    //     $('#current_tasks').prepend(
-                    //         $('<div>', {
-                    //             class: 'item ' + mark,
-                    //             name: `task_${tasks[i].Task_id}`,
-                    //             onclick: `completeTask(this)`,
-                    //             append: $('<img>', {
-                    //                 src: `static/images/${tasks[i].Type}.svg`,
-                    //                 class: 'importance'
-                    //             }).add($('<div>', {
-                    //                 class: 'fieldInfo',
-                    //                 append: $('<div>', {
-                    //                     class: 'row',
-                    //                     append: $('<div>', {
-                    //                         class: 'name',
-                    //                         html: typeTask()
-                    //                     }).add($('<div>', {
-                    //                         class: 'time',
-                    //                         html: tasks[i].Time
-                    //                     }))
-                    //                 }).add($('<div>', {
-                    //                     class: 'row',
-                    //                     append: $('<div>', {
-                    //                         class: 'descr',
-                    //                         html: tasks[i].Comment
-                    //                     }).add($('<div>', {
-                    //                         class: 'time',
-                    //                         append: $('<span>', {
-                    //                             class: 'bold',
-                    //                             html: tasks[i].Date
-                    //                         })
-                    //                     }))
-                    //                 }))
-                    //             }))
-                    //         })
-                    //     )
-                    // } else {
-                    //     $('#tasks_list_e .empty').remove();
-                    //     $('#expired_tasks').prepend(
-                    //         $('<div>', {
-                    //             class: 'item',
-                    //             name: `task_${tasks[i].Task_id}`,
-                    //             onclick: `completeTask(this)`,
-                    //             append: $('<img>', {
-                    //                 src: `static/images/${tasks[i].Type}.svg`,
-                    //                 class: 'importance'
-                    //             }).add($('<div>', {
-                    //                 class: 'fieldInfo',
-                    //                 append: $('<div>', {
-                    //                     class: 'row',
-                    //                     append: $('<div>', {
-                    //                         class: 'name',
-                    //                         html: typeTask()
-                    //                     }).add($('<div>', {
-                    //                         class: 'time',
-                    //                         html: tasks[i].Time
-                    //                     }))
-                    //                 }).add($('<div>', {
-                    //                     class: 'row',
-                    //                     append: $('<div>', {
-                    //                         class: 'descr',
-                    //                         html: tasks[i].Comment
-                    //                     }).add($('<div>', {
-                    //                         class: 'time',
-                    //                         append: $('<span>', {
-                    //                             class: 'bold',
-                    //                             html: tasks[i].Date
-                    //                         })
-                    //                     }))
-                    //                 }))
-                    //             }))
-                    //         })
-                    //     )
-                    // }
+                    if (first_datetime.getTime() > second_datetime.getTime()) {
+                        let mark = tasks[i].Admin ? 'mark' : '';
+                        $('#tasks_list .empty').remove();
+                        $('#current_tasks').prepend(
+                            $('<div>', {
+                                class: 'item ' + mark,
+                                name: `task_${tasks[i].Task_id}`,
+                                onclick: `completeTask(this)`,
+                                append: $('<img>', {
+                                    src: `static/images/${tasks[i].Type}.svg`,
+                                    class: 'importance'
+                                }).add($('<div>', {
+                                    class: 'fieldInfo',
+                                    append: $('<div>', {
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'name',
+                                            html: typeTask()
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            html: tasks[i].Time
+                                        }))
+                                    }).add($('<div>', {
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'descr',
+                                            html: tasks[i].Comment
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            append: $('<span>', {
+                                                class: 'bold',
+                                                html: tasks[i].Date
+                                            })
+                                        }))
+                                    }))
+                                }))
+                            })
+                        )
+                    } else {
+                        $('#tasks_list_e .empty').remove();
+                        $('#expired_tasks').prepend(
+                            $('<div>', {
+                                class: 'item',
+                                name: `task_${tasks[i].Task_id}`,
+                                onclick: `completeTask(this)`,
+                                append: $('<img>', {
+                                    src: `static/images/${tasks[i].Type}.svg`,
+                                    class: 'importance'
+                                }).add($('<div>', {
+                                    class: 'fieldInfo',
+                                    append: $('<div>', {
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'name',
+                                            html: typeTask()
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            html: tasks[i].Time
+                                        }))
+                                    }).add($('<div>', {
+                                        class: 'row',
+                                        append: $('<div>', {
+                                            class: 'descr',
+                                            html: tasks[i].Comment
+                                        }).add($('<div>', {
+                                            class: 'time',
+                                            append: $('<span>', {
+                                                class: 'bold',
+                                                html: tasks[i].Date
+                                            })
+                                        }))
+                                    }))
+                                }))
+                            })
+                        )
+                    }
                 }
             } else {
                 taskInfo = {
@@ -220,52 +223,52 @@ function taskCreate(tasks = 'new') {
                 } catch {
                     return alert('Проверьте введенные данные!')
                 }
+                $('#tasks_list .empty').remove();
+                $('#current_tasks').empty();
+                $('#expired_tasks').empty();
                 socket.emit('addTask', {data: taskInfo});
                 function typeTask() {
                     if (taskInfo.task_type == 'phone') return 'Звонок';
                     if (taskInfo.task_type == 'email') return 'Письмо';
                     if (taskInfo.task_type == 'other') return 'Другое';
                 }
-                $('#tasks_list .empty').remove();
-                $('#current_tasks').empty();
-                $('#expired_tasks').empty();
-                // if ($('#task_whom').val() == data.id) {
-                //     $('#current_tasks').append(
-                //         $('<div>', {
-                //             class: 'item',
-                //             name: `task_new`,
-                //             onclick: `completeTask(this)`,
-                //             append: $('<img>', {
-                //                 src: `static/images/${taskInfo.task_type}.svg`,
-                //                 class: 'importance'
-                //             }).add($('<div>', {
-                //                 class: 'fieldInfo',
-                //                 append: $('<div>', {
-                //                     class: 'row',
-                //                     append: $('<div>', {
-                //                         class: 'name',
-                //                         html: typeTask()
-                //                     }).add($('<div>', {
-                //                         class: 'time',
-                //                         html: taskInfo.task_time
-                //                     }))
-                //                 }).add($('<div>', {
-                //                     class: 'row',
-                //                     append: $('<div>', {
-                //                         class: 'descr',
-                //                         html: taskInfo.task_comment
-                //                     }).add($('<div>', {
-                //                         class: 'time',
-                //                         append: $('<span>', {
-                //                             class: 'bold',
-                //                             html: taskInfo.task_date
-                //                         })
-                //                     }))
-                //                 }))
-                //             }))
-                //         })
-                //     )
-                // } 
+                if ($('#task_whom').val() == data.id) {
+                    $('#current_tasks').append(
+                        $('<div>', {
+                            class: 'item',
+                            name: `task_new`,
+                            onclick: `completeTask(this)`,
+                            append: $('<img>', {
+                                src: `static/images/${taskInfo.task_type}.svg`,
+                                class: 'importance'
+                            }).add($('<div>', {
+                                class: 'fieldInfo',
+                                append: $('<div>', {
+                                    class: 'row',
+                                    append: $('<div>', {
+                                        class: 'name',
+                                        html: typeTask()
+                                    }).add($('<div>', {
+                                        class: 'time',
+                                        html: taskInfo.task_time
+                                    }))
+                                }).add($('<div>', {
+                                    class: 'row',
+                                    append: $('<div>', {
+                                        class: 'descr',
+                                        html: taskInfo.task_comment
+                                    }).add($('<div>', {
+                                        class: 'time',
+                                        append: $('<span>', {
+                                            class: 'bold',
+                                            html: taskInfo.task_date
+                                        })
+                                    }))
+                                }))
+                            }))
+                        })
+                    )
+                } 
                 createCTButtons();
             }
         }
