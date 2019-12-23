@@ -10,7 +10,6 @@ $(document).ready(function() {
     $('#clientButton, #category-0').addClass('active');
     socket.emit('connection')
     socket.emit('showTasks');
-
 });
 
 socket.on('showTasks', function(data) {
