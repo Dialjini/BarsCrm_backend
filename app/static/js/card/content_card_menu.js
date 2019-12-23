@@ -265,22 +265,14 @@ function downloadDocument(elem) {
             } else {
                 document_name = 'Dogovor_na_tovari_ip';
             }
-            console.log({ category: data[0], card_id: data[1], name: document_name, address: data_client[i].Adress, delivery: 'no' })
-            $.ajax({
-                url: '/downloadDoc',
-                type: 'GET',
-                data: { category: data[0], card_id: data[1], name: document_name, address: data_client[i].Adress, delivery: 'no' },
-                dataType: 'html',
-                success: function(data) {
-                    const blob = new Blob([data]);
-                    const url = window.URL.createObjectURL(blob);
-
-                    const link = document.createElement('a')
-                    link.href = url
-                    link.download = "downloadDoc.docx"
-                    link.click()
-                }
-            });
+            const link = document.createElement('a');
+            link.href = `http://127.0.0.1:5000/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
+            if (select_cusmoter == 'ООО') {
+                link.download = 'Договор поставки ООО';
+            } else {
+                link.download = 'Договор поставки ИП';
+            }
+            link.click();
         }
     }
     
