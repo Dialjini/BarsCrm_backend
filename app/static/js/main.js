@@ -13,6 +13,8 @@ $(document).ready(function() {
 });
 
 socket.on('showTasks', function(data) {
+    $('#current_tasks').empty();
+    $('#expired_tasks').empty();
     taskCreate(data);
 });
 socket.on('refreshTasks', function() {
