@@ -44,7 +44,7 @@ function linkField() {
             { width: 92.297, id: 'stock_stock', list: [] },
             { width: 97.281, id: 'stock_volume', list: [] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
-            { width: 106, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] },
+            { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] },
         ]
 
         let idList = this.id;
@@ -122,9 +122,15 @@ function linkField() {
                 if (list[i].id == idList) {
                     if (width > list[i].width) {
                         $(`#${idList}`).width(width);
+                        for (let j = 0; j < $(`#${idList} .report_list`).children()[0].children.length; j++) {
+                            $(`#${idList} .report_list`).children()[0].children[j].style.width = width + 'px';
+                        }
                     } else {
                         $(`#${idList}`).width(list[i].width);
                         $(`#${idList} .report_list`).width(list[i].width);
+                        for (let j = 0; j < $(`#${idList} .report_list`).children()[0].children.length; j++) {
+                            $(`#${idList} .report_list`).children()[0].children[j].style.width = list[i].width + 'px';
+                        }
                     }
                 }
             }
@@ -142,7 +148,6 @@ function linkField() {
             $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
-                console.log(this.id.split('_'));
                 if (idList.includes('analytics_reports')) {
                     let functions = [
                         analyticsFilterTable_0,
@@ -161,7 +166,6 @@ function linkField() {
                         analyticsFilterTable_3,
                         analyticsFilterTable_4
                     ]
-                    let a_rep;
                     let list = ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
                     for (let i = 0; i < list.length; i++) {
                         if ($('#analytics_reports').children()[0].children[0].innerHTML == list[i]) {
@@ -169,6 +173,12 @@ function linkField() {
                         }
                     }
                 } else {
+                    $('.centerBlock .header .cancel').remove();
+                    $('.centerBlock .header').append(`
+                        <div class="cancel">
+                            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+                        </div>
+                    `) 
                     let filter_ids = [
                         { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
                         { id: 'stock_product', filterName: 'Name', name: 'Товар'},
@@ -176,7 +186,6 @@ function linkField() {
                         { id: 'stock_volume', filterName: 'Volume', name: 'Объем'},
                         { id: 'stock_stock', filterName: 'stock_address', name: 'Склад'},
                     ]
-                    // Фильтрация как общая (449 строка main.js)
                     if (lastData.last_id == idList) {
                         if (lastData.last_table[0].id == 'filter_stock') {
                             let data = lastData.last_table;
@@ -199,6 +208,7 @@ function linkField() {
                             for (let i = 0; i < data[1][1].length; i++) {
                                 for (let k = 0; k < filter_ids.length; k++) {
                                     if (filter_ids[k].id == idList) {
+                                        console.log(data[1][1][i][filter_ids[k].filterName] == filterName);
                                         if (data[1][1][i][filter_ids[k].filterName] == filterName) {
                                             data[1][1][i].stock_address = data[1][1][i].stock_address;
                                             filterTable.push(data[1][1][i]);
@@ -352,7 +362,7 @@ function linkField() {
                             lastData.last_id = idList;
                             return fillingTables(data);
                         }
-                    }                    
+                    }                  
                 }
             };
 

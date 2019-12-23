@@ -539,6 +539,11 @@ $('#search_button').click(function() {
 function cancelSearch() {
     for (let i = 0; i < dataName.length; i++) {
         if (saveTableAndCard[0].id == dataName[i].name) {
+            if (saveTableAndCard[0].id == 'stock') {
+                $('.row').remove();
+                addButtonsSubcategory(3);
+                linkField();
+            }
             getTableData(dataName[i].link);
             break;
         }

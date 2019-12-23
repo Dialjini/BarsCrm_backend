@@ -392,7 +392,6 @@ let rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             for (let k = selectTableData[i].items.length - 1; k >= 0; k--) {
-                console.log(selectTableData[i]);
                 if (selectTableData[i].stock_address != null) {
                     let element = $('<tr>', {id: `stock_${selectTableData[i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
                     const name = [selectTableData[i].items[k].Prefix, selectTableData[i].items[k].Group_name, selectTableData[i].items[k].Name, selectTableData[i].items[k].Weight, selectTableData[i].items[k].Packing, selectTableData[i].items[k].Volume, selectTableData[i].items[k].Cost, selectTableData[i].items[k].NDS, selectTableData[i].stock_address];
