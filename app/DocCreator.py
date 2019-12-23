@@ -20,8 +20,11 @@ def replace_doc(words, replacements, doc):
         for i in doc.paragraphs:
             if words[j] in i.text:
                 i.text = i.text.replace(str(words[j]), str(replacements[j]))
-        if words[j] in doc.tables[0].cell(0, 1).text:
-            doc.tables[0].cell(0, 1).text = doc.tables[0].cell(0, 1).text.replace(str(words[j]), str(replacements[j]))
+        try:
+            if words[j] in doc.tables[0].cell(0, 1).text:
+                doc.tables[0].cell(0, 1).text = doc.tables[0].cell(0, 1).text.replace(str(words[j]), str(replacements[j]))
+        except Exception:
+            continue
     return doc
 
 
