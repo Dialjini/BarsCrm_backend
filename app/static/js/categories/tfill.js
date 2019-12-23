@@ -1057,9 +1057,20 @@ function fillingTables(object, filter = false) {
             return object[0].lastCard[i];
         }
     }
-
+    let this_user;
+    $.ajax({
+        url: '/getThisUser',
+        type: 'GET',
+        async: false,
+        dataType: 'html',
+        success: function(user) {
+            this_user = JSON.parse(user);
+        }
+    })
     if (object[0].id === 'analytics') {
-        return analyticsFilterTable_0();
+        console.log(this_user);
+        if (this_user.role == 'admin') return analyticsFilterTable_0();
+        if (this_user.role == 'manager') return analyticsFilterTable_1();
     }
 
     let table = $('<table />', {

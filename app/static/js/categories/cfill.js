@@ -44,24 +44,21 @@ function linkField() {
             { width: 92.297, id: 'stock_stock', list: [] },
             { width: 97.281, id: 'stock_volume', list: [] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
-            { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] },
+            { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] }
         ]
 
-        let idList = this.id;
-        let element;
+        let idList = this.id, element;
         let info = ['Group_name', 'Name', 'Packing', 'stock_address'];
         if (!idList.includes('analytics')) {
             for (let k = 0; k < info.length; k++) {
                 for (let i = 0; i < categoryInStock[1][1].length; i++) {
                     for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                        // Если value этой айдишки не ее изначально название - брать остальные показатели, у которых есть это неизначальное значение
                         if (k !== 3) list[k].list.push(categoryInStock[1][1][i].items[j][info[k]]);
                         else list[k].list.push(categoryInStock[1][1][i][info[k]])
                     }
                 }
             }
         }
-
         for (let i = 0; i < list.length; i++) {
             if (list[i].id === idList) {
                 element = i;
@@ -76,7 +73,6 @@ function linkField() {
                 }
             }
         }
-
         if ($(`#${idList} .drop_down_img`).hasClass('drop_active')) {
             $(`#${idList} .drop_down_img`).removeClass('drop_active');
             $(`#${idList} .report_list`).fadeOut(200);
@@ -90,6 +86,16 @@ function linkField() {
             $(`#${list[i].id}`).width('auto');
         }
 
+        let this_user;
+        $.ajax({
+            url: '/getThisUser',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(user) {
+                this_user = JSON.parse(user);
+            }
+        });
         let namesList;
         function fillingList() {
             for (let i = 0; i < list.length; i++) {
@@ -97,6 +103,7 @@ function linkField() {
                     namesList = list[i].list;
                     let ul = $('<ul>');
                     for (let j = 0; j < list[i].list.length; j++) {
+                        if (this_user.role == 'manager' && j == 0) continue;
                         ul.append(
                             `<li id="${idList}_${j}">${list[i].list[j]}</li>`
                         )
