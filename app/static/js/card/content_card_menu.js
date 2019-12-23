@@ -870,7 +870,6 @@ function addMember(id = 'client', selectedLine = '') {
         }
         return options;
     }
-    console.log(selectedLine);
     $('#member').append($('<div>', {
         class: `member ${category.member}`,
         id: `member_${count_members}`,
@@ -1095,7 +1094,6 @@ function addRow(id, selectedLine = '') {
                     })
                 }));  
             } else {
-                console.log(selectedLine[table.html[i]]);
                 tr.append($('<td>', {
                     append: $('<input>', {
                         css: { width: table.widthInput[i].width + 'px', padding: '0' },

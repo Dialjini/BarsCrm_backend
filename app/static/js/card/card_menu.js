@@ -46,7 +46,6 @@ function createCardMenu(element, index = 0) {
     let getInfo = element.id.split('_');
     let selectedLine = new Object();
     let accountInfoInDelivery = null;
-    console.log(getInfo);
 
     // Информация по всем карточкам подкатегорий
     // Подставить актуальные данные
@@ -1037,7 +1036,6 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine) {
-        console.log(selectedLine);
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -1603,7 +1601,6 @@ function makeRequest(element) {
         items_ids.push($(element).attr('id').split('_')[2]);
     }
     data['delivery_item_ids'] = JSON.stringify(items_ids);
-    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -1774,7 +1771,6 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
-    console.log(data);
     $.ajax({
         url: '/addItemToStock',
         type: 'GET',
@@ -2008,7 +2004,6 @@ function completionCard(elem) {
 // Закрытие карточки
 function closeCardMenu(id = '') {
     // Сохраняет данные на сервер
-    console.log(id);
     if (id[1] == 'user') {
         getTableData(saveTableAndCard);
         return;

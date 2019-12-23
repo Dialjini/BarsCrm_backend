@@ -20,6 +20,7 @@ socket.on('showTasks', function(data) {
 socket.on('refreshTasks', function() {
     socket.emit('showTasks');
 });
+let user;
 socket.on('user joined', function() {
 });
 
@@ -32,7 +33,7 @@ function getUserInfo() {
             data = JSON.parse(data);
             let role = data.role;
             let surname = data.second_name;
-            
+            user = data;
             if (role == 'admin') 
                  role = 'Администратор'
             else role = 'Менеджер'
@@ -104,6 +105,12 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
+                    if (saveTableAndCard[0].id == 'analytics') {
+                        if (user.role == 'manager') {
+                            $('#analytics_reports .field_with_modal')[0].children[0].innerHTML = 'Сводный по объёмам';
+                            $('.table').width('fit-content');
+                        }
+                    }
                     if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
                         sortTableByArea('min', false);
                     }
@@ -383,7 +390,6 @@ function saveInfoCard(id, close = false, elem = null) {
             }
             if (count == data.length - 1) members.pop();
         });
-        console.log(members);
         $.ajax({
             url: '/addContacts',
             type: 'GET',
@@ -624,7 +630,6 @@ function searchCategoryInfo() {
             data: {data: +searchInfo},
             dataType: 'html',
             success: function(result) {
-                console.log(JSON.parse(result));
                 $('.modal_search').remove();
                 $('.overflow').remove();
 

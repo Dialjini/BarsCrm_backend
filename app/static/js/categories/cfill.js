@@ -37,13 +37,23 @@ function linkField() {
 
     // Подкатегория с вызовом модального окна
     $('.list').click(function() {
+        let this_user;
+        $.ajax({
+            url: '/getThisUser',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(user) {
+                this_user = JSON.parse(user);
+            }
+        })
         const list = [
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
             { width: 110.328, id: 'stock_packing', list: [] },
             { width: 92.297, id: 'stock_stock', list: [] },
             { width: 97.281, id: 'stock_volume', list: [] },
-            { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
+            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
             { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] }
         ]
 
@@ -86,16 +96,6 @@ function linkField() {
             $(`#${list[i].id}`).width('auto');
         }
 
-        let this_user;
-        $.ajax({
-            url: '/getThisUser',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(user) {
-                this_user = JSON.parse(user);
-            }
-        });
         let namesList;
         function fillingList() {
             for (let i = 0; i < list.length; i++) {
@@ -103,7 +103,6 @@ function linkField() {
                     namesList = list[i].list;
                     let ul = $('<ul>');
                     for (let j = 0; j < list[i].list.length; j++) {
-                        if (this_user.role == 'manager' && j == 0) continue;
                         ul.append(
                             `<li id="${idList}_${j}">${list[i].list[j]}</li>`
                         )
@@ -173,7 +172,7 @@ function linkField() {
                         analyticsFilterTable_3,
                         analyticsFilterTable_4
                     ]
-                    let list = ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
+                    let list = this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
                     for (let i = 0; i < list.length; i++) {
                         if ($('#analytics_reports').children()[0].children[0].innerHTML == list[i]) {
                             return functions[i](this.id.split('_')[2]);
@@ -215,7 +214,6 @@ function linkField() {
                             for (let i = 0; i < data[1][1].length; i++) {
                                 for (let k = 0; k < filter_ids.length; k++) {
                                     if (filter_ids[k].id == idList) {
-                                        console.log(data[1][1][i][filter_ids[k].filterName] == filterName);
                                         if (data[1][1][i][filter_ids[k].filterName] == filterName) {
                                             data[1][1][i].stock_address = data[1][1][i].stock_address;
                                             filterTable.push(data[1][1][i]);
@@ -827,7 +825,6 @@ function getValidationDate(date) {
                 }
             }
         }
-        console.log(items_list);
         function fillTable() {
             let table = '';
             for (let i = 0; i < items_list.length; i++) {
@@ -960,7 +957,6 @@ function getValidationDate(date) {
                     let date_create_account = getValidationDate(account_data[i].account.Date);
                     if (account.Name === account_data[i].account.Name && account.id !== account_data[i].account.id
                         && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
-                        console.log(account.Name, account_data[i].account.Name)
                         for (let g = 0; g < volume_two.length; g++) {
                             volume_one.push(volume_two[g]);
                         }
@@ -1091,7 +1087,6 @@ function getValidationDate(date) {
         for (let i = 0; i < items_list.length - 1; i++) {
             for (let j = i + 1; j < items_list.length; j++) {
                 if (items_list[i].account.Name === items_list[j].account.Name && items_list[i].account.id === items_list[j].account.id) {
-                    console.log(account_data[i].account.Date)
                     for (let k = 0; k < items_list[j].items.length; k++) {
                         items_list[i].items.push(items_list[j].items[k])
                     }
@@ -1209,7 +1204,6 @@ function getValidationDate(date) {
             let table = '';
             let all_data = [];
             for (let i = 0; i < accounts.length; i++) {
-                console.log(accounts[i].account.Date)
                 let date_create_account = getValidationDate(accounts[i].account.Date);
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                     let items_volume = JSON.parse(accounts[i].account.Item_ids);

@@ -479,7 +479,6 @@ function searchByCompetitor() {
             for (let i = 0; i < filter_table.length; i++) {
                 filterClient[1][1].push(filter_table[i]);
             }
-            console.log(filterClient);
             $('.table').remove();
             $('.info').append(fillingTables(filterClient));
             $('.centerBlock .header .cancel').remove();
@@ -560,14 +559,11 @@ function sortTableByManagers(element) {
                 if (!sortStatus.category.status && !sortStatus.area.status) {
                     if (filterClient[1][1] != undefined) filterClient[1].pop();
                     data = categoryInListClient[1][1];
-                    console.log('client');
                 } else {
                     if (filterClient[1][1] == undefined) {
                         data = categoryInListClient[1][1];
-                        console.log('bad_filter_client');
                     } else {
                         data = sortStatus.manager.last == null ? filterClient[1][1] : sortStatus.manager.last;
-                        console.log('filter_client');
                     }
                 }
                 sortStatus.manager.last = categoryInListClient[1][1]
@@ -626,10 +622,8 @@ function sortTableByArea(filter, input = true) {
         if (!sortStatus.manager.status && !sortStatus.category.status) {
             if (filterClient[1][1] != undefined) filterClient[1].pop();
             newTableData = categoryInListClient.slice();
-            console.log('client');
         } else {
             newTableData = filterClient;
-            console.log('filter_client');
         }
     } else {
         newTableData = saveTableAndCard.slice();
@@ -798,10 +792,7 @@ function sortTableByProduct(filter) {
     } else {
         data = sortStatus.product.last == null ? filterProvider[1][1] : sortStatus.product.last;
     }
-
     sortStatus.product.last = categoryInListProvider[1][1];
-
-    console.log(data);
     let filter_data = [];
     for (let i = 0; i < data.length; i++) {
         let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
@@ -855,7 +846,6 @@ function selectFilterCategory(element) {
                 filter_table.push(data[i].Category);
             }
         }
-
         for (let i = 0; i < filter_table.length - 1; i++) {
             for (let j = i + 1; j < filter_table.length; j++) {
                 if (filter_table[i] == filter_table[j]) {
@@ -864,15 +854,11 @@ function selectFilterCategory(element) {
                 }
             }
         }
-        console.log(filter_table);
         for (let i = 0; i < filter_table.length; i++) {
             ul.append(`
                 <li onclick="sortTableByCategory(this)">${filter_table[i]}</li>
             `)
         }
-
-
-        // получить список групп товаров
         return ul;
     }
     if ($('.table .cl_category').hasClass('drop_active')) {
@@ -1057,20 +1043,9 @@ function fillingTables(object, filter = false) {
             return object[0].lastCard[i];
         }
     }
-    let this_user;
-    $.ajax({
-        url: '/getThisUser',
-        type: 'GET',
-        async: false,
-        dataType: 'html',
-        success: function(user) {
-            this_user = JSON.parse(user);
-        }
-    })
     if (object[0].id === 'analytics') {
-        console.log(this_user);
-        if (this_user.role == 'admin') return analyticsFilterTable_0();
-        if (this_user.role == 'manager') return analyticsFilterTable_1();
+        if (user.role == 'admin') return analyticsFilterTable_0();
+        if (user.role == 'manager') return analyticsFilterTable_1();
     }
 
     let table = $('<table />', {
