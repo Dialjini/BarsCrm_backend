@@ -232,9 +232,8 @@ function contractContentCard(elem) {
                 <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
                 <tr>
                     <td class="bold">Юр. лицо</td><td>
-                        <select>
-                            <option selected disabled value="">Не выбрано</option>
-                            <option value="ООО">ООО</option>
+                        <select id="select_cusmoter">
+                            <option selected value="ООО">ООО</option>
                             <option value="ИП">ИП</option>
                         </select>
                     </td>
@@ -256,15 +255,35 @@ function contractContentCard(elem) {
 }
 function downloadDocument(elem) {
     let data = $(elem).attr('name').split('_');
-    $.ajax({
-        url: '/downloadDoc',
-        type: 'GET',
-        data: {category: data[0], card_id: data[1], name: 'Договор'},
-        dataType: 'html',
-        success: function(data) {
-            console.log(data);
+    let data_client = categoryInListClient[1][1];
+    let select_cusmoter = $('#select_cusmoter').val()
+    for (let i = 0; i < data_client.length; i++) {
+        if (data_client[i].id == data[1]) {
+            let document_name;
+            if (select_cusmoter == 'ООО') {
+                document_name = 'Dogovor_na_tovari_ooo';
+            } else {
+                document_name = 'Dogovor_na_tovari_ip';
+            }
+            console.log({ category: data[0], card_id: data[1], name: document_name, address: data_client[i].Adress, delivery: 'no' })
+            $.ajax({
+                url: '/downloadDoc',
+                type: 'GET',
+                data: { category: data[0], card_id: data[1], name: document_name, address: data_client[i].Adress, delivery: 'no' },
+                dataType: 'html',
+                success: function(data) {
+                    const blob = new Blob([data]);
+                    const url = window.URL.createObjectURL(blob);
+
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.download = "downloadDoc.docx"
+                    link.click()
+                }
+            });
         }
-    });
+    }
+    
 }
 // Контентная часть вкладки Выставления счета
 function invoicingContentCard(elem, data) {

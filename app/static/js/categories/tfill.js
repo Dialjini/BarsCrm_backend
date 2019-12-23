@@ -705,7 +705,6 @@ function sortTableByArea(filter, input = true) {
     if (newTableData[1][1] != undefined) {
         newTableData[1].pop();
     }
-    console.log(filter_table);
     newTableData[1].push(filter_table);
     $('.table').remove();
     $('.info').append(fillingTables(newTableData, true));
@@ -820,7 +819,6 @@ function sortTableByProduct(filter) {
     }
 
     if (filterProvider[1][1] != undefined) filterProvider[1].pop();
-    console.log(filterProvider[1])
     filterProvider[1].push(table_data)
     $('.table').remove();
     $('.info').append(fillingTables(filterProvider, true));
