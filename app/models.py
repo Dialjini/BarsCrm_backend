@@ -2,6 +2,16 @@ from app import db
 from datetime import datetime
 
 
+def getMonthNum():
+    Docs = Document.query.all()
+    result = 1
+    for i in Docs:
+        print(i.Date)
+        print(i.Date[0:2], '  ', str(datetime.now().month))
+        if i.Date[0:2] == str(datetime.now().month):
+            result += 1
+    return result
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String)
@@ -142,13 +152,6 @@ class Document(db.Model):
     Client_contact_name = db.Column(db.String)
     Owner_id = db.Column(db.Integer)
     MonthNum = db.Column(db.Integer)
-    def getMonthNum(self):
-        Docs = Document.query.all()
-        result = 1
-        for i in Docs:
-            if i.Date[3:-5] == str(datetime.now().month):
-                result = result + 1
-        return result
 
 
 class Contacts(db.Model):
