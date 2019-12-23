@@ -534,8 +534,8 @@ def getStockTable():
             subres['stock_address'] = stock.Name
             result.append(subres)
 
-        subres = {'items': json.loads(table_to_json(models.BadItems.query.all())), 'stock_address': None}
-        result.append(subres)
+        # subres = {'items': json.loads(table_to_json(models.BadItems.query.all())), 'stock_address': None}
+        # result.append(subres)
 
         return json.dumps(result)
     else:
@@ -580,7 +580,11 @@ def getItemGroup():
 @app.route('/getAllItems', methods=['GET'])
 def getAllItems():
     if 'username' in session:
-        return table_to_json(models.Item.query.all())
+        result = models.Item.query.all()
+        badItems = models.BadItems.query.all()
+        for i in badItems:
+            result.append(i)
+        return table_to_json(result)
     else:
         return redirect('/', code=302)
 
