@@ -44,7 +44,7 @@ function linkField() {
             { width: 92.297, id: 'stock_stock', list: [] },
             { width: 97.281, id: 'stock_volume', list: [] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
-            { width: 106, id: 'analytics_period', list: ['Тест 1', 'Тест 2', 'Тест 3'] },
+            { width: 106, id: 'analytics_period', list: ['За день', 'За неделю', 'За месяц', 'За год'] },
         ]
 
         let idList = this.id;
@@ -340,7 +340,7 @@ function linkField() {
             };
 
             $('.info').append(createFilterTable());
-            if ($('#active_field').html() == 'Сводный по объёмам') {
+            if ($('#active_field').html() == 'Сводный по объёмам' || $('#active_field').html() == 'Отгрузки менеджеров') {
                 $('.table').width('fit-content');
             }
         });
@@ -884,7 +884,6 @@ function createNewMember() {
                         }
                         account_data.splice(i, 1);
                         i--;
-                        return volume_one;
                     }
                 }
                 return volume_one;
@@ -1131,79 +1130,197 @@ function createNewMember() {
     }
     // Отгрузки менеджеров
     function analyticsFilterTable_4() {
-        // Один tr - один клиент
+        let stocks, account_data;
+        $.ajax({
+            url: '/getAccounts',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                account_data = JSON.parse(data);
+            }
+        });
+        $.ajax({
+            url: '/getStockTable',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                stocks = JSON.parse(data);
+            }
+        });
+        let all_items = [];
+        for (let i = 0; i < stocks.length; i++) {
+            for (let j = 0; j < stocks[i].items.length; j++) {
+                all_items.push(stocks[i].items[j]);
+            }
+        }
+
+        all_items.sort(function(a, b) {
+            if (a.Item_id > b.Item_id) return 1;
+            if (a.Item_id < b.Item_id) return -1;
+            return 0;
+        })
+
+        let amounts = [], all_amounts = 0;
+        for (let i = 0; i < all_items.length; i++) {
+            amounts[i] = 0;
+        }
+        function fillItemsAmount(account) {
+            let account_data_copy = account_data.slice();
+            let amount = JSON.parse(account.Items_amount);
+            for (let i = 0; i < account_data_copy.length; i++) {
+                let amount_two = JSON.parse(account_data_copy[i].account.Items_amount);
+                if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id) {
+                    for (let g = 0; g < amount_two.length; g++) {
+                        amount.push(amount_two[g]);
+                    }
+
+                    for (let l = 0; l < amount.length - 1; l++) {
+                        for (let h = l + 1; h < amount.length; h++) {
+                            if (amount[l].id === amount[h].id) {
+                                amount[l].amount = +amount[l].amount + +amount[h].amount;
+                                amount.splice(h, 1);
+                                h--;
+                            }
+                        }
+                    }
+                    account_data_copy.splice(i, 1);
+                    i--;
+                }
+            }
+            return amount;
+        }
+        function fillItemsVolume(account) {
+            let account_data_copy = account_data.slice();
+            let volume_one = JSON.parse(account.Item_ids);
+            for (let i = 0; i < account_data_copy.length; i++) {
+                let volume_two = JSON.parse(account_data_copy[i].account.Item_ids);
+                if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id) {
+                    for (let g = 0; g < volume_two.length; g++) {
+                        volume_one.push(volume_two[g]);
+                    }
+
+                    for (let l = 0; l < volume_one.length - 1; l++) {
+                        for (let h = l + 1; h < volume_one.length; h++) {
+                            if (volume_one[l].id === volume_one[h].id) {
+                                volume_one[l].volume = +volume_one[l].volume + +volume_one[h].volume;
+                                volume_one.splice(h, 1);
+                                h--;
+                            }
+                        }
+                    }
+                    account_data_copy.splice(i, 1);
+                    i--;
+                }
+            }
+            return volume_one;
+        }
+
+        function outputAllItems() {
+            let th = '';
+            for (let i = 0; i < all_items.length; i++) {
+                th += `<th width="70">${all_items[i].Name}</th>`
+            }
+            return th;
+        }
+
+        function fillTable() {
+            let users;
+            $.ajax({
+                url: '/getUsers',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    users = JSON.parse(data);
+                }
+            });
+            let managers = [];
+
+            for (let i = 0; i < users.length; i++) {
+                if (users[i].role === 'manager') {
+                    managers.push(users[i]);
+                } 
+            }
+            
+            function fillItemsInfo(manager) {
+                let td = '';
+                for (let i = 0; i < account_data.length; i++) {
+                    if (account_data[i].account.Manager_id == manager) {
+                        let items_volume = fillItemsVolume(account_data[i].account)
+                        let items_amount = fillItemsAmount(account_data[i].account);
+                        items_volume.sort(function(a, b) {
+                            if (a.id > b.id) return 1;
+                            if (a.id < b.id) return -1;
+                            return 0;
+                        })
+                        items_amount.sort(function(a, b) {
+                            if (a.id > b.id) return 1;
+                            if (a.id < b.id) return -1;
+                            return 0;
+                        })
+                        let general_amount = 0;
+
+                        for (let element = 0; element < items_amount.length; element++) {
+                            general_amount += Math.round(+items_amount[element].amount);
+                        }
+                        all_amounts += general_amount;
+                        td += `<td>${general_amount}</td>`
+                        for (let j = 0; j < items_volume.length; j++) {
+                            for (let k = 0; k < all_items.length; k++) {
+                                if (+all_items[k].Item_id == +items_volume[j].id) {
+                                    amounts[k] += +items_volume[j].volume;
+                                    td += `<td id="item_${k + 1}">${items_volume[j].volume}</td>`
+                                    if (items_volume.length - 1 != j) {
+                                        j++;
+                                    }
+                                } else {
+                                    td += `<td id="item_${k + 1}">0</td>`
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                return td;
+            }
+            function checkManager(manager) {
+                for (let i = 0; i < account_data.length; i++) {
+                    if (account_data[i].account.Manager_id == manager) {
+                        return fillItemsInfo(manager);
+                    }
+                }
+                return `<td>0</td><td>0</td><td>0</td><td>0</td>`;
+            }
+            let table = '';
+            for (let i = 0; i < managers.length; i++) {
+                table += `
+                    <tr>
+                        <td>${managers[i].second_name}</td>
+                        ${checkManager(managers[i].id)}
+                    </tr>
+                `
+            }
+            let amount_tr = `<tr>${fillAmountRow()}</tr>`;
+            function fillAmountRow() {
+                let td = `<td></td><td>${all_amounts}</td>`
+                for (let i = 0; i < amounts.length; i++) {
+                    td += `<td class="bold">${amounts[i]}</td>`
+                }
+                return td;
+            }
+            table += amount_tr;
+            return table;
+        }
         return `
             <table class="table analytics">
                 <tr>
-                    <th>Менеджер</th>
-                    <th>Итого</th>
-                    <th>Товар 1</th>
-                    <th>Товар 2</th>
-                    <th>Товар 3</th>
-                    <th>Товар 4</th>
-                    <th>Товар 5</th>
-                    <th>Товар 6</th>
+                    <th width="170">Менеджер</th>
+                    <th width="130">Итого</th>
+                    ${outputAllItems()}
                 </tr>
-                <tr>
-                    <td>Сидоров</td>
-                    <td>Сумма по товарам</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Петров</td>
-                    <td>Сумма по товарам</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Иванов</td>
-                    <td>Сумма по товарам</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Кустов</td>
-                    <td>Сумма по товарам</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td>Пупкин</td>
-                    <td>Сумма по товарам</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                    <td>Объем</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                    <td class="bold">Сумма</td>
-                </tr>
+                ${fillTable()}
             </table>
         `
     }
