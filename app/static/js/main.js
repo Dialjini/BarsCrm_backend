@@ -10,16 +10,17 @@ $(document).ready(function() {
     $('#clientButton, #category-0').addClass('active');
     socket.emit('connection')
     socket.emit('showTasks');
-    socket.on('showTasks', function(data) {
-        taskCreate(data);
-    });
-    socket.on('refreshTasks', function() {
-        socket.emit('showTasks');
-    });
-    socket.on('user joined', function() {
-    });
+
 });
 
+socket.on('showTasks', function(data) {
+    taskCreate(data);
+});
+socket.on('refreshTasks', function() {
+    socket.emit('showTasks');
+});
+socket.on('user joined', function() {
+});
 
 function getUserInfo() {
     $.ajax({

@@ -6,7 +6,6 @@ import json
 import os
 from datetime import datetime
 
-
 socketio = SocketIO(app)
 
 if __name__ == '__main__':
@@ -26,16 +25,16 @@ class Inside_date:
 
 @socketio.on('delete_task')
 def delete_task(data):
-    print(data)
     task = models.Tasks.query.filter_by(Task_id=int(data['data'])).first()
     db.session.delete(task)
     db.session.commit()
-    sendTasks()
+    emit('refreshTasks', broadcast=True)
 
 
 @socketio.on('connection')
 def user_connected():
     print("user connect")
+
 
 @socketio.on('add user')
 def add_user(data):
@@ -51,19 +50,20 @@ def add_user(data):
 def sendTasks():
     tasks = []
     Tasks = models.Tasks.query.all()
-    if models.User.query.filter_by(login=session['username']).first():
-        user = models.User.query.filter_by(login=session['username']).first()
-    else:
-        user = models.User.query.filter_by(email=session['username']).first()
+
+    print(session['id'])
     for i in Tasks:
+        socketio.sleep(0)
+        print(session['id'])
+        print(tasks)
         try:
             if 'all' in json.loads(i.Visibility):
                 tasks.append(json.loads(table_to_json([i]))[0])
-            elif str(user.id) in json.loads(i.Visibility):
+            elif str(session['id']) in json.loads(i.Visibility):
                 tasks.append(json.loads(table_to_json([i]))[0])
         except Exception as er:
             print(er)
-    emit('showTasks', json.dumps(tasks))
+    emit('showTasks', json.dumps(tasks), broadcast=False)
 
 
 
@@ -142,6 +142,7 @@ def to_PDF(name, owner, address, delivery):
 def index():
     try:
         print(session['username'])
+        print(session['id'])
     except Exception:
         print("Not logged in")
 
@@ -191,6 +192,7 @@ def auth():
 
         if user.password == password:
             session['username'] = login
+            session['id'] = user.id
             # join_room('all')
             return redirect('/', code=302)
 
@@ -201,6 +203,7 @@ def auth():
 
         if user.password == password:
             session['username'] = login
+            session['id'] = user.id
             return redirect('/', code=302)
 
         return json.dumps({'message': 'Неверный пароль', 'success': False})
@@ -212,6 +215,7 @@ def auth():
 def logout():
     if 'username' in session:
         session.pop('username', None)
+        session.pop('id', None)
     return redirect('/', code=302)
 
 
@@ -814,6 +818,7 @@ def deleteManagerFromCard():
 @app.route('/getThisUser', methods=['GET'])
 def getThisUser():
     if 'username' in session:
+        print(session['username'])
         if models.User.query.filter_by(login=session['username']).first():
             user = models.User.query.filter_by(login=session['username']).first()
         else:
