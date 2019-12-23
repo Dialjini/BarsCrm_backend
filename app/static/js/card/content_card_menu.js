@@ -570,7 +570,7 @@ function calculationIndicators() {
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : -totalSale);
                         $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
                         $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
-                        let total = +$(`#calcDelivery_${data[j].items[k].Item_id}`).html() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).html() + +$(`#calcSale_${data[j].items[k].Item_id}`).val();
+                        let total = (+$(`#calcDelivery_${data[j].items[k].Item_id}`).html() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).html() + +$(`#calcSale_${data[j].items[k].Item_id}`).val()) * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val();
                         let amount = Math.round(+$(`#product_cost_${data[j].items[k].Item_id}`).html() * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val()).toFixed(2);
                         $(`#calcSum_${data[j].items[k].Item_id}`).html(+amount + total);
 
@@ -606,7 +606,7 @@ function recountPrice(id) {
 
     product.children().last().html(
         (+product.children()[5].children[0].value * +product.children()[6].innerHTML)
-        + (+product.children()[7].children[0].value + +product.children()[8].innerHTML + +product.children()[9].innerHTML)
+        + (+product.children()[7].children[0].value * +product.children()[5].children[0].value + +product.children()[8].innerHTML * +product.children()[5].children[0].value + +product.children()[9].innerHTML * +product.children()[5].children[0].value)
     );
     
     let sum = 0;
@@ -638,7 +638,7 @@ function all_costs() {
     }
     for (let element of $('#exposed_list .invoiled')) {
         $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML)
-        + (+$(element).children()[7].children[0].value + +$(element).children()[8].innerHTML + +$(element).children()[9].innerHTML);
+        + (+$(element).children()[7].children[0].value * +$(element).children()[5].children[0].value + +$(element).children()[8].innerHTML * +$(element).children()[5].children[0].value + +$(element).children()[9].innerHTML * +$(element).children()[5].children[0].value);
     }
     calculationIndicators();
 }

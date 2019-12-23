@@ -368,8 +368,6 @@ function removeTask(id) {
         break;
     }
     socket.emit('delete_task', {data: id})
-    console.log($('#current_tasks').children().length == 0);
-    console.log($('#task_list'));
     if ($('#current_tasks').children().length == 0) {
         $('#tasks_list .empty').remove();
         $('#tasks_list').append(`<div class="empty">Нет задач</div>`);

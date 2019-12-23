@@ -44,7 +44,7 @@ function linkField() {
             { width: 92.297, id: 'stock_stock', list: [] },
             { width: 97.281, id: 'stock_volume', list: [] },
             { width: 220, id: 'analytics_reports', list: ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] },
-            { width: 106, id: 'analytics_period', list: ['За день', 'За неделю', 'За месяц', 'За год'] },
+            { width: 106, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] },
         ]
 
         let idList = this.id;
@@ -142,6 +142,7 @@ function linkField() {
             $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
+                console.log(this.id.split('_'));
                 if (idList.includes('analytics_reports')) {
                     let functions = [
                         analyticsFilterTable_0,
@@ -150,7 +151,23 @@ function linkField() {
                         analyticsFilterTable_3,
                         analyticsFilterTable_4
                     ]
+                    $('#analytics_period .field_with_modal')[0].children[0].innerHTML = 'Период';
                     return functions[this.id.split('_')[2]]();
+                } else if (idList.includes('analytics_period')) {
+                    let functions = [
+                        analyticsFilterTable_0,
+                        analyticsFilterTable_1,
+                        analyticsFilterTable_2,
+                        analyticsFilterTable_3,
+                        analyticsFilterTable_4
+                    ]
+                    let a_rep;
+                    let list = ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
+                    for (let i = 0; i < list.length; i++) {
+                        if ($('#analytics_reports').children()[0].children[0].innerHTML == list[i]) {
+                            return functions[i](this.id.split('_')[2]);
+                        }
+                    }
                 } else {
                     let filter_ids = [
                         { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
@@ -730,10 +747,39 @@ function createNewMember() {
         }
     }); 
 }
+function getValidationDate(date) {
+    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
 
+    let date_arr = datetime_regex.exec(date);
+    let datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+    return datetime;
+}
 // Отчеты
     // Прибыль по клиентам
-    function analyticsFilterTable_0() {
+    function analyticsFilterTable_0(period = 'all') {
+        let date_period = datePeriod();
+        function datePeriod() {
+            let date_filter = [ 
+                {id: 'all', period: 3650},
+                {id: 0, period: 3650},
+                {id: 1, period: 0},
+                {id: 2, period: 7},
+                {id: 3, period: 30},
+                {id: 4, period: 365},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
         let account_data;
         $.ajax({
             url: '/getAccounts',
@@ -746,8 +792,11 @@ function createNewMember() {
         });
         let items_list = [];
         for (let i = 0; i < account_data.length; i++) {
-            for (let j = 0; j < account_data[i].items.length; j++) {
-                items_list.push({ item: account_data[i].items[j], account: [account_data[i].account] })
+            let date_create_account = getValidationDate(account_data[i].account.Date);
+            if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                for (let j = 0; j < account_data[i].items.length; j++) {
+                    items_list.push({ item: account_data[i].items[j], account: [account_data[i].account] })
+                }
             }
         }
         for (let i = 0; i < items_list.length - 1; i++) {
@@ -815,7 +864,30 @@ function createNewMember() {
         `
     }
     // Сводный по объёмам
-    function analyticsFilterTable_1() {
+    function analyticsFilterTable_1(period = 'all') {
+        let date_period = datePeriod();
+        function datePeriod() {
+            let date_filter = [ 
+                {id: 'all', period: 3650},
+                {id: 0, period: 3650},
+                {id: 1, period: 0},
+                {id: 2, period: 7},
+                {id: 3, period: 30},
+                {id: 4, period: 365},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
         let account_data;
         let stocks;
         $.ajax({
@@ -868,7 +940,10 @@ function createNewMember() {
                 let volume_one = JSON.parse(account.Item_ids);
                 for (let i = 0; i < account_data.length; i++) {
                     let volume_two = JSON.parse(account_data[i].account.Item_ids);
-                    if (account.Name === account_data[i].account.Name && account.id !== account_data[i].account.id) {
+                    let date_create_account = getValidationDate(account_data[i].account.Date);
+                    if (account.Name === account_data[i].account.Name && account.id !== account_data[i].account.id
+                        && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                        console.log(account.Name, account_data[i].account.Name)
                         for (let g = 0; g < volume_two.length; g++) {
                             volume_one.push(volume_two[g]);
                         }
@@ -889,35 +964,37 @@ function createNewMember() {
                 return volume_one;
             }
             for (let i = 0; i < account_data.length; i++) {
-                let items_volume = fillItemsVolume(account_data[i].account)
-                items_volume.sort(function(a, b) {
-                    if (a.id > b.id) return 1;
-                    if (a.id < b.id) return -1;
-                    return 0;
-                })
-                table += `
-                    <tr>
-                        <td>${account_data[i].account.Name}</td>
-                        ${fillVolume()}
-                    </tr>
-                `
-                console.log(items_volume);
-                function fillVolume() {
-                    let td = '';
-                    for (let j = 0; j < items_volume.length; j++) {
-                        for (let l = 0; l < all_items.length; l++) {
-                            if (+all_items[l].Item_id == +items_volume[j].id) {
-                                amounts[l] += +items_volume[j].volume;
-                                td += `<td id="item_${l + 1}">${items_volume[j].volume}</td>`
-                                if (items_volume.length - 1 != j) {
-                                    j++;
+                let date_create_account = getValidationDate(account_data[i].account.Date);
+                if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                    let items_volume = fillItemsVolume(account_data[i].account)
+                    items_volume.sort(function(a, b) {
+                        if (a.id > b.id) return 1;
+                        if (a.id < b.id) return -1;
+                        return 0;
+                    })
+                    table += `
+                        <tr>
+                            <td>${account_data[i].account.Name}</td>
+                            ${fillVolume()}
+                        </tr>
+                    `
+                    function fillVolume() {
+                        let td = '';
+                        for (let j = 0; j < items_volume.length; j++) {
+                            for (let l = 0; l < all_items.length; l++) {
+                                if (+all_items[l].Item_id == +items_volume[j].id) {
+                                    amounts[l] += +items_volume[j].volume;
+                                    td += `<td id="item_${l + 1}">${items_volume[j].volume}</td>`
+                                    if (items_volume.length - 1 != j) {
+                                        j++;
+                                    }
+                                } else {
+                                    td += `<td id="item_${l + 1}">0</td>`
                                 }
-                            } else {
-                                td += `<td id="item_${l + 1}">0</td>`
                             }
                         }
+                        return td;
                     }
-                    return td;
                 }
             }
             let amount_tr = `<tr>${fillAmountRow()}</tr>`;
@@ -942,7 +1019,30 @@ function createNewMember() {
         `
     }
     // По клиентам
-    function analyticsFilterTable_2() {
+    function analyticsFilterTable_2(period = 'all') {
+        let date_period = datePeriod();
+        function datePeriod() {
+            let date_filter = [ 
+                {id: 'all', period: 3650},
+                {id: 0, period: 3650},
+                {id: 1, period: 0},
+                {id: 2, period: 7},
+                {id: 3, period: 30},
+                {id: 4, period: 365},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
         let account_data, delivery_data;
         $.ajax({
             url: '/getAccounts',
@@ -964,13 +1064,17 @@ function createNewMember() {
         });
         let items_list = [];
         for (let i = 0; i < account_data.length; i++) {
-            for (let j = 0; j < account_data[i].items.length; j++) {
-                items_list.push({ items: [account_data[i].items[j]], account: account_data[i].account })
+            let date_create_account = getValidationDate(account_data[i].account.Date);
+            if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                for (let j = 0; j < account_data[i].items.length; j++) {
+                    items_list.push({ items: [account_data[i].items[j]], account: account_data[i].account })
+                }
             }
         }
         for (let i = 0; i < items_list.length - 1; i++) {
             for (let j = i + 1; j < items_list.length; j++) {
                 if (items_list[i].account.Name === items_list[j].account.Name && items_list[i].account.id === items_list[j].account.id) {
+                    console.log(account_data[i].account.Date)
                     for (let k = 0; k < items_list[j].items.length; k++) {
                         items_list[i].items.push(items_list[j].items[k])
                     }
@@ -1050,7 +1154,30 @@ function createNewMember() {
         `
     }
     // По приветам
-    function analyticsFilterTable_3() {
+    function analyticsFilterTable_3(period = 'all') {
+        let date_period = datePeriod();
+        function datePeriod() {
+            let date_filter = [ 
+                {id: 'all', period: 3650},
+                {id: 0, period: 3650},
+                {id: 1, period: 0},
+                {id: 2, period: 7},
+                {id: 3, period: 30},
+                {id: 4, period: 365},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
         function fillTable() {
             let accounts;
             $.ajax({
@@ -1065,30 +1192,34 @@ function createNewMember() {
             let table = '';
             let all_data = [];
             for (let i = 0; i < accounts.length; i++) {
-                let items_volume = JSON.parse(accounts[i].account.Item_ids);
-                let items_hello = JSON.parse(accounts[i].account.Hello);
-                let sum_volume = items_volume.reduce((a, b) => ({volume: +a.volume + +b.volume}));
-                let sum_hello_volume = 0, id_client = 0;
-                let client_data = categoryInListClient[1][1];
+                console.log(accounts[i].account.Date)
+                let date_create_account = getValidationDate(accounts[i].account.Date);
+                if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                    let items_volume = JSON.parse(accounts[i].account.Item_ids);
+                    let items_hello = JSON.parse(accounts[i].account.Hello);
+                    let sum_volume = items_volume.reduce((a, b) => ({volume: +a.volume + +b.volume}));
+                    let sum_hello_volume = 0, id_client = 0;
+                    let client_data = categoryInListClient[1][1];
 
-                for (let j = 0; j < client_data.length; j++) {
-                    if (client_data[j].Name === accounts[i].account.Name) {
-                        id_client = client_data[j].id;
-                        break;
+                    for (let j = 0; j < client_data.length; j++) {
+                        if (client_data[j].Name === accounts[i].account.Name) {
+                            id_client = client_data[j].id;
+                            break;
+                        }
                     }
-                }
 
-                for (let sum = 0; sum < items_volume.length; sum++) {
-                    sum_hello_volume += +items_volume[sum].volume * +items_hello[sum];
+                    for (let sum = 0; sum < items_volume.length; sum++) {
+                        sum_hello_volume += +items_volume[sum].volume * +items_hello[sum];
+                    }
+                    all_data.push({
+                        client_id: id_client,
+                        name: accounts[i].account.Name,
+                        volume: +sum_volume.volume,
+                        average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
+                        amount_hello: Math.ceil(+sum_hello_volume),
+                        amount: Math.round(+accounts[i].account.Sum * 0.9)
+                    });
                 }
-                all_data.push({
-                    client_id: id_client,
-                    name: accounts[i].account.Name,
-                    volume: +sum_volume.volume,
-                    average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
-                    amount_hello: Math.ceil(+sum_hello_volume),
-                    amount: Math.round(+accounts[i].account.Sum * 0.9)
-                });
             }
             for (let i = 0; i < all_data.length - 1; i++) {
                 for (let j = i + 1; j < all_data.length; j++) {
@@ -1129,7 +1260,30 @@ function createNewMember() {
         `
     }
     // Отгрузки менеджеров
-    function analyticsFilterTable_4() {
+    function analyticsFilterTable_4(period = 'all') {
+        let date_period = datePeriod();
+        function datePeriod() {
+            let date_filter = [ 
+                {id: 'all', period: 3650},
+                {id: 0, period: 3650},
+                {id: 1, period: 0},
+                {id: 2, period: 7},
+                {id: 3, period: 30},
+                {id: 4, period: 365},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
         let stocks, account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1171,7 +1325,9 @@ function createNewMember() {
             let amount = JSON.parse(account.Items_amount);
             for (let i = 0; i < account_data_copy.length; i++) {
                 let amount_two = JSON.parse(account_data_copy[i].account.Items_amount);
-                if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id) {
+                let date_create_account = getValidationDate(account_data_copy[i].account.Date);
+                if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id
+                    && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                     for (let g = 0; g < amount_two.length; g++) {
                         amount.push(amount_two[g]);
                     }
@@ -1196,7 +1352,9 @@ function createNewMember() {
             let volume_one = JSON.parse(account.Item_ids);
             for (let i = 0; i < account_data_copy.length; i++) {
                 let volume_two = JSON.parse(account_data_copy[i].account.Item_ids);
-                if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id) {
+                let date_create_account = getValidationDate(account_data_copy[i].account.Date);
+                if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id
+                    && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                     for (let g = 0; g < volume_two.length; g++) {
                         volume_one.push(volume_two[g]);
                     }
@@ -1247,7 +1405,9 @@ function createNewMember() {
             function fillItemsInfo(manager) {
                 let td = '';
                 for (let i = 0; i < account_data.length; i++) {
-                    if (account_data[i].account.Manager_id == manager) {
+                    let date_create_account = getValidationDate(account_data[i].account.Date);
+                    if (account_data[i].account.Manager_id == manager 
+                        && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                         let items_volume = fillItemsVolume(account_data[i].account)
                         let items_amount = fillItemsAmount(account_data[i].account);
                         items_volume.sort(function(a, b) {
