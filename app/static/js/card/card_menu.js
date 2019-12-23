@@ -661,7 +661,7 @@ function createCardMenu(element, index = 0) {
                     </div>
                 </div>
                 <div class="next">
-                    <button class="btn btn-main" id="provider" onclick="contractNext(this)">Оформить Договор</button> 
+                    <button class="btn btn-main" id="provider" onclick="closeCardMenu(this.name)">Сохранить</button> 
                 </div>`)
         return content;
     }
@@ -1382,7 +1382,7 @@ function createCardMenu(element, index = 0) {
                     </div>
                     <div class="next">
                         <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
-                        <button class="btn btn-main" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
+                        <button class="btn btn-main" id="delivery_new" onclick="createDocument(this)">Оформить Заявку</button>
                     </div>`
     }
     // Контентная часть добавления товара
@@ -1527,6 +1527,37 @@ function getListAreas(element, area = '') {
             saveCard();
         }
     });
+}
+function createDocument(element) {
+    let data = $(element).attr('name').split('_');
+    let carrier = ['carrier', +$('#delivery_carrier_id').val()];
+    let select_cusmoter = $('#delivery_customer').val()
+    $.ajax({
+        url: '/getCarriers',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data_carrier) {
+            data_carrier = JSON.parse(data_carrier);
+            for (let i = 0; i < data_carrier.length; i++) {
+                if (data_carrier[i].id == carrier[1]) {
+                    let document_name;
+                    if (select_cusmoter == 'ООО') {
+                        document_name = 'ZayavkaOOO';
+                    } else {
+                        document_name = 'ZayavkaIP';
+                    }
+                    const link = document.createElement('a');
+                    link.href = `http://127.0.0.1:5000/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
+                    if (select_cusmoter == 'ООО') {
+                        link.download = 'Заявка ООО';
+                    } else {
+                        link.download = 'Заявка ИП';
+                    }
+                    link.click();
+                }
+            }
+        }
+    }); 
 }
 function makeRequest(element) {
     let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];

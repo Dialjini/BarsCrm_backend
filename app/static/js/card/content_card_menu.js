@@ -226,6 +226,20 @@ function fillVolume(value) {
 }
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
+    function buttonsCategory() {
+        if (elem.name.includes('client')) {
+            return `
+                <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
+                <button class="btn btn-main" id="${elem.id}" onclick="invoiceCard(this)">Выставить счёт</button> 
+            `
+        } else if (elem.name.includes('carrier')) {
+            let name = $(elem).attr('name').split('_');
+            return `
+                <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
+                <button class="btn btn-main" name="${name[0]}_close_card_${name[1]}_contract" onclick="closeCardMenu(this.name)">Закрыть</button> 
+            `
+        }
+    }
     return `
         <div class="row_card column">
             <table class="fit gray">
@@ -248,34 +262,68 @@ function contractContentCard(elem) {
             </div>
         </div>
         <div class="next">
-            <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
-            <button class="btn btn-main" id="${elem.id}" onclick="invoiceCard(this)">Выставить счёт</button> 
+            ${buttonsCategory()}
         </div>
     `
 }
 function downloadDocument(elem) {
     let data = $(elem).attr('name').split('_');
-    let data_client = categoryInListClient[1][1];
     let select_cusmoter = $('#select_cusmoter').val()
-    for (let i = 0; i < data_client.length; i++) {
-        if (data_client[i].id == data[1]) {
-            let document_name;
-            if (select_cusmoter == 'ООО') {
-                document_name = 'Dogovor_na_tovari_ooo';
-            } else {
-                document_name = 'Dogovor_na_tovari_ip';
+    if (data[0] == 'client') {
+        $.ajax({
+            url: '/getClients',
+            type: 'GET',
+            dataType: 'html',
+            success: function(data_client) {
+                data_client = JSON.parse(data_client);
+                for (let i = 0; i < data_client.length; i++) {
+                    if (data_client[i].id == data[1]) {
+                        let document_name;
+                        if (select_cusmoter == 'ООО') {
+                            document_name = 'Dogovor_na_tovari_ooo';
+                        } else {
+                            document_name = 'Dogovor_na_tovari_ip';
+                        }
+                        const link = document.createElement('a');
+                        link.href = `http://127.0.0.1:5000/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
+                        if (select_cusmoter == 'ООО') {
+                            link.download = 'Договор поставки ООО';
+                        } else {
+                            link.download = 'Договор поставки ИП';
+                        }
+                        link.click();
+                    }
+                }
             }
-            const link = document.createElement('a');
-            link.href = `http://127.0.0.1:5000/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
-            if (select_cusmoter == 'ООО') {
-                link.download = 'Договор поставки ООО';
-            } else {
-                link.download = 'Договор поставки ИП';
+        }); 
+    } else if (data[0] == 'carrier') {
+        $.ajax({
+            url: '/getCarriers',
+            type: 'GET',
+            dataType: 'html',
+            success: function(data_carrier) {
+                data_carrier = JSON.parse(data_carrier);
+                for (let i = 0; i < data_carrier.length; i++) {
+                    if (data_carrier[i].id == data[1]) {
+                        let document_name;
+                        if (select_cusmoter == 'ООО') {
+                            document_name = 'DogovorNaDostavkuOOO';
+                        } else {
+                            document_name = 'DogovorNaDostavkuIP';
+                        }
+                        const link = document.createElement('a');
+                        link.href = `http://127.0.0.1:5000/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_carrier[i].Address}&delivery=no`;
+                        if (select_cusmoter == 'ООО') {
+                            link.download = 'Договор на доставку ООО';
+                        } else {
+                            link.download = 'Договор на доставку ИП';
+                        }
+                        link.click();
+                    }
+                }
             }
-            link.click();
-        }
-    }
-    
+        }); 
+    }    
 }
 // Контентная часть вкладки Выставления счета
 function invoicingContentCard(elem, data) {
