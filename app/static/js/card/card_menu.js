@@ -357,8 +357,6 @@ function createCardMenu(element, index = 0) {
             }
         })
     }
-
-
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
         let content = $('<div>', { 

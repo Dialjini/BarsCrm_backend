@@ -1133,7 +1133,7 @@ function addRow(id, selectedLine = '') {
 }
 function getItemsList(id, selectedLine, category) {
     $.ajax({
-        url: '/getStockTable',
+        url: '/getAllItems',
         type: 'GET',
         dataType: 'html',
         success: function(data) {
@@ -1142,9 +1142,7 @@ function getItemsList(id, selectedLine, category) {
             let list_items = [];
             let list_ids = [];
             for (let i = 0; i < data.length; i++) {
-                for (let j = 0; j < data[i].items.length; j++)  {
-                    list_items.push(data[i].items[j].Name);
-                }
+                list_items.push(data[i].Name);
             }
                  
             for (let i = 0; i < list_items.length - 1; i++) {
@@ -1155,7 +1153,6 @@ function getItemsList(id, selectedLine, category) {
                     }
                 }
             }
-
             for (let i = 0; i < list_items.length; i++) 
                 options += `<option value="${list_items[i]}">${list_items[i]}</option>`
             $(`#${id}`).empty();
