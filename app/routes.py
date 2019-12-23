@@ -580,11 +580,7 @@ def getItemGroup():
 @app.route('/getAllItems', methods=['GET'])
 def getAllItems():
     if 'username' in session:
-        result = models.Item.query.all()
-        badItems = models.BadItems.query.all()
-        for i in badItems:
-            result.append(i)
-        return table_to_json(result)
+        return table_to_json(models.Item.query.all())
     else:
         return redirect('/', code=302)
 
@@ -692,7 +688,7 @@ def addItemToStock():
         if len(Stocks):
             Stock = Stocks[0]
         else:
-            item = models.BadItems()
+            item = models.Item()
             item.Weight = data['item_weight']
             item.Packing = data['item_packing']
             item.Fraction = data['item_fraction']
