@@ -35,6 +35,7 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
 
     document.Prefix = 'ООО'
     document.UHH = owner.UHH
+    document.Owner_type = owner.__tablename__
     if owner.Bik:
         document.Bik = owner.Bik
     else:
@@ -91,6 +92,7 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
 
     document.Prefix = 'ИП'
     document.UHH = owner.UHH
+    document.Owner_type = owner.__tablename__
     if owner.Bik:
         document.Bik = owner.Bik
     else:
@@ -146,6 +148,7 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
 
     document.Prefix = 'ООО'
     document.UHH = owner.UHH
+    document.Owner_type = owner.__tablename__
     if owner.Bik:
         document.Bik = owner.Bik
     else:
@@ -197,6 +200,7 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Prefix = 'ИП'
 
+    document.Owner_type = owner.__tablename__
     document.UHH = owner.UHH
     if owner.Bik:
         document.Bik = owner.Bik
@@ -251,6 +255,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
 
     document.UHH = owner.UHH
+    document.Owner_type = owner.__tablename__
     document.Prefix = 'ООО'
 
     document.Bik = ''
@@ -313,6 +318,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
 
     document.UHH = owner.UHH
+    document.Owner_type = owner.__tablename__
     document.Prefix = 'ИП'
     document.Bik = ''
     document.KPP = info['data']['kpp']

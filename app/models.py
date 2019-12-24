@@ -129,6 +129,7 @@ class Client(db.Model):
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Prefix = db.Column(db.String)
+    Owner_type = db.Column(db.String)
     Type = db.Column(db.String)
     Date = db.Column(db.String)
     Client_name = db.Column(db.String)
