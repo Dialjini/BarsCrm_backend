@@ -270,7 +270,7 @@ const idCardFields = [
     {   
         name: 'client', ids:
         ['client_site', 'client_holding', 'client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
-        'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc'],
+        'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc', 'client_rc'],
         request: '/addClient'
     },
     {   
@@ -282,7 +282,7 @@ const idCardFields = [
     {   
         name: 'carrier', ids:
         ['carrier_name', 'carrier_area', 'carrier_region', 'carrier_address', 'carrier_inn', 'carrier_capacity', 'carrier_view',
-        'carrier_bik', 'carrier_kc'],
+        'carrier_bik', 'carrier_kc', 'carrier_rc'],
         request: '/addCarrier'
     },
     {   
