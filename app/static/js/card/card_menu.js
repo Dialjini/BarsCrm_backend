@@ -1955,7 +1955,7 @@ function comeBack(elem) {
 // Переход на вкладку оформления договора карточки
 function contractNext(elem) {
     if (!checkEmail()) return;
-    saveInfoCard(elem.name, true, elem);
+    saveInfoCard(elem.name, true, elem, 'check');
     getCommentsInfo.getRequest(elem.name);
     saveCard();
 }

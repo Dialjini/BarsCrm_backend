@@ -227,7 +227,7 @@ function fillingDisableCardProvider(managers) {
 }
 
 // Отсылаем данные для сохранения данных по таблице
-function saveInfoCard(id, close = false, elem = null) {
+function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     let createOrSaveCard = (function() {
         return {
             getRequest: function (idData, request) {
@@ -307,12 +307,14 @@ function saveInfoCard(id, close = false, elem = null) {
                 idData['provider_item_list'] = JSON.stringify(items);
             }
             additionalData(i);
-            if (data[0] == 'client' || data[0] == 'carrier') {
-                if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
-                    return alert('В начале адреса нужно указать почтовый индекс')
-                }
-                if (idData[`${data[0]}_inn`] == '') {
-                    return alert('Введите ИНН')
+            if (checkINN == 'check') {
+                if (data[0] == 'client' || data[0] == 'carrier') {
+                    if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
+                        return alert('В начале адреса нужно указать почтовый индекс')
+                    }
+                    if (idData[`${data[0]}_inn`] == '') {
+                        return alert('Введите ИНН')
+                    }
                 }
             }
             createOrSaveCard.getRequest(idData, request);
