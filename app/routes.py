@@ -117,6 +117,8 @@ def to_PDF(name, owner, address, delivery):
             info = i
     if str(info) == '{}':
         return 'BAD ADDRESS or INN'
+    owner.UTC = info['data']['address']['data']['timezone']
+    db.session.commit()
 
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
