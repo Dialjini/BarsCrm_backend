@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, redirect, session, request, send_from_directory
+from flask import render_template, redirect, session, request
 from app import models, db, reqs, DocCreator
 from flask_socketio import SocketIO, emit
 import json
@@ -147,9 +147,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', dir_last_updated="/static")
+        return render_template('index.html', dir_last_updated=1)
     else:
-        return render_template('login.html', dir_last_updated="/static")
+        return render_template('login.html', dir_last_updated=1)
 
 
 @app.route('/getAllTasks')
@@ -174,6 +174,7 @@ def getMyTasks():
         except Exception as er:
             print(er)
     return json.dumps(tasks)
+
 
 @app.route('/auth', methods=['GET'])
 def auth():
