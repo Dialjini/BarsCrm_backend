@@ -597,7 +597,7 @@ function searchFill(element) {
             for (let j = 0; j < clientCards.length; j++) {
                 searchCards.push(clientCards[j]);
             }
-            listData[i].filter[1][1] = searchCards;
+            listData[i].filter[1][1] = searchCards.reverse();
             $('.table').remove();
             $('.info').append(fillingTables(listData[i].filter, true));
             break;

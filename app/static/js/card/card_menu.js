@@ -817,7 +817,7 @@ function createCardMenu(element, index = 0) {
             for (let i = 0; i < list_items.length; i++) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
-                sum += +items_amount[i];
+                sum += +items_amount[i].amount;
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
                         <td>${list_items[i].Name}</td>
@@ -897,13 +897,13 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${Math.round(vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">НДС</span><span>${Math.round(sum - vat)}</span></div>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="9" style="border: none"></td>
+                                <td colspan="9" style="border: none;"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">НДС</span><span>${Math.round(sum - vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${Math.round(vat)}</span></div>
                                 </td>
                             </tr>
                             <tr>
@@ -926,6 +926,10 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tbody id="group"></tbody>
                             </table>
+                        </div>
+                        <div class="events">
+                            <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this.id)">
+                            <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -1373,10 +1377,6 @@ function createCardMenu(element, index = 0) {
                                         <tbody id="group"></tbody>
                                     </table>
                                 </div>
-                                <div class="events">
-                                    <img class="add_something" id="delivery-group" src="static/images/add.png" onclick="addRow(this.id)">
-                                    <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -1547,7 +1547,7 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    link.href = `http://127.0.0.1:5000/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
+                    link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                     if (select_cusmoter == 'ООО') {
                         link.download = 'Заявка ООО';
                     } else {

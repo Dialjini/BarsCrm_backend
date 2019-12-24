@@ -285,7 +285,7 @@ function downloadDocument(elem) {
                             document_name = 'Dogovor_na_tovari_ip';
                         }
                         const link = document.createElement('a');
-                        link.href = `http://127.0.0.1:5000/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
+                        link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
                         if (select_cusmoter == 'ООО') {
                             link.download = 'Договор поставки ООО';
                         } else {
@@ -1180,7 +1180,7 @@ function addRow(id, selectedLine = '') {
                 $('#group #delivery_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
             }
             if (id === 'account-group') {
-                $('#account_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+                $('#group #account_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
             }
         }
     }
