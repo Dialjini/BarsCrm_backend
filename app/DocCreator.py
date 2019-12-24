@@ -50,7 +50,10 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
-    document.Client_prefix_address = owner.Adress
+    try:
+        document.Client_prefix_address = owner.Adress
+    except Exception:
+        document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + \
                                    info['data']['address']['data']['region_with_type']
@@ -100,7 +103,10 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
-    document.Client_prefix_address = owner.Adress
+    try:
+        document.Client_prefix_address = owner.Adress
+    except Exception:
+        document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + \
                                    info['data']['address']['data']['region_with_type']
@@ -149,7 +155,10 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
-    document.Client_prefix_address = owner.Adress
+    try:
+        document.Client_prefix_address = owner.Adress
+    except Exception:
+        document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
     if info['data']['address']['data']['postal_box'] != None:
@@ -194,7 +203,10 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
-    document.Client_prefix_address = owner.Adress
+    try:
+        document.Client_prefix_address = owner.Adress
+    except Exception:
+        document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
     if info['data']['address']['data']['postal_box'] != None:
@@ -234,7 +246,10 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
-    document.Client_prefix_address = owner.Adress
+    try:
+        document.Client_prefix_address = owner.Adress
+    except Exception:
+        document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
     document.KPP = info['data']['kpp']
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
@@ -288,7 +303,10 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
-    document.Client_prefix_address = owner.Adress
+    try:
+        document.Client_prefix_address = owner.Adress
+    except Exception:
+        document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
     document.KPP = info['data']['kpp']
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
@@ -323,5 +341,3 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
                                         str(account.Sum), num2text(account.Sum)], doc=doc)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
     return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
-
-print(models.getMonthNum())
