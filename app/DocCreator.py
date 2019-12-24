@@ -278,7 +278,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     Items = models.Item.query.all()
     item_info = {'mass': 0}
     for i in Items:
-        if str(i.Item_id) in json.loads(delivery.item_ids):
+        if str(i.Item_id) in json.loads(delivery.Item_ids):
             item_info['mass'] = item_info['mass'] + i.Weight
             item_info['packing'] = i.Packing
 
@@ -341,7 +341,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     Items = models.Item.query.all()
     item_info = {'mass': 0}
     for i in Items:
-        if str(i.Item_id) in json.loads(delivery.item_ids):
+        if str(i.Item_id) in json.loads(delivery.Item_ids):
             item_info['mass'] = item_info['mass'] + i.Weight
             item_info['packing'] = i.Packing
 
