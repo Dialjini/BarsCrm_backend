@@ -307,7 +307,14 @@ function saveInfoCard(id, close = false, elem = null) {
                 idData['provider_item_list'] = JSON.stringify(items);
             }
             additionalData(i);
-            console.log(idData);
+            if (data[0] == 'client' || data[0] == 'carrier') {
+                if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
+                    return alert('В начале адреса нужно указать почтовый индекс')
+                }
+                if (idData[`${data[0]}_inn`] == '') {
+                    return alert('Введите ИНН')
+                }
+            }
             createOrSaveCard.getRequest(idData, request);
             break;
         }
