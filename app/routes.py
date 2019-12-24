@@ -961,7 +961,6 @@ def addProvider():
         Provider.Volume = data['provider_volume']
         Provider.Holding = data['provider_holding']
         Provider.Item_list = data['provider_item_list']
-        Provider.UTC = data['provider_utc']
 
         if new:
             db.session.add(Provider)
@@ -1058,7 +1057,6 @@ def addCarier():
         Carrier.Bik = data['carrier_bik']
         Carrier.kc = data['carrier_kc']
         Carrier.rc = data['carrier_rc']
-        Carrier.UTC = data['carrier_utc']
 
         if new:
             db.session.add(Carrier)
@@ -1105,7 +1103,6 @@ def addClient():
         Client.Bik = data['client_bik']
         Client.kc = data['client_kc']
         Client.rc = data['client_rc']
-        Client.UTC = data['client_utc']
 
         if new:
             db.session.add(Client)
