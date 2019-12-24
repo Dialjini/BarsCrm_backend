@@ -359,6 +359,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
+        console.log(selectedLine);
         let content = $('<div>', { 
             class: 'row_card',
             append: $('<table>', {

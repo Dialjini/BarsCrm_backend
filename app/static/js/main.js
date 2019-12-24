@@ -307,6 +307,7 @@ function saveInfoCard(id, close = false, elem = null) {
                 idData['provider_item_list'] = JSON.stringify(items);
             }
             additionalData(i);
+            console.log(idData);
             createOrSaveCard.getRequest(idData, request);
             break;
         }

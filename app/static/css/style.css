@@ -160,7 +160,7 @@ body {
 .page .modal_search .content .table_search td,
 .page .modal_search .content .table_search th {
   text-align: left;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #cccccc;
   padding: 10px 5px 10px 15px;
   vertical-align: middle;
   font-size: 12px;
@@ -598,7 +598,7 @@ body {
 .page .centerBlock .container .info .table td,
 .page .centerBlock .container .info .table th {
   text-align: left;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #cccccc;
   padding: 10px 5px 10px 15px;
   vertical-align: middle;
   font-size: 12px;
@@ -858,7 +858,7 @@ body {
 .page .centerBlock .container .info .card_menu {
   width: 100%;
   background-color: #f8f8f8;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #cccccc;
   padding: 20px 30px;
   margin-bottom: 30px;
   -webkit-box-sizing: border-box;
@@ -1256,7 +1256,7 @@ body {
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block td,
 .page .centerBlock .container .info .card_menu .content .row_card .info_block th {
-  border: 1px solid #DDDDDD;
+  border: 1px solid #cccccc;
   padding: 5px 10px;
 }
 
@@ -1292,17 +1292,17 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table .product:last-child td {
-  border-bottom: 1px solid #DDDDDD;
+  border-bottom: 1px solid #cccccc;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table .product td {
   height: 20px;
   border: none;
-  border-left: 1px solid #DDDDDD;
+  border-left: 1px solid #cccccc;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table .product td:last-child {
-  border-right: 1px solid #DDDDDD;
+  border-right: 1px solid #cccccc;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table td,
@@ -1371,7 +1371,7 @@ body {
 .page .centerBlock .container .info .card_menu .content input {
   border: none;
   outline: none;
-  border-bottom: 1px solid #DDDDDD;
+  border-bottom: 1px solid #cccccc;
   width: 180px;
   height: 25px;
   margin-top: 8px;
@@ -1651,7 +1651,7 @@ body {
   width: 100%;
   border: none;
   outline: none;
-  border-bottom: 1px solid #DDDDDD;
+  border-bottom: 1px solid #cccccc;
   font-family: 'Montserrat', sans-serif;
   font-size: 10px;
   -webkit-box-sizing: border-box;
