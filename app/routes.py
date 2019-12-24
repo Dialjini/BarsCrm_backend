@@ -147,9 +147,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1)
+        return render_template('index.html', last_update=3)
     else:
-        return render_template('login.html', last_update=1)
+        return render_template('login.html', last_update=3)
 
 
 @app.route('/getAllTasks')
@@ -1026,6 +1026,8 @@ def addCarier():
         Carrier.UHH = data['carrier_inn']
         Carrier.Region = data['carrier_region']
         Carrier.View = data['carrier_view']
+        Carrier.Bik = data['carrier_bik']
+        Carrier.kc = data['carrier_kc']
 
         if new:
             db.session.add(Carrier)
@@ -1069,6 +1071,8 @@ def addClient():
         Client.Livestock_all = data['livestock_general']
         Client.Livestock_milking = data['livestock_milking']
         Client.Livestock_milkyield = data['livestock_milkyield']
+        Client.Bik = data['client_bik']
+        Client.kc = data['client_kc']
 
         if new:
             db.session.add(Client)

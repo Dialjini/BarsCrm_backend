@@ -162,9 +162,9 @@ function createCardMenu(element, index = 0) {
                 }
             } else {
                 const emptyData = [
-                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield'] },
+                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
-                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View'] },
+                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View', 'Bik', 'kc'] },
                     { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
@@ -392,6 +392,14 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>ИНН</td>
                             <td><input type="text" id="client_inn" onchange="saveCard()" value="${selectedLine.UHH}"></td>
+                        </tr>
+                        <tr>
+                            <td>БИК</td>
+                            <td><input type="text" id="client_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
+                        </tr>
+                        <tr>
+                            <td>К/С</td>
+                            <td><input type="text" id="client_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
                         </tr>`)
             }).add(`<table class="table_block">
                         <tr>
@@ -730,6 +738,16 @@ function createCardMenu(element, index = 0) {
                             </td>
                         </tr>
                         <tr>
+                            <td>БИК</td>
+                            <td><input type="text" id="carrier_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
+                        </tr>
+                        <tr>
+                            <td>К/С</td>
+                            <td><input type="text" id="carrier_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
+                        </tr>
+                    </table>`).add(`
+                    <table class="table_block">
+                        <tr>
                             <td>Грузоподъемность</td>
                             <td>
                                 <input type="text" id="carrier_capacity" onchange="saveCard()" value="${selectedLine.Capacity}" class="string">
@@ -743,7 +761,8 @@ function createCardMenu(element, index = 0) {
                                 </select>
                             </td>
                         </tr>
-                    </table>`)
+                    </table>
+                    `)
         }).add(`<div class="row_card" id="media">
                     <div class="left_side">
                         <div class="hmax" id="member"></div>
