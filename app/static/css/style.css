@@ -1015,13 +1015,11 @@ body {
   display: flex;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .list .contract {
   margin-bottom: 20px;
+  margin-right: 20px;
   width: 230px;
   height: 250px;
   border: 1px solid lightgray;

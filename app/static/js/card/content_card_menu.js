@@ -240,6 +240,44 @@ function contractContentCard(elem) {
             `
         }
     }
+    function listDocuments() {
+        let documents = '';
+        let old_docs;
+        $.ajax({
+            url: '/getDocs',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                old_docs = JSON.parse(data);
+            }
+        });
+        let names = [
+            {category: 'client', name: 'Договор поставки от'},
+            {category: 'carrier', name: 'Договор об оказании услуг перевозки грузов от'}
+        ]
+        let count = 0;
+        for (let i = 0; i < old_docs.length; i++) {
+            for (let j = 0; j < names.length; j++) {
+                if (old_docs[i].Owner_type == elem.id && elem.id == names[j].category) {
+                    count++;
+                    documents += `
+                    <div style="background-color: #E8E8E8" class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
+                        <span>${names[j].name} ${old_docs[i].Prefix}</span>
+                    </div>
+                    `
+                }
+            }
+        }
+        if (count < 2) {
+            documents += `
+            <div class="contract flex" name="${elem.name}" onclick="downloadDocument(this)">
+                <span>Новый договор</span>
+            </div>
+            `
+        }
+        return documents;
+    }
     return `
         <div class="row_card column">
             <table class="fit gray">
@@ -254,11 +292,7 @@ function contractContentCard(elem) {
                 </tr>
             </table>
             <div class="list" id="list_contract">
-
-                <div class="contract flex" name="${elem.name}" onclick="downloadDocument(this)">
-                    <span>Новый договор</span>
-                </div>
-
+                ${listDocuments()}
             </div>
         </div>
         <div class="next">
@@ -266,9 +300,21 @@ function contractContentCard(elem) {
         </div>
     `
 }
+function downloadOldDocument(elem) {
+    const link = document.createElement('a');
+    link.href = `/downloadOldDoc?id=${elem.id}`;
+    link.download = $(elem).attr('name');
+    link.click();
+}
 function downloadDocument(elem) {
     let data = $(elem).attr('name').split('_');
     let select_cusmoter = $('#select_cusmoter').val()
+    for (let i = 0; i < $('#list_contract').children().length; i++) {
+        if ($('#list_contract').children()[i].children[0].innerHTML.includes(select_cusmoter)) {
+            alert(`Договор от ${select_cusmoter} уже существует!`);
+            return;
+        }
+    }
     if (data[0] == 'client') {
         $.ajax({
             url: '/getClients',
