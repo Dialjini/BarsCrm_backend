@@ -117,7 +117,7 @@ def to_PDF(name, owner, address, delivery):
             info = i
     if str(info) == '{}':
         return 'BAD ADDRESS or INN'
-    owner.UTC = info['data']['address']['data']['timezone']
+    owner.UTC = int(info['data']['address']['data']['timezone'][3:])
     db.session.commit()
 
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
