@@ -1549,9 +1549,9 @@ function createDocument(element) {
                     const link = document.createElement('a');
                     link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                     if (select_cusmoter == 'ООО') {
-                        link.download = 'Заявка ООО';
+                        link.download = 'Заявка ООО.docx';
                     } else {
-                        link.download = 'Заявка ИП';
+                        link.download = 'Заявка ИП.docx';
                     }
                     link.click();
                 }

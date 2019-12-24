@@ -287,9 +287,9 @@ function downloadDocument(elem) {
                         const link = document.createElement('a');
                         link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
                         if (select_cusmoter == 'ООО') {
-                            link.download = 'Договор поставки ООО';
+                            link.download = 'Договор поставки ООО.docx';
                         } else {
-                            link.download = 'Договор поставки ИП';
+                            link.download = 'Договор поставки ИП.docx';
                         }
                         link.click();
                     }
@@ -312,11 +312,11 @@ function downloadDocument(elem) {
                             document_name = 'DogovorNaDostavkuIP';
                         }
                         const link = document.createElement('a');
-                        link.href = `http://127.0.0.1:5000/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_carrier[i].Address}&delivery=no`;
+                        link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_carrier[i].Address}&delivery=no`;
                         if (select_cusmoter == 'ООО') {
-                            link.download = 'Договор на доставку ООО';
+                            link.download = 'Договор на доставку ООО.docx';
                         } else {
-                            link.download = 'Договор на доставку ИП';
+                            link.download = 'Договор на доставку ИП.docx';
                         }
                         link.click();
                     }
