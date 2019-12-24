@@ -256,10 +256,13 @@ function contractContentCard(elem) {
             {category: 'client', name: 'Договор поставки от'},
             {category: 'carrier', name: 'Договор об оказании услуг перевозки грузов от'}
         ]
+        if (elem.name.includes('new')) {
+            elem.name = elem.name.replace(/new/g, saveTableAndCard[1][1].length + 1)
+        }
         let count = 0;
         for (let i = 0; i < old_docs.length; i++) {
             for (let j = 0; j < names.length; j++) {
-                if (old_docs[i].Owner_type == elem.id && elem.id == names[j].category) {
+                if (old_docs[i].Owner_type == elem.id && elem.id == names[j].category && old_docs[i].Owner_id == elem.name.split('_')[1]) {
                     count++;
                     documents += `
                     <div style="background-color: #E8E8E8" class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">

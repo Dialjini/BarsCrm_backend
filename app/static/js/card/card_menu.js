@@ -1557,8 +1557,14 @@ function getListAreas(element, area = '') {
 }
 function createDocument(element) {
     let data = $(element).attr('name').split('_');
+    if (data[1].includes('new')) {
+        data[1] = data[1].replace(/new/g, saveTableAndCard[1][1].length + 1)
+    }
     let carrier = ['carrier', +$('#delivery_carrier_id').val()];
     let select_cusmoter = $('#delivery_customer').val()
+    if ($('#delivery_carrier_id').val() == null) {
+        return alert('Выберите перевозчика!');
+    }
     $.ajax({
         url: '/getCarriers',
         type: 'GET',
@@ -1574,6 +1580,7 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
+                    console.log(`/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`)
                     link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                     if (select_cusmoter == 'ООО') {
                         link.download = 'Заявка ООО.docx';
