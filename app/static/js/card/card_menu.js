@@ -52,19 +52,19 @@ function createCardMenu(element, index = 0) {
     const titleObject = [
         {
             id: 'client',
-            list: [`Местное время: ${getCurrentTime()}`],
+            list: [],
             link: clientContentCard,
             status: getInfo[1]
         },
         {
             id: 'provider',
-            list: [`Местное время: ${getCurrentTime()}`],
+            list: [],
             link: providerContentCard,
             status: getInfo[1]
         },
         {
             id: 'carrier',
-            list: [`Местное время: ${getCurrentTime()}`],
+            list: [],
             link: carrierContentCard,
             status: getInfo[1]
         },
@@ -148,16 +148,19 @@ function createCardMenu(element, index = 0) {
 
                     }
                 }
-
+                let date = new Date();
                 titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id || selectedLine.account.id}`);
                 if (getInfo[0] === 'client') {
+                    titleObject[i].list.push(selectedLine.UTC == '' ? 'Местное время не определенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours()}:${date.getMinutes()}`)
                     titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
                     titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
                 } 
                 if (getInfo[0] === 'provider') {
+                    titleObject[i].list.push(selectedLine.UTC == '' ? 'Местное время не определенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours()}:${date.getMinutes()}`)
                     titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
                 } 
                 if (getInfo[0] === 'account') {
+                    titleObject[i].list.push(selectedLine.UTC == '' ? 'Местное время не определенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours()}:${date.getMinutes()}`)
                     titleObject[i].list.push(`Счета от ${selectedLine.items[0].Prefix}`)
                 }
             } else {
@@ -359,6 +362,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
+        console.log(selectedLine);
         let content = $('<div>', { 
             class: 'row_card',
             append: $('<table>', {
@@ -1580,7 +1584,6 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    console.log(`/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`)
                     link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                     if (select_cusmoter == 'ООО') {
                         link.download = 'Заявка ООО.docx';
