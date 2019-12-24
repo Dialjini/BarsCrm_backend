@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, redirect, session, request
+from flask import render_template, redirect, session, request, send_from_directory
 from app import models, db, reqs, DocCreator
 from flask_socketio import SocketIO, emit
 import json
@@ -147,9 +147,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=4)
+        return render_template('index.html', last_update=5)
     else:
-        return render_template('login.html', last_update=4)
+        return render_template('login.html', last_update=5)
 
 
 @app.route('/getAllTasks')
@@ -971,6 +971,33 @@ def addProvider():
     else:
         return redirect('/', code=302)
 
+@app.route('/deleteDoc', methods=['GET'])
+def deleteDoc():
+    doc = models.Document.query.filter_by(id=request.args['id']).first()
+
+    db.session.delete(doc)
+    db.session.commit()
+    return 'OK'
+
+
+@app.route('/getDocs', methods=['GET'])
+def getDocs():
+    if 'username' in session:
+        return table_to_json(models.Document.query.all())
+    else:
+        return redirect('/', code=302)
+
+
+@app.route('/downloadOldDoc', methods=['GET'])
+def downloadOldDoc():
+    if 'username' in session:
+        document = models.Document.query.filter_by(id=request.args['id']).first()
+        print(os.path.abspath(os.path.dirname(__file__) + '/upload')+document.Path)
+        return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
+                                   filename=document.Path)
+    else:
+        return redirect('/', code=302)
+
 
 @app.route('/addComment', methods=['GET'])
 def addComment():
@@ -1028,6 +1055,7 @@ def addCarier():
         Carrier.View = data['carrier_view']
         Carrier.Bik = data['carrier_bik']
         Carrier.kc = data['carrier_kc']
+        Carrier.rc = data['carrier_rc']
 
         if new:
             db.session.add(Carrier)
@@ -1073,6 +1101,7 @@ def addClient():
         Client.Livestock_milkyield = data['livestock_milkyield']
         Client.Bik = data['client_bik']
         Client.kc = data['client_kc']
+        Client.rc = data['client_rc']
 
         if new:
             db.session.add(Client)

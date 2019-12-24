@@ -63,6 +63,8 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
 
     db.session.add(document)
     db.session.commit()
+    document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
+    db.session.commit()
     rate = datetime.now() + timedelta(days=7)
     doc = Document(os.path.dirname(__file__) + '/files/Dogovor_mezhdu_OOO_Bars_i_perevozchikom.docx')
     doc = replace_doc(doc=doc, words=['document.MonthNum', 'document.Date', 'date.d', 'date.m', 'date.y',
@@ -76,8 +78,8 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
                                     document.Client_prefix_address, document.Client_mail_address, document.UHH,
                                     document.KPP,
                                     document.rc, document.kc, document.Bik])
-    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
-    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
+    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
 
 
 
@@ -116,6 +118,8 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
 
     db.session.add(document)
     db.session.commit()
+    document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
+    db.session.commit()
     rate = datetime.now() + timedelta(days=7)
     doc = Document(os.path.dirname(__file__) + '/files/DOGOVOR_mezhdu_IP_i_perevozchikom.docx')
     doc = replace_doc(doc=doc, words=['document.MonthNum', 'document.Date', 'date.d', 'date.m', 'date.y',
@@ -129,8 +133,8 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
                                     document.Client_prefix_address, document.Client_mail_address, document.UHH,
                                     document.KPP,
                                     document.rc, document.kc, document.Bik])
-    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
-    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
+    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
 
 
 def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
@@ -166,6 +170,9 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
 
     db.session.add(document)
     db.session.commit()
+    document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
+    db.session.commit()
+
     rate = datetime.now() + timedelta(days=7)
     doc = Document(os.path.dirname(__file__) + '/files/Образец_Договора_на_товары.docx')
     doc = replace_doc(doc=doc, words=['document.MonthNum', 'document.Date', 'date.d', 'date.m', 'date.y',
@@ -177,8 +184,8 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
                               rate.day, rate.month, rate.year, document.Client_name,
                               document.Client_prefix_address, document.Client_mail_address, document.UHH, document.KPP,
                               document.rc, document.kc, document.Bik])
-    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
-    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
+    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
 
 
 def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
@@ -214,6 +221,8 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
 
     db.session.add(document)
     db.session.commit()
+    document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
+    db.session.commit()
     rate = datetime.now() + timedelta(days=7)
     doc = Document(os.path.dirname(__file__) + '/files/ДОГОВОР орион.docx')
     doc = replace_doc(doc=doc, words=['document.MonthNum', 'document.Date', 'date.d', 'date.m', 'date.y',
@@ -225,9 +234,9 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
                               rate.day, rate.month, rate.year, document.Client_name,
                               document.Client_prefix_address, document.Client_mail_address, document.UHH, document.KPP,
                               document.rc, document.kc, document.Bik])
-    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
-    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
-# top ready   ----------------------------------------------------------------------------------------------------------
+    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+
 
 def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document = models.Document()
@@ -265,6 +274,9 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
 
     db.session.add(document)
     db.session.commit()
+    document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
+    db.session.commit()
+
     doc = Document(os.path.dirname(__file__) + '/files/Zayavka_OOO.docx')
     doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                 'document.Client_contact_name', 'document.Client_name'],
@@ -282,8 +294,8 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(account.Sum), num2text(account.Sum)], doc=doc)
-    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
-    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
+    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
 
 
 
@@ -322,6 +334,8 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
 
     db.session.add(document)
     db.session.commit()
+    document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
+    db.session.commit()
     doc = Document(os.path.dirname(__file__) + '/files/Zayavka_IP.docx')
     doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                 'document.Client_contact_name', 'document.Client_name'],
@@ -339,5 +353,5 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(account.Sum), num2text(account.Sum)], doc=doc)
-    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id)))
-    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id)))
+    doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return send_from_directory(directory=dir_u, filename='{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
