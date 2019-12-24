@@ -226,19 +226,11 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
 
     document.UHH = owner.UHH
-    if owner.Bik:
-        document.Bik = owner.Bik
-    else:
-        document.Bik = ''
+
+    document.Bik = ''
     document.KPP = info['data']['kpp']
-    if owner.rc:
-        document.rc = owner.rc
-    else:
-        document.rc = ''
-    if owner.kc:
-        document.kc = owner.kc
-    else:
-        document.kc = ''
+    document.rc = ''
+    document.kc = ''
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
@@ -289,19 +281,10 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
 
     document.UHH = owner.UHH
-    if owner.Bik:
-        document.Bik = owner.Bik
-    else:
-        document.Bik = ''
+    document.Bik = ''
     document.KPP = info['data']['kpp']
-    if owner.rc:
-        document.rc = owner.rc
-    else:
-        document.rc = ''
-    if owner.kc:
-        document.kc = owner.kc
-    else:
-        document.kc = ''
+    document.rc = ''
+    document.kc = ''
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
