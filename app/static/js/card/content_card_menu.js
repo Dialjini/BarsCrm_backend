@@ -266,7 +266,7 @@ function contractContentCard(elem) {
                     count++;
                     documents += `
                     <div style="background-color: #E8E8E8" class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
-                        <span>${names[j].name} ${old_docs[i].Prefix}</span>
+                        <span style="text-align: center">${names[j].name} ${old_docs[i].Prefix}</span>
                     </div>
                     `
                 }
@@ -306,7 +306,7 @@ function contractContentCard(elem) {
 function downloadOldDocument(elem) {
     const link = document.createElement('a');
     link.href = `/downloadOldDoc?id=${elem.id}`;
-    link.download = $(elem).attr('name');
+    link.download = $(elem).attr('name') + '.docx';
     link.click();
 }
 function downloadDocument(elem) {
