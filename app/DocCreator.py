@@ -1,7 +1,8 @@
 from app import app, models, db
 from flask import send_from_directory
 from datetime import datetime, timedelta
-from docx import Document
+from docx import Document, styles
+from docx.shared import Pt
 import os
 import json
 from num2t4ru import num2text
@@ -16,9 +17,13 @@ def replace_request(words, replacements, doc):
 
 
 def replace_doc(words, replacements, doc):
+    style = doc.styles['Normal']
+    style.font.size = Pt(11)
+    style.font.name = "Times New Roman"
     for j in range(0, len(words)):
         for i in doc.paragraphs:
             if words[j] in i.text:
+                i.style = style
                 i.text = i.text.replace(str(words[j]), str(replacements[j]))
         try:
             if words[j] in doc.tables[0].cell(0, 1).text:
