@@ -1537,7 +1537,6 @@ body {
   -webkit-box-flex: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
-  margin-left: 100px;
 }
 
 .page .rightBlock .profile .fieldInfo .descr {
