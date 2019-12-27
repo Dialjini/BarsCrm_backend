@@ -259,11 +259,9 @@ function contractContentCard(elem) {
         if (elem.name.includes('new')) {
             elem.name = elem.name.replace(/new/g, saveTableAndCard[1][1].length + 1)
         }
-        let count = 0;
         for (let i = 0; i < old_docs.length; i++) {
             for (let j = 0; j < names.length; j++) {
                 if (old_docs[i].Owner_type == elem.id && elem.id == names[j].category && old_docs[i].Owner_id == elem.name.split('_')[1]) {
-                    count++;
                     documents += `
                     <div style="background-color: #E8E8E8" class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
                         <span style="text-align: center">${names[j].name} ${old_docs[i].Prefix}</span>
@@ -272,13 +270,11 @@ function contractContentCard(elem) {
                 }
             }
         }
-        if (count < 2) {
-            documents += `
-            <div class="contract flex" name="${elem.name}" onclick="downloadDocument(this)">
-                <span>Новый договор</span>
-            </div>
-            `
-        }
+        documents += `
+        <div class="contract flex" name="${elem.name}" onclick="downloadDocument(this)">
+            <span>Новый договор</span>
+        </div>
+        `
         return documents;
     }
     return `
@@ -312,12 +308,6 @@ function downloadOldDocument(elem) {
 function downloadDocument(elem) {
     let data = $(elem).attr('name').split('_');
     let select_cusmoter = $('#select_cusmoter').val()
-    for (let i = 0; i < $('#list_contract').children().length; i++) {
-        if ($('#list_contract').children()[i].children[0].innerHTML.includes(select_cusmoter)) {
-            alert(`Договор от ${select_cusmoter} уже существует!`);
-            return;
-        }
-    }
     if (data[0] == 'client') {
         $.ajax({
             url: '/getClients',
