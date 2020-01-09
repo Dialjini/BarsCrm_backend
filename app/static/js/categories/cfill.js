@@ -763,9 +763,11 @@ function createNewMember() {
     }); 
 }
 function getValidationDate(date) {
+    console.log(date);
     let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
 
     let date_arr = datetime_regex.exec(date);
+    console.log(date_arr);
     let datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
     return datetime;
 }
@@ -807,6 +809,7 @@ function getValidationDate(date) {
         });
         let items_list = [];
         for (let i = 0; i < account_data.length; i++) {
+            console.log(account_data[i].account.Date);
             let date_create_account = getValidationDate(account_data[i].account.Date);
             if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                 for (let j = 0; j < account_data[i].items.length; j++) {
