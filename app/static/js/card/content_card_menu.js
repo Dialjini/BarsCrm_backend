@@ -877,7 +877,7 @@ function addComment(manager = '', data) {
                     </td>`
             })
         )
-        $('#comment_date').datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+        $('#comment_date').datepicker({position: 'right bottom', autoClose: true})
         $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
         function getRoleList() {
             let list = '';
@@ -1087,7 +1087,7 @@ function addRow(id, selectedLine = '') {
                 {id: 'item_vat', width: 28, type: 'number'},
                 {id: 'item_packing', width: 60, type: 'text'},
                 {id: 'item_weight', width: 30, type: 'text'},
-                {id: 'item_fraction', width: 60, type: 'text'}
+                {id: 'item_fraction', width: 90, type: 'text'}
             ],
             html: ['Name', 'Cost', 'Date', 'NDS', 'Packing', 'Weight', 'Fraction']
         }, { id: 'carrier-group', tbody: 'group', count: 5, widthInput: [
@@ -1164,6 +1164,34 @@ function addRow(id, selectedLine = '') {
             });
         }
 
+        function getListFraction(id) {
+            $.ajax({
+                url: '/getAllItems',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data) {
+                    let options = '<option value="disabled" selected disabled>Выбрать</option>';
+                    let list_items = ['Россыпь', 'Ракушка', 'Гранулы'];
+                    for (let i = 0; i < list_items.length; i++) 
+                        options += `<option value="${list_items[i]}">${list_items[i]}</option>`
+                    $(`#${id}`).empty();
+                    $(`#${id}`).append(options);
+                    $('.hmax #group [name="item_fraction"]').each(function() {
+                        if (selectedLine.Fraction == '') {
+                            $(`#${id} option:contains('Выбрать')`).attr('selected', true)
+                        } else {
+                            $(`#${id} option`).each(function(i, element) {
+                                if ($(element).html() == selectedLine.Fraction) {
+                                    $(element).attr('selected', true);
+                                }
+                            });
+                            $(`#${id} :selected`).val($(`#${id} :selected`).html());       
+                        }
+                    })
+                }
+            })
+        }
+
         for (let i = 0; i < table.count; i++) {
             if (table.widthInput[i].id == 'item_product') {
                 let count = 0;
@@ -1191,6 +1219,19 @@ function addRow(id, selectedLine = '') {
                         append: getListCompetitor('item_creator_' + count)
                     })
                 }));  
+            } else if (table.widthInput[i].id  == 'item_fraction') {
+                let count = 0;
+                $('.hmax #group [name="item_fraction"]').each(function() {
+                    count++;
+                })
+                tr.append($('<td>', {
+                    append: $('<select>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: 'item_fraction_' + count,
+                        name: 'item_fraction',
+                        append: getListFraction('item_fraction_' + count)
+                    })
+                }));
             } else {
                 tr.append($('<td>', {
                     append: $('<input>', {
@@ -1202,7 +1243,7 @@ function addRow(id, selectedLine = '') {
                 }));
             }  
         }
-
+        console.log(123);
         return tr;
     }
 
@@ -1211,15 +1252,15 @@ function addRow(id, selectedLine = '') {
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             if (id === 'provider-group') {
-                $('#group #item_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+                $('#group #item_date').last().datepicker({position: 'right bottom', autoClose: true})
             }
             if (id === 'delivery-group') {
-                $('#delivery_start_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-                $('#delivery_end_date').datepicker({minDate: new Date(), position: 'right top', autoClose: true})
-                $('#group #delivery_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+                $('#delivery_start_date').datepicker({position: 'right top', autoClose: true})
+                $('#delivery_end_date').datepicker({position: 'right top', autoClose: true})
+                $('#group #delivery_date').last().datepicker({position: 'right bottom', autoClose: true})
             }
             if (id === 'account-group') {
-                $('#group #account_date').last().datepicker({minDate: new Date(), position: 'right bottom', autoClose: true})
+                $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true})
             }
         }
     }
