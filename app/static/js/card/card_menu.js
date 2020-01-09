@@ -16,7 +16,7 @@ function getCurrentTime() {
 // Получение текущей даты в формате dd.mm или dd.mm.yy
 function getCurrentDate(year = 'none') {
     let time = new Date();
-    let month = time.getMonth() + 1;
+    let month = +time.getMonth() + 1 < 10 ? '0' + (+time.getMonth() + 1) : +time.getMonth() + 1;
     let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
     if (year !== 'none') {
         let year = time.getFullYear();
