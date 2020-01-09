@@ -149,9 +149,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=4324)
+        return render_template('index.html', last_update=44144)
     else:
-        return render_template('login.html', last_update=4324)
+        return render_template('login.html', last_update=44144)
 
 
 @app.route('/getAllTasks')
