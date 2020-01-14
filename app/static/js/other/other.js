@@ -208,20 +208,61 @@ function taskCreate(tasks = 'new') {
                     task_who: data.id,
                     task_date: $('#task_date').val(),
                     task_time: $('#task_time').val(),
-                    task_comment: $('#task_comment').val(),
+                    task_comment: $('#task_comment').val() == '' ? 'Без комментария' : $('#task_comment').val(),
                 }
                 let date = $('#task_date').val();
                 let time = $('#task_time').val();
 
                 try {
                     if (date.split('.').length != 3) {
-                        return alert('Введите дату в формате дд.мм.гггг или дд.мм.гг')
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Введите дату в формате дд.мм.гггг или дд.мм.гг!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
                     }
                     if (time == '') {
                         taskInfo.task_time = '00:00'
+                    } else {
+                        let array_time = time.split(':');
+                        if (+array_time[0] > 23 || +array_time[1] > 59) {
+                            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Некорректное время!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                        }
                     }
                 } catch {
-                    return alert('Проверьте введенные данные!')
+                    return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Проверьте корректность введенных данных!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
                 }
                 $('#tasks_list .empty').remove();
                 $('#current_tasks').empty();
@@ -390,6 +431,7 @@ function createCT(id, values = 'empty') {
         if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: ''}
         $('#createCT').append(createContactsFormTask(values));
         $('#task_date').datepicker({position: 'left top', autoClose: true})
+        $('#task_time').mask('99:99');
     } else if (id == 'completeTask') {
         $('#createCT').append(createCompleteForm(values));
     }

@@ -24,7 +24,7 @@ const categoryInListProvider = [
             { name: 'Район', width: 20 },
             { name: 'Наименование', width: 20 },
             { name: 'Товар', width: 15 },
-            { name: 'Цена', width: 10 },
+            { name: 'Цена, руб.', width: 10 },
             { name: 'Менеджер', width: 15 },
         ],
     ]
@@ -54,7 +54,7 @@ const categoryInFinanceDebit = [
             { name: 'Наименование', width: 20 },
             { name: 'Дата отгрузки', width: 5 },
             { name: 'Дней отсрочки', width: 5 },
-            { name: 'Сумма', width: 5 },
+            { name: 'Сумма, руб.', width: 5 },
             { name: 'Оплачено', width: 5 },
             { name: 'Осталось', width: 5 },
             { name: 'Менеджер', width: 10 },
@@ -70,7 +70,7 @@ const categoryInFinanceAccount = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Дата выставления', width: 10 },
             { name: 'Наименование', width: 30 },
-            { name: 'Сумма', width: 10 },
+            { name: 'Сумма, руб.', width: 10 },
             { name: 'Статус', width: 10 },
             { name: 'Приветы', width: 10 },
             { name: 'Менеджер', width: 10 },
@@ -88,8 +88,8 @@ const categoryInDelivery = [
             { name: 'Склад', width: 15 },
             { name: 'Перевозчик', width: 15 },
             { name: 'Юр. лицо', width: 5 },
-            { name: 'Цена с НДС', width: 10 },
-            { name: 'Цена без НДС', width: 10 },
+            { name: 'Цена с НДС, руб.', width: 10 },
+            { name: 'Цена без НДС, руб.', width: 10 },
             { name: 'Дата оплаты', width: 10 },
         ],
     ]
@@ -104,9 +104,9 @@ const categoryInStock = [
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
             { name: 'Вес', width: 5 },
-            { name: 'Фасовка', width: 15 },
-            { name: 'Объем', width: 5 },
-            { name: 'Цена прайса', width: 5 },
+            { name: 'Упаковка', width: 15 },
+            { name: 'Объем, кг.', width: 5 },
+            { name: 'Цена прайса, руб.', width: 5 },
             { name: 'НДС', width: 5 },
             { name: 'Склад', width: 15 },
         ],
@@ -121,9 +121,9 @@ const categoryInFilterStock = [
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
             { name: 'Вес', width: 5 },
-            { name: 'Фасовка', width: 15 },
-            { name: 'Объем', width: 5 },
-            { name: 'Цена прайса', width: 5 },
+            { name: 'Упаковка', width: 15 },
+            { name: 'Объем, кг.', width: 5 },
+            { name: 'Цена прайса, руб.', width: 5 },
             { name: 'НДС', width: 5 },
             { name: 'Склад', width: 15 },
         ],
@@ -152,7 +152,7 @@ const filterProvider = [
             { name: 'Район', width: 20 },
             { name: 'Наименование', width: 20 },
             { name: 'Товар', width: 15 },
-            { name: 'Цена', width: 10 },
+            { name: 'Цена, руб.', width: 10 },
             { name: 'Менеджер', width: 15 },
         ],
     ]
@@ -177,7 +177,7 @@ const filterAccount = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Дата выставления', width: 10 },
             { name: 'Наименование', width: 30 },
-            { name: 'Сумма', width: 10 },
+            { name: 'Сумма, руб.', width: 10 },
             { name: 'Статус', width: 10 },
             { name: 'Приветы', width: 10 },
             { name: 'Менеджер', width: 10 },
@@ -193,8 +193,8 @@ const filterDelivery = [
             { name: 'Склад', width: 15 },
             { name: 'Перевозчик', width: 15 },
             { name: 'Юр. лицо', width: 5 },
-            { name: 'Цена с НДС', width: 10 },
-            { name: 'Цена без НДС', width: 10 },
+            { name: 'Цена с НДС, руб.', width: 10 },
+            { name: 'Цена без НДС, руб.', width: 10 },
             { name: 'Дата оплаты', width: 10 },
         ],
     ]
@@ -217,6 +217,10 @@ const dataName = [
     { name: 'analytics', link: categoryInAnalytics },
 ]
 
+const simpleObject = [
+    { id: 'simple', name: 'Финансы', active: false, lastCard: [null, null] },
+]
+
 // Данные по подкатегориям, для генерации соответствующей таблицы и перехода по нужным подкатегориям
 const subcategoryButtons = [
     [
@@ -229,7 +233,7 @@ const subcategoryButtons = [
         'Финансы',
         { id: 'debitButton', objectName: categoryInFinanceDebit, name: 'Дебеторка', class: 'field' },
         { id: 'accountButton', objectName: categoryInFinanceAccount, name: 'Счета', class: 'field' },
-        //{ id: 'unknown', objectName: simpleObject, name: `Осталось <span class="gray">${categoryInFinanceAccount[1].length - 1}</span> счета на <span class="green">+ 234 000</span> за месяц`, class: 'info_about_accounts' }
+        { id: 'unknown', objectName: simpleObject, name: `Осталось <span class="gray">${categoryInFinanceAccount[1].length - 1}</span> счета на <span class="green">+ 234 000</span> за месяц`, class: 'info_about_accounts' }
     ],
     [
         'Доставка',
@@ -239,7 +243,7 @@ const subcategoryButtons = [
         'Склад',
         { id: 'stock_group', objectName: categoryInStock, name: 'Группа товаров', class: 'field_with_modal' },
         { id: 'stock_product', objectName: categoryInStock, name: 'Товар', class: 'field_with_modal' },
-        { id: 'stock_packing', objectName: categoryInStock, name: 'Фасовка', class: 'field_with_modal' },
+        { id: 'stock_packing', objectName: categoryInStock, name: 'Упаковка', class: 'field_with_modal' },
         { id: 'stock_volume', objectName: categoryInStock, name: 'Объем', class: 'field_with_modal' },
         { id: 'stock_stock', objectName: categoryInStock, name: 'Склад', class: 'field_with_modal' },
     ],
@@ -270,13 +274,13 @@ const idCardFields = [
     {   
         name: 'client', ids:
         ['client_site', 'client_holding', 'client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
-        'client_tag', 'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc', 'client_rc'],
+        'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc', 'client_rc'],
         request: '/addClient'
     },
     {   
         name: 'provider', ids:
         ['provider_holding', 'provider_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
-        'provider_tag', 'provider_category', 'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_vat', 'provider_merc'],
+        'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_merc'],
         request: '/addProvider'
     },
     {   

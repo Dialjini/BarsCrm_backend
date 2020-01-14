@@ -6,8 +6,8 @@ function analyticsContent() {
             <tr>
                 <th>Товар</th>
                 <th>Клиент</th>
-                <th>Объем</th>
-                <th>Цена</th>
+                <th>Объем, кг.</th>
+                <th>Цена, руб.</th>
                 <th>Доставка</th>
                 <th>Привет</th>
                 <th>Себестоимость</th>
@@ -44,8 +44,8 @@ function analyticsContent() {
             <tr>
                 <th>Товар</th>
                 <th>Клиент</th>
-                <th>Объем</th>
-                <th>Цена</th>
+                <th>Объем, кг.</th>
+                <th>Цена, руб.</th>
                 <th>Доставка</th>
                 <th>Привет</th>
                 <th>Себестоимость</th>
@@ -230,7 +230,7 @@ function contractContentCard(elem) {
         if (elem.name.includes('client')) {
             return `
                 <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
-                <button class="btn btn-main" id="${elem.id}" onclick="invoiceCard(this)">Выставить счёт</button> 
+                <button class="btn btn-main" id="${elem.id}" onclick="invoiceCard(this)">Вперёд</button> 
             `
         } else if (elem.name.includes('carrier')) {
             let name = $(elem).attr('name').split('_');
@@ -389,17 +389,17 @@ function invoicingContentCard(elem, data) {
         return `<tr>
                     <th width="15" rowspan="2"></th>
                     <th width="150" rowspan="2">Товар</th>
-                    <th colspan="2">Фасовка</th>
+                    <th colspan="2">Упаковка</th>
                     <th colspan="2">Количество</th>
-                    <th colspan="5">Цена</th>
+                    <th colspan="5">Цена, руб.</th>
                     <th style="width: 90px;" rowspan="2">Сумма</th>
                 </tr>
                 <tr>
-                    <th>Тара</th>
-                    <th width="55">Вес</th>
-                    <th width="55">В тарах</th>
-                    <th width="55">Объем</th>
-                    <th width="85">Цена прайса</th>
+                    <th>Вид</th>
+                    <th width="55">Вес, кг.</th>
+                    <th width="65">Всего, шт.</th>
+                    <th width="75">Объем, кг.</th>
+                    <th width="85">Цена прайса, руб.</th>
                     <th width="55">Скидка</th>
                     <th width="55">Привет</th>
                     <th width="55">Доставка</th>
@@ -412,10 +412,10 @@ function invoicingContentCard(elem, data) {
                     <th>Группа товаров</th>
                     <th>Товар</th>
                     <th>Юр. лицо</th>
-                    <th>Объем</th>
-                    <th>Фасовка</th>
+                    <th>Объем, кг.</th>
+                    <th>Упаковка</th>
                     <th>НДС</th>
-                    <th>Цена прайса</th>
+                    <th>Цена прайса, руб.</th>
                     <th>Склад</th>
                 </tr>`
     }
@@ -850,7 +850,7 @@ function addComment(manager = '', data) {
         let list_role = [];
         $('#member .member').each(function(i, element) {
             if ($(element).children()[0].children[0].children[0].value != '') {
-                list_role.push({ role: $(element).children()[0].children[0].children[0].value, surname: $(element).children()[0].children[1].children[0].value })
+                list_role.push({ role: $(element).children()[0].children[0].children[0].value, surname: $(element).children()[0].children[0].children[2].value })
             }
         });
         $('#messages').append(
@@ -977,14 +977,13 @@ function addMember(id = 'client', selectedLine = '') {
                 class: 'top',
                 append: $('<select>', {
                     append: fillListRole()
-                }).add('<input>',    { placeholder: category.placeholder, class: category.class, id: category.class, onchange: 'saveCard()', value: selectedLine.Number })
-            }).add($('<div>', {
-                class: 'bottom',
-                append: $('<input>', { placeholder: 'Фамилия', class: 'last_name', id: 'last_name', onchange: 'saveCard()', value: selectedLine.Last_name, type: 'text'
-                }).add('<input>',    { placeholder: 'Имя Отчество', class: 'first_name', id: 'first_name', onchange: 'saveCard()', value: selectedLine.Name, type: 'name'
-                }).add('<input>',    { placeholder: 'Почта', class: 'email', id: 'email', onchange: 'saveCard()', onblur: 'checkEmail()', value: selectedLine.Email, type: 'email'
-                })
-            }))
+                }).add(
+                    `<input placeholder="${category.placeholder}" class="${category.class}" id="${category.class}" onchange="saveCard()" value="${selectedLine.Number}">
+                     <input placeholder="Фамилия" class="last_name" id="last_name" onchange="saveCard()" value="${selectedLine.Last_name}" type="text">
+                     <input placeholder="Имя Отчество" class="first_name" id="first_name" onchange="saveCard()" value="${selectedLine.Name}" type="name">
+                     <input placeholder="Почта" class="email" id="email" onchange="saveCard()" onblur="checkEmail()" value="${selectedLine.Email}" type="email">
+                    `)
+            })
         }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)', append:
         $('<img>', { src: '../static/images/visible.png'})
     }))
@@ -995,7 +994,7 @@ function addMember(id = 'client', selectedLine = '') {
         visOrHidContact(`visible_${count_members}`);
     }
     for (let element of $('#member .member #phone')) {
-        $(element).mask('89999999999');
+        $(element).mask('8(999)999-99-99');
     }
     saveCard();
 }
@@ -1038,7 +1037,7 @@ function visOrHidContact(idElem) {
 function checkEmail() {
     let listEmail = [];
     $('#member .member').each(function(i, element) {
-        let email = $(element).children()[0].children[1].children[2];
+        let email = $(element).children()[0].children[0].children[4];
         let value = email.value;
         if (value == '') {
             listEmail.push('true');
@@ -1074,19 +1073,19 @@ function addRow(id, selectedLine = '') {
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
-                {id: 'item_volume', width: 60, type: 'number'},
+                {id: 'item_volume', width: 60, type: 'text'},
                 {id: 'item_creator', width: 180, type: 'text'},
-                {id: 'item_price', width: 65, type: 'number'}
+                {id: 'item_price', width: 75, type: 'text'}
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
         },
         { id: 'provider-group', tbody: 'group', count: 7, widthInput: [
                 {id: 'item_product', width: 100, type: 'text'},
-                {id: 'item_price', width: 65, type: 'number'},
+                {id: 'item_price', width: 75, type: 'text'},
                 {id: 'item_date', width: 60, type: 'text'},
                 {id: 'item_vat', width: 28, type: 'number'},
                 {id: 'item_packing', width: 60, type: 'text'},
-                {id: 'item_weight', width: 30, type: 'text'},
+                {id: 'item_weight', width: 50, type: 'text'},
                 {id: 'item_fraction', width: 90, type: 'text'}
             ],
             html: ['Name', 'Cost', 'Date', 'NDS', 'Packing', 'Weight', 'Fraction']
@@ -1095,25 +1094,25 @@ function addRow(id, selectedLine = '') {
                     {id: 'carrier_client', width: 100, type: 'text'},
                     {id: 'carrier_stock', width: 160, type: 'text'},
                     {id: 'carrier_driver', width: 90, type: 'text'},
-                    {id: 'carrier_price', width: 65, type: 'number'}
+                    {id: 'carrier_price', width: 75, type: 'text'}
                 ],
                 html: []
         }, { id: 'account-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'account_date', width: 70, type: 'text'},
-                    {id: 'account_price', width: 65, type: 'number'}
+                    {id: 'account_price', width: 75, type: 'text'}
                 ],
                 html: ['date', 'sum']
         }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'delivery_date', width: 60, type: 'text'},
-                    {id: 'delivery_price', width: 65, type: 'number'}
+                    {id: 'delivery_price', width: 75, type: 'text'}
                 ],
                 html: ['date', 'price']
         }, { id: 'flight-group', tbody: 'flight', count: 6, widthInput: [
                     {id: 'delivery_flight_product', width: 100, type: 'text'},
                     {id: 'delivery_flight_stock', width: 160, type: 'text'},
-                    {id: 'delivery_flight_weight', width: 30, type: 'number'},
+                    {id: 'delivery_flight_weight', width: 50, type: 'text'},
                     {id: 'delivery_flight_type', width: 160, type: 'text'},
-                    {id: 'delivery_flight_sum', width: 70, type: 'number'}
+                    {id: 'delivery_flight_sum', width: 80, type: 'text'}
                 ],
                 html: []
         }
@@ -1251,16 +1250,31 @@ function addRow(id, selectedLine = '') {
         if (id == tableInfo[i].id) {
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
+            if (id === 'client-group') {
+                $('#group #item_price').mask('# ##0', { reverse: true });
+                $('#group #item_volume').mask('# ##0', { reverse: true });
+            }
             if (id === 'provider-group') {
+                $('#group #item_price').mask('# ##0', { reverse: true });
+                $('#group #item_weight').mask('# ##0', { reverse: true });
                 $('#group #item_date').last().datepicker({position: 'right bottom', autoClose: true})
+            }
+            if (id === 'carrier-group') {
+                $('#carrier_price').mask('# ##0', { reverse: true });
+            }
+            if (id === 'account-group') {
+                $('#account_price').mask('# ##0', { reverse: true });
+                $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true})
+            }
+            if (id === 'flight-group') {
+                $('#delivery_flight_sum').mask('# ##0', { reverse: true });
+                $('#delivery_flight_weight').mask('# ##0', { reverse: true });
             }
             if (id === 'delivery-group') {
                 $('#delivery_start_date').datepicker({position: 'right top', autoClose: true})
                 $('#delivery_end_date').datepicker({position: 'right top', autoClose: true})
                 $('#group #delivery_date').last().datepicker({position: 'right bottom', autoClose: true})
-            }
-            if (id === 'account-group') {
-                $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true})
+                $('#delivery_price').mask('# ##0', { reverse: true });
             }
         }
     }
@@ -1329,16 +1343,6 @@ function itemSelection(element, select) {
         } else {
             $(`#${element}_industry option:contains('${select.Segment}')`).attr('selected', true)
             $(`#${element}_industry :selected`).val($(`#${element}_industry :selected`).html());
-        }
-        if (select.Demand_item == '') {
-            $(`#demand_product option:contains('Выбрать')`).attr('selected', true)
-        } else {
-            $('#demand_product option').each(function(i, element) {
-                if ($(element).html() == select.Demand_item) {
-                    $(element).attr('selected', true);
-                }
-            });
-            $(`#demand_product :selected`).val($(`#demand_product :selected`).html());       
         }
     } else {
         let option = $(`#${element.id} :selected`);

@@ -188,7 +188,7 @@ function linkField() {
                     let filter_ids = [
                         { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
                         { id: 'stock_product', filterName: 'Name', name: 'Товар'},
-                        { id: 'stock_packing', filterName: 'Packing', name: 'Фасовка'},
+                        { id: 'stock_packing', filterName: 'Packing', name: 'Упаковка'},
                         { id: 'stock_volume', filterName: 'Volume', name: 'Объем'},
                         { id: 'stock_stock', filterName: 'stock_address', name: 'Склад'},
                     ]
@@ -202,10 +202,10 @@ function linkField() {
                                     { name: 'Товар', width: 15 },
                                     { name: 'Юр. лицо', width: 5 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Объем', width: 5 },
-                                    { name: 'Фасовка', width: 15 },
+                                    { name: 'Объем, кг.', width: 5 },
+                                    { name: 'Упаковка', width: 15 },
                                     { name: 'НДС', width: 5 },
-                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Цена прайса, руб.', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
                             ];
@@ -236,9 +236,9 @@ function linkField() {
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Фасовка', width: 15 },
-                                    { name: 'Объем', width: 5 },
-                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Упаковка', width: 15 },
+                                    { name: 'Объем, кг.', width: 5 },
+                                    { name: 'Цена прайса, руб.', width: 5 },
                                     { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
@@ -284,9 +284,9 @@ function linkField() {
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Фасовка', width: 15 },
-                                    { name: 'Объем', width: 5 },
-                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Упаковка', width: 15 },
+                                    { name: 'Объем, кг.', width: 5 },
+                                    { name: 'Цена прайса, руб.', width: 5 },
                                     { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
@@ -322,9 +322,9 @@ function linkField() {
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Фасовка', width: 15 },
-                                    { name: 'Объем', width: 5 },
-                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Упаковка', width: 15 },
+                                    { name: 'Объем, кг.', width: 5 },
+                                    { name: 'Цена прайса, руб.', width: 5 },
                                     { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ], data],
@@ -341,9 +341,9 @@ function linkField() {
                                     { name: 'Группа товаров', width: 15 },
                                     { name: 'Товар', width: 15 },
                                     { name: 'Вес', width: 5 },
-                                    { name: 'Фасовка', width: 15 },
-                                    { name: 'Объем', width: 5 },
-                                    { name: 'Цена прайса', width: 5 },
+                                    { name: 'Упаковка', width: 15 },
+                                    { name: 'Объем, кг.', width: 5 },
+                                    { name: 'Цена прайса, руб.', width: 5 },
                                     { name: 'НДС', width: 5 },
                                     { name: 'Склад', width: 15 },
                                 ]],
@@ -748,7 +748,19 @@ function createNewMember() {
     for (let i = 0; i < ids.length; i++) {
         data[ids[i]] = $(`#${ids[i]}`).val();
         if ($(`#${ids[i]}`).val() == '' && ids[i] != 'create_email' && ids[i] != 'create_patronymic' || $(`#${ids[i]}`).val() == null) {
-            return alert('Все поля, кроме почты и отчества, обязательны к заполнению!');
+            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Все поля, кроме почты и отчества, обязательны к заполнению!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
         }
     }
     data['id'] = 'new';
@@ -867,8 +879,8 @@ function getValidationDate(date) {
                 <tr>
                     <th>Товар</th>
                     <th width="270">Клиент</th>
-                    <th>Объем</th>
-                    <th>Цена</th>
+                    <th>Объем, кг.</th>
+                    <th>Цена, руб.</th>
                     <th>Доставка</th>
                     <th>Привет</th>
                     <th>Себестоимость</th>
@@ -1162,7 +1174,7 @@ function getValidationDate(date) {
                     <th>Товары</th>
                     <th>Вес</th>
                     <th>Дата отгрузки</th>
-                    <th>Сумма</th>
+                    <th>Сумма, руб.</th>
                 </tr>
                 ${fillTable()}
             </table>
@@ -1266,7 +1278,7 @@ function getValidationDate(date) {
                     <th width="350">Клиент</th>
                     <th>Объём</th>
                     <th>Сколько</th>
-                    <th>Сумма</th>
+                    <th>Сумма, руб.</th>
                     <th>Итого</th>
                 </tr>
                 ${fillTable()}

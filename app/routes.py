@@ -149,9 +149,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=2003)
+        return render_template('index.html', last_update=1069)
     else:
-        return render_template('login.html', last_update=20)
+        return render_template('login.html', last_update=1017)
 
 
 @app.route('/getAllTasks')
@@ -948,15 +948,12 @@ def addProvider():
 
         Provider.Name = data['provider_name']
         Provider.Rayon = data['provider_area']
-        Provider.Category = data['provider_category']
         Provider.Distance = data['provider_distance']
         Provider.UHH = data['provider_inn']
         Provider.Price = data['provider_price']
         Provider.Oblast = data['provider_region']
         Provider.Train = data['provider_station']
-        Provider.Tag = data['provider_tag']
         Provider.Adress = data['provider_address']
-        Provider.NDS = data['provider_vat']
         Provider.Merc = data['provider_merc']
         Provider.Volume = data['provider_volume']
         Provider.Holding = data['provider_holding']
@@ -1091,12 +1088,9 @@ def addClient():
         Client.Price = data['client_price']
         Client.Oblast = data['client_region']
         Client.Station = data['client_station']
-        Client.Tag = data['client_tag']
         Client.Adress = data['client_address']
         Client.Holding = data['client_holding']
         Client.Site = data['client_site']
-        Client.Demand_item = data['demand_product']
-        Client.Demand_volume = data['demand_volume']
         Client.Livestock_all = data['livestock_general']
         Client.Livestock_milking = data['livestock_milking']
         Client.Livestock_milkyield = data['livestock_milkyield']
