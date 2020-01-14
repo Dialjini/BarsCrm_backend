@@ -130,9 +130,17 @@ function getTableData(table, input = false, close = false) {
                         }
                     });
                     $('#find_competitor').remove();
+                    $('#amount_cards').remove();
                     if (saveTableAndCard[0].id == 'client') {
                         $('.fields').append(`
                             <div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>
+                        `)
+                    }
+                    if (saveTableAndCard[0].name == 'Список') {
+                        $('.fields').append(`
+                            <div id="amount_cards">
+                                <span>Кол-во карточек: ${saveTableAndCard[1][1].length}</span>
+                            </div>
                         `)
                     }
                 }
@@ -225,7 +233,6 @@ function fillingDisableCardProvider(managers) {
         }
     }
 }
-
 // Отсылаем данные для сохранения данных по таблице
 function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     let createOrSaveCard = (function() {
@@ -309,11 +316,95 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             additionalData(i);
             if (checkINN == 'check') {
                 if (data[0] == 'client' || data[0] == 'carrier') {
+                    test = idData;
                     if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
-                        return alert('В начале адреса нужно указать почтовый индекс')
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">В начале адреса нужно указать почтовый индекс, содержащий 6 цифр</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
                     }
                     if (idData[`${data[0]}_inn`] == '') {
-                        return alert('Введите ИНН')
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Введите ИНН</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                    } else if (idData[`${data[0]}_inn`].length < 10 || idData[`${data[0]}_inn`].length > 12) {
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">ИНН должен содержать от 10 до 12 цифр</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                    }
+                    if (idData[`${data[0]}_bik`].length != 9) {
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">БИК должен содержать 9 цифр</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                    }
+                    if (idData[`${data[0]}_kc`].length != 20) {
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Корреспондентский счёт должен содержать 20 цифр</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                    }
+                    if (idData[`${data[0]}_rc`].length != 20) {
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Расчётный счёт должен содержать 20 цифр</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
                     }
                 }
             }
@@ -326,9 +417,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
         if (data[0] == 'client') {
             idData[`livestock_general`] = $('#livestock_general').val();
             idData[`livestock_milking`] = $('#livestock_milking').val();
-            idData[`livestock_milkyield`] = $('#livestock_milkyield').val();
-            idData[`demand_product`] = $('#demand_product').val();
-            idData[`demand_volume`] = $('#demand_volume').val();    
+            idData[`livestock_milkyield`] = $('#livestock_milkyield').val();   
         }
         idData[`${data[0]}_data`] = card;
         idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
@@ -388,9 +477,9 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             members.push({
                 role: $(element).children()[0].children[0].children[0].value,
                 phone: $(element).children()[0].children[0].children[1].value,
-                last_name: $(element).children()[0].children[1].children[0].value,
-                first_name: $(element).children()[0].children[1].children[1].value,
-                email: $(element).children()[0].children[1].children[2].value,
+                last_name: $(element).children()[0].children[0].children[2].value,
+                first_name: $(element).children()[0].children[0].children[3].value,
+                email: $(element).children()[0].children[0].children[4].value,
                 visible: visible_contact
             })
             let data = Object.keys(members[0]);

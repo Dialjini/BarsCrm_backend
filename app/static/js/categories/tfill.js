@@ -19,7 +19,7 @@ let rowFilling = (object, id, table) => {
                         }
                     });
                     if (data.role == 'admin') {
-                        return `<button class="btn btn-main btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>`
+                        return `<button class="btn btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>`
                     }
                     return '';
                 }
@@ -35,7 +35,7 @@ let rowFilling = (object, id, table) => {
                 <th id="all_area" onclick="selectFilterArea(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu_black.svg" class="drop_down_img all_area">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img all_area">
                     </div>
                 </th>`
             } else if (i == 3 && id == 'provider' || i == 3 && id == 'filter_provider') {
@@ -43,7 +43,7 @@ let rowFilling = (object, id, table) => {
                 <th id="pd_group" onclick="selectGroupProduct(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_group">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img pd_group">
                     </div>
                 </th>`
             } else if (i == 4 && id == 'provider' || i == 4 && id == 'filter_provider') {
@@ -51,7 +51,7 @@ let rowFilling = (object, id, table) => {
                 <th id="pd_price" onclick="selectFilterPrice(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_price">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img pd_price">
                     </div>
                 </th>`
             } else if (i == 4 && id == 'client') {
@@ -59,7 +59,7 @@ let rowFilling = (object, id, table) => {
                 <th id="cl_category" onclick="selectFilterCategory(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu_black.svg" class="drop_down_img cl_category">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img cl_category">
                     </div>
                 </th>`
             } else {
@@ -72,7 +72,7 @@ let rowFilling = (object, id, table) => {
             <th id="pd_manager" onclick="selectManager(this)" width="${object[0][object[0].length - 1].width}%">
                 <div class="flex jc-sb">
                     <span>${object[0][object[0].length - 1].name}</span>
-                    <img src="static/images/dropmenu_black.svg" class="drop_down_img pd_manager">
+                    <img src="static/images/dropmenu.svg" class="drop_down_img pd_manager">
                 </div>
             </th>`);
         } else {
