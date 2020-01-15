@@ -149,7 +149,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1069)
+        return render_template('index.html', last_update=1159)
     else:
         return render_template('login.html', last_update=1017)
 
@@ -944,7 +944,6 @@ def addProvider():
             Provider = models.Provider()
             Stock = models.Stock()
             Stock.Name = data['provider_address']
-            Stock.NDS = data['provider_vat']
 
         Provider.Name = data['provider_name']
         Provider.Rayon = data['provider_area']

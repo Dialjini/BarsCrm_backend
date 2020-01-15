@@ -69,11 +69,11 @@ const categoryInFinanceAccount = [
         [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Дата выставления', width: 10 },
-            { name: 'Наименование', width: 30 },
+            { name: 'Наименование', width: 20 },
             { name: 'Сумма, руб.', width: 10 },
             { name: 'Статус', width: 10 },
             { name: 'Приветы', width: 10 },
-            { name: 'Менеджер', width: 10 },
+            { name: 'Менеджер', width: 15 },
         ],
     ]
 ]
@@ -176,11 +176,11 @@ const filterAccount = [
         [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Дата выставления', width: 10 },
-            { name: 'Наименование', width: 30 },
+            { name: 'Наименование', width: 20 },
             { name: 'Сумма, руб.', width: 10 },
             { name: 'Статус', width: 10 },
             { name: 'Приветы', width: 10 },
-            { name: 'Менеджер', width: 10 },
+            { name: 'Менеджер', width: 15 },
         ],
     ]
 ]
@@ -213,6 +213,7 @@ const dataName = [
     { name: 'account', link: categoryInFinanceAccount },
     { name: 'delivery', link: categoryInDelivery },
     { name: 'stock', link: categoryInStock },
+    { name: 'item', link: categoryInStock },
     { name: 'filter_provider', link: categoryInListProvider },
     { name: 'analytics', link: categoryInAnalytics },
 ]

@@ -27,6 +27,13 @@ function getCurrentDate(year = 'none') {
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
+    $('body').append(`
+        <div id="preloader">
+            <div id="preloader_preload"></div>
+        </div>
+    `)
+    preloader = document.getElementById("preloader_preload");
+
     sortStatus = {
         product: {status: false, filter: null, last: null},
         price: {status: false, filter: null},
@@ -209,10 +216,8 @@ function createCardMenu(element, index = 0) {
     // Запоминаем карточку
     for (let i = 0; i < dataName.length; i++) {
         if (getInfo[0] == dataName[i].name) {
-            if (getInfo[0] !== 'stock') {
-                saveTableAndCard = dataName[i].link;
-                dataName[i].link[0].lastCard[0] = cardMenu();
-            }
+            saveTableAndCard = dataName[i].link;
+            dataName[i].link[0].lastCard[0] = cardMenu();
             break;
         }
     }
@@ -237,10 +242,17 @@ function createCardMenu(element, index = 0) {
         content.append(infoElement.link(selectedLine));
         return content;
     }
+    for (let i = 0; i < dataName.length; i++) {
+        if (getInfo[0] == dataName[i].name) {
+            saveTableAndCard = dataName[i].link;
+            dataName[i].link[0].lastCard[0]
+            $('.info').append(dataName[i].link[0].lastCard[0])
+            break;
+        }
+    }
 
-    $('.info').append(cardMenu());
     $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
-    if (getInfo[0] !== 'client') itemSelection(getInfo[0], selectedLine);
+    itemSelection(getInfo[0], selectedLine);
     if (getInfo[0] === 'stock') categoryInStock[0].lastCard[0] = null;
 
     // Маски для полей с вводом денежных средств
@@ -334,6 +346,7 @@ function createCardMenu(element, index = 0) {
                     addMember(category, contacts[i]);
                 }
             }
+            setTimeout(function(){ fadeOutPreloader(preloader); }, 100);
         }
     }
 
@@ -389,7 +402,8 @@ function createCardMenu(element, index = 0) {
                             type: 'text',
                             id: 'client_name',
                             onchange: 'saveCard()',
-                            value: selectedLine.Name
+                            value: selectedLine.Name,
+                            class: 'string'
                         })
                     }))
                 }).add(`<tr>
@@ -404,50 +418,68 @@ function createCardMenu(element, index = 0) {
                         </tr>
                         <tr>
                             <td>Адрес</td>
-                            <td><input type="text" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
+                            <td><input type="text" class="string" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
                         </tr>
-                        <tr>
-                            <td>ИНН</td>
-                            <td><input maxlength="12" type="text" id="client_inn" onchange="saveCard()" value="${selectedLine.UHH}"></td>
-                        </tr>
-                        <tr>
-                            <td>БИК</td>
-                            <td><input type="text" maxlength="9" id="client_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
-                        </tr>
-                        <tr>
-                            <td>К/С</td>
-                            <td><input type="text" maxlength="20" id="client_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
-                        </tr>
-                        <tr>
-                            <td>Р/С</td>
-                            <td><input type="text" maxlength="20" id="client_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
-                        </tr>`)
-            }).add(`<table class="table_block">
-                        <tr>
-                            <td>Категория</td>
-                            <td>
-                                <select id="client_category" onchange="itemSelection(this)">
-                                    <option value="disabled" selected disabled>Выбрать</option>
-                                    <option value="category_0">Клиент</option>
-                                    <option value="category_1">Потенциальный клиент</option>
-                                    <option value="category_2">Лидер</option>
-                                    <option value="category_3">Неперспективный клиент</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ж/Д Станция</td>
-                            <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
-                        </tr>
-                        <tr>
-                            <td>Цена вагона, руб.</td>
-                            <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
-                        </tr>
-                        <tr>
-                            <td>км от НСК</td>
-                            <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
-                        </tr>
-                    </table>
+                    `)
+            }).add(`
+                    <div class="visible_block">
+                        <div class="visible_info">
+                            <div id="props" class="visible_title" onclick="showOrHideInfo(this.id)">
+                                <span>Реквизиты</span>
+                                <img id="hidden_image_props" src="static/images/dropmenu_black.svg" class="drop_down_img">
+                            </div>
+                            <table id="hidden_info_props" class="table_block" style="display:none; margin-bottom: 20px;">
+                                <tr>
+                                    <td>ИНН</td>
+                                    <td><input maxlength="12" class="string" type="text" id="client_inn" onchange="saveCard()" value="${selectedLine.UHH}"></td>
+                                </tr>
+                                <tr>
+                                    <td>БИК</td>
+                                    <td><input type="text" class="string" maxlength="9" id="client_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Корр. счёт</td>
+                                    <td><input type="text" class="string" maxlength="20" id="client_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Расч. счёт</td>
+                                    <td><input type="text" class="string" maxlength="20" id="client_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="visible_info">
+                            <div id="additional" class="visible_title" onclick="showOrHideInfo(this.id)">
+                                <span>Доп. информация</span>
+                                <img id="hidden_image_additional" src="static/images/dropmenu_black.svg" class="drop_down_img">
+                            </div>
+                            <table id="hidden_info_additional" class="table_block" style="display: none;">
+                                <tr>
+                                    <td>Категория</td>
+                                    <td>
+                                        <select id="client_category" onchange="itemSelection(this)">
+                                            <option value="disabled" selected disabled>Выбрать</option>
+                                            <option value="category_0">Клиент</option>
+                                            <option value="category_1">Потенциальный клиент</option>
+                                            <option value="category_2">Лидер</option>
+                                            <option value="category_3">Неперспективный клиент</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ж/Д Станция</td>
+                                    <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Цена вагона, руб.</td>
+                                    <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
+                                </tr>
+                                <tr>
+                                    <td>км от НСК</td>
+                                    <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                     <div class="info_block">
                         <span class="lightgray">Отрасль</span>
                         <select id="client_industry" onchange="itemSelection(this)">
@@ -462,9 +494,9 @@ function createCardMenu(element, index = 0) {
                         <span class="lightgray" style="margin-top: 17px;">Поголовье</span>
                         <table>
                             <tr>
-                                <td>Общее</td>
-                                <td>Дойного</td>
-                                <td>Надои</td>
+                                <th>Общее</th>
+                                <th>Дойного</th>
+                                <th>Надои</th>
                             </tr>
                             <tbody id="livestock">
                                 <tr>
@@ -487,10 +519,10 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax">
                             <table>
                                 <tr>
-                                    <td>Товар</td>
-                                    <td>Объем, кг.</td>
-                                    <td>У кого</td>
-                                    <td>Цена, руб.</td>
+                                    <th>Товар</th>
+                                    <th>Объем, кг.</th>
+                                    <th>У кого</th>
+                                    <th>Цена, руб.</th>
                                 </tr>
                                 <tbody id="group"></tbody>
                             </table>
@@ -542,7 +574,8 @@ function createCardMenu(element, index = 0) {
                             type: 'text',
                             id: 'provider_name',
                             value: selectedLine.Name,
-                            onchange: 'saveCard()'
+                            onchange: 'saveCard()',
+                            class: 'string'
                         })
                     }))
                 }).add(`<tr>
@@ -558,13 +591,13 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="provider_address" onchange="saveCard()" value="${selectedLine.Adress}">
+                                <input type="text" class="string" id="provider_address" onchange="saveCard()" value="${selectedLine.Adress}">
                             </td>
                         </tr>
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" id="provider_inn" onchange="saveCard()" value="${selectedLine.UHH}">
+                                <input type="text" class="string" id="provider_inn" onchange="saveCard()" value="${selectedLine.UHH}">
                             </td>
                         </tr>`)
             }).add(`<table class="table_block">
@@ -612,7 +645,15 @@ function createCardMenu(element, index = 0) {
                         <span class="lightgray">Группа товаров</span>
                         <div class="hmax">
                             <table>
-                                <tr><td>Товар</td><td>Цена, руб.</td><td>Дата</td><td>НДС</td><td>Упаковка</td><td>Вес</td><td>Фракция</td></tr>
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Цена, руб.</th>
+                                    <th>Дата</th>
+                                    <th>НДС</th>
+                                    <th>Упаковка</th>
+                                    <th>Вес</th>
+                                    <th>Фракция</th>
+                                </tr>
                                 <tbody id="group"></tbody>
                             </table>
                         </div>
@@ -686,7 +727,8 @@ function createCardMenu(element, index = 0) {
                             type: 'text',
                             id: 'carrier_name',
                             value: selectedLine.Name,
-                            onchange: 'saveCard()'
+                            onchange: 'saveCard()',
+                            class: 'string'
                         })
                     }))
                 }).add(`<tr>
@@ -714,15 +756,15 @@ function createCardMenu(element, index = 0) {
                         </tr>
                         <tr>
                             <td>БИК</td>
-                            <td><input type="text" id="carrier_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
+                            <td><input type="text" class="string" id="carrier_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
                         </tr>
                         <tr>
                             <td>К/С</td>
-                            <td><input type="text" id="carrier_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
+                            <td><input type="text" class="string" id="carrier_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
                         </tr>
                         <tr>
                             <td>Р/С</td>
-                            <td><input type="text" id="carrier_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
+                            <td><input type="text" class="string" id="carrier_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
                         </tr>
                     </table>`).add(`
                     <table class="table_block">
@@ -754,11 +796,11 @@ function createCardMenu(element, index = 0) {
                         <div class="hmax">
                             <table>
                                 <tr>
-                                    <td>Дата</td>
-                                    <td>Клиент</td>
-                                    <td>Склад</td>
-                                    <td>Водитель</td>
-                                    <td>Цена, руб.</td>
+                                    <th>Дата</th>
+                                    <th>Клиент</th>
+                                    <th>Склад</th>
+                                    <th>Водитель</th>
+                                    <th>Цена, руб.</th>
                                 </tr>
                                 <tbody id="group"></tbody>
                             </table>
@@ -1418,6 +1460,7 @@ function createCardMenu(element, index = 0) {
             for (let i = 0; i < info.length; i++) {
                 options += `<option value="${info[i].id}">${info[i].Group}</option>`
             }
+            setTimeout(function() { fadeOutPreloader(preloader) }, 0);
             return options;
         }
         return `
@@ -1542,7 +1585,7 @@ function createDocument(element) {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">Выберите перевозчика!</p>
+                                            <p style="font-size: 12px; color: #595959;">Выберите перевозчика!</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1701,7 +1744,7 @@ function transitProduct(element) {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">Выберите склад!</p>
+                                            <p style="font-size: 12px; color: #595959;">Выберите склад!</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1717,7 +1760,7 @@ function transitProduct(element) {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">Введите корректное значение в поле Объём!</p>
+                                            <p style="font-size: 12px; color: #595959;">Введите корректное значение в поле Объём!</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1735,7 +1778,7 @@ function transitProduct(element) {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">На складе нет такого объема этого продукта!</p>
+                                            <p style="font-size: 12px; color: #595959;">На складе нет такого объема этого продукта!</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1872,7 +1915,7 @@ function createNewStock() {
         data: data,
         dataType: 'html',
         success: function() {
-            getTableData(categoryInStock);
+            createCardMenu($('<div>', { id: 'item_add' })[0])
         }
     });
 }
@@ -1886,7 +1929,7 @@ function createNewGroup() {
         data: data,
         dataType: 'html',
         success: function() {
-            getTableData(categoryInStock);
+            createCardMenu($('<div>', { id: 'item_add' })[0])
         }
     });
 }

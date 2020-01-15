@@ -290,9 +290,9 @@ let rowFilling = (object, id, table) => {
                 }
 
                 if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
-                else status = '<span class="red">Неоплачено</span>'
+                else status = '<span class="red">Не оплачено</span>'
             } else {
-                status = '<span class="red">Неоплачено</span>';
+                status = '<span class="red">Не оплачено</span>';
             }
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
@@ -311,7 +311,7 @@ let rowFilling = (object, id, table) => {
             }
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, selectTableData[i].account.Sum, status, hello_sum, managerSecondName];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, selectTableData[i].account.Sum, status, +hello_sum.toFixed(2), managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -870,7 +870,7 @@ function selectFilterCategory(element) {
     $('.table .cl_category').addClass('drop_active');
     $(element).append($('<div>', { 
         class: 'list_category',
-        css: {'top': `${$(element).height() + 20}px`},
+        css: {'top': `${$(element).height() + 30}px`},
         append: listCategory()
     }))
     $('.list_category').fadeIn(200);
@@ -896,7 +896,7 @@ function selectFilterArea(element) {
     $('.table .all_area').addClass('drop_active');
     $(element).append($('<div>', { 
         class: 'list_area',
-        css: {'top': `${$(element).height() + 20}px`},
+        css: {'top': `${$(element).height() + 30}px`},
         append: listPrice()
     }))
     $('.list_area').fadeIn(200);
@@ -922,7 +922,7 @@ function selectFilterPrice(element) {
     $('.table .pd_price').addClass('drop_active');
     $(element).append($('<div>', { 
         class: 'list_price',
-        css: {'top': `${$(element).height() + 20}px`},
+        css: {'top': `${$(element).height() + 30}px`},
         append: listPrice()
     }))
     $('.list_price').fadeIn(200);
@@ -967,7 +967,7 @@ function selectGroupProduct(element) {
     $('.table .pd_group').addClass('drop_active');
     $(element).append($('<div>', { 
         class: 'list_group',
-        css: {'top': `${$(element).height() + 20}px`},
+        css: {'top': `${$(element).height() + 30}px`},
         append: listGroup()
     }))
     $('.list_group').fadeIn(200);
@@ -1022,7 +1022,7 @@ function selectManager(element) {
     $('.table .pd_manager').addClass('drop_active');
     $(element).append($('<div>', { 
         class: 'list_manager',
-        css: {'top': `${$(element).height() + 20}px`},
+        css: {'top': `${$(element).height() + 30}px`},
         append: listManager()
     }))
     $('.list_manager').fadeIn(200);

@@ -1,4 +1,5 @@
 let socket = io();
+let preloader = document.getElementById("preloader_preload");
 
 $(document).ready(function() {
     addButtonsSubcategory(0);
@@ -23,6 +24,18 @@ socket.on('refreshTasks', function() {
 let user;
 socket.on('user joined', function() {
 });
+
+function fadeOutPreloader(el) {
+    el.style.opacity = 1;
+    let interpreloader = setInterval(function() {
+        el.style.opacity = el.style.opacity - 0.05;
+        if (el.style.opacity <= 0.05) {
+            clearInterval(interpreloader);
+            preloader.style.display = "none";
+        }
+    },16);
+    $('#preloader').remove();
+}
 
 function getUserInfo() {
     $.ajax({
@@ -79,10 +92,17 @@ function getTableData(table, input = false, close = false) {
                                 }
                                 $('.info').append(fillTable());
                                 $('#loading').fadeIn(100);
+                                $('body').append(`
+                                    <div id="preloader">
+                                        <div id="preloader_preload"></div>
+                                    </div>
+                                `)
+                                preloader = document.getElementById("preloader_preload");
                             },
                             success: function(data) { gettingData(JSON.parse(data)); },
                             complete: function() {
                                 $('#loading').remove();
+                                fadeOutPreloader(preloader);
                             }
                         });
                     }
@@ -149,7 +169,7 @@ function getTableData(table, input = false, close = false) {
     })();
     requestTableData.getRequest(table, input, close)
 }
-
+let test;
 function fillingDisableCardClient(managers) {
     let dataClient = categoryInListClient[1][1];
 
@@ -238,6 +258,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     let createOrSaveCard = (function() {
         return {
             getRequest: function (idData, request) {
+                console.log(idData);
                 $.ajax({
                     url: request,
                     type: 'GET',
@@ -326,7 +347,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">В начале адреса нужно указать почтовый индекс, содержащий 6 цифр</p>
+                                            <p style="font-size: 12px; color: #595959;">В начале адреса нужно указать почтовый индекс, содержащий 6 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -341,7 +362,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">Введите ИНН</p>
+                                            <p style="font-size: 12px; color: #595959;">Введите ИНН</p>
                                         </div>
                                     </div>
                                 </div>
@@ -355,7 +376,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">ИНН должен содержать от 10 до 12 цифр</p>
+                                            <p style="font-size: 12px; color: #595959;">ИНН должен содержать от 10 до 12 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -370,7 +391,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">БИК должен содержать 9 цифр</p>
+                                            <p style="font-size: 12px; color: #595959;">БИК должен содержать 9 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -385,7 +406,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">Корреспондентский счёт должен содержать 20 цифр</p>
+                                            <p style="font-size: 12px; color: #595959;">Корреспондентский счёт должен содержать 20 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -400,7 +421,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px;">Расчётный счёт должен содержать 20 цифр</p>
+                                            <p style="font-size: 12px; color: #595959;">Расчётный счёт должен содержать 20 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -476,9 +497,9 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             let visible_contact = $(element).children()[1].id.includes('visible') ? true : false;
             members.push({
                 role: $(element).children()[0].children[0].children[0].value,
-                phone: $(element).children()[0].children[0].children[1].value,
-                last_name: $(element).children()[0].children[0].children[2].value,
-                first_name: $(element).children()[0].children[0].children[3].value,
+                last_name: $(element).children()[0].children[0].children[1].value,
+                first_name: $(element).children()[0].children[0].children[2].value,
+                phone: $(element).children()[0].children[0].children[3].value,
                 email: $(element).children()[0].children[0].children[4].value,
                 visible: visible_contact
             })

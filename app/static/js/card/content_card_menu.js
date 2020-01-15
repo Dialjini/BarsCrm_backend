@@ -262,42 +262,173 @@ function contractContentCard(elem) {
         for (let i = 0; i < old_docs.length; i++) {
             for (let j = 0; j < names.length; j++) {
                 if (old_docs[i].Owner_type == elem.id && elem.id == names[j].category && old_docs[i].Owner_id == elem.name.split('_')[1]) {
+                    console.log(old_docs);
                     documents += `
-                    <div style="background-color: #E8E8E8" class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
-                        <span style="text-align: center">${names[j].name} ${old_docs[i].Prefix}</span>
+                    <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
+                        <div class="format">DOCX</div>
+                        <div class="date_number">
+                            <div class="top">15.01.2020</div>
+                            <div class="bottom">01/01/2020</div>
+                        </div>
+                        <span>${names[j].name} ${old_docs[i].Prefix}</span>
                     </div>
                     `
                 }
             }
         }
-        documents += `
-        <div class="contract flex" name="${elem.name}" onclick="downloadDocument(this)">
-            <span>Новый договор</span>
-        </div>
-        `
         return documents;
+    }
+
+    function tableAccount() {
+        let accounts, managers, all_items;
+        $.ajax({
+            url: '/getAccounts',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                accounts = JSON.parse(data);
+            }
+        });
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
+        $.ajax({
+            url: '/getAllItems',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                all_items = JSON.parse(result);
+            }
+        });
+        let table = `
+            <table class="new_table">
+                ${fillTable()}
+            </table>
+        `;
+
+        function fillTable() {
+            let tbody = `
+                    <tr>
+                        <th>Юр. лицо</th>
+                        <th>Дата выставления</th>
+                        <th>Товары</th>
+                        <th>Цена, руб.</th>
+                        <th>Сумма, руб.</th>
+                        <th>Статус</th>
+                        <th>Приветы</th>
+                        <th>Менеджер</th>
+                    </tr>`;
+            let client_id = elem.name.split('_')[1];
+            for (let i = 0; i < accounts.length; i++) {
+                for (let j = 0; j < saveTableAndCard[1][1].length; j++) {
+                    if (saveTableAndCard[1][1][j].Name === accounts[i].account.Name && client_id == saveTableAndCard[1][1][j].id) {
+                        let tr = '';
+                        let account_data = accounts[i].account;
+
+                        if (account_data.Payment_history != undefined) {
+                            let payment_list = JSON.parse(account_data.Payment_history);
+                            let amount = account_data.Sum;
+                            let payment_amount = 0;
+
+                            for (let i = 0; i < payment_list.length; i++) {
+                                payment_amount += +payment_list[i].sum
+                            }
+
+                            if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
+                            else status = '<span class="red">Не оплачено</span>'
+                        } else {
+                            status = '<span class="red">Не оплачено</span>';
+                        }
+                        let managerSecondName;
+                        for (let j = 0; j < managers.length; j++) {
+                            if (+managers[j].id == +account_data.Manager_id) {
+                                managerSecondName = managers[j].second_name == null ? 'Фамилия не указана' : managers[j].second_name;
+                                break;
+                            } else {
+                                managerSecondName = 'Не выбран';
+                            }
+                        }
+
+                        let hello_sum = 0;
+                        let hello_list = JSON.parse(account_data.Hello);
+                        for (let g = 0; g < hello_list.length; g++) {
+                            hello_sum += +hello_list[g];
+                        }
+
+                        let items = JSON.parse(account_data.Items_amount);
+                        let items_name = [];
+                        for (let g = 0; g < items.length; g++) {
+                            for (t = 0; t < all_items.length; t++) {
+                                if (items[g].id === all_items[t].Item_id) {
+                                    items_name.push(all_items[t].Name)
+                                }
+                            }
+                        }
+                        tr += `
+                        <tbody>
+                            <tr>
+                                <td rowspan="${items.length}">${accounts[i].items[0].Prefix}</td>
+                                <td rowspan="${items.length}">${account_data.Date}</td>
+                                <td>${items_name[0]}</td>
+                                <td>${items[0].amount}</td>
+                                <td rowspan="${items.length}">${account_data.Sum}</td>
+                                <td rowspan="${items.length}">${status}</td>
+                                <td rowspan="${items.length}">${+hello_sum.toFixed(2)}</td>
+                                <td rowspan="${items.length}">${managerSecondName}</td>
+                            </tr>
+                        `
+
+                        for (let k = 1; k < items.length; k++) {
+                            tr += `
+                                <tr>
+                                    <td>${items_name[k]}</td>
+                                    <td>${items[k].amount}</td>
+                                </tr>`
+                        }
+                        tbody += tr + '</tbody>';
+                    }
+                }
+            }
+            return tbody;
+        }
+        return table;
     }
     return `
         <div class="row_card column">
-            <table class="fit gray">
-                <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
-                <tr>
-                    <td class="bold">Юр. лицо</td><td>
-                        <select id="select_cusmoter">
-                            <option selected value="ООО">ООО</option>
-                            <option value="ИП">ИП</option>
-                        </select>
-                    </td>
-                </tr>
-            </table>
+            <div class="row_card" style="justify-content: flex-start">
+                <table class="fit gray">
+                    <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
+                    <tr>
+                        <td class="bold">Юр. лицо</td><td>
+                            <select id="select_cusmoter">
+                                <option selected value="ООО">ООО</option>
+                                <option value="ИП">ИП</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div class="new_contract flex" name="${elem.name}" onclick="downloadDocument(this)">
+                    <img style="width: 15px;" src="static/images/plus.svg">
+                </div>
+            </div>
             <div class="list" id="list_contract">
                 ${listDocuments()}
             </div>
         </div>
+        <div class="row_card">
+            ${tableAccount()}
+        </div>
         <div class="next">
             ${buttonsCategory()}
-        </div>
-    `
+        </div>`
 }
 function downloadOldDocument(elem) {
     const link = document.createElement('a');
@@ -305,7 +436,32 @@ function downloadOldDocument(elem) {
     link.download = $(elem).attr('name') + '.docx';
     link.click();
 }
+// function check() {
+//     $('.page').prepend($('<div>', { class: 'background' }));
+//             $('.page').prepend(
+//                 $('<div>', {
+//                     class: 'modal_select',
+//                     append: `
+//                         <div class="title">
+//                             <span>Выбор действия</span>
+//                             <img onclick="closeModal()" src="static/images/cancel.png">
+//                         </div>
+//                         <div class="content">
+//                             <div class="message">
+//                                 <p>Вы уверены, что Вы хотите создать новый договор?</p>
+//                             </div>
+//                         </div>
+//                         <div class="buttons">
+//                             <button class="btn" style="margin-right: 15px" onclick="closeModal()">Отмена</button>
+//                             <button class="btn btn-main">Создать</button>
+//                         </div>
+//                     `
+//                 })
+//             );
+// }
 function downloadDocument(elem) {
+    let check = confirm("Вы уверены, что Вы хотите создать новый договор?");
+    if (!check) return;
     let data = $(elem).attr('name').split('_');
     let select_cusmoter = $('#select_cusmoter').val()
     if (data[0] == 'client') {
@@ -331,6 +487,17 @@ function downloadDocument(elem) {
                             link.download = 'Договор поставки ИП.docx';
                         }
                         link.click();
+                        $('#list_contract').append(`
+                            
+                        `)
+                    //     <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
+                    //     <div class="format">DOCX</div>
+                    //     <div class="date_number">
+                    //         <div class="top">15.01.2020</div>
+                    //         <div class="bottom">01/01/2020</div>
+                    //     </div>
+                    //     <span>${names[j].name} ${old_docs[i].Prefix}</span>
+                    // </div>
                     }
                 }
             }
@@ -358,6 +525,9 @@ function downloadDocument(elem) {
                             link.download = 'Договор на доставку ИП.docx';
                         }
                         link.click();
+                        $('#list_contract').append(`
+                            
+                        `)
                     }
                 }
             }
@@ -944,12 +1114,24 @@ function showComments(element) {
         }
     }
 }
+// Скрытие/показ информации в карточке
+function showOrHideInfo(id) {
+    let table_id = 'hidden_info_' + id;
+    let image_id = 'hidden_image_' + id;
+    if ($(`#${image_id}`).hasClass('drop_active')) {
+        $(`#${image_id}`).removeClass('drop_active');
+        $(`#${table_id}`).fadeOut(200);
+    } else {
+        $(`#${image_id}`).addClass('drop_active');
+        $(`#${table_id}`).fadeIn(200);
+    }
+}
 // Добавление контакта в карточках, мб переделать в одну функцию
 function addMember(id = 'client', selectedLine = '') {
     if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт'};
     else category = {class: 'phone', member: '', placeholder: 'Телефон'};
     if (selectedLine == '') {
-        selectedLine = {role: '', phone: '', last_name: '', first_name: '', email: '', visible: true};
+        selectedLine = {role: '', Number: '', Last_name: '', Name: '', Email: '', visible: true};
     }
     let count_members = 0;
     $('#member .member').each(function(i, element) {
@@ -976,12 +1158,16 @@ function addMember(id = 'client', selectedLine = '') {
             append: $('<div>', {
                 class: 'top',
                 append: $('<select>', {
+                    css: {
+                        'margin-top': '10px'
+                    },
                     append: fillListRole()
                 }).add(
-                    `<input placeholder="${category.placeholder}" class="${category.class}" id="${category.class}" onchange="saveCard()" value="${selectedLine.Number}">
-                     <input placeholder="Фамилия" class="last_name" id="last_name" onchange="saveCard()" value="${selectedLine.Last_name}" type="text">
-                     <input placeholder="Имя Отчество" class="first_name" id="first_name" onchange="saveCard()" value="${selectedLine.Name}" type="name">
-                     <input placeholder="Почта" class="email" id="email" onchange="saveCard()" onblur="checkEmail()" value="${selectedLine.Email}" type="email">
+                    `
+                     <input placeholder="Фамилия" class="last_name" id="last_name" onchange="saveCard()" value="${selectedLine.Last_name == null ? '' : selectedLine.Last_name}" type="text">
+                     <input placeholder="Имя Отчество" class="first_name" id="first_name" onchange="saveCard()" value="${selectedLine.Name == null ? '' : selectedLine.Name}" type="name">
+                     <input placeholder="${category.placeholder}" class="${category.class}" id="${category.class}" onchange="saveCard()" value="${selectedLine.Number}">
+                     <input placeholder="Почта" class="email" id="email" onchange="saveCard()" onblur="checkEmail()" value="${selectedLine.Email == null ? '' : selectedLine.Email}" type="email">
                     `)
             })
         }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)', append:
@@ -994,7 +1180,7 @@ function addMember(id = 'client', selectedLine = '') {
         visOrHidContact(`visible_${count_members}`);
     }
     for (let element of $('#member .member #phone')) {
-        $(element).mask('8(999)999-99-99');
+        $(element).mask('8-999-999-99-99');
     }
     saveCard();
 }
@@ -1072,18 +1258,18 @@ function removeMemberOrRow(id) {
 function addRow(id, selectedLine = '') {
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
-                {id: 'item_product', width: 100, type: 'text'},
+                {id: 'item_product', width: 210, type: 'text'},
                 {id: 'item_volume', width: 60, type: 'text'},
-                {id: 'item_creator', width: 180, type: 'text'},
-                {id: 'item_price', width: 75, type: 'text'}
+                {id: 'item_creator', width: 225, type: 'text'},
+                {id: 'item_price', width: 80, type: 'text'}
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
         },
         { id: 'provider-group', tbody: 'group', count: 7, widthInput: [
-                {id: 'item_product', width: 100, type: 'text'},
-                {id: 'item_price', width: 75, type: 'text'},
+                {id: 'item_product', width: 210, type: 'text'},
+                {id: 'item_price', width: 80, type: 'text'},
                 {id: 'item_date', width: 60, type: 'text'},
-                {id: 'item_vat', width: 28, type: 'number'},
+                {id: 'item_vat', width: 30, type: 'number'},
                 {id: 'item_packing', width: 60, type: 'text'},
                 {id: 'item_weight', width: 50, type: 'text'},
                 {id: 'item_fraction', width: 90, type: 'text'}
@@ -1094,17 +1280,17 @@ function addRow(id, selectedLine = '') {
                     {id: 'carrier_client', width: 100, type: 'text'},
                     {id: 'carrier_stock', width: 160, type: 'text'},
                     {id: 'carrier_driver', width: 90, type: 'text'},
-                    {id: 'carrier_price', width: 75, type: 'text'}
+                    {id: 'carrier_price', width: 80, type: 'text'}
                 ],
                 html: []
         }, { id: 'account-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'account_date', width: 70, type: 'text'},
-                    {id: 'account_price', width: 75, type: 'text'}
+                    {id: 'account_price', width: 80, type: 'text'}
                 ],
                 html: ['date', 'sum']
         }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'delivery_date', width: 60, type: 'text'},
-                    {id: 'delivery_price', width: 75, type: 'text'}
+                    {id: 'delivery_price', width: 80, type: 'text'}
                 ],
                 html: ['date', 'price']
         }, { id: 'flight-group', tbody: 'flight', count: 6, widthInput: [
@@ -1123,7 +1309,7 @@ function addRow(id, selectedLine = '') {
 
         function getListCompetitor(id) {
             $.ajax({
-                url: '/getClients',
+                url: '/getProviders',
                 type: 'GET',
                 dataType: 'html',
                 success: function(data) {
@@ -1131,10 +1317,8 @@ function addRow(id, selectedLine = '') {
                     let competitors = [];
                     let options = '';
                     for (let i = 0; i < data.length; i++) {
-                        if (data[i].Category == 'Конкурент') {
-                            let name = data[i].Name
-                            competitors.push(name);
-                        }
+                        let name = data[i].Name
+                        competitors.push(name);
                     }
                     options += `<option disabled selected>Не выбран</option>`
                     for (let i = 0; i < competitors.length; i++) {
