@@ -732,6 +732,29 @@ def addItemToStock():
         return redirect('/', code=302)
 
 
+@app.route('/deleteCard', methods=['GET'])
+def deleteCard():
+    if 'username' in session:
+        if request.args['category'] == 'Client':
+            card = models.Client.query.filter_by(id=request.args['id'])
+
+        elif request.args['category'] == 'Provider':
+            card = models.Provider.query.filter_by(id=request.args['id'])
+
+        elif request.args['category'] == 'Carrier':
+            card = models.Carrier.query.filter_by(id=request.args['id'])
+
+        else:
+            return 'ERROR'
+
+        db.session.delete(card)
+        db.session.commit()
+
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/getStocks', methods=['GET'])
 def getStocks():
     if 'username' in session:
