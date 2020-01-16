@@ -255,20 +255,6 @@ function createCardMenu(element, index = 0) {
     itemSelection(getInfo[0], selectedLine);
     if (getInfo[0] === 'stock') categoryInStock[0].lastCard[0] = null;
 
-    // Маски для полей с вводом денежных средств
-    if (getInfo[0] == 'client') {
-        $('#client_price').mask('# ##0.00', { reverse: true });
-        $('#livestock_general').mask('# ##0.00', { reverse: true });
-        $('#livestock_milking').mask('# ##0.00', { reverse: true });
-        $('#livestock_milkyield').mask('# ##0.00', { reverse: true });
-    } else if (getInfo[0] == 'provider') {
-        $('#provider_price').mask('# ##0.00', { reverse: true });
-    } else if (getInfo[0] == 'carrier') {
-        $('#carrier_capacity').mask('# ##0', { reverse: true });
-    } else if (getInfo[0] == 'delivery') {
-        $('#item_sum').mask('# ##0.00', { reverse: true });
-    }
-
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
     if (getInfo[0] == 'client' || getInfo[0] == 'provider' || getInfo[0] == 'carrier') getContactsAndItems();
     else if (getInfo[0] == 'delivery') {
@@ -281,6 +267,7 @@ function createCardMenu(element, index = 0) {
                 addRow(`delivery-group`, list[i]);
             }
         }
+        setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
     } else if (getInfo[0] == 'account') {
         let payment_list;
         if (selectedLine.account.Payment_history != undefined) {
@@ -291,6 +278,7 @@ function createCardMenu(element, index = 0) {
         for (let i = 0; i < payment_list.length; i++) {
             addRow('account-group', payment_list[i]);
         }
+        setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
     }
 
     function getContactsAndItems() {
@@ -301,6 +289,7 @@ function createCardMenu(element, index = 0) {
             addMember(category);
             addRow(`${category}-group`);
             $('[name="remove_last_group"]').fadeOut(0);
+            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
         } else {
             if (category == 'client' || category == 'provider') {
                 $.ajax({
@@ -355,6 +344,7 @@ function createCardMenu(element, index = 0) {
         $('.info').prepend($('<div>', {class: 'overflow'}));
         $('.overflow').height($('.container')[0].scrollHeight);
         $('#card_menu').addClass('modal');
+        setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
     // Проверка на заполненность Контактов и строк таблиц (Не у Склада)
     } else { 
         try {
@@ -471,11 +461,11 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tr>
                                     <td>Цена вагона, руб.</td>
-                                    <td><input type="text" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
+                                    <td><input type="text" onkeyup="maskNumber(this.id)" id="client_price" onchange="saveCard()" class="string" value="${selectedLine.Price}"></td>
                                 </tr>
                                 <tr>
                                     <td>км от НСК</td>
-                                    <td><input type="text" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
+                                    <td><input type="text" onkeyup="maskNumber(this.id)" id="client_distance" onchange="saveCard()" class="string" value="${selectedLine.Distance}"></td>
                                 </tr>
                             </table>
                         </div>
@@ -500,9 +490,9 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tbody id="livestock">
                                 <tr>
-                                    <td><input id="livestock_general" type="text" style="width: 75px" value="${selectedLine.Livestock_all}"></td>
-                                    <td><input id="livestock_milking" type="text" style="width: 75px" value="${selectedLine.Livestock_milking}"></td>
-                                    <td><input id="livestock_milkyield" type="text" style="width: 75px" value="${selectedLine.Livestock_milkyield}"></td>
+                                    <td><input onkeyup="maskNumber(this.id)" id="livestock_general" type="text" style="width: 75px" value="${selectedLine.Livestock_all}"></td>
+                                    <td><input onkeyup="maskNumber(this.id)" id="livestock_milking" type="text" style="width: 75px" value="${selectedLine.Livestock_milking}"></td>
+                                    <td><input onkeyup="maskNumber(this.id)" id="livestock_milkyield" type="text" style="width: 75px" value="${selectedLine.Livestock_milkyield}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -597,7 +587,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" class="string" id="provider_inn" onchange="saveCard()" value="${selectedLine.UHH}">
+                                <input type="text" maxlength="12" class="string" id="provider_inn" onchange="saveCard()" value="${selectedLine.UHH}">
                             </td>
                         </tr>`)
             }).add(`<table class="table_block">
@@ -610,13 +600,13 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Цена вагона, руб.</td>
                             <td>
-                                <input type="text" id="provider_price" class="string" onchange="saveCard()" value="${selectedLine.Price}">
+                                <input onkeyup="maskNumber(this.id)" type="text" id="provider_price" class="string" onchange="saveCard()" value="${selectedLine.Price}">
                             </td>
                         </tr>
                         <tr>
                             <td>км от НСК</td>
                             <td>
-                                <input type="text" id="provider_distance" class="string" onchange="saveCard()" value="${selectedLine.Distance}">
+                                <input onkeyup="maskNumber(this.id)" type="text" id="provider_distance" class="string" onchange="saveCard()" value="${selectedLine.Distance}">
                             </td>
                         </tr>
                     </table>
@@ -624,7 +614,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Объем про-ва, кг.</td>
                             <td>
-                                <input type="text" id="provider_volume" class="string" onchange="saveCard()" value="${selectedLine.Volume}">
+                                <input onkeyup="maskNumber(this.id)" type="text" id="provider_volume" class="string" onchange="saveCard()" value="${selectedLine.Volume}">
                             </td>
                         </tr>
                         <tr>
@@ -751,27 +741,27 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>ИНН</td>
                             <td>
-                                <input type="text" id="carrier_inn" onchange="saveCard()" class="string" value="${selectedLine.UHH}">
+                                <input type="text" id="carrier_inn" maxlength="12" onchange="saveCard()" class="string" value="${selectedLine.UHH}">
                             </td>
                         </tr>
                         <tr>
                             <td>БИК</td>
-                            <td><input type="text" class="string" id="carrier_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
+                            <td><input type="text" class="string" maxlength="9" id="carrier_bik" onchange="saveCard()" value="${selectedLine.Bik}"></td>
                         </tr>
                         <tr>
-                            <td>К/С</td>
-                            <td><input type="text" class="string" id="carrier_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
+                            <td>Корр. счёт</td>
+                            <td><input type="text" class="string" maxlength="20" id="carrier_kc" onchange="saveCard()" value="${selectedLine.kc}"></td>
                         </tr>
                         <tr>
-                            <td>Р/С</td>
-                            <td><input type="text" class="string" id="carrier_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
+                            <td>Расч. счёт</td>
+                            <td><input type="text" class="string" maxlength="20" id="carrier_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
                         </tr>
                     </table>`).add(`
                     <table class="table_block">
                         <tr>
-                            <td>Грузоподъемность</td>
+                            <td>Грузоподъемность, кг.</td>
                             <td>
-                                <input type="text" id="carrier_capacity" onchange="saveCard()" value="${selectedLine.Capacity}" class="string">
+                                <input onkeyup="maskNumber(this.id)" type="text" id="carrier_capacity" onchange="saveCard()" value="${selectedLine.Capacity}" class="string">
                             </td>
                         </tr>
                         <tr>
@@ -1045,7 +1035,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="mb">
                             <span class="bold">Объем, кг.</span>
-                            <input style="width: 60px" type="number" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
+                            <input onkeyup="maskNumber(this.id)" style="width: 60px" type="text" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
                         </div>
                         <div>
                             <table class="full">
@@ -1257,7 +1247,7 @@ function createCardMenu(element, index = 0) {
                                             <td>${listStocks[k].Name}</td>
                                             <td>${inputVolume[m].volume}</td>
                                             <td>${listAllItems[i].Packing}</td>
-                                            <td><input id="item_sum" type="text"></td>
+                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
                                         </tr>
                                         `
                                     } else {
@@ -1267,7 +1257,7 @@ function createCardMenu(element, index = 0) {
                                             <td>${listStocks[k].Name}</td>
                                             <td>${inputVolume[m].volume}</td>
                                             <td>${listAllItems[i].Packing}</td>
-                                            <td><input id="item_sum" value="${amounts[i]}" type="text"></td>
+                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[i]}" type="text"></td>
                                         </tr>
                                         `
                                     }
@@ -1486,15 +1476,15 @@ function createCardMenu(element, index = 0) {
                 <table class="table_block">
                     <tr>
                         <td>Объем, кг.</td>
-                        <td><input type="number" id="item_volume" onchange="saveCard()" class="string"></td>
+                        <td><input onkeyup="maskNumber(this.id)" type="text" id="item_volume" onchange="saveCard()" class="string"></td>
                     </tr>
                     <tr>
                         <td>Упаковка</td>
                         <td><input type="text" id="item_packing" onchange="saveCard()" class="string"></td>
                     </tr>
                     <tr>
-                        <td>Вес</td>
-                        <td><input type="number" id="item_weight" onchange="saveCard()" class="string"></td>
+                        <td>Вес, кг.</td>
+                        <td><input onkeyup="maskNumber(this.id)" type="text" id="item_weight" onchange="saveCard()" class="string"></td>
                     </tr>
                 </table>
                 <table class="table_block">
@@ -1509,15 +1499,15 @@ function createCardMenu(element, index = 0) {
                     </tr>
                     <tr>
                         <td>НДС</td>
-                        <td><input type="number" id="item_vat" onchange="saveCard()" class="string"></td>
+                        <td><input maxlength="12" type="number" id="item_vat" onchange="saveCard()" class="string"></td>
                     </tr>
                     <tr>
                         <td>Цена прайса, руб.</td>
-                        <td><input type="number" id="item_price" onchange="saveCard()" class="string"></td>
+                        <td><input onkeyup="maskNumber(this.id)" type="text" id="item_price" onchange="saveCard()" class="string"></td>
                     </tr>
                     <tr>
-                        <td>Закупочная цена</td>
-                        <td><input type="number" id="item_purchase_price" onchange="saveCard()" class="string"></td>
+                        <td>Закупочная цена, руб.</td>
+                        <td><input onkeyup="maskNumber(this.id)" type="text" id="item_purchase_price" onchange="saveCard()" class="string"></td>
                     </tr>
                 </table> 
             </div>
@@ -1716,8 +1706,8 @@ function transferToAccounts(element) {
             categoryInFinanceAccount[0].lastCard[0] = $('.card_menu');
             categoryInFinanceAccount[0].active = true;
             categoryInFinanceDebit[0].active = false;
-
-            linkCategory('category-1');
+            $('#debitButton').removeClass('active');
+            $('#accountButton').addClass('active');
             linkField();
         }
     });
@@ -2084,8 +2074,8 @@ function completionCard(elem) {
                 for (let element of $('#exposed_list .invoiled')) {
                     let idProduct = $(element).attr('id').split('_')[1];
                     sale.push($(element).children()[7].children[0].value);
-                    privet.push($(element).children()[8].innerHTML);
-                    delivery.push($(element).children()[9].innerHTML);
+                    privet.push($(element).children()[8].children[0].value);
+                    delivery.push($(element).children()[9].children[0].value);
                     items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
                 }
 

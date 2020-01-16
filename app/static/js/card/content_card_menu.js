@@ -1,84 +1,3 @@
-// Контентная часть Аналитики
-function analyticsContent() {
-    // Получить данные, чтобы заполнить таблицу(-ы)
-    return `
-        <table class="table analytics">
-            <tr>
-                <th>Товар</th>
-                <th>Клиент</th>
-                <th>Объем, кг.</th>
-                <th>Цена, руб.</th>
-                <th>Доставка</th>
-                <th>Привет</th>
-                <th>Себестоимость</th>
-                <th>Купили</th>
-                <th>Заработали</th>
-                <th>Прибыль</th>
-            </tr>
-            <tr>
-                <td rowspan="2">Жмых</td>
-                <td>Лютик</td>
-                <td>7904</td>
-                <td>109</td>
-                <td>2</td>
-                <td>6</td>
-                <td>101</td>
-                <td>80</td>
-                <td>21</td>
-                <td>166000</td>
-            </tr>
-            <tr>
-                <td>Ромашка</td>
-                <td>7904</td>
-                <td>89</td>
-                <td>3</td>
-                <td>8</td>
-                <td>104</td>
-                <td>65</td>
-                <td>43</td>
-                <td>122300</td>
-            </tr>
-        </table>
-
-        <table class="table analytics">
-            <tr>
-                <th>Товар</th>
-                <th>Клиент</th>
-                <th>Объем, кг.</th>
-                <th>Цена, руб.</th>
-                <th>Доставка</th>
-                <th>Привет</th>
-                <th>Себестоимость</th>
-                <th>Купили</th>
-                <th>Заработали</th>
-                <th>Прибыль</th>
-            </tr>
-            <tr>
-                <td rowspan="2">Барда</td>
-                <td>Лютик</td>
-                <td>7904</td>
-                <td>109</td>
-                <td>2</td>
-                <td>6</td>
-                <td>101</td>
-                <td>80</td>
-                <td>21</td>
-                <td>166000</td>
-            </tr>
-            <tr>
-                <td>Ромашка</td>
-                <td>7904</td>
-                <td>89</td>
-                <td>3</td>
-                <td>8</td>
-                <td>104</td>
-                <td>65</td>
-                <td>43</td>
-                <td>122300</td>
-            </tr>
-        </table>
-    `
-}
 let list_items_acc, list_stock_acc;
 function checkStocks(element) {
     let idAccount = element.name.split('_')[1];
@@ -280,126 +199,130 @@ function contractContentCard(elem) {
     }
 
     function tableAccount() {
-        let accounts, managers, all_items;
-        $.ajax({
-            url: '/getAccounts',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(data) {
-                accounts = JSON.parse(data);
-            }
-        });
-        $.ajax({
-            url: '/getUsers',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(result) {
-                managers = JSON.parse(result);
-            }
-        });
-        $.ajax({
-            url: '/getAllItems',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(result) {
-                all_items = JSON.parse(result);
-            }
-        });
-        let table = `
-            <table class="new_table">
-                ${fillTable()}
-            </table>
-        `;
+        if (elem.name.includes('client')) {
+            let accounts, managers, all_items;
+            $.ajax({
+                url: '/getAccounts',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    accounts = JSON.parse(data);
+                }
+            });
+            $.ajax({
+                url: '/getUsers',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    managers = JSON.parse(result);
+                }
+            });
+            $.ajax({
+                url: '/getAllItems',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    all_items = JSON.parse(result);
+                }
+            });
+            let table = `
+                <table class="new_table">
+                    ${fillTable()}
+                </table>
+            `;
 
-        function fillTable() {
-            let tbody = `
-                    <tr>
-                        <th>Юр. лицо</th>
-                        <th>Дата выставления</th>
-                        <th>Товары</th>
-                        <th>Цена, руб.</th>
-                        <th>Сумма, руб.</th>
-                        <th>Статус</th>
-                        <th>Приветы</th>
-                        <th>Менеджер</th>
-                    </tr>`;
-            let client_id = elem.name.split('_')[1];
-            for (let i = 0; i < accounts.length; i++) {
-                for (let j = 0; j < saveTableAndCard[1][1].length; j++) {
-                    if (saveTableAndCard[1][1][j].Name === accounts[i].account.Name && client_id == saveTableAndCard[1][1][j].id) {
-                        let tr = '';
-                        let account_data = accounts[i].account;
+            function fillTable() {
+                let tbody = `
+                        <tr>
+                            <th>Юр. лицо</th>
+                            <th>Дата выставления</th>
+                            <th>Товары</th>
+                            <th>Цена, руб.</th>
+                            <th>Сумма, руб.</th>
+                            <th>Статус</th>
+                            <th>Приветы</th>
+                            <th>Менеджер</th>
+                        </tr>`;
+                let client_id = elem.name.split('_')[1];
+                for (let i = 0; i < accounts.length; i++) {
+                    for (let j = 0; j < saveTableAndCard[1][1].length; j++) {
+                        if (saveTableAndCard[1][1][j].Name === accounts[i].account.Name && client_id == saveTableAndCard[1][1][j].id) {
+                            let tr = '';
+                            let account_data = accounts[i].account;
 
-                        if (account_data.Payment_history != undefined) {
-                            let payment_list = JSON.parse(account_data.Payment_history);
-                            let amount = account_data.Sum;
-                            let payment_amount = 0;
+                            if (account_data.Payment_history != undefined) {
+                                let payment_list = JSON.parse(account_data.Payment_history);
+                                let amount = account_data.Sum;
+                                let payment_amount = 0;
 
-                            for (let i = 0; i < payment_list.length; i++) {
-                                payment_amount += +payment_list[i].sum
-                            }
+                                for (let i = 0; i < payment_list.length; i++) {
+                                    payment_amount += +payment_list[i].sum
+                                }
 
-                            if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
-                            else status = '<span class="red">Не оплачено</span>'
-                        } else {
-                            status = '<span class="red">Не оплачено</span>';
-                        }
-                        let managerSecondName;
-                        for (let j = 0; j < managers.length; j++) {
-                            if (+managers[j].id == +account_data.Manager_id) {
-                                managerSecondName = managers[j].second_name == null ? 'Фамилия не указана' : managers[j].second_name;
-                                break;
+                                if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
+                                else status = '<span class="red">Не оплачено</span>'
                             } else {
-                                managerSecondName = 'Не выбран';
+                                status = '<span class="red">Не оплачено</span>';
                             }
-                        }
-
-                        let hello_sum = 0;
-                        let hello_list = JSON.parse(account_data.Hello);
-                        for (let g = 0; g < hello_list.length; g++) {
-                            hello_sum += +hello_list[g];
-                        }
-
-                        let items = JSON.parse(account_data.Items_amount);
-                        let items_name = [];
-                        for (let g = 0; g < items.length; g++) {
-                            for (t = 0; t < all_items.length; t++) {
-                                if (items[g].id === all_items[t].Item_id) {
-                                    items_name.push(all_items[t].Name)
+                            let managerSecondName;
+                            for (let j = 0; j < managers.length; j++) {
+                                if (+managers[j].id == +account_data.Manager_id) {
+                                    managerSecondName = managers[j].second_name == null ? 'Фамилия не указана' : managers[j].second_name;
+                                    break;
+                                } else {
+                                    managerSecondName = 'Не выбран';
                                 }
                             }
-                        }
-                        tr += `
-                        <tbody>
-                            <tr>
-                                <td rowspan="${items.length}">${accounts[i].items[0].Prefix}</td>
-                                <td rowspan="${items.length}">${account_data.Date}</td>
-                                <td>${items_name[0]}</td>
-                                <td>${items[0].amount}</td>
-                                <td rowspan="${items.length}">${account_data.Sum}</td>
-                                <td rowspan="${items.length}">${status}</td>
-                                <td rowspan="${items.length}">${+hello_sum.toFixed(2)}</td>
-                                <td rowspan="${items.length}">${managerSecondName}</td>
-                            </tr>
-                        `
 
-                        for (let k = 1; k < items.length; k++) {
+                            let hello_sum = 0;
+                            let hello_list = JSON.parse(account_data.Hello);
+                            for (let g = 0; g < hello_list.length; g++) {
+                                hello_sum += +hello_list[g];
+                            }
+
+                            let items = JSON.parse(account_data.Items_amount);
+                            let items_name = [];
+                            for (let g = 0; g < items.length; g++) {
+                                for (t = 0; t < all_items.length; t++) {
+                                    if (items[g].id === all_items[t].Item_id) {
+                                        items_name.push(all_items[t].Name)
+                                    }
+                                }
+                            }
                             tr += `
+                            <tbody>
                                 <tr>
-                                    <td>${items_name[k]}</td>
-                                    <td>${items[k].amount}</td>
-                                </tr>`
+                                    <td rowspan="${items.length}">${accounts[i].items[0].Prefix}</td>
+                                    <td rowspan="${items.length}">${account_data.Date}</td>
+                                    <td>${items_name[0]}</td>
+                                    <td>${items[0].amount}</td>
+                                    <td rowspan="${items.length}">${account_data.Sum}</td>
+                                    <td rowspan="${items.length}">${status}</td>
+                                    <td rowspan="${items.length}">${+hello_sum.toFixed(2)}</td>
+                                    <td rowspan="${items.length}">${managerSecondName}</td>
+                                </tr>
+                            `
+
+                            for (let k = 1; k < items.length; k++) {
+                                tr += `
+                                    <tr>
+                                        <td>${items_name[k]}</td>
+                                        <td>${items[k].amount}</td>
+                                    </tr>`
+                            }
+                            tbody += tr + '</tbody>';
                         }
-                        tbody += tr + '</tbody>';
                     }
                 }
+                return tbody;
             }
-            return tbody;
+            return table;
+        } else {
+            return '';
         }
-        return table;
     }
     return `
         <div class="row_card column">
@@ -570,10 +493,10 @@ function invoicingContentCard(elem, data) {
                     <th width="65">Всего, шт.</th>
                     <th width="75">Объем, кг.</th>
                     <th width="85">Цена прайса, руб.</th>
-                    <th width="55">Скидка</th>
-                    <th width="55">Привет</th>
-                    <th width="55">Доставка</th>
-                    <th width="85">За единицу</th>
+                    <th width="60">Скидка</th>
+                    <th width="60">Привет</th>
+                    <th width="60">Доставка</th>
+                    <th width="75">За единицу</th>
                 </tr>`
     }
     // Вывод заголовка отфильтрованной, нижней таблицы
@@ -631,6 +554,7 @@ function invoicingContentCard(elem, data) {
     function getContentCard(listFunctions, idTable, className) {
         let content = $('<div>', {
             class: 'row_card',
+            id: 'row_' + idTable,
             append: $('<div>', {
                 class: 'info_block full ' + className,
                 append: $('<table>', {
@@ -673,6 +597,14 @@ function invoicingContentCard(elem, data) {
         })
         return content;
     }
+    function searchContent() {
+        return `
+            <div class="search_items">
+                <input type="text" id="invoice_search_items">
+                <button onclick="searchItemsInTable()" class="btn btn-main btn-srch btn-srch-left">Поиск</button>
+            </div>
+        `
+    }
     // Кнопки во вкладке
     function nextStepButtons() {
         let content = $('<div>', {
@@ -695,9 +627,68 @@ function invoicingContentCard(elem, data) {
     }
 
     return  getRowContent()
-            .add(getContentCard([getTitleTable, getRowsTable], 'input_table'))
+            .add(getContentCard([getTitleTable, getRowsTable], 'input_table', ''))
+            .add(searchContent())
             .add(getContentCard([getTitleFilterList, getFilterList], 'output_table', 'hmax'))
             .add(nextStepButtons());
+}
+// Поиск товаров в таблице Выставления счета
+function searchItemsInTable() {
+    let search_item = $('#invoice_search_items').val();
+    
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data); 
+            function getTitleFilterList() {
+                return `<tr>
+                            <th>Группа товаров</th>
+                            <th>Товар</th>
+                            <th>Юр. лицо</th>
+                            <th>Объем, кг.</th>
+                            <th>Упаковка</th>
+                            <th>НДС</th>
+                            <th>Цена прайса, руб.</th>
+                            <th>Склад</th>
+                        </tr>`
+            }
+
+            function getFilterList() {
+                let tbody = $('<tbody>', {id: 'filter_list'});
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].stock_address !== null) {
+                        for (let j = 0; j < data[i].items.length; j++) {
+                            if (data[i].items[j].Name.includes(search_item)) {
+                                let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
+                                const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
+                                for (let k = 0; k < name.length; k++) {
+                                    tr.append($('<td>', {
+                                        html: name[k]
+                                    }))
+                                }
+                                tbody.append(tr);
+                            }
+                        }
+                    }
+                }
+                return tbody;
+            }
+
+            let content = $('<div>', {
+                    class: 'info_block full hmax',
+                    append: $('<table>', {
+                        class: 'account_table',
+                        id: 'output_table',
+                        html: getTitleFilterList(),
+                        append: getFilterList()
+                    })
+            })
+            $('#row_output_table').empty();
+            $('#row_output_table').append(content);
+        }
+    });
 }
 // Выставление счета
 function invoiceInTable(element) {
@@ -748,7 +739,7 @@ function invoiceInTable(element) {
                                 {id: `invoiled_volume_${idProduct}`, html: ''},
                                 {id: `product_cost_${idProduct}`, html: account.Cost},
                                 {id: `calcSale_${idProduct}`, html: ''}, {id: `calcPrivet_${idProduct}`, html: ''},
-                                {id: `calcDelivery_${idProduct}`, html: ''}, {id: `product_unit_${idProduct}`, html: ''}, {id: `calcSum_${idProduct}`, html: ''},
+                                {id: `calcDelivery_${idProduct}`, html: ''}, {id: `product_unit_${idProduct}`, html: ''}, {id: `amountC_${idProduct}`, html: ''},
                             ]
                             for (let k = 0; k < list.length; k++) {
                                 if (list[k].id.includes('invoiled_volume')) {
@@ -757,7 +748,7 @@ function invoiceInTable(element) {
                                             type: 'number', onkeyup: 'tarCalculation(this.id)', id: list[k].id, max: account.Volume
                                         })
                                     }))
-                                } else if (list[k].id.includes('calcSale')) {
+                                } else if (list[k].id.includes('calc')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
                                             type: 'number', id: list[k].id,
@@ -831,16 +822,18 @@ function calculationIndicators() {
             for (let k = 0; k < data[j].items.length; k++) {
                 $('#exposed_list .invoiled').each(function(i, element) {
                     if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
-                        let totalSale = Math.abs((+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2));
-                        let totalPrivet = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        let totalDelivery = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let totalSale       = (+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let totalPrivet     = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let totalDelivery   = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
+                        let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +$(`#product_cost_${data[j].items[k].Item_id}`).html()).toFixed(2);
 
-                        $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : -totalSale);
-                        $(`#calcPrivet_${data[j].items[k].Item_id}`).html(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
-                        $(`#calcDelivery_${data[j].items[k].Item_id}`).html(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
-                        let total = (+$(`#calcDelivery_${data[j].items[k].Item_id}`).html() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).html() + +$(`#calcSale_${data[j].items[k].Item_id}`).val()) * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val();
+                        $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : (+totalSale * -1).toFixed(2));
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
+                        $(`#product_unit_${data[j].items[k].Item_id}`).html(isNaN(price_unit) || price_unit == Infinity || price_unit == -Infinity ? '' : price_unit)
+                        let total = (+$(`#calcDelivery_${data[j].items[k].Item_id}`).val() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).val() + +$(`#calcSale_${data[j].items[k].Item_id}`).val()) * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val();
                         let amount = Math.round(+$(`#product_cost_${data[j].items[k].Item_id}`).html() * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val()).toFixed(2);
-                        $(`#calcSum_${data[j].items[k].Item_id}`).html(+amount + total);
+                        $(`#amountC_${data[j].items[k].Item_id}`).html(+amount + total);
 
                         let sum = 0;
                         for (let element of $('#exposed_list .invoiled')) {
@@ -862,20 +855,40 @@ function tarCalculation(id) {
     let idElement = id.split('_')[2];
     let volume = +$(`#${id}`).val();
     let weight = +$(`#product_weight_${idElement}`).html();
-    let unit = Math.round(+$(`#product_cost_${idElement}`).html() / volume).toFixed(2);
+    let unit = Math.round(+$(`#product_cost_${idElement}`).html() + +$(`#calcSale_${idElement}`).val() + +$(`#calcPrivet_${idElement}`).val() + +$(`#calcDelivery_${idElement}`).val()).toFixed(2);
 
     $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
     $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
     calculationIndicators();
 }
 function recountPrice(id) {
-    let idProduct = id.split('_')[1];
-    let product = $(`#exposed_list #invoiled_${idProduct}_product`);
+    let dataProduct = id.split('_');
+    let product = $(`#exposed_list #invoiled_${dataProduct[1]}_product`);
 
     product.children().last().html(
         (+product.children()[5].children[0].value * +product.children()[6].innerHTML)
-        + (+product.children()[7].children[0].value * +product.children()[5].children[0].value + +product.children()[8].innerHTML * +product.children()[5].children[0].value + +product.children()[9].innerHTML * +product.children()[5].children[0].value)
+        + (+product.children()[7].children[0].value * +product.children()[5].children[0].value + +product.children()[8].children[0].value * +product.children()[5].children[0].value + +product.children()[9].children[0].value * +product.children()[5].children[0].value)
     );
+
+    let list = [
+        { id: 'total_discount_inv', type: 'calcSale' },
+        { id: 'total_privet_inv',   type: 'calcPrivet' },
+        { id: 'total_delivery_inv', type: 'calcDelivery' }
+    ]
+
+    for (let i = 0; i < list.length; i++) {
+        if (dataProduct[0].includes(list[i].type)) {
+            let other_total_sale = 0;
+            $('#exposed_list .invoiled').each(function(i, element) {
+                other_total_sale += (+$(`#${dataProduct[0]}_${i + 1}`).val() * +$(`#invoiled_volume_${i + 1}`).val());
+            });
+            if (list[i].id == 'total_discount_inv') {
+                other_total_sale *= -1;
+            }
+            $(`#${list[i].id}`).val(other_total_sale);
+
+        }
+    } 
     
     let sum = 0;
     $('#exposed_list .invoiled').each(function(i, element) {
@@ -1128,11 +1141,12 @@ function showOrHideInfo(id) {
 }
 // Добавление контакта в карточках, мб переделать в одну функцию
 function addMember(id = 'client', selectedLine = '') {
-    if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт'};
-    else category = {class: 'phone', member: '', placeholder: 'Телефон'};
     if (selectedLine == '') {
-        selectedLine = {role: '', Number: '', Last_name: '', Name: '', Email: '', visible: true};
+        selectedLine = {role: '', Number: '', Last_name: '', Name: '', Email: '', Car: '', visible: true};
     }
+    if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт', select: selectedLine.Car};
+    else category = {class: 'phone', member: '', placeholder: 'Телефон', select: selectedLine.Number};
+    console.log(selectedLine);
     let count_members = 0;
     $('#member .member').each(function(i, element) {
         count_members++;
@@ -1150,6 +1164,13 @@ function addMember(id = 'client', selectedLine = '') {
         }
         return options;
     }
+    function carrierPhone() {
+        if (id === 'carrier') {
+            return `<input placeholder="Телефон" class="phone" id="phone" onchange="saveCard()" value="${selectedLine.Number}">`
+        } else {
+            return '';
+        }
+    }
     $('#member').append($('<div>', {
         class: `member ${category.member}`,
         id: `member_${count_members}`,
@@ -1166,13 +1187,14 @@ function addMember(id = 'client', selectedLine = '') {
                     `
                      <input placeholder="Фамилия" class="last_name" id="last_name" onchange="saveCard()" value="${selectedLine.Last_name == null ? '' : selectedLine.Last_name}" type="text">
                      <input placeholder="Имя Отчество" class="first_name" id="first_name" onchange="saveCard()" value="${selectedLine.Name == null ? '' : selectedLine.Name}" type="name">
-                     <input placeholder="${category.placeholder}" class="${category.class}" id="${category.class}" onchange="saveCard()" value="${selectedLine.Number}">
+                     <input placeholder="${category.placeholder}" class="${category.class}" id="${category.class}" onchange="saveCard()" value="${category.select}">
+                     ${carrierPhone()}
                      <input placeholder="Почта" class="email" id="email" onchange="saveCard()" onblur="checkEmail()" value="${selectedLine.Email == null ? '' : selectedLine.Email}" type="email">
                     `)
             })
         }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)', append:
-        $('<img>', { src: '../static/images/visible.png'})
-    }))
+            $('<img>', { src: '../static/images/visible.png'})
+        }))
     }));
     if (selectedLine.Visible == null) {
         selectedLine.Visible = true;
@@ -1223,7 +1245,7 @@ function visOrHidContact(idElem) {
 function checkEmail() {
     let listEmail = [];
     $('#member .member').each(function(i, element) {
-        let email = $(element).children()[0].children[0].children[4];
+        let email = $(element).children().children().children().last()[0];
         let value = email.value;
         if (value == '') {
             listEmail.push('true');
@@ -1253,6 +1275,9 @@ function removeMemberOrRow(id) {
     if ($(`#${id}`).children().length <= 1) {
         $(`[name="remove_last_${id}"]`).fadeOut(0);
     }
+}
+function maskNumber(id) {
+    $(`#${id}`).mask('# ##0.00', { reverse: true });
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
@@ -1416,17 +1441,28 @@ function addRow(id, selectedLine = '') {
                     })
                 }));
             } else {
-                tr.append($('<td>', {
-                    append: $('<input>', {
-                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
-                        id: table.widthInput[i].id, 
-                        value: selectedLine[table.html[i]],
-                        type: table.widthInput[i].type
-                    })
-                }));
+                if (table.widthInput[i].id.includes('sum') || table.widthInput[i].id.includes('weight') || table.widthInput[i].id.includes('price')) {
+                    tr.append($('<td>', {
+                        append: $('<input>', {
+                            css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                            id: table.widthInput[i].id, 
+                            value: selectedLine[table.html[i]],
+                            type: table.widthInput[i].type,
+                            onkeyup: 'maskNumber(this.id)'
+                        })
+                    }));
+                } else {
+                    tr.append($('<td>', {
+                        append: $('<input>', {
+                            css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                            id: table.widthInput[i].id, 
+                            value: selectedLine[table.html[i]],
+                            type: table.widthInput[i].type
+                        })
+                    }));
+                }
             }  
         }
-        console.log(123);
         return tr;
     }
 

@@ -1163,6 +1163,8 @@ body {
       -ms-flex-align: center;
           align-items: center;
   background-color: #EAF0F6;
+  -webkit-box-shadow: 0 2px 5px -2px #d8d8d8;
+          box-shadow: 0 2px 5px -2px #d8d8d8;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .list .contract span {
@@ -1213,7 +1215,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side {
-  width: 90%;
+  width: 100%;
   margin-right: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1270,8 +1272,12 @@ body {
   padding: 0;
 }
 
-.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .m_info .top .phone, .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .m_info .top .car {
+.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .m_info .top .phone {
   width: 170px;
+}
+
+.page .centerBlock .container .info .card_menu .content .row_card .left_side .member .m_info .top .car {
+  width: 100px;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .left_side .member .m_info .top .last_name {
@@ -1680,6 +1686,22 @@ body {
 
 .page .centerBlock .container .info .card_menu .content .area .messages .message .static:hover {
   cursor: pointer;
+}
+
+.page .centerBlock .container .info .card_menu .content .search_items {
+  margin-top: -45px;
+  margin-bottom: 20px;
+  margin-left: 2px;
+}
+
+.page .centerBlock .container .info .card_menu .content .search_items input {
+  height: 30px;
+  border: none;
+  -webkit-box-shadow: 0 1px 4px lightgrey;
+          box-shadow: 0 1px 4px lightgrey;
+  border-radius: 5px 0 0 5px;
+  margin-right: -1px;
+  padding: 0 15px;
 }
 
 .page .centerBlock .container .info .card_menu .content .next {
@@ -2275,6 +2297,19 @@ body {
   margin-right: 10px;
   background: #9281D5;
   color: white;
+}
+
+.btn-srch {
+  width: 50px;
+  font-size: 11px;
+}
+
+.btn-srch-left {
+  border-radius: 0 5px 5px 0;
+}
+
+.btn-srch-right {
+  border-radius: 5px 0 0 5px;
 }
 
 .btn-div {

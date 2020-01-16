@@ -149,7 +149,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1159)
+        return render_template('index.html', last_update=1218)
     else:
         return render_template('login.html', last_update=1017)
 
@@ -735,14 +735,14 @@ def addItemToStock():
 @app.route('/deleteCard', methods=['GET'])
 def deleteCard():
     if 'username' in session:
-        if request.args['category'] == 'Client':
-            card = models.Client.query.filter_by(id=request.args['id'])
+        if request.args['category'] == 'client':
+            card = models.Client.query.filter_by(id=request.args['id']).first() 
 
-        elif request.args['category'] == 'Provider':
-            card = models.Provider.query.filter_by(id=request.args['id'])
+        elif request.args['category'] == 'provider':
+            card = models.Provider.query.filter_by(id=request.args['id']).first() 
 
-        elif request.args['category'] == 'Carrier':
-            card = models.Carrier.query.filter_by(id=request.args['id'])
+        elif request.args['category'] == 'carrier':
+            card = models.Carrier.query.filter_by(id=request.args['id']).first()
 
         else:
             return 'ERROR'

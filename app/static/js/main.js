@@ -102,7 +102,7 @@ function getTableData(table, input = false, close = false) {
                             success: function(data) { gettingData(JSON.parse(data)); },
                             complete: function() {
                                 $('#loading').remove();
-                                fadeOutPreloader(preloader);
+                                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                             }
                         });
                     }
@@ -169,7 +169,6 @@ function getTableData(table, input = false, close = false) {
     })();
     requestTableData.getRequest(table, input, close)
 }
-let test;
 function fillingDisableCardClient(managers) {
     let dataClient = categoryInListClient[1][1];
 
@@ -337,7 +336,6 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             additionalData(i);
             if (checkINN == 'check') {
                 if (data[0] == 'client' || data[0] == 'carrier') {
-                    test = idData;
                     if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
                         return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
@@ -488,6 +486,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
         });
     }
 
+    let categ = data[0];
     function addMembersInfo(close) {
         let members = [];
         if (card == 'new') {
@@ -495,14 +494,27 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
         }
         $('#member .member').each(function(i, element) {
             let visible_contact = $(element).children()[1].id.includes('visible') ? true : false;
-            members.push({
-                role: $(element).children()[0].children[0].children[0].value,
-                last_name: $(element).children()[0].children[0].children[1].value,
-                first_name: $(element).children()[0].children[0].children[2].value,
-                phone: $(element).children()[0].children[0].children[3].value,
-                email: $(element).children()[0].children[0].children[4].value,
-                visible: visible_contact
-            })
+            if (categ == 'carrier') {
+                members.push({
+                    role: $(element).children()[0].children[0].children[0].value,
+                    last_name: $(element).children()[0].children[0].children[1].value,
+                    first_name: $(element).children()[0].children[0].children[2].value,
+                    car: $(element).children()[0].children[0].children[3].value,
+                    phone: $(element).children()[0].children[0].children[4].value,
+                    email: $(element).children()[0].children[0].children[5].value,
+                    visible: visible_contact
+                })
+            } else {
+                members.push({
+                    role: $(element).children()[0].children[0].children[0].value,
+                    last_name: $(element).children()[0].children[0].children[1].value,
+                    first_name: $(element).children()[0].children[0].children[2].value,
+                    car: 'null',
+                    phone: $(element).children()[0].children[0].children[3].value,
+                    email: $(element).children()[0].children[0].children[4].value,
+                    visible: visible_contact
+                })
+            }
             let data = Object.keys(members[0]);
             let count = 0;
             for (let i = 0; i < data.length - 1; i++) {
@@ -510,6 +522,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             }
             if (count == data.length - 1) members.pop();
         });
+        console.log(members);
         $.ajax({
             url: '/addContacts',
             type: 'GET',
