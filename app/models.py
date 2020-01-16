@@ -174,6 +174,7 @@ class Contacts(db.Model):
     Manager = db.Column(db.String)
     Date = db.Column(db.Date)
     Birthday = db.Column(db.Date)
+    Car = db.Column(db.String)
     Visible = db.Column(db.Boolean)
 
 

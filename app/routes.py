@@ -768,6 +768,7 @@ def addContacts():
             Contact.Email = i['email']
             Contact.Position = i['role']
             Contact.Visible = i['visible']
+            Contact.Car = i['car']
             if request.args['category'] == 'client':
                 Contact.Client_id = Owner.id
             elif request.args['category'] == 'provider':
