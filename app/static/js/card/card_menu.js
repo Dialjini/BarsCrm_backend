@@ -2142,6 +2142,8 @@ function closeModalMenu() {
     $('.search #search').val('');
 }
 function deleteCard(id) {
+    let check = confirm('Удалить карточку?');
+    if (!check) return;
     let data = id.split('_');
     $.ajax({
         url: '/getThisUser',

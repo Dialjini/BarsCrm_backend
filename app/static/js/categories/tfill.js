@@ -202,7 +202,7 @@ let rowFilling = (object, id, table) => {
         });
 
         for (let i = selectTableData.length - 1; i >= 0; i--) {
-            let tbody = $('<tbody>', { id: `provider_${i + 1}`, name: 'provider' , onclick: 'createCardMenu(this)' });
+            let tbody = $('<tbody>', { id: `provider_${selectTableData[i].id}`, name: 'provider' , onclick: 'createCardMenu(this)' });
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
                 if (+managers[j].id == +selectTableData[i].Manager_id && selectTableData[i].Manager_active) {
@@ -255,7 +255,7 @@ let rowFilling = (object, id, table) => {
             let count = selectTableData[i].delivery.Amounts != undefined ? JSON.parse(selectTableData[i].delivery.Amounts) : [];
             let vat = selectTableData[i].delivery.Customer == 'ООО' ? 0.74 : 1.26;
             for (let i = 0; i < count.length; i++) {
-                amount += +count[i];
+                amount += +deleteSpaces(count[i]);
             }
             const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, Math.ceil(amount * vat), amount, selectTableData[i].delivery.Payment_date];
             for (let j = 0; j < name.length; j++) {
@@ -286,9 +286,8 @@ let rowFilling = (object, id, table) => {
                 let payment_amount = 0;
 
                 for (let i = 0; i < payment_list.length; i++) {
-                    payment_amount += +payment_list[i].sum
+                    payment_amount += +deleteSpaces(payment_list[i].sum);
                 }
-
                 if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
                 else status = '<span class="red">Не оплачено</span>'
             } else {
@@ -358,7 +357,7 @@ let rowFilling = (object, id, table) => {
                 let amount = selectTableData[i].account.Sum;
 
                 for (let i = 0; i < payment_list.length; i++) {
-                    payment_amount += +payment_list[i].sum
+                    payment_amount += +deleteSpaces(payment_list[i].sum)
                 }
             } else {
                 payment_amount = 0;
@@ -375,7 +374,7 @@ let rowFilling = (object, id, table) => {
             }
             if (first_date == undefined) first_date = 'Не указано';
             if (postponement_date == undefined) postponement_date = 'Не указано';
-
+            if (payment_amount == 0) continue;
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
             const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, selectTableData[i].account.Sum, payment_amount, +selectTableData[i].account.Sum - payment_amount, managerSecondName];
 

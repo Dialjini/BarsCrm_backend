@@ -381,13 +381,57 @@ function downloadOldDocument(elem) {
 //                 })
 //             );
 // }
+function inputFieldDoc(data, document_name, address, elem) {
+    $.ajax({
+        url: '/downloadDoc',
+        data: { category: data[0], name: document_name, card_id: data[1], address: address, delivery: 'no' },
+        type: 'GET',
+        dataType: 'html',
+        success: function(result) {
+            $.ajax({
+                url: '/getDocs',
+                type: 'GET',
+                dataType: 'html',
+                success: function(result) {
+                    let documents = '';
+                    let old_docs = JSON.parse(result);
+                    let names = [
+                        {category: 'client', name: 'Договор поставки от'},
+                        {category: 'carrier', name: 'Договор об оказании услуг перевозки грузов от'}
+                    ]
+                    let name_category = $(elem).attr('name');
+                    if (name_category.includes('new')) {
+                        name_category = name_category.replace(/new/g, saveTableAndCard[1][1].length + 1)
+                    }
+                    for (let i = 0; i < old_docs.length; i++) {
+                        for (let j = 0; j < names.length; j++) {
+                            if (old_docs[i].Owner_type == data[0] && data[0] == names[j].category && old_docs[i].Owner_id == name_category.split('_')[1]) {
+                                documents += `
+                                <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
+                                    <div class="format">DOCX</div>
+                                    <div class="date_number">
+                                        <div class="top">${old_docs[i].Creation_date}</div>
+                                        <div class="bottom">${old_docs[i].MonthNum}/${old_docs[i].Date}</div>
+                                    </div>
+                                    <span>${names[j].name} ${old_docs[i].Prefix}</span>
+                                </div>
+                                `
+                            }
+                        }
+                    }
+                    $('#list_contract').empty();
+                    $('#list_contract').append(documents);
+                }
+            });
+        }
+    })
+}
 function downloadDocument(elem) {
     let check = confirm("Вы уверены, что Вы хотите создать новый договор?");
     if (!check) return;
     let data = $(elem).attr('name').split('_');
     if (data[1] == 'new') data[1] = saveTableAndCard[1][1].length + 1;
     let select_cusmoter = $('#select_cusmoter').val()
-    console.log(elem);
     if (data[0] == 'client') {
         $.ajax({
             url: '/getClients',
@@ -403,63 +447,10 @@ function downloadDocument(elem) {
                         } else {
                             document_name = 'Dogovor_na_tovari_ip';
                         }
-                        const link = document.createElement('a');
-                        $.ajax({
-                            url: '/downloadDoc',
-                            data: { category: data[0], name: document_name, card_id: data[1], address: data_client[i].Adress, delivery: 'no' },
-                            type: 'GET',
-                            dataType: 'html',
-                            success: function(result) {
-                                console.log(result);
-                                $.ajax({
-                                    url: '/getDocs',
-                                    type: 'GET',
-                                    dataType: 'html',
-                                    success: function(result) {
-                                        console.log(1);
-                                        let documents = '';
-                                        let old_docs = JSON.parse(result);
-                                        console.log(old_docs);
-                                        let names = [
-                                            {category: 'client', name: 'Договор поставки от'},
-                                            {category: 'carrier', name: 'Договор об оказании услуг перевозки грузов от'}
-                                        ]
-                                        let test_1 = $(elem).attr('name');
-                                        if (test_1.includes('new')) {
-                                            test_1 = test_1.replace(/new/g, saveTableAndCard[1][1].length + 1)
-                                        }
-                                        for (let i = 0; i < old_docs.length; i++) {
-                                            for (let j = 0; j < names.length; j++) {
-                                                console.log(old_docs[i].Owner_type, data[0], names[j].category, old_docs[i].Owner_id, test_1.split('_')[1])
-                                                if (old_docs[i].Owner_type == data[0] && data[0] == names[j].category && old_docs[i].Owner_id == test_1.split('_')[1]) {
-                                                    documents += `
-                                                    <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
-                                                        <div class="format">DOCX</div>
-                                                        <div class="date_number">
-                                                            <div class="top">${old_docs[i].Creation_date}</div>
-                                                            <div class="bottom">${old_docs[i].MonthNum}/${old_docs[i].Date}</div>
-                                                        </div>
-                                                        <span>${names[j].name} ${old_docs[i].Prefix}</span>
-                                                    </div>
-                                                    `
-                                                }
-                                            }
-                                        }
-                                        $('#list_contract').empty();
-                                        $('#list_contract').append(documents);
-                                    }
-                                });
-                            }
-                        })
-                        // link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
-                        // if (select_cusmoter == 'ООО') {
-                        //     link.download = 'Договор поставки ООО.docx';
-                        // } else {
-                        //     link.download = 'Договор поставки ИП.docx';
-                        // }
-                        // link.click();
+                        inputFieldDoc(data, document_name, data_client[i].Adress, elem);
                     }
                 }
+                
             }
         }); 
     } else if (data[0] == 'carrier') {
@@ -477,17 +468,7 @@ function downloadDocument(elem) {
                         } else {
                             document_name = 'DogovorNaDostavkuIP';
                         }
-                        const link = document.createElement('a');
-                        link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_carrier[i].Address}&delivery=no`;
-                        if (select_cusmoter == 'ООО') {
-                            link.download = 'Договор на доставку ООО.docx';
-                        } else {
-                            link.download = 'Договор на доставку ИП.docx';
-                        }
-                        link.click();
-                        $('#list_contract').append(`
-                            
-                        `)
+                        inputFieldDoc(data, document_name, data_carrier[i].Address, elem);
                     }
                 }
             }
@@ -1313,6 +1294,10 @@ function checkEmail() {
     }
     return true;
 }
+function deleteSpaces(string) {
+    string = string.replace(/\s/g,"");
+    return string;
+}
 // Удаление последнего контакта в карточках
 // Удаление последней строки в таблицах карточек
 function removeMemberOrRow(id) {
@@ -1517,30 +1502,30 @@ function addRow(id, selectedLine = '') {
             $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             if (id === 'client-group') {
-                $('#group #item_price').mask('# ##0', { reverse: true });
-                $('#group #item_volume').mask('# ##0', { reverse: true });
+                $('#group #item_price').mask('# ##0.00', { reverse: true });
+                $('#group #item_volume').mask('# ##0.00', { reverse: true });
             }
             if (id === 'provider-group') {
-                $('#group #item_price').mask('# ##0', { reverse: true });
-                $('#group #item_weight').mask('# ##0', { reverse: true });
+                $('#group #item_price').mask('# ##0.00', { reverse: true });
+                $('#group #item_weight').mask('# ##0.00', { reverse: true });
                 $('#group #item_date').last().datepicker({position: 'right bottom', autoClose: true})
             }
             if (id === 'carrier-group') {
-                $('#carrier_price').mask('# ##0', { reverse: true });
+                $('#carrier_price').mask('# ##0.00', { reverse: true });
             }
             if (id === 'account-group') {
-                $('#account_price').mask('# ##0', { reverse: true });
+                $('#account_price').mask('# ##0.00', { reverse: true });
                 $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true})
             }
             if (id === 'flight-group') {
-                $('#delivery_flight_sum').mask('# ##0', { reverse: true });
-                $('#delivery_flight_weight').mask('# ##0', { reverse: true });
+                $('#delivery_flight_sum').mask('# ##0.00', { reverse: true });
+                $('#delivery_flight_weight').mask('# ##0.00', { reverse: true });
             }
             if (id === 'delivery-group') {
                 $('#delivery_start_date').datepicker({position: 'right top', autoClose: true})
                 $('#delivery_end_date').datepicker({position: 'right top', autoClose: true})
                 $('#group #delivery_date').last().datepicker({position: 'right bottom', autoClose: true})
-                $('#delivery_price').mask('# ##0', { reverse: true });
+                $('#delivery_price').mask('# ##0.00', { reverse: true });
             }
         }
     }

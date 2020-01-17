@@ -121,6 +121,12 @@ function getTableData(table, input = false, close = false) {
                             $('.card_menu, .overflow').remove();
                         }, 0);
                     }
+                    if (table[0].id === 'debit') {
+                        if (table[1][1] !== undefined) {
+                            table[1].pop(data);
+                        }
+                        table[1].push(data);
+                    }
                     if (table[0].id !== 'analytics' && table[1][1] === undefined) {
                         table[1].push(data);
                     }

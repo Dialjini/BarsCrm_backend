@@ -449,13 +449,11 @@ function addButtonsSubcategory(idCategory) {
         $('#delivery_new').attr('onclick', 'reloadStockItems(this)');
     }
 }
-
 function closePersonCard() {
     // Создавать пользователя
     $('.card_menu').remove();
     adminPanel();
 }
-
 function userInfo(element) {
     function fillRoles(role) {
         if (role == 'admin') {
@@ -497,13 +495,13 @@ function userInfo(element) {
                                         <tr>
                                             <td>Фамилия</td>
                                             <td>
-                                                <input type="text" value="${data[i].second_name}" disabled>
+                                                <input type="text" value="${data[i].second_name}" id="edit_surname">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Имя</td>
                                             <td>
-                                                <input type="name" value="${data[i].name}" disabled>
+                                                <input type="name" value="${data[i].name}" id="edit_name">
                                             </td>
                                         </tr>
                                         <tr>
@@ -531,7 +529,7 @@ function userInfo(element) {
                                         <tr>
                                             <td>Логин</td>
                                             <td>
-                                                <input type="login" value="${data[i].login}" disabled>
+                                                <input type="login" value="${data[i].login}" id="edit_login">
                                             </td>
                                         </tr>
                                         <tr>
@@ -553,7 +551,6 @@ function userInfo(element) {
         }
     });
 }
-
 function deleteMember(idMember) {
     $.ajax({
         url: '/deleteMember',
@@ -566,7 +563,6 @@ function deleteMember(idMember) {
         }
     });
 }
-
 function editMember(idMember) {
     $.ajax({
         url: '/getUsers',
@@ -577,13 +573,13 @@ function editMember(idMember) {
             for (let i = 0; i < result.length; i++) {
                 if (result[i].id == +idMember) {
                     let data = {};
+                    data['create_first_name'] = $('#edit_name').val();
+                    data['create_last_name'] = $('#edit_surname').val();
                     data['create_patronymic'] = $('#edit_patronymic').val();
                     data['create_email'] = $('#edit_email').val();
+                    data['create_login'] = $('#edit_login').val();
                     data['create_role'] = $('#edit_role').val();
                     data['create_password'] = $('#edit_password').val();
-                    data['create_last_name'] = result[i].second_name;
-                    data['create_first_name'] = result[i].name;
-                    data['create_login'] = result[i].login;
                     data['id'] = +idMember;
                 
                     $.ajax({
@@ -601,7 +597,6 @@ function editMember(idMember) {
         }
     });
 }
-
 function adminPanel() {
     $.ajax({
         url: '/getThisUser',
