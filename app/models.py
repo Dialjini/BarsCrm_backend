@@ -152,10 +152,12 @@ def getMonthNum():
     Docs = Document.query.all()
     result = 1
     for i in Docs:
-        print(i.Date)
-        print(i.Date[0:2], '  ', str(datetime.now().month))
-        if i.Date[0:2] == str(datetime.now().month):
-            result += 1
+        if datetime.now().month > 9:
+            if i.Date[0:2] == str(datetime.now().month):
+                result += 1
+        else:
+            if i.Date[0:1] == str(datetime.now().month):
+                result += 1
     return result
 
 
