@@ -305,6 +305,26 @@ def stockTransit():
 
     return 'OK'
 
+@app.route('/addRole', methods=['GET'])
+def addRole():
+    if 'username' in session:
+        role = models.Role()
+        role.Name = request.args['name']
+        role.Priority = int(request.args['priority'])
+        db.session.add(role)
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
+@app.route('/getRoles', methods=['GET'])
+def getRoles():
+    if 'username' in session:
+        return table_to_json(models.Role.query.all())
+    else:
+        return redirect('/', code=302)
+
 
 @app.route('/findContacts', methods=['GET'])
 def findContacts():

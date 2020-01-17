@@ -279,6 +279,12 @@ class Account(db.Model):
     Payment_history = db.Column(db.String)
 
 
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String)
+    Priority = db.Column(db.Integer)
+
+
 class Delivery(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Carrier_id = db.Column(db.Integer, db.ForeignKey('carrier.id'))

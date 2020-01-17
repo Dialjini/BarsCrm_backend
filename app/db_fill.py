@@ -1,14 +1,19 @@
 from app import models, db
 import json
-from xhtml2pdf import pisa
-from io import StringIO, BytesIO
-from xhtml2pdf.config.httpconfig import httpConfig
-import xlsxwriter
-import xlrd
 import openpyxl
-from openpyxl.styles.borders import Border, Side, BORDER_THIN, BORDER_NONE, BORDER_MEDIUM, DEFAULT_BORDER
 
 
+# -------------------------------------------------------Roles----------------------------------------------------------
+def add_roles():
+    role_list = ['Собственник', 'Директор', 'Генеральный директор', 'Заместитель директора',
+                 'Председатель', 'Главный бухгалтер','Бухгалтер', 'Снабжение', 'Зоотехник', 'Агроном', 'Секретарь',
+                 'Логист', 'Зав. гаражом', 'Водитель']
+    for i in range(0, 14):
+        role = models.Role()
+        role.Name = role_list[i]
+        role.Priority = int(i)
+        db.session.add(role)
+    db.session.commit()
 # -------------------------------------------------------User-----------------------------------------------------------
 def add_user(login, password, email, role, name, avatar='default'):
     table = models.User()
@@ -218,5 +223,6 @@ add_user(login='admin', password='qwerzy132', email='лысый', role='admin', 
 add_provider_from_xlsx()
 addTemplate('Договор')
 addTemplate('Заявка')
+add_roles()
 # db.session.delete(models.Account.query.filter_by(id=1).first())
 db.session.commit()
