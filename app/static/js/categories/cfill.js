@@ -645,6 +645,7 @@ function adminPanel() {
                         <div class="row">
                             <div class="fields">
                                 <div class="btn btn-main btn-div" id="addNewPerson">Добавить сотрудника</div>
+                                <div class="btn btn-main btn-div" id="addNewPosition">Добавить должность</div>
                             </div>
                             <div class="category">АДМИН ПАНЕЛЬ</div>
                         </div>
@@ -660,6 +661,74 @@ function adminPanel() {
                             </tr>
                         </table>`)
                         fillingTable();
+                    }
+
+                    $('#addNewPosition').click(function() {
+                        $.ajax({
+                            url: '/getRoles',
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function(data) {
+                                data = JSON.parse(data);
+                                $('.table, .card_menu').remove();
+                                $('.info').append(`
+                                <div class="card_menu persons" id="card_menu">
+                                    <div class="title">
+                                        <div class="left_side">
+                                            <span>Добавление должности</span>
+                                        </div>
+                                        <div class="right_side">
+                                            <div class="close" onclick="closePersonCard()">
+                                                <img src="static/images/cancel.png">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <div class="row_card">
+                                            <table class="table_block">
+                                                <tr>
+                                                    <td>Должность</td>
+                                                    <td>
+                                                        <input class="string" type="text" id="new_position">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Приоритет</td>
+                                                    <td>
+                                                        <input class="string" type="number" id="new_position_priority">
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <table class="table_block">
+                                                <tr>
+                                                    <td>Список должностей</td>
+                                                    <td>
+                                                        <ul>
+                                                            ${fillPositionList(data)}
+                                                        </ul>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="next" style="margin-top: 35px;">
+                                        <button class="btn btn-main" onclick="addNewPosition()">Добавить</button>
+                                    </div>
+                                </div>
+                                `)
+                            }
+                        });
+                    })
+
+                    function fillPositionList(data) {
+                        let list = '';
+                        for (let i = 0; i < data.length; i++) {
+                            list += `
+                                <li disabled>${data[i].Name}</li>
+                            `
+                        }
+
+                        return list;
                     }
 
                     $('#addNewPerson').click(function() {
@@ -740,7 +809,35 @@ function adminPanel() {
         }
     });
 }
-
+function addNewPosition() {
+    let value = $('#new_position').val().trim();
+    let priority = $('#new_position_priority').val()
+    if (value != '') {
+        $.ajax({
+            url: '/addRole',
+            data: { name: value, priority: priority },
+            type: 'GET',
+            dataType: 'html',
+            success: function() {
+                closePersonCard();
+            }
+        }); 
+    } else {
+        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Введите должность!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+    } 
+}
 function createNewMember() {
     let ids = ['create_last_name', 'create_first_name', 'create_patronymic', 'create_role', 'create_password', 'create_login', 'create_email'];
     let data = {};

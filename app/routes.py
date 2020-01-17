@@ -149,7 +149,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1218)
+        return render_template('index.html', last_update=1252)
     else:
         return render_template('login.html', last_update=1017)
 
@@ -249,7 +249,8 @@ def downloadDoc():
             owner = models.Carrier.query.filter_by(id=request.args['card_id']).first()
         else:
             return 'Error 400'
-        return 'OK'
+        return to_PDF(owner=owner, name=request.args['name'],
+                    address=request.args['address'], delivery=request.args['delivery'])
     else:
         return redirect('/', code=302)
 

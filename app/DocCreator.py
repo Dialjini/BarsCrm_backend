@@ -87,6 +87,7 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
                                     document.KPP,
                                     document.rc, document.kc, document.Bik])
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return 'OK'
 
 
 
@@ -144,6 +145,7 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
                                     document.KPP,
                                     document.rc, document.kc, document.Bik])
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return 'OK'
 
 
 def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
@@ -197,6 +199,7 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
                               document.Client_prefix_address, document.Client_mail_address, document.UHH, document.KPP,
                               document.rc, document.kc, document.Bik])
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return 'OK'
 
 
 def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
@@ -249,6 +252,7 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
                               document.Client_prefix_address, document.Client_mail_address, document.UHH, document.KPP,
                               document.rc, document.kc, document.Bik])
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return 'OK'
 
 
 def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
@@ -311,6 +315,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(account.Sum), num2text(account.Sum)], doc=doc)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return 'OK'
 
 
 
@@ -373,3 +378,4 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(account.Sum), num2text(account.Sum)], doc=doc)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
+    return 'OK'

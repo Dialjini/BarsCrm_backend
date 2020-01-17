@@ -2141,6 +2141,28 @@ function closeModalMenu() {
     $('.overflow').remove();
     $('.search #search').val('');
 }
+function deleteCard(id) {
+    let data = id.split('_');
+    $.ajax({
+        url: '/getThisUser',
+        type: 'GET',
+        dataType: 'html',
+        success: function(result) {
+            this_user = JSON.parse(result);
+            if (this_user.role == 'admin') {
+                $.ajax({
+                    url: '/deleteCard',
+                    type: 'GET',
+                    data: { category: data[0], id: data[1] },
+                    dataType: 'html',
+                    success: function() {
+                        getTableData(saveTableAndCard);
+                    }
+                });
+            }
+        }
+    });
+}
 // Заполняем Заголовок карточки
 function getTitleInfo(element, selectedLine) {
     let title = $('<div>', { class: 'title' });
@@ -2163,7 +2185,7 @@ function getTitleInfo(element, selectedLine) {
         }
 
         function getUserInfo() {
-            let data;
+            let data, this_user;
             
             $.ajax({
                 url: '/getUsers',
@@ -2172,6 +2194,15 @@ function getTitleInfo(element, selectedLine) {
                 dataType: 'html',
                 success: function(result) {
                     data = JSON.parse(result);
+                }
+            });
+            $.ajax({
+                url: '/getThisUser',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    this_user = JSON.parse(result);
                 }
             });
             if (!selectedLine.Manager_active) {
@@ -2188,6 +2219,15 @@ function getTitleInfo(element, selectedLine) {
                             }))
                         }
                     }
+
+                    if (this_user.role == 'admin') {
+                        ul.append($('<li>', {
+                            html: 'Удалить карточку',
+                            id: `${element.id}_${element.status}`,
+                            onclick: 'deleteCard(this.id)'
+                        }))
+                    }
+
                     return ul;
                 }
                 return $('<div>', { class: 'gray', id: 'user',

@@ -181,13 +181,12 @@ function contractContentCard(elem) {
         for (let i = 0; i < old_docs.length; i++) {
             for (let j = 0; j < names.length; j++) {
                 if (old_docs[i].Owner_type == elem.id && elem.id == names[j].category && old_docs[i].Owner_id == elem.name.split('_')[1]) {
-                    console.log(old_docs);
                     documents += `
                     <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
                         <div class="format">DOCX</div>
                         <div class="date_number">
-                            <div class="top">15.01.2020</div>
-                            <div class="bottom">01/01/2020</div>
+                            <div class="top">${old_docs[i].Creation_date}</div>
+                            <div class="bottom">${old_docs[i].MonthNum}/${old_docs[i].Date}</div>
                         </div>
                         <span>${names[j].name} ${old_docs[i].Prefix}</span>
                     </div>
@@ -386,7 +385,9 @@ function downloadDocument(elem) {
     let check = confirm("Вы уверены, что Вы хотите создать новый договор?");
     if (!check) return;
     let data = $(elem).attr('name').split('_');
+    if (data[1] == 'new') data[1] = saveTableAndCard[1][1].length + 1;
     let select_cusmoter = $('#select_cusmoter').val()
+    console.log(elem);
     if (data[0] == 'client') {
         $.ajax({
             url: '/getClients',
@@ -403,24 +404,60 @@ function downloadDocument(elem) {
                             document_name = 'Dogovor_na_tovari_ip';
                         }
                         const link = document.createElement('a');
-                        link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
-                        if (select_cusmoter == 'ООО') {
-                            link.download = 'Договор поставки ООО.docx';
-                        } else {
-                            link.download = 'Договор поставки ИП.docx';
-                        }
-                        link.click();
-                        $('#list_contract').append(`
-                            
-                        `)
-                    //     <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
-                    //     <div class="format">DOCX</div>
-                    //     <div class="date_number">
-                    //         <div class="top">15.01.2020</div>
-                    //         <div class="bottom">01/01/2020</div>
-                    //     </div>
-                    //     <span>${names[j].name} ${old_docs[i].Prefix}</span>
-                    // </div>
+                        $.ajax({
+                            url: '/downloadDoc',
+                            data: { category: data[0], name: document_name, card_id: data[1], address: data_client[i].Adress, delivery: 'no' },
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function(result) {
+                                console.log(result);
+                                $.ajax({
+                                    url: '/getDocs',
+                                    type: 'GET',
+                                    dataType: 'html',
+                                    success: function(result) {
+                                        console.log(1);
+                                        let documents = '';
+                                        let old_docs = JSON.parse(result);
+                                        console.log(old_docs);
+                                        let names = [
+                                            {category: 'client', name: 'Договор поставки от'},
+                                            {category: 'carrier', name: 'Договор об оказании услуг перевозки грузов от'}
+                                        ]
+                                        let test_1 = $(elem).attr('name');
+                                        if (test_1.includes('new')) {
+                                            test_1 = test_1.replace(/new/g, saveTableAndCard[1][1].length + 1)
+                                        }
+                                        for (let i = 0; i < old_docs.length; i++) {
+                                            for (let j = 0; j < names.length; j++) {
+                                                console.log(old_docs[i].Owner_type, data[0], names[j].category, old_docs[i].Owner_id, test_1.split('_')[1])
+                                                if (old_docs[i].Owner_type == data[0] && data[0] == names[j].category && old_docs[i].Owner_id == test_1.split('_')[1]) {
+                                                    documents += `
+                                                    <div class="contract flex" name="${names[j].name} ${old_docs[i].Prefix}" id="${old_docs[i].id}" onclick="downloadOldDocument(this)">
+                                                        <div class="format">DOCX</div>
+                                                        <div class="date_number">
+                                                            <div class="top">${old_docs[i].Creation_date}</div>
+                                                            <div class="bottom">${old_docs[i].MonthNum}/${old_docs[i].Date}</div>
+                                                        </div>
+                                                        <span>${names[j].name} ${old_docs[i].Prefix}</span>
+                                                    </div>
+                                                    `
+                                                }
+                                            }
+                                        }
+                                        $('#list_contract').empty();
+                                        $('#list_contract').append(documents);
+                                    }
+                                });
+                            }
+                        })
+                        // link.href = `/downloadDoc?category=${data[0]}&name=${document_name}&card_id=${data[1]}&address=${data_client[i].Adress}&delivery=no`;
+                        // if (select_cusmoter == 'ООО') {
+                        //     link.download = 'Договор поставки ООО.docx';
+                        // } else {
+                        //     link.download = 'Договор поставки ИП.docx';
+                        // }
+                        // link.click();
                     }
                 }
             }
@@ -1153,13 +1190,22 @@ function addMember(id = 'client', selectedLine = '') {
     });
     function fillListRole() {
         let options = `<option disabled selected value="Не выбрана">Должность</option>`;
-        let roles = ['Собственник', 'Директор', 'Генеральный директор', 'Заместитель директора', 'Председатель', 'Главный бухгалтер',
-                     'Бухгалтер', 'Снабжение', 'Зоотехник', 'Агроном', 'Секретарь', 'Логист', 'Зав. гаражом', 'Водитель'];
+        let roles;
+        $.ajax({
+            url: '/getRoles',
+            type: 'GET',
+            dataType: 'html',
+            async: false,
+            success: function(result) {
+                roles = JSON.parse(result);
+            }
+        });
+        console.log(roles);
         for (let i = 0; i < roles.length; i++) {
-            if (selectedLine.Position == roles[i]) {
-                options += `<option selected value="${roles[i]}">${roles[i]}</option>`
+            if (selectedLine.Position == roles[i].Name) {
+                options += `<option selected value="${roles[i].Name}">${roles[i].Name}</option>`
             } else {
-                options += `<option value="${roles[i]}">${roles[i]}</option>`
+                options += `<option value="${roles[i].Name}">${roles[i].Name}</option>`
             }
         }
         return options;
