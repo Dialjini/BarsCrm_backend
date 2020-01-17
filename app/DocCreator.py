@@ -37,6 +37,7 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
 
     document.Prefix = 'ООО'
     document.UHH = owner.UHH
@@ -94,6 +95,7 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
 
     document.Prefix = 'ИП'
     document.UHH = owner.UHH
@@ -150,6 +152,7 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
 
     document.Prefix = 'ООО'
     document.UHH = owner.UHH
@@ -203,6 +206,7 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
     document.Prefix = 'ИП'
 
     document.Owner_type = owner.__tablename__
@@ -257,6 +261,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     Client = models.Client.query.filter_by(Name=delivery.Client).first()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
 
     document.UHH = owner.UHH
@@ -320,6 +325,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     Client = models.Client.query.filter_by(Name=delivery.Client).first()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
 
     document.UHH = owner.UHH

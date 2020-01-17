@@ -145,6 +145,7 @@ class Document(db.Model):
     Owner_id = db.Column(db.Integer)
     MonthNum = db.Column(db.Integer)
     Path = db.Column(db.String)
+    Creation_date = db.Column(db.String)
 
 
 def getMonthNum():
