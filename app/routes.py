@@ -250,8 +250,10 @@ def downloadDoc():
         else:
             return 'Error 400'
 
-        return to_PDF(owner=owner, name=request.args['name'],
+        download = to_PDF(owner=owner, name=request.args['name'],
                       address=request.args['address'], delivery=request.args['delivery'])
+        emit('doc_ready')
+        return download
     else:
         return redirect('/', code=302)
 
