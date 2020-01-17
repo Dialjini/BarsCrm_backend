@@ -249,11 +249,7 @@ def downloadDoc():
             owner = models.Carrier.query.filter_by(id=request.args['card_id']).first()
         else:
             return 'Error 400'
-
-        download = to_PDF(owner=owner, name=request.args['name'],
-                      address=request.args['address'], delivery=request.args['delivery'])
-        emit('doc_ready')
-        return download
+        return 'OK'
     else:
         return redirect('/', code=302)
 
