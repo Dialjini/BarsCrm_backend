@@ -360,14 +360,14 @@ def findContacts():
 
             for i in Contacts:
                 try:
-                    if i.Number == data or i.Email == data or i.Last_name:
+                    if i.Number == data or data in i.Email or i.Last_name == data:
                         result.append(json.loads(table_to_json([i]))[0])
                 except Exception:
                     a='nothin'
 
             for i in Users:
                 try:
-                    if i.email == data:
+                    if data in i.email:
                         subres = json.loads(table_to_json([i]))[0]
                         subres.pop('password', None)
                         result.append(subres)
