@@ -2044,14 +2044,42 @@ body {
           flex-direction: column;
 }
 
+.page .rightBlock .sidebar .infoblock .drop_down_search .region .region_name {
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+}
+
+.page .rightBlock .sidebar .infoblock .drop_down_search .region .region_name:hover {
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  background: #e8e8e8;
+  padding: 0 10px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border-radius: 2px;
+}
+
 .page .rightBlock .sidebar .infoblock .drop_down_search .region ul {
   margin-left: 20px;
   font-size: 12px;
-  list-style: inside;
 }
 
 .page .rightBlock .sidebar .infoblock .drop_down_search .region ul li {
   margin-top: 5px;
+  height: 20px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  width: 90%;
+}
+
+.page .rightBlock .sidebar .infoblock .drop_down_search .region ul li:hover {
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  background: #e8e8e8;
+  padding: 0 10px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border-radius: 2px;
 }
 
 .page .rightBlock .sidebar .infoblock .drop_down_search .region:first-child {

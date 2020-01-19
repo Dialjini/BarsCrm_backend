@@ -1310,6 +1310,14 @@ function removeMemberOrRow(id) {
 function maskNumber(id) {
     $(`#${id}`).mask('# ##0.00', { reverse: true });
 }
+function changeSearchMode() {
+    if ($('#active_comment_seach').prop('checked')) {
+        $('#search').attr('placeholder', 'Введите текст комментария');
+    } else {
+        $('#search').attr('placeholder', 'Введите фамилию, телефон или email');
+    }
+    
+}
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
     const tableInfo = [

@@ -705,7 +705,49 @@ function cancelSearch() {
         manager: {status: false, filter: null, last: null}
     }
 }
+function searchRegionFill(element) {
+    $('.centerBlock .header .cancel').remove();
 
+    let search = $(element).html();
+    let data = saveTableAndCard[1][1];
+    let listData = [
+        { id: 'client', list: 'Oblast', filter: filterClient },
+        { id: 'provider', list: 'Oblast', filter: filterProvider },
+        { id: 'carrier', list: 'Region', filter: filterCarrier },
+    ]
+    let searchCards = [];
+    for (let i = 0; i < listData.length; i++) {
+        if (listData[i].id == saveTableAndCard[0].id) {
+            for (let j = 0; j < data.length; j++) {
+                let string = String(data[j][listData[i].list]).toLowerCase();
+                if (string.includes(search.toLowerCase())) {
+                    searchCards.push(data[j]);
+                }
+            }
+            let clientCards = [];
+            for (let j = 0; j < searchCards.length; j++) {
+                if (searchCards[j].Category === 'Клиент') {
+                    clientCards.push(searchCards[j]);
+                    searchCards.splice(j, 1);
+                    j--;
+                }
+            }
+            for (let j = 0; j < clientCards.length; j++) {
+                searchCards.push(clientCards[j]);
+            }
+            listData[i].filter[1][1] = searchCards.reverse();
+            $('.table').remove();
+            $('.info').append(fillingTables(listData[i].filter, true));
+            break;
+        }
+    }
+    $('.centerBlock .header .cancel').remove();
+    $('.centerBlock .header').append(`
+        <div class="cancel">
+            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+        </div>
+    `)
+}
 function searchFill(element) {
     $('.centerBlock .header .cancel').remove();
 
@@ -714,7 +756,7 @@ function searchFill(element) {
     let listData = [
         { id: 'client', list: 'Rayon', filter: filterClient },
         { id: 'provider', list: 'Rayon', filter: filterProvider },
-        { id: 'carrier', list: 'Region', filter: filterCarrier },
+        { id: 'carrier', list: 'Area', filter: filterCarrier },
     ]
     let searchCards = [];
     for (let i = 0; i < listData.length; i++) {
@@ -760,19 +802,18 @@ function searchCategoryInfo() {
     $('.centerBlock .header .cancel').remove();
 
     let searchInfo = $('#search').val();
-    let phone = +searchInfo;
 
-    if (!isNaN(phone) && searchInfo.length > 3) {
         $.ajax({
             url: '/findContacts',
             type: 'GET',
-            data: {data: +searchInfo},
+            data: {data: searchInfo},
             dataType: 'html',
             success: function(result) {
                 $('.modal_search').remove();
                 $('.overflow').remove();
 
                 let data = JSON.parse(result);
+                console.log(data);
                 function fillTable() {
                     let table = $('<table>', { class: 'table_search' });
                     table.append(`
@@ -846,84 +887,4 @@ function searchCategoryInfo() {
             }
         });
         return;
-    }
-
-    let data = saveTableAndCard[1][1];
-    let listData = [
-        { id: 'client', list: ['id', 'Name', 'Oblast', 'Rayon', 'Category'], filter: filterClient },
-        { id: 'provider', list: ['Oblast', 'Rayon', 'Name', 'Group', 'Price'], filter: filterProvider },
-        { id: 'carrier', list: ['Name', 'Region', 'Area', 'Capacity', 'View'], filter: filterCarrier },
-        { id: 'account', list: ['Prefix', 'Date', 'Name', 'Sum', 'Status', 'Hello'], filter: filterAccount },
-        { id: 'delivery', list: ['Date', 'Name', 'Stock', 'Carrier_id', 'Prefix', 'Price', 'Payment_date'], filter: filterDelivery },
-    ]
-    let searchCards = [];
-    for (let i = 0; i < listData.length; i++) {
-        if (listData[i].id == saveTableAndCard[0].id && saveTableAndCard[0].id == 'account') {
-            for (let j = 0; j < data.length; j++) {
-                for (let k = 0; k < listData[i].list.length; k++) {
-                    let string;
-                    if (listData[i].list[k] == 'Prefix') {
-                        string = String(data[j].items[0][listData[i].list[k]]).toLowerCase()
-                    } else {
-                        string = String(data[j].account[listData[i].list[k]]).toLowerCase();
-                    }
-                    if (string.includes(searchInfo.toLowerCase())) {
-                        searchCards.push(data[j]);
-                        break;
-                    }
-                }
-            }
-            listData[i].filter[1][1] = searchCards;
-            $('.table').remove();
-            $('.info').append(fillingTables(listData[i].filter, true));
-            break;
-        }
-        if (listData[i].id == saveTableAndCard[0].id && saveTableAndCard[0].id == 'delivery') {
-            for (let j = 0; j < data.length; j++) {
-                for (let k = 0; k < listData[i].list.length; k++) {
-                    let string = String(data[j].delivery[listData[i].list[k]]).toLowerCase();
-                    if (string.includes(searchInfo.toLowerCase())) {
-                        searchCards.push(data[j]);
-                        break;
-                    }
-                }
-            }
-            listData[i].filter[1][1] = searchCards;
-            $('.table').remove();
-            $('.info').append(fillingTables(listData[i].filter, true));
-            break;
-        }
-        if (listData[i].id == saveTableAndCard[0].id) {
-            for (let j = 0; j < data.length; j++) {
-                for (let k = 0; k < listData[i].list.length; k++) {
-                    let string = String(data[j][listData[i].list[k]]).toLowerCase();
-                    if (string.includes(searchInfo.toLowerCase())) {
-                        searchCards.push(data[j]);
-                        break;
-                    }
-                }
-            }
-            let clientCards = [];
-            for (let j = 0; j < searchCards.length; j++) {
-                if (searchCards[j].Category === 'Клиент') {
-                    clientCards.push(searchCards[j]);
-                    searchCards.splice(j, 1);
-                    j--;
-                }
-            }
-            for (let j = 0; j < clientCards.length; j++) {
-                searchCards.push(clientCards[j]);
-            }
-            listData[i].filter[1][1] = searchCards;
-            $('.table').remove();
-            $('.info').append(fillingTables(listData[i].filter, true));
-            break;
-        }
-    }
-    $('.centerBlock .header .cancel').remove();
-    $('.centerBlock .header').append(`
-        <div class="cancel">
-            <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
-        </div>
-    `)
 }
