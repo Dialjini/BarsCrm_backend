@@ -123,6 +123,8 @@ def to_PDF(name, owner, address, delivery):
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
 
+    print(name)
+
     if name == 'DogovorNaDostavkuIP':
         return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
     elif name == 'DogovorNaDostavkuOOO':

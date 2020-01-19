@@ -258,7 +258,7 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
 def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
-    Client = models.Client.query.filter_by(Name=delivery.Client).first()
+    Client = models.Client.query.filter_by(Name=delivery.Name).first()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
@@ -289,7 +289,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     item_info = {'mass': 0}
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
-            item_info['mass'] = item_info['mass'] + i.Weight
+            item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
             item_info['packing'] = i.Packing
 
     db.session.add(document)
@@ -313,16 +313,20 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
                                         delivery.Stock, delivery.Contact_End, Client.Name, Client.Adress,
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                        str(account.Sum), num2text(account.Sum)], doc=doc)
+                                        str(account.Sum), num2text(float(account.Sum))], doc=doc)
+    # for i in doc.paragraphs:
+     #    print(i.text)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
-    return 'OK'
+    return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
+                                   filename=document.Path)
 
 
 
 def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
-    Client = models.Client.query.filter_by(Name=delivery.Client).first()
+    print(delivery.Name)
+    Client = models.Client.query.filter_by(Name=delivery.Name).first()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
@@ -353,7 +357,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     item_info = {'mass': 0}
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
-            item_info['mass'] = item_info['mass'] + i.Weight
+            item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
             item_info['packing'] = i.Packing
 
     db.session.add(document)
@@ -376,6 +380,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
                                         delivery.Stock, delivery.Contact_End, Client.Name, Client.Adress,
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                        str(account.Sum), num2text(account.Sum)], doc=doc)
+                                        str(account.Sum), num2text(float(account.Sum))], doc=doc)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
-    return 'OK'
+    return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
+                                   filename=document.Path)
