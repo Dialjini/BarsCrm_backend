@@ -718,6 +718,30 @@ def getAllClientContacts():
         return redirect('/', code=302)
 
 
+@app.route('/editItem', methods=['GET'])
+def editItem():
+    if 'username' in session:
+        data = request.args
+        item = models.Item.query.filter_by(id=data['id']).first()
+        item.Weight = data['item_weight']
+        item.Packing = data['item_packing']
+        item.Fraction = data['item_fraction']
+        item.Creator = data['item_creator']
+        item.Name = data['item_product']
+        item.Cost = data['item_price']
+        item.Volume = data['item_volume']
+        item.NDS = data['item_vat']
+        item.Group_id = data['group_id']
+        item.Prefix = data['item_prefix']
+        item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
+        item.Purchase_price = data['item_purchase_price']
+
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():
     if 'username' in session:
