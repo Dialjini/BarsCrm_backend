@@ -3,8 +3,14 @@ function createRegionMenu() {
     let data = saveTableAndCard[1][1];
 
     for (let i = 0; i < data.length; i++) {
-        if (data[i].Oblast != null) {
-            regions.push({ name: data[i].Oblast, areas: [] });
+        if (saveTableAndCard[0].id == 'carrier') {
+            if (data[i].Region != null) {
+                regions.push({ name: data[i].Region, areas: [] });
+            }
+        } else {
+            if (data[i].Oblast != null) {
+                regions.push({ name: data[i].Oblast, areas: [] });
+            }
         }
     }
 
@@ -19,8 +25,14 @@ function createRegionMenu() {
 
     for (let i = 0; i < data.length; i++) {
         for (let j = 0; j < regions.length; j++) {
-            if (regions[j].name == data[i].Oblast && data[i].Rayon != null && data[i].Rayon != '') {
-                regions[j].areas.push(data[i].Rayon)
+            if (saveTableAndCard[0].id == 'carrier') {
+                if (regions[j].name == data[i].Region && data[i].Area != null && data[i].Area != '') {
+                    regions[j].areas.push(data[i].Area)
+                }
+            } else {
+                if (regions[j].name == data[i].Oblast && data[i].Rayon != null && data[i].Rayon != '') {
+                    regions[j].areas.push(data[i].Rayon)
+                }
             }
         }
     } 
@@ -54,9 +66,10 @@ function createRegionMenu() {
         $(element).append(() => {
             let region = $('<div />', {
                 class: 'region',
-                append: $('<span>', {
-                    class: '',
-                    html: regions[i].name
+                append: $('<div>', {
+                    class: 'region_name',
+                    html: regions[i].name,
+                    onclick: 'searchRegionFill(this)' // Фильтровать по области
                 }).add($('<ul>', {
                     class: 'list_regions',
                     html: createLiList(i)
