@@ -327,6 +327,20 @@ def getRoles():
         return redirect('/', code=302)
 
 
+@app.route('/findComments', methods=['GET'])
+def findComments():
+    if 'username' in session:
+        result = []
+        data = request.args['data']
+        Comments = models.Notes.query.all()
+        for i in Comments:
+            if data in i:
+                result.append(table_to_json(i))
+        return result
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/findContacts', methods=['GET'])
 def findContacts():
     if 'username' in session:
@@ -346,7 +360,7 @@ def findContacts():
 
             for i in Contacts:
                 try:
-                    if i.Number == data or i.Email == data:
+                    if i.Number == data or i.Email == data or i.Last_name:
                         result.append(json.loads(table_to_json([i]))[0])
                 except Exception:
                     a='nothin'
