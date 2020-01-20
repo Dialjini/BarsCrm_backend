@@ -915,6 +915,15 @@ def getThisUser():
         return redirect('/', code=302)
 
 
+@app.route('/getThisItem', methods=['GET'])
+def getThisItem():
+    if 'username' in session:
+        item = models.Item.filter_by(Item_id=request.args['id']).first()
+        return item
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/addItems', methods=['GET'])
 def addItems():
     if 'username' in session:
