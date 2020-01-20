@@ -918,8 +918,8 @@ def getThisUser():
 @app.route('/getThisItem', methods=['GET'])
 def getThisItem():
     if 'username' in session:
-        item = models.Item.filter_by(Item_id=request.args['id']).first()
-        return table_to_json(item)
+        item = models.Item.query.filter_by(Item_id=request.args['id']).first()
+        return table_to_json([item])
     else:
         return redirect('/', code=302)
 
