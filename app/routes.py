@@ -722,7 +722,7 @@ def getAllClientContacts():
 def editItem():
     if 'username' in session:
         data = request.args
-        item = models.Item.query.filter_by(id=data['id']).first()
+        item = models.Item.query.filter_by(Item_id=data['id']).first()
         item.Weight = data['item_weight']
         item.Packing = data['item_packing']
         item.Fraction = data['item_fraction']
