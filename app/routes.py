@@ -454,6 +454,7 @@ def addMessages():
         Message.Date = i['comment_date']
         Message.Manager = i['comment_role']
         Message.Note = i['comment_content']
+        Message.Creator = i['comment_creator']
         if request.args['category'] == 'client':
             Message.Client_id = request.args['id']
         elif request.args['category'] == 'provider':
