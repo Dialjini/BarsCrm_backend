@@ -349,8 +349,14 @@ def findContacts():
         Contacts = models.Contacts.query.all()
         Deliveryies = models.Delivery.query.all()
         Users = models.User.query.all()
+        try:
+            for i in data:
+                checker = int(i)
+            number = True
+        except Exception:
+            number = False
 
-        if len(data) > 8:
+        if not number or len(data) > 8:
             for i in Deliveryies:
                 try:
                     if i['Contact_End'] == data or i['Contact_Number'] == data:
@@ -360,6 +366,8 @@ def findContacts():
 
             for i in Contacts:
                 try:
+                    print(data)
+                    print(i.Last_name)
                     if i.Number == data or data in i.Email or i.Last_name == data:
                         result.append(json.loads(table_to_json([i]))[0])
                 except Exception:
