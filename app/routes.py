@@ -353,64 +353,28 @@ def findContacts():
         Contacts = models.Contacts.query.all()
         Deliveryies = models.Delivery.query.all()
         Users = models.User.query.all()
-        try:
-            for i in data:
-                checker = int(i)
-            number = True
-        except Exception:
-            number = False
+        for i in Deliveryies:
+            try:
+                if data in i['Contact_End'] or data in i['Contact_Number']:
+                    result.append(json.loads(table_to_json([i]))[0])
+            except Exception:
+                a='nothin'
 
-        if not number or len(data) > 8:
-            for i in Deliveryies:
-                try:
-                    if i['Contact_End'] == data or i['Contact_Number'] == data:
-                        result.append(json.loads(table_to_json([i]))[0])
-                except Exception:
-                    a='nothin'
+        for i in Contacts:
+            try:
+                if data in i.Number or data in i.Email or data in i.Last_name:
+                    result.append(json.loads(table_to_json([i]))[0])
+            except Exception:
+                a='nothin'
 
-            for i in Contacts:
-                try:
-                    print(data)
-                    print(i.Last_name)
-                    if i.Number == data or data in i.Email or i.Last_name == data:
-                        result.append(json.loads(table_to_json([i]))[0])
-                except Exception:
-                    a='nothin'
-
-            for i in Users:
-                try:
-                    if data in i.email:
-                        subres = json.loads(table_to_json([i]))[0]
-                        subres.pop('password', None)
-                        result.append(subres)
-                except Exception:
-                    a='nothin'
-
-        else:
-            for i in Deliveryies:
-                try:
-                    if i['Contact_End'][len(i['Contact_End'])-len(data):len(i['Contact_End'])] == data\
-                            or i['Contact_Number'][len(i['Contact_Number'])-len(data):len(i['Contact_Number'])] == data:
-                        result.append(json.loads(table_to_json([i]))[0])
-                except Exception:
-                    a='nothin'
-
-            for i in Contacts:
-                try:
-                    if i.Number[len(i.Number)-len(data):len(i.Number)] == data \
-                            or i.Email[len(i.Email)-len(data):len(i.Email)] == data:
-                        result.append(json.loads(table_to_json([i]))[0])
-                except Exception:
-                    a='nothin'
-
-            for i in Users:
-                try:
-                    if i.email[len(i.email)-len(data):len(i.email)] == data:
-                        subres = json.loads(table_to_json([i]))[0]
-                        subres.pop('password', None)
-                        result.append(subres)
-                except Exception:
-                    a='nothin'
+        for i in Users:
+            try:
+                if data in i.email:
+                     subres = json.loads(table_to_json([i]))[0]
+                     subres.pop('password', None)
+                     result.append(subres)
+            except Exception:
+                a='nothin'
 
         return json.dumps(result)
     else:
