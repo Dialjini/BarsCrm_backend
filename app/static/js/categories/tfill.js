@@ -406,21 +406,6 @@ let rowFilling = (object, id, table) => {
         return table;
     }
 
-    let rowFillingFilterStock = (id) => {
-        table.append(getTitleTable());
-        for (let i = selectTableData.length - 1; i >= 0; i--) {
-            let element = $('<tr>', {id: `stock_${selectTableData[i].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-            const name = [selectTableData[i].Prefix, selectTableData[i].Group_name, selectTableData[i].Name, selectTableData[i].Weight, selectTableData[i].Packing, selectTableData[i].Volume, selectTableData[i].Cost, selectTableData[i].NDS, selectTableData[i].stock_address];
-
-            for (let j = 0; j < name.length; j++) {
-                let elementTr = $('<td>', { html: name[j] });
-                element.append(elementTr);
-            }
-            table.append(element);
-        }
-        return table;
-    }
-
     const tableFunctiouns = [
         { id: 'client', function: rowFillingDefault },
         { id: 'provider', function: rowFillingProvider },
@@ -430,7 +415,7 @@ let rowFilling = (object, id, table) => {
         { id: 'account', function: rowFillingAccount },
         { id: 'delivery', function: rowFillingDelivery },
         { id: 'stock', function: rowFillingStock },
-        { id: 'filter_stock', function: rowFillingFilterStock },
+        { id: 'filter_stock', function: rowFillingStock },
     ]
 
     for (let element of tableFunctiouns) {

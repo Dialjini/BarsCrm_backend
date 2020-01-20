@@ -50,21 +50,21 @@ function linkField() {
         const list = [
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
-            { width: 110.328, id: 'stock_packing', list: [] },
-            { width: 92.297, id: 'stock_stock', list: [] },
-            { width: 97.281, id: 'stock_volume', list: [] },
             { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
             { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] }
         ]
 
         let idList = this.id, element;
-        let info = ['Group_name', 'Name', 'Packing', 'stock_address'];
+        let filter_table = categoryInStock[1][1];
+        let info = ['Group_name', 'Name'];
+
         if (!idList.includes('analytics')) {
-            for (let k = 0; k < info.length; k++) {
-                for (let i = 0; i < categoryInStock[1][1].length; i++) {
-                    for (let j = 0; j < categoryInStock[1][1][i].items.length; j++) {
-                        if (k !== 3) list[k].list.push(categoryInStock[1][1][i].items[j][info[k]]);
-                        else list[k].list.push(categoryInStock[1][1][i][info[k]])
+            if (!$('.report_list').is(`#${idList}`)) {
+                for (let k = 0; k < info.length; k++) {
+                    for (let i = 0; i < filter_table.length; i++) {
+                        for (let j = 0; j < filter_table[i].items.length; j++) {
+                            list[k].list.push(filter_table[i].items[j][info[k]])
+                        }
                     }
                 }
             }
@@ -127,9 +127,9 @@ function linkField() {
             for (let i = 0; i < list.length; i++) {
                 if (list[i].id == idList) {
                     if (width > list[i].width) {
-                        $(`#${idList}`).width(width);
+                        $(`#${idList}`).width(+width + 20);
                         for (let j = 0; j < $(`#${idList} .report_list`).children()[0].children.length; j++) {
-                            $(`#${idList} .report_list`).children()[0].children[j].style.width = width + 'px';
+                            $(`#${idList} .report_list`).children()[0].children[j].style.width = +width + 20 + 'px';
                         }
                     } else {
                         $(`#${idList}`).width(list[i].width);
@@ -148,8 +148,10 @@ function linkField() {
 
         $('li').click(function() {
             let filterName = this.innerHTML;
+            $('#not_found').remove();
 
             $('table').remove();
+            $(`#${idList}`).width('auto');
             $(`#${idList} #active_field`).html(namesList[this.id.split('_')[2]]);
             $(`#${idList} .field_with_modal`).addClass('active');
 
@@ -184,194 +186,56 @@ function linkField() {
                         <div class="cancel">
                             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
                         </div>
-                    `) 
-                    let filter_ids = [
+                    `)
+
+                    const filter_ids = [
                         { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
                         { id: 'stock_product', filterName: 'Name', name: 'Товар'},
-                        { id: 'stock_packing', filterName: 'Packing', name: 'Упаковка'},
-                        { id: 'stock_volume', filterName: 'Volume', name: 'Объем'},
-                        { id: 'stock_stock', filterName: 'stock_address', name: 'Склад'},
                     ]
-                    if (lastData.last_id == idList) {
-                        if (lastData.last_table[0].id == 'filter_stock') {
-                            let data = lastData.last_table;
-                            lastData.last_table = [
-                                { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
-                                [[
-                                    { name: 'Группа товаров', width: 15 },
-                                    { name: 'Товар', width: 15 },
-                                    { name: 'Юр. лицо', width: 5 },
-                                    { name: 'Вес', width: 5 },
-                                    { name: 'Объем, кг.', width: 5 },
-                                    { name: 'Упаковка', width: 15 },
-                                    { name: 'НДС', width: 5 },
-                                    { name: 'Цена прайса, руб.', width: 5 },
-                                    { name: 'Склад', width: 15 },
-                                ]],
-                            ];
-                            lastData.last_table[1][1] = data[1][1];
-                            let filterTable = [];
-                            for (let i = 0; i < data[1][1].length; i++) {
-                                for (let k = 0; k < filter_ids.length; k++) {
-                                    if (filter_ids[k].id == idList) {
-                                        if (data[1][1][i][filter_ids[k].filterName] == filterName) {
-                                            data[1][1][i].stock_address = data[1][1][i].stock_address;
-                                            filterTable.push(data[1][1][i]);
-                                        }   
-                                    }
-                                }
-                            }
-                            data[1][1] = [];
-                            for (let i = 0; i < filterTable.length; i++) {
-                                data[1][1].push(filterTable[i]);
-                            }
-                            lastData.last_id = idList;
-                            return fillingTables(data);
-                        } else if (lastData.last_table[0].id == 'stock') {
-                            let data = lastData.last_table;
-                            lastData.last_table = [
-                                { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
-                                [[
-                                    { name: 'Юр. лицо', width: 5 },
-                                    { name: 'Группа товаров', width: 15 },
-                                    { name: 'Товар', width: 15 },
-                                    { name: 'Вес', width: 5 },
-                                    { name: 'Упаковка', width: 15 },
-                                    { name: 'Объем, кг.', width: 5 },
-                                    { name: 'Цена прайса, руб.', width: 5 },
-                                    { name: 'НДС', width: 5 },
-                                    { name: 'Склад', width: 15 },
-                                ]],
-                            ];
-                            lastData.last_table[1][1] = data[1][1];
-                            let filterTable = [];
 
-                            for (let i = 0; i < data[1][1].length; i++) {
-                                for (let j = 0; j < data[1][1][i].items.length; j++) {
-                                    for (let k = 0; k < filter_ids.length; k++) {
-                                        if (idList == 'stock_stock') {
-                                            if (data[1][1][i][filter_ids[k].filterName] == filterName) {
-                                                data[1][1][i].items[j].stock_address = data[1][1][i].stock_address;
-                                                filterTable.push(data[1][1][i].items[j]);
-                                            }   
-                                        } else if (filter_ids[k].id == idList) {
-                                            if (data[1][1][i].items[j][filter_ids[k].filterName] == filterName) {
-                                                data[1][1][i].items[j].stock_address = data[1][1][i].stock_address;
-                                                filterTable.push(data[1][1][i].items[j]);
-                                            }
-                                        }
-                                    }
+                    for (let i = 0; i < filter_ids.length; i++) {
+                        if ($(`#${filter_ids[i].id}`).children().children()[0].innerHTML != filter_ids[i].name) {
+                            for (let j = 0; j < filter_parameters.length; j++) {
+                                if (filter_parameters[j].name == filter_ids[i].filterName) {
+                                    filter_parameters[j].filter = $(`#${filter_ids[i].id}`).children().children()[0].innerHTML;
                                 }
                             }
-                            data[1][1] = [];
-                            for (let i = 0; i < filterTable.length; i++) {
-                                data[1][1].push(filterTable[i]);
-                            }
-                            data[0].id = 'filter_stock';
-                            lastData.last_id = idList;
-                            return fillingTables(data);
                         }
-                    } else {
-                        if (categoryInFilterStock[1][1].length == 0) {
-                            // Фильтровать от inStock
-                            let data = categoryInStock[1][1];
-                            let filterTable = [];
-
-                            lastData.last_table = [
-                                { id: 'stock', name: 'Склад', active: true, lastCard: [null, null] },
-                                [[
-                                    { name: 'Юр. лицо', width: 5 },
-                                    { name: 'Группа товаров', width: 15 },
-                                    { name: 'Товар', width: 15 },
-                                    { name: 'Вес', width: 5 },
-                                    { name: 'Упаковка', width: 15 },
-                                    { name: 'Объем, кг.', width: 5 },
-                                    { name: 'Цена прайса, руб.', width: 5 },
-                                    { name: 'НДС', width: 5 },
-                                    { name: 'Склад', width: 15 },
-                                ]],
-                            ];
-                            lastData.last_table[1][1] = categoryInStock[1][1];
-                            for (let i = 0; i < data.length; i++) {
-                                for (let j = 0; j < data[i].items.length; j++) {
-                                    for (let k = 0; k < filter_ids.length; k++) {
-                                        if (idList == 'stock_stock') {
-                                            if (data[i][filter_ids[k].filterName] == filterName) {
-                                                data[i].items[j].stock_address = data[i].stock_address;
-                                                filterTable.push(data[i].items[j]);
-                                            }
-                                        } else if (filter_ids[k].id == idList) {
-                                            if (data[i].items[j][filter_ids[k].filterName] == filterName) {
-                                                data[i].items[j].stock_address = data[i].stock_address;
-                                                filterTable.push(data[i].items[j]);
-                                            }
-                                        }
-                                    }
-                                }
+                    }
+                    categoryInFilterStock[1][1] = [];
+                    let items = []
+                    for (let i = 0; i < filter_table.length; i++) {
+                        for (let k = 0; k < filter_table[i].items.length; k++) {
+                            if ((filter_table[i].items[k][filter_parameters[0].name] == filter_parameters[0].filter || filter_parameters[0].filter == '')
+                                && (filter_table[i].items[k][filter_parameters[1].name] == filter_parameters[1].filter || filter_parameters[1].filter == '')) {
+                                items.push({ stock_address: filter_table[i].stock_address, items: [filter_table[i].items[k]]});
                             }
-                            data = [];
-                            for (let i = 0; i < filterTable.length; i++) {
-                                data.push(filterTable[i]);
-                            }
-                            lastData.last_id = idList;
-                            categoryInFilterStock[1][1] = data;
-                            data = [
-                                { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
-                                [[
-                                    { name: 'Юр. лицо', width: 5 },
-                                    { name: 'Группа товаров', width: 15 },
-                                    { name: 'Товар', width: 15 },
-                                    { name: 'Вес', width: 5 },
-                                    { name: 'Упаковка', width: 15 },
-                                    { name: 'Объем, кг.', width: 5 },
-                                    { name: 'Цена прайса, руб.', width: 5 },
-                                    { name: 'НДС', width: 5 },
-                                    { name: 'Склад', width: 15 },
-                                ], data],
-                                
-                            ]
-                            return fillingTables(data);
-                        } else {
-                            // Фильтровать filterStock
-                            let data = categoryInFilterStock;
-                            lastData.last_table = [
-                                { id: 'filter_stock', name: 'Склад', active: true, lastCard: [null, null] },
-                                [[
-                                    { name: 'Юр. лицо', width: 5 },
-                                    { name: 'Группа товаров', width: 15 },
-                                    { name: 'Товар', width: 15 },
-                                    { name: 'Вес', width: 5 },
-                                    { name: 'Упаковка', width: 15 },
-                                    { name: 'Объем, кг.', width: 5 },
-                                    { name: 'Цена прайса, руб.', width: 5 },
-                                    { name: 'НДС', width: 5 },
-                                    { name: 'Склад', width: 15 },
-                                ]],
-                            ];
-                            lastData.last_table[1][1] = categoryInFilterStock[1][1];
-                            let filterTable = [];
-                            for (let i = 0; i < data[1][1].length; i++) {
-                                for (let k = 0; k < filter_ids.length; k++) {
-                                    if (filter_ids[k].id == idList) {
-                                        if (data[1][1][i][filter_ids[k].filterName] == filterName) {
-                                            data[1][1][i].stock_address = data[1][1][i].stock_address;
-                                            filterTable.push(data[1][1][i]);
-                                        }   
-                                    }
-                                }
-                            }
-                            data[1][1] = [];
-                            for (let i = 0; i < filterTable.length; i++) {
-                                data[1][1].push(filterTable[i]);
-                            }
-                            lastData.last_id = idList;
-                            return fillingTables(data);
                         }
-                    }                  
+                    }
+                    for (let i = 0; i < items.length - 1; i++) {
+                        for (let j = i + 1; j < items.length; j++) {
+                            if (items[i].stock_address === items[j].stock_address) {
+                                for (let k = 0; k < items[j].items.length; k++) {
+                                    items[i].items.push(items[j].items[k]);
+                                }
+                                items.splice(j, 1);
+                                j--;
+                            }
+                        }
+                    }
+                    categoryInFilterStock[1][1] = items;
+                    return fillingTables(categoryInFilterStock);         
                 }
             };
 
             $('.info').append(createFilterTable());
+            if (categoryInFilterStock[1][1].length == 0) {
+                $('.info').append(`
+                    <div id="not_found" class="row">
+                        <span style="margin-left: 10px; margin-top: -20px;">Ничего не найдено</span>
+                    </div>
+                `)
+            }
             if ($('#active_field').html() == 'Сводный по объёмам' || $('#active_field').html() == 'Отгрузки менеджеров') {
                 $('.table').width('fit-content');
             }
@@ -455,6 +319,7 @@ function closePersonCard() {
     adminPanel();
 }
 function userInfo(element) {
+    $('#addNewPerson').remove();
     function fillRoles(role) {
         if (role == 'admin') {
             return `
@@ -478,7 +343,7 @@ function userInfo(element) {
                 if (data[i].id == element.id) {
                     $('.table, .card_menu').remove();
                         $('.info').append(`
-                        <div class="card_menu persons" id="card_menu">
+                        <div class="card_menu" id="card_menu">
                             <div class="title">
                                 <div class="left_side">
                                     <span>Редактирование сотрудника</span>
@@ -597,7 +462,100 @@ function editMember(idMember) {
         }
     });
 }
-function adminPanel() {
+function persons() {
+    adminPanel();
+}
+function items() {
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        beforeSend: function() {
+            $('body').append(`
+                <div id="preloader">
+                    <div id="preloader_preload"></div>
+                </div>
+            `)
+            preloader = document.getElementById("preloader_preload");
+        },
+        success: function(data) {
+            data = JSON.parse(data);
+            function getTable() {
+                let table = $('<table>', { class: 'table' });
+                table.append(getTitleTable());
+                function getTitleTable() {
+                    let current_table = categoryInStock[1][0];
+                    let element = $('<tr>');
+                    for (let i = 0; i < current_table.length; i++) {
+                        element.append(`<th width="${current_table[i].width}%">${current_table[i].name}</th>`)
+                    }
+                    return element;
+                }
+                for (let i = data.length - 1; i >= 0; i--) {
+                    for (let k = data[i].items.length - 1; k >= 0; k--) {
+                        if (data[i].stock_address != null) {
+                            let element = $('<tr>', {id: `stock_${data[i].items[k].Item_id}`, onclick: 'editItem(this.id)'});
+                            const name = [data[i].items[k].Prefix, data[i].items[k].Group_name, data[i].items[k].Name, data[i].items[k].Weight, data[i].items[k].Packing, data[i].items[k].Volume, data[i].items[k].Cost, data[i].items[k].NDS, data[i].stock_address];
+            
+                            for (let j = 0; j < name.length; j++) {
+                                let elementTr = $('<td>', { html: name[j] });
+                                element.append(elementTr);
+                            }
+                            table.append(element);
+                        }
+                    }
+                }
+                return table;
+            }
+            $('.table').remove();
+            $('#addNewPerson').remove();
+            activeThisField('items');
+            $('.info').append(getTable())
+        },
+        complete: function() {
+            $('#loading').remove();
+            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+        }
+    });
+}
+function positions() {
+    $.ajax({
+        url: '/getRoles',
+        type: 'GET',
+        dataType: 'html',
+        beforeSend: function() {
+            $('body').append(`
+                <div id="preloader">
+                    <div id="preloader_preload"></div>
+                </div>
+            `)
+            preloader = document.getElementById("preloader_preload");
+        },
+        success: function(data) {
+            data = JSON.parse(data);
+
+
+            $('.table').remove();
+            $('#addNewPerson').remove();
+            activeThisField('positions');
+            $('.info').append(getTable())
+        },
+        complete: function() {
+            $('#loading').remove();
+            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+        }
+    });
+}
+function activeThisField(field) {
+    const fields = ['persons', 'positions', 'items'];
+    for (let i = 0; i < fields.length; i++) {
+        $(`#${fields[i]}`).removeClass('active');
+        if (fields[i] == field) {
+            $(`#${field}`).addClass('active');
+        }
+    }
+}
+function adminPanel(close = '') {
     $.ajax({
         url: '/getThisUser',
         type: 'GET',
@@ -605,202 +563,411 @@ function adminPanel() {
         success: function(data) {
             data = JSON.parse(data);
             if (data.role == 'admin') {
-                $('.info').empty();
-                $('[name="linkCategory"]').removeClass('active');
-                $('#mini_logo').addClass('active');
+                admin();
+                function admin() {
+                    $('.info').empty();
+                    $('[name="linkCategory"]').removeClass('active');
+                    $('#mini_logo').addClass('active');
 
-                function fillingTable() {
-                    $.ajax({
-                        url: '/getUsers',
-                        type: 'GET',
-                        dataType: 'html',
-                        success: function(data) {
-                            data = JSON.parse(data);
-                            for (let i = 0; i < data.length; i++) {
-                                if (data[i].role == 'admin') data[i].role = 'Администратор';
-                                if (data[i].role == 'manager') data[i].role = 'Менеджер';
-                                $('#admin').append(`
-                                    <tr id="${data[i].id}" onclick="userInfo(this)">
-                                        <td>${data[i].second_name}</td>
-                                        <td>${data[i].name}</td>
-                                        <td>${data[i].third_name}</td>
-                                        <td>${data[i].role}</td>
-                                        <td>${data[i].email}</td>
-                                        <td>${data[i].login}</td>
-                                        <td>${data[i].password}</td>
-                                    </tr>
+                    function fillingTable() {
+                        $.ajax({
+                            url: '/getUsers',
+                            type: 'GET',
+                            dataType: 'html',
+                            beforeSend: function() {
+                                $('body').append(`
+                                    <div id="preloader">
+                                        <div id="preloader_preload"></div>
+                                    </div>
                                 `)
+                                preloader = document.getElementById("preloader_preload");
+                            },
+                            success: function(data) {
+                                data = JSON.parse(data);
+                                for (let i = 0; i < data.length; i++) {
+                                    if (data[i].role == 'admin') data[i].role = 'Администратор';
+                                    if (data[i].role == 'manager') data[i].role = 'Менеджер';
+                                    $('#admin').append(`
+                                        <tr id="${data[i].id}" onclick="userInfo(this)">
+                                            <td>${data[i].second_name}</td>
+                                            <td>${data[i].name}</td>
+                                            <td>${data[i].third_name}</td>
+                                            <td>${data[i].role}</td>
+                                            <td>${data[i].email}</td>
+                                            <td>${data[i].login}</td>
+                                            <td>${data[i].password}</td>
+                                        </tr>
+                                    `)
+                                }
+                                $('.info').append(`
+                                    <div id="addNewPerson" class="add_something_main" style="margin-top: -20px;">
+                                        <img style="width: 15px;" src="static/images/plus.svg">
+                                    <div>
+                                `)
+                                if (close != '') {
+                                    eval(close)();
+                                }
+                            },
+                            complete: function() {
+                                $('#loading').remove();
+                                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                             }
-                        }
-                    });
-                }
-                getContent();
-                function getContent() {
-                    $('.info').append(`
-                        <div class="row">
-                            <div class="fields">
-                                <div class="btn btn-main btn-div" id="addNewPerson">Добавить сотрудника</div>
-                                <div class="btn btn-main btn-div" id="addNewPosition">Добавить должность</div>
+                        });
+                    }
+                    getContent();
+                    function getContent() {
+                        $('.info').append(`
+                            <div class="row">
+                                <div class="fields">
+                                    <div class="field active" id="persons" onclick="persons()">Сотрудники</div>
+                                    <div class="field" id="positions" onclick="positions()">Должности</div>
+                                    <div class="field" id="items" onclick="items()">Редактирование товаров</div>
+                                </div>
+                                <div class="category">АДМИН ПАНЕЛЬ</div>
                             </div>
-                            <div class="category">АДМИН ПАНЕЛЬ</div>
-                        </div>
-                        <table class="table" id="admin">
-                            <tr>
-                                <th width="170">Фамилия</th>
-                                <th width="170">Имя</th>
-                                <th width="170">Отчество</th>
-                                <th width="130">Должность</th>
-                                <th width="170">Email</th>
-                                <th width="120">Логин</th>
-                                <th width="150">Пароль</th>
-                            </tr>
-                        </table>`)
-                        fillingTable();
+                            <table class="table" id="admin">
+                                <tr>
+                                    <th width="170">Фамилия</th>
+                                    <th width="170">Имя</th>
+                                    <th width="170">Отчество</th>
+                                    <th width="130">Должность</th>
+                                    <th width="170">Email</th>
+                                    <th width="120">Логин</th>
+                                    <th width="150">Пароль</th>
+                                </tr>
+                            </table>`)
+                            fillingTable();
                     }
 
                     $('#addNewPosition').click(function() {
-                        $.ajax({
-                            url: '/getRoles',
-                            type: 'GET',
-                            dataType: 'html',
-                            success: function(data) {
-                                data = JSON.parse(data);
-                                $('.table, .card_menu').remove();
-                                $('.info').append(`
-                                <div class="card_menu persons" id="card_menu">
-                                    <div class="title">
-                                        <div class="left_side">
-                                            <span>Добавление должности</span>
-                                        </div>
-                                        <div class="right_side">
-                                            <div class="close" onclick="closePersonCard()">
-                                                <img src="static/images/cancel.png">
+                            $.ajax({
+                                url: '/getRoles',
+                                type: 'GET',
+                                dataType: 'html',
+                                success: function(data) {
+                                    data = JSON.parse(data);
+                                    $('.table, .card_menu').remove();
+                                    $('.info').append(`
+                                    <div class="card_menu persons" id="card_menu">
+                                        <div class="title">
+                                            <div class="left_side">
+                                                <span>Добавление должности</span>
+                                            </div>
+                                            <div class="right_side">
+                                                <div class="close" onclick="closePersonCard()">
+                                                    <img src="static/images/cancel.png">
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="content">
-                                        <div class="row_card">
-                                            <table class="table_block">
-                                                <tr>
-                                                    <td>Должность</td>
-                                                    <td>
-                                                        <input class="string" type="text" id="new_position">
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Приоритет</td>
-                                                    <td>
-                                                        <input class="string" type="number" id="new_position_priority">
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                            <table class="table_block">
-                                                <tr>
-                                                    <td>Список должностей</td>
-                                                    <td>
-                                                        <ul>
-                                                            ${fillPositionList(data)}
-                                                        </ul>
-                                                    </td>
-                                                </tr>
-                                            </table>
+                                        <div class="content">
+                                            <div class="row_card">
+                                                <table class="table_block">
+                                                    <tr>
+                                                        <td>Должность</td>
+                                                        <td>
+                                                            <input class="string" type="text" id="new_position">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Приоритет</td>
+                                                        <td>
+                                                            <input class="string" type="number" id="new_position_priority">
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <table class="table_block">
+                                                    <tr>
+                                                        <td>Список должностей</td>
+                                                        <td>
+                                                            <ul>
+                                                                ${fillPositionList(data)}
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="next" style="margin-top: 35px;">
+                                            <button class="btn btn-main" onclick="addNewPosition()">Добавить</button>
                                         </div>
                                     </div>
-                                    <div class="next" style="margin-top: 35px;">
-                                        <button class="btn btn-main" onclick="addNewPosition()">Добавить</button>
-                                    </div>
-                                </div>
-                                `)
-                            }
-                        });
+                                    `)
+                                }
+                            });
                     })
 
                     function fillPositionList(data) {
-                        let list = '';
-                        for (let i = 0; i < data.length; i++) {
-                            list += `
-                                <li disabled>${data[i].Name}</li>
-                            `
-                        }
+                            let list = '';
+                            for (let i = 0; i < data.length; i++) {
+                                list += `
+                                    <li disabled>${data[i].Name}</li>
+                                `
+                            }
 
-                        return list;
+                            return list;
                     }
 
                     $('#addNewPerson').click(function() {
-                        $('.table, .card_menu').remove();
-                        $('.info').append(`
-                        <div class="card_menu persons" id="card_menu">
-                            <div class="title">
-                                <div class="left_side">
-                                    <span>Добавление сотрудника</span>
-                                </div>
-                                <div class="right_side">
-                                    <div class="close" onclick="closePersonCard()">
-                                        <img src="static/images/cancel.png">
+                            $('.table, .card_menu').remove();
+                            $('.info').append(`
+                            <div class="card_menu persons" id="card_menu">
+                                <div class="title">
+                                    <div class="left_side">
+                                        <span>Добавление сотрудника</span>
+                                    </div>
+                                    <div class="right_side">
+                                        <div class="close" onclick="closePersonCard()">
+                                            <img src="static/images/cancel.png">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="content">
-                                <div class="row_card">
-                                    <table class="table_block">
-                                        <tr>
-                                            <td>Фамилия</td>
-                                            <td>
-                                                <input type="text" id="create_last_name">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Имя</td>
-                                            <td>
-                                                <input type="name" id="create_first_name">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Отчество</td>
-                                            <td>
-                                                <input type="text" id="create_patronymic">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Должность</td>
-                                            <td>
-                                                <select type="text" id="create_role">
-                                                    <option value="null" selected disabled>Не выбран</option>
-                                                    <option value="admin">Администратор</option>
-                                                    <option value="manager">Менеджер</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <table class="table_block">
-                                        <tr>
-                                            <td>Email</td>
-                                            <td>
-                                                <input type="email" id="create_email">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Логин</td>
-                                            <td>
-                                                <input type="login" id="create_login">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Пароль</td>
-                                            <td>
-                                                <input type="text" id="create_password">
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <div class="content">
+                                    <div class="row_card">
+                                        <table class="table_block">
+                                            <tr>
+                                                <td>Фамилия</td>
+                                                <td>
+                                                    <input type="text" id="create_last_name">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Имя</td>
+                                                <td>
+                                                    <input type="name" id="create_first_name">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Отчество</td>
+                                                <td>
+                                                    <input type="text" id="create_patronymic">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Должность</td>
+                                                <td>
+                                                    <select type="text" id="create_role">
+                                                        <option value="null" selected disabled>Не выбран</option>
+                                                        <option value="admin">Администратор</option>
+                                                        <option value="manager">Менеджер</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <table class="table_block">
+                                            <tr>
+                                                <td>Email</td>
+                                                <td>
+                                                    <input type="email" id="create_email">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Логин</td>
+                                                <td>
+                                                    <input type="login" id="create_login">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Пароль</td>
+                                                <td>
+                                                    <input type="text" id="create_password">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="next">
+                                        <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
+                                    </div>
                                 </div>
-                                <div class="next">
-                                    <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
-                                </div>
-                            </div>
-                        </div>`)
+                            </div>`)
                     })
+                }
             }
             return;
+        }
+    });
+}
+
+function closeThisMenu(id) {
+    adminPanel(id);
+}
+
+function editItem(id) {
+    let count = id.split('_')[1];
+    $.ajax({
+        url: '/getThisItem',
+        data: {id: count},
+        type: 'GET',
+        dataType: 'html',
+        beforeSend: function() {
+            $('body').append(`
+                <div id="preloader">
+                    <div id="preloader_preload"></div>
+                </div>
+            `)
+            preloader = document.getElementById("preloader_preload");
+        },
+        success: function(data) {
+            data = JSON.parse(data)[0];
+            console.log(data);
+            $('.table').remove();
+            function fillListStock() {
+                let info;
+                $.ajax({
+                    url: '/getStocks',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(data) {
+                        info = JSON.parse(data);
+                    }
+                });
+                let options = '';
+                options += `<option value="0">Не выбран</option>`
+                for (let i = 0; i < info.length; i++) {
+                    if (info[i].id == data.Stock_id) {
+                        options += `<option selected value="${info[i].id}">${info[i].Name}</option>`
+                    } else {
+                        options += `<option value="${info[i].id}">${info[i].Name}</option>`
+                    }
+                }
+                return options;
+            }
+            function fillListGroup() {
+                let info;
+                $.ajax({
+                    url: '/getItemGroup',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(data) {
+                        info = JSON.parse(data);
+                    }
+                });
+                let options = '';
+                for (let i = 0; i < info.length; i++) {
+                    if (info[i].id == data.Group_id) {
+                        options += `<option selected value="${info[i].id}">${info[i].Group}</option>`
+                    } else {
+                        options += `<option value="${info[i].id}">${info[i].Group}</option>`
+                    }
+                }
+                setTimeout(function() { fadeOutPreloader(preloader) }, 0);
+                return options;
+            }
+            function fillListPrefix() {
+                if (data.Prefix == 'ООО') {
+                    return `
+                        <option selected value="ООО">ООО</option>
+                        <option value="ИП">ИП</option>
+                    `
+                } else {
+                    return `
+                        <option value="ООО">ООО</option>
+                        <option selected value="ИП">ИП</option>
+                    `
+                }
+            }
+
+            $('.info').append(`
+                <div class="card_menu">
+                    <div class="title">
+                        <div class="left_side">
+                            <span>Изменение данных по товару</span>
+                        </div>
+                        <div class="right_side">
+                            <div class="close" id="items" onclick="closeThisMenu(this.id)">
+                                <img src="static/images/cancel.png">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <div class="row_card">
+                            <table class="table_block">
+                                <tr>
+                                    <td>Склад</td>
+                                    <td>
+                                        <select type="text" id="stock_id">${fillListStock()}</select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Группа товаров</td>
+                                    <td>
+                                        <select type="text" id="group_id">${fillListGroup()}</select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Товар</td>
+                                    <td><input type="text" id="item_product" class="string" value="${data.Name}"></td>
+                                </tr>
+                            </table>
+                            <table class="table_block">
+                                <tr>
+                                    <td>Объем, кг.</td>
+                                    <td><input onkeyup="maskNumber(this.id)" type="text" id="item_volume" class="string" value="${data.Volume}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Упаковка</td>
+                                    <td><input type="text" id="item_packing" class="string" value="${data.Packing}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Вес, кг.</td>
+                                    <td><input onkeyup="maskNumber(this.id)" type="text" id="item_weight" class="string" value="${data.Weight}"></td>
+                                </tr>
+                            </table>
+                            <table class="table_block">
+                                <tr>
+                                    <td>Юр. лицо</td>
+                                    <td>
+                                        <select type="text" id="item_prefix">
+                                            ${fillListPrefix()}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>НДС</td>
+                                    <td><input maxlength="12" type="number" id="item_vat" class="string" value="${data.NDS}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Цена прайса, руб.</td>
+                                    <td><input onkeyup="maskNumber(this.id)" type="text" id="item_price" class="string" value="${data.Cost}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Закупочная цена, руб.</td>
+                                    <td><input onkeyup="maskNumber(this.id)" type="text" id="item_purchase_price" class="string" value="${data.Purchase_price}"></td>
+                                </tr>
+                            </table> 
+                        </div>
+                        <div class="next">
+                            <button class="btn btn-main" id="item_${data.Item_id}" onclick="saveEditItem(this.id)">Изменить товар</button>
+                        </div>
+                    </div>
+                </div>
+            `);
+        },
+        complete: function() {
+            $('#loading').remove();
+            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+        }
+    })
+}
+function saveEditItem(id) {
+    let item_id = id.split('_')[1];
+    let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price', 'item_purchase_price'];
+    let data = {};
+
+    for (let i = 0; i < list.length; i++) {
+        data[list[i]] = $(`#${list[i]}`).val();
+    }
+    data['item_fraction'] = 'test';
+    data['item_creator'] = 'test';
+    data['id'] = item_id;
+    $.ajax({
+        url: '/editItem',
+        type: 'GET',
+        data: data,
+        dataType: 'html',
+        success: function() {
+            closeThisMenu('items');
         }
     });
 }

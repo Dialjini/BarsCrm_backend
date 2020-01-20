@@ -2395,6 +2395,34 @@ body {
   margin-left: 2px;
 }
 
+.clip {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.add_something_main {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  background: #E5F7EF;
+  -webkit-box-shadow: 0 1px 2px -1px #4A9982;
+          box-shadow: 0 1px 2px -1px #4A9982;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.add_something_main:hover {
+  cursor: pointer;
+}
+
 @media (max-width: 1700px) {
   .page .centerBlock .container .info .card_menu .content #media {
     -webkit-box-orient: vertical;

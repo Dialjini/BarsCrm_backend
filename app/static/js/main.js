@@ -697,6 +697,12 @@ function cancelSearch() {
     $('#search').val('');
     $('.modal_search').remove();
     $('.overflow').remove();
+    lastData = {
+        last_id: '',
+        last_table: '',
+    }
+    filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''} ];
+    categoryInFilterStock[1][1] = [];
     sortStatus = {
         product: {status: false, filter: null, last: null},
         price: {status: false, filter: null},
@@ -800,9 +806,92 @@ function openCardMenu(element) {
 }
 function searchCategoryInfo() {
     $('.centerBlock .header .cancel').remove();
-
     let searchInfo = $('#search').val();
+    if ($('#active_comment_seach').prop('checked')) {
+        $.ajax({
+            url: '/findComments',
+            type: 'GET',
+            data: {data: searchInfo},
+            dataType: 'html',
+            success: function(result) {
+                $('.modal_search').remove();
+                $('.overflow').remove();
 
+                let data = JSON.parse(result);
+                console.log(data);
+                function fillTable() {
+                    let table = $('<table>', { class: 'table_search' });
+                    table.append(`
+                        <tr>
+                            <th>Должность</th>
+                            <th>Имя Отчество</th>
+                            <th width="300">Организация</th>
+                            <th>Дата создания</th>
+                            <th width="200">Комментарий</th>
+                        </tr>
+                    `)
+                    for (let i = 0; i < data.length; i++) {
+                        let currentDataBySelectTable, currentRequest;
+                        let tr;
+                        if (data[i].Client_id != null) {
+                            tr = $('<tr>', { id: `client_${data[i].Client_id}_search`, onclick: 'openCardMenu(this)' })
+                            currentRequest = { request: '/getClients', id: data[i].Client_id, mainTable: categoryInListClient };
+                        } else if (data[i].Provider_id != null) {
+                            tr = $('<tr>', { id: `provider_${data[i].Provider_id}_search`, onclick: 'openCardMenu(this)' })
+                            currentRequest = { request: '/getProviders', id: data[i].Provider_id, mainTable: categoryInListProvider };
+                        } else if (data[i].Carrier_id != null) {
+                            tr = $('<tr>', { id: `carrier_${data[i].Carrier_id}_search`, onclick: 'openCardMenu(this)' })
+                            currentRequest = { request: '/getCarriers', id: data[i].Carrier_id, mainTable: categoryInListCarrier };
+                        }
+                        $.ajax({
+                            url: currentRequest.request,
+                            type: 'GET',
+                            dataType: 'html',
+                            success: function(result) {
+                                currentDataBySelectTable = JSON.parse(result);
+                                if (currentRequest.mainTable[1][1] == undefined) {
+                                    currentRequest.mainTable[1].push(currentDataBySelectTable);
+                                }
+                                for (let j = 0; j < currentDataBySelectTable.length; j++) {
+                                    if (currentRequest.id == currentDataBySelectTable[j].id) {
+                                        let manager_info = data[i].Manager.split('|');
+                                        tr.append(`
+                                            <td>${manager_info[0] == undefined ? '' : manager_info[0]}</td>
+                                            <td>${manager_info[1] == undefined ? manager_info[0] : manager_info[1]}</td>
+                                            <td>${currentDataBySelectTable[j].Name}</td>
+                                            <td>${data[i].Date}</td>
+                                            <td><p style="width: 200px" class="clip">${data[i].Note}</p></td>
+                                        `)
+                                        break;
+                                    }
+                                }
+                            }
+                        })
+                        table.append(tr);
+                    }
+                    return table;
+                }
+                function createModalMenu() {
+                    let modal_menu = $('<div>', { 
+                        class: 'modal_select modal_search',
+                        append: $('<div>', { class: 'title', html: `
+                            <span>Поиск по номеру телефона</span>
+                            <div class="close" onclick="closeModalMenu()">
+                                <img src="static/images/cancel.png">
+                            </div>
+                        ` }).add(
+                            $('<div>', { class: 'content', append: fillTable() })
+                        )
+                    });
+
+                    return modal_menu;
+                }
+                $('.info').prepend($('<div>', {class: 'overflow'}));
+                $('.overflow').height($('.container')[0].scrollHeight);
+                $('.info').append(createModalMenu());
+            }
+        })
+    } else {
         $.ajax({
             url: '/findContacts',
             type: 'GET',
@@ -886,5 +975,5 @@ function searchCategoryInfo() {
                 $('.info').append(createModalMenu());
             }
         });
-        return;
+    }
 }
