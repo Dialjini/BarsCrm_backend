@@ -334,9 +334,13 @@ def findComments():
         data = request.args['data']
         Comments = models.Notes.query.all()
         for i in Comments:
-            if data in i:
-                result.append(table_to_json(i))
-        return result
+            try:
+                if data in i.Note:
+                    result.append(json.loads(table_to_json([i]))[0])
+            except Exception:
+                continue
+
+        return json.dumps(result)
     else:
         return redirect('/', code=302)
 
