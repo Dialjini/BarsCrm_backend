@@ -43,8 +43,19 @@ function linkField() {
             type: 'GET',
             async: false,
             dataType: 'html',
+            beforeSend: function() {
+                $('body').append(`
+                    <div id="preloader">
+                        <div id="preloader_preload"></div>
+                    </div>
+                `)
+                preloader = document.getElementById("preloader_preload");
+            },
             success: function(user) {
                 this_user = JSON.parse(user);
+            },
+            complete: function() {
+                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
             }
         })
         const list = [
@@ -102,10 +113,26 @@ function linkField() {
                 if (list[i].id == idList) {
                     namesList = list[i].list;
                     let ul = $('<ul>');
-                    for (let j = 0; j < list[i].list.length; j++) {
-                        ul.append(
-                            `<li id="${idList}_${j}">${list[i].list[j]}</li>`
-                        )
+                    if (this_user.role == 'admin') {
+                        for (let j = 0; j < list[i].list.length; j++) {
+                            ul.append(
+                                `<li id="${idList}_${j}">${list[i].list[j]}</li>`
+                            )
+                        }
+                    } else {
+                        if (idList == 'analytics_reports') {
+                            for (let j = 0; j < list[i].list.length; j++) {
+                                ul.append(
+                                    `<li id="${idList}_${j + 1}">${list[i].list[j]}</li>`
+                                )
+                            }
+                        } else {
+                            for (let j = 0; j < list[i].list.length; j++) {
+                                ul.append(
+                                    `<li id="${idList}_${j}">${list[i].list[j]}</li>`
+                                )
+                            }
+                        }
                     }
                     return ul;
                 } 
@@ -147,12 +174,16 @@ function linkField() {
         $(`#${idList} .drop_down_img`).addClass('drop_active');
 
         $('li').click(function() {
-            let filterName = this.innerHTML;
             $('#not_found').remove();
+            let this_id = this.id;
 
             $('table').remove();
             $(`#${idList}`).width('auto');
-            $(`#${idList} #active_field`).html(namesList[this.id.split('_')[2]]);
+            $(`#${idList} #active_field`).html(identify());
+            function identify() {
+                if (this_user.role == 'admin') return namesList[this_id.split('_')[2]]
+                if (this_user.role == 'manager') return namesList[+this_id.split('_')[2] - 1]
+            }
             $(`#${idList} .field_with_modal`).addClass('active');
 
             let createFilterTable = () => {
@@ -165,7 +196,7 @@ function linkField() {
                         analyticsFilterTable_4
                     ]
                     $('#analytics_period .field_with_modal')[0].children[0].innerHTML = 'Период';
-                    return functions[this.id.split('_')[2]]();
+                    return functions[this_id.split('_')[2]]();
                 } else if (idList.includes('analytics_period')) {
                     let functions = [
                         analyticsFilterTable_0,
@@ -177,7 +208,7 @@ function linkField() {
                     let list = this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
                     for (let i = 0; i < list.length; i++) {
                         if ($('#analytics_reports').children()[0].children[0].innerHTML == list[i]) {
-                            return functions[i](this.id.split('_')[2]);
+                            return functions[this_id.split('_')[2]]();
                         }
                     }
                 } else {
@@ -229,7 +260,7 @@ function linkField() {
             };
 
             $('.info').append(createFilterTable());
-            if (categoryInFilterStock[1][1].length == 0) {
+            if (categoryInFilterStock[1][1].length == 0 && !idList.includes('analytics')) {
                 $('.info').append(`
                     <div id="not_found" class="row">
                         <span style="margin-left: 10px; margin-top: -20px;">Ничего не найдено</span>
@@ -466,6 +497,7 @@ function persons() {
     adminPanel();
 }
 function items() {
+    $('._block').remove();
     $.ajax({
         url: '/getStockTable',
         type: 'GET',
@@ -519,6 +551,7 @@ function items() {
     });
 }
 function positions() {
+    $('._block').remove();
     $.ajax({
         url: '/getRoles',
         type: 'GET',
@@ -533,8 +566,19 @@ function positions() {
         },
         success: function(data) {
             data = JSON.parse(data);
-
-
+            function getTable() {
+                let list_position = $('<div>', { class: '_block' });
+                for (let i = 0; i < data.length; i++) {
+                    list_position.append(`<div class="block_ flex"><span>${data[i].Name}</span></div>`)
+                }
+                list_position.append(`
+                    <div class="block_ flex block_add">
+                        <input placeholder="Введите должность" class="format" type="text" id="new_position">
+                        <button class="btn btn-main" style="height: 25px; font-size: 11px" onclick="addNewPosition_Save()">Добавить</button>
+                    </div>
+                `)
+                return list_position;
+            }
             $('.table').remove();
             $('#addNewPerson').remove();
             activeThisField('positions');
@@ -600,7 +644,7 @@ function adminPanel(close = '') {
                                     `)
                                 }
                                 $('.info').append(`
-                                    <div id="addNewPerson" class="add_something_main" style="margin-top: -20px;">
+                                    <div id="addNewPerson" onclick="addNewPerson()" class="add_something_main" style="margin-top: -20px;">
                                         <img style="width: 15px;" src="static/images/plus.svg">
                                     <div>
                                 `)
@@ -638,159 +682,89 @@ function adminPanel(close = '') {
                             </table>`)
                             fillingTable();
                     }
-
-                    $('#addNewPosition').click(function() {
-                            $.ajax({
-                                url: '/getRoles',
-                                type: 'GET',
-                                dataType: 'html',
-                                success: function(data) {
-                                    data = JSON.parse(data);
-                                    $('.table, .card_menu').remove();
-                                    $('.info').append(`
-                                    <div class="card_menu persons" id="card_menu">
-                                        <div class="title">
-                                            <div class="left_side">
-                                                <span>Добавление должности</span>
-                                            </div>
-                                            <div class="right_side">
-                                                <div class="close" onclick="closePersonCard()">
-                                                    <img src="static/images/cancel.png">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="content">
-                                            <div class="row_card">
-                                                <table class="table_block">
-                                                    <tr>
-                                                        <td>Должность</td>
-                                                        <td>
-                                                            <input class="string" type="text" id="new_position">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Приоритет</td>
-                                                        <td>
-                                                            <input class="string" type="number" id="new_position_priority">
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                                <table class="table_block">
-                                                    <tr>
-                                                        <td>Список должностей</td>
-                                                        <td>
-                                                            <ul>
-                                                                ${fillPositionList(data)}
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="next" style="margin-top: 35px;">
-                                            <button class="btn btn-main" onclick="addNewPosition()">Добавить</button>
-                                        </div>
-                                    </div>
-                                    `)
-                                }
-                            });
-                    })
-
-                    function fillPositionList(data) {
-                            let list = '';
-                            for (let i = 0; i < data.length; i++) {
-                                list += `
-                                    <li disabled>${data[i].Name}</li>
-                                `
-                            }
-
-                            return list;
-                    }
-
-                    $('#addNewPerson').click(function() {
-                            $('.table, .card_menu').remove();
-                            $('.info').append(`
-                            <div class="card_menu persons" id="card_menu">
-                                <div class="title">
-                                    <div class="left_side">
-                                        <span>Добавление сотрудника</span>
-                                    </div>
-                                    <div class="right_side">
-                                        <div class="close" onclick="closePersonCard()">
-                                            <img src="static/images/cancel.png">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="content">
-                                    <div class="row_card">
-                                        <table class="table_block">
-                                            <tr>
-                                                <td>Фамилия</td>
-                                                <td>
-                                                    <input type="text" id="create_last_name">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Имя</td>
-                                                <td>
-                                                    <input type="name" id="create_first_name">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Отчество</td>
-                                                <td>
-                                                    <input type="text" id="create_patronymic">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Должность</td>
-                                                <td>
-                                                    <select type="text" id="create_role">
-                                                        <option value="null" selected disabled>Не выбран</option>
-                                                        <option value="admin">Администратор</option>
-                                                        <option value="manager">Менеджер</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <table class="table_block">
-                                            <tr>
-                                                <td>Email</td>
-                                                <td>
-                                                    <input type="email" id="create_email">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Логин</td>
-                                                <td>
-                                                    <input type="login" id="create_login">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Пароль</td>
-                                                <td>
-                                                    <input type="text" id="create_password">
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <div class="next">
-                                        <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
-                                    </div>
-                                </div>
-                            </div>`)
-                    })
                 }
             }
             return;
         }
     });
 }
-
+function addNewPerson() {
+    $('#addNewPerson').remove();
+    $('.table, .card_menu').remove();
+    $('.info').append(`
+    <div class="card_menu persons" id="card_menu">
+        <div class="title">
+            <div class="left_side">
+                <span>Добавление сотрудника</span>
+            </div>
+            <div class="right_side">
+                <div class="close" onclick="closePersonCard()">
+                    <img src="static/images/cancel.png">
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="row_card">
+                <table class="table_block">
+                    <tr>
+                        <td>Фамилия</td>
+                        <td>
+                            <input type="text" id="create_last_name">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Имя</td>
+                        <td>
+                            <input type="name" id="create_first_name">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Отчество</td>
+                        <td>
+                            <input type="text" id="create_patronymic">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Должность</td>
+                        <td>
+                            <select type="text" id="create_role">
+                                <option value="null" selected disabled>Не выбран</option>
+                                <option value="admin">Администратор</option>
+                                <option value="manager">Менеджер</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <table class="table_block">
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <input type="email" id="create_email">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Логин</td>
+                        <td>
+                            <input type="login" id="create_login">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Пароль</td>
+                        <td>
+                            <input type="text" id="create_password">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="next">
+                <button class="btn btn-main" onclick="createNewMember()">Добавить</button>
+            </div>
+        </div>
+    </div>`)
+}
 function closeThisMenu(id) {
     adminPanel(id);
 }
-
 function editItem(id) {
     let count = id.split('_')[1];
     $.ajax({
@@ -808,7 +782,6 @@ function editItem(id) {
         },
         success: function(data) {
             data = JSON.parse(data)[0];
-            console.log(data);
             $('.table').remove();
             function fillListStock() {
                 let info;
@@ -971,9 +944,9 @@ function saveEditItem(id) {
         }
     });
 }
-function addNewPosition() {
+function addNewPosition_Save() {
     let value = $('#new_position').val().trim();
-    let priority = $('#new_position_priority').val()
+    let priority = 0;
     if (value != '') {
         $.ajax({
             url: '/addRole',
@@ -981,7 +954,7 @@ function addNewPosition() {
             type: 'GET',
             dataType: 'html',
             success: function() {
-                closePersonCard();
+                positions();
             }
         }); 
     } else {
@@ -1034,11 +1007,8 @@ function createNewMember() {
     }); 
 }
 function getValidationDate(date) {
-    console.log(date);
     let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
     let date_arr = datetime_regex.exec(date);
-    console.log(date_arr);
     let datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
     return datetime;
 }
@@ -1074,13 +1044,23 @@ function getValidationDate(date) {
             type: 'GET',
             async: false,
             dataType: 'html',
+            beforeSend: function() {
+                $('body').prepend(`
+                    <div id="preloader">
+                        <div id="preloader_preload"></div>
+                    </div>
+                `)
+                preloader = document.getElementById("preloader_preload");
+            },
             success: function(data) {
                 account_data = JSON.parse(data);
+            },
+            complete: function() {
+                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
             }
         });
         let items_list = [];
         for (let i = 0; i < account_data.length; i++) {
-            console.log(account_data[i].account.Date);
             let date_create_account = getValidationDate(account_data[i].account.Date);
             if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                 for (let j = 0; j < account_data[i].items.length; j++) {
@@ -1113,19 +1093,22 @@ function getValidationDate(date) {
                                 if (j == 0) {
                                     trContent += `<td rowspan="${items_list[i].account.length}">${items_list[i].item.Name}</td>`;
                                 }
-                                let price = +delivery[v] + +hello[v] + Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume);
+                                let price = +delivery[v] + +hello[v] + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
                                 trContent += `<td>${items_list[i].account[j].Name}</td>
                                             <td>${volume[v].volume}</td>
                                             <td>${price}</td>
                                             <td>${delivery[v]}</td>
                                             <td>${hello[v]}</td>
-                                            <td>${Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume)}</td>
+                                            <td>${items_list[i].item.Cost}</td>
                                             <td>${items_list[i].item.Purchase_price}</td>
-                                            <td>${Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume) - +items_list[i].item.Purchase_price}</td>
-                                            <td>${(Math.round(+items_list[i].item.Cost / +items_list[i].item.Volume) - +items_list[i].item.Purchase_price) * +volume[v].volume}</td>`
+                                            <td>${Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)}</td>
+                                            <td>${(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume}</td>`
                                 return trContent;
                             }
-                            let tr = `<tr>${fillTr()}</tr>`
+                            let tr;
+                            if (j == 0) tr = `<tbody class="tr_tr"><tr>${fillTr()}</tr>`
+                            else if (j == items_list[i].account.length - 1) tr = `<tr>${fillTr()}</tr></tbody>`
+                            else tr = `<tr>${fillTr()}</tr>`
                             table += tr;
                         }
                     }
@@ -1213,6 +1196,17 @@ function getValidationDate(date) {
                 type: 'GET',
                 async: false,
                 dataType: 'html',
+                beforeSend: function() {
+                    $('body').prepend(`
+                        <div id="preloader">
+                            <div id="preloader_preload"></div>
+                        </div>
+                    `)
+                    preloader = document.getElementById("preloader_preload");
+                },
+                complete: function() {
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                },
                 success: function(data) {
                     account_data = JSON.parse(data);
                 }
@@ -1345,6 +1339,17 @@ function getValidationDate(date) {
             type: 'GET',
             async: false,
             dataType: 'html',
+            beforeSend: function() {
+                $('body').prepend(`
+                    <div id="preloader">
+                        <div id="preloader_preload"></div>
+                    </div>
+                `)
+                preloader = document.getElementById("preloader_preload");
+            },
+            complete: function() {
+                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+            },
             success: function(data) {
                 delivery_data = JSON.parse(data);
             }
@@ -1471,6 +1476,17 @@ function getValidationDate(date) {
                 type: 'GET',
                 async: false,
                 dataType: 'html',
+                beforeSend: function() {
+                    $('body').prepend(`
+                        <div id="preloader">
+                            <div id="preloader_preload"></div>
+                        </div>
+                    `)
+                    preloader = document.getElementById("preloader_preload");
+                },
+                complete: function() {
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                },
                 success: function(data) {
                     accounts = JSON.parse(data);
                 }
@@ -1584,6 +1600,17 @@ function getValidationDate(date) {
             type: 'GET',
             async: false,
             dataType: 'html',
+            beforeSend: function() {
+                $('body').prepend(`
+                    <div id="preloader">
+                        <div id="preloader_preload"></div>
+                    </div>
+                `)
+                preloader = document.getElementById("preloader_preload");
+            },
+            complete: function() {
+                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+            },
             success: function(data) {
                 stocks = JSON.parse(data);
             }

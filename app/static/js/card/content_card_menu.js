@@ -1044,7 +1044,7 @@ function switchMode(element) {
     calculationIndicators();
 }
 // Добавление комментариев в карточках
-function addComment(manager = '', data) {
+function addComment(manager = '', data, last = false) {
     if (manager === '') {
         $(`#messages`).empty();
         $(`#comments`).empty();
@@ -1054,7 +1054,7 @@ function addComment(manager = '', data) {
                 list_role.push({ role: $(element).children()[0].children[0].children[0].value, surname: $(element).children()[0].children[0].children[2].value })
             }
         });
-        $('#messages').append(
+        $('#messages').prepend(
             $('<tr>', {
                 id: 'message',
                 append: `
@@ -1079,7 +1079,6 @@ function addComment(manager = '', data) {
             })
         )
         $('#comment_date').datepicker({position: 'right bottom', autoClose: true})
-        $('#add_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
         function getRoleList() {
             let list = '';
             for (let i = 0; i < list_role.length - 1; i++) {
@@ -1096,48 +1095,61 @@ function addComment(manager = '', data) {
             return list;
         }
     } else {
-        $('#messages').append(
+        $('#messages').prepend(
             $('<tr>', {
                 id: 'message',
                 append: `
-                    <td>
+                    <td width="75">
                         <div type="text" id="message_date" class="m_date">${manager.date}</div>
                     </td>
-                    <td>
-                        <div type="text" onclick="showComments(this)" id="comments_${data[0]}_${data[1]}" class="m_role static">${manager.name}</div>
-                    </td>`
+                    <td style="padding-bottom: 10px">
+                        <div type="text" onclick="showThisComment(this)" id="comments_${data[0]}_${data[1]}_${manager.id}" class="m_role static">${manager.name}</div>
+                    </td>
+                    <td width="75"><p style="width: 85px;" class="clip">${manager.note}</p></td>`
             })
         );
+        if (last) {
+            $('#comments').prepend(
+                $('<tr>', {
+                    id: 'comment',
+                    append: `
+                        <td>
+                            <div class="done"><p style="width: 95%;">${manager.note}</p></div>
+                        </td>
+                        <td style="font-weight: 500;" width="100">${manager.creator == null ? 'Не определен' : manager.creator}</td>
+                    `
+                })
+            )
+        }
     }
 }
-function showComments(element) {
+function showThisComment(element) {
     $(`#comments`).empty();
     let data = element.id.split('_');
-    let value = $(element).html();
     $.ajax({
         url: '/getMessages',
         type: 'GET',
         data: {category: data[1], id: data[2]},
         dataType: 'html',
         success: function(result) {
-            showAllComments(JSON.parse(result), value);
+            showComment(JSON.parse(result));
         }
     });
-    function showAllComments(result, value) {
+    function showComment(result) {
         for (let i = 0; i < result.length; i++) {
-            if (value === result[i].Manager) {
+            if (+data[3] === +result[i].NoteId) {
                 let comments = {
-                    date: result[i].Date.split(' ')[0],
-                    comment: result[i].Note
+                    comment: result[i].Note,
+                    creator: result[i].Creator == null ? 'Не определен' : result[i].Creator
                 }
                 $('#comments').prepend(
                     $('<tr>', {
                         id: 'comment',
                         append: `
-                            <td width="70px">${comments.date}</td>
                             <td>
-                                <div class="done"><p>${comments.comment}</p></div>
+                                <div class="done"><p style="width: 95%;">${comments.comment}</p></div>
                             </td>
+                            <td style="font-weight: 500;" width="100">${comments.creator}</td>
                         `
                     })
                 )
@@ -1164,7 +1176,6 @@ function addMember(id = 'client', selectedLine = '') {
     }
     if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт', select: selectedLine.Car};
     else category = {class: 'phone', member: '', placeholder: 'Телефон', select: selectedLine.Number};
-    console.log(selectedLine);
     let count_members = 0;
     $('#member .member').each(function(i, element) {
         count_members++;
@@ -1181,7 +1192,6 @@ function addMember(id = 'client', selectedLine = '') {
                 roles = JSON.parse(result);
             }
         });
-        console.log(roles);
         for (let i = 0; i < roles.length; i++) {
             if (selectedLine.Position == roles[i].Name) {
                 options += `<option selected value="${roles[i].Name}">${roles[i].Name}</option>`

@@ -263,7 +263,6 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     let createOrSaveCard = (function() {
         return {
             getRequest: function (idData, request) {
-                console.log(idData);
                 $.ajax({
                     url: request,
                     type: 'GET',
@@ -528,7 +527,6 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             }
             if (count == data.length - 1) members.pop();
         });
-        console.log(members);
         $.ajax({
             url: '/addContacts',
             type: 'GET',
@@ -573,33 +571,42 @@ let getCommentsInfo = (function() {
         getRequest: function (data) {
             if (typeof data === typeof '') {
                 // Сохраняем комментарий
-                let list = {
-                    comment_date: $('#comment_date').val(),
-                    comment_role: $('#comment_role').val(),
-                    comment_content: $('#comment_content').val()
-                };
-                if (list.comment_role == null) {
-                    addComment();
-                    return;
-                }
-                data = data.split('_');
-                let count = 0, array = Object.keys(list);
-                for (let i = 0; i < 3; i++) {
-                    if (list[array[i]] == '' || list[array[i]] == null) {
-                        count++;
-                    } 
-                }
-                if (count == 3) {
-                    getComments();
-                    return;
-                }
                 $.ajax({
-                    url: '/addMessages',
+                    url: '/getThisUser',
                     type: 'GET',
-                    data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
                     dataType: 'html',
                     success: function(result) {
-                        getComments()
+                        let user = JSON.parse(result);
+                        let list = {
+                            comment_date: $('#comment_date').val(),
+                            comment_role: $('#comment_role').val(),
+                            comment_content: $('#comment_content').val(),
+                            comment_creator: user.second_name
+                        };
+                        if (list.comment_role == null) {
+                            addComment();
+                            return;
+                        }
+                        data = data.split('_');
+                        let count = 0, array = Object.keys(list);
+                        for (let i = 0; i < 3; i++) {
+                            if (list[array[i]] == '' || list[array[i]] == null) {
+                                count++;
+                            } 
+                        }
+                        if (count == 3) {
+                            getComments();
+                            return;
+                        }
+                        $.ajax({
+                            url: '/addMessages',
+                            type: 'GET',
+                            data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
+                            dataType: 'html',
+                            success: function(result) {
+                                getComments()
+                            }
+                        });
                     }
                 });
             } else { getComments() }
@@ -625,22 +632,15 @@ let getCommentsInfo = (function() {
             for (let i = 0; i < comments.length; i++) {
                 list_managers.push({
                     name: comments[i].Manager,
-                    date: comments[i].Date.split(' ')[0]
+                    date: comments[i].Date.split(' ')[0],
+                    note: comments[i].Note,
+                    id: comments[i].NoteId,
+                    creator: comments[i].Creator,
                 });
             }
-            for (let i = 0; i < list_managers.length - 1; i++) {
-                for (let j = i + 1; j < list_managers.length; j++) {
-                    if (list_managers[i].name === list_managers[j].name) {
-                        if (list_managers[j].date != '')
-                            list_managers[i].date = list_managers[j].date
-                        list_managers.splice(j, 1);
-                        j--;
-                    }
-                }
-            }
-            for (let i = 0; i < list_managers.length; i++)
+            for (let i = 0; i < list_managers.length - 1; i++)
                 addComment(list_managers[i], data)
-            $('#add_new_comment').attr('onclick', 'addComment()')
+            addComment(list_managers[list_managers.length - 1], data, true);
         }
         if ($(`#messages`).children().length <= 1) {
             $(`[name="remove_last_comment"]`).fadeOut(0);
@@ -818,7 +818,6 @@ function searchCategoryInfo() {
                 $('.overflow').remove();
 
                 let data = JSON.parse(result);
-                console.log(data);
                 function fillTable() {
                     let table = $('<table>', { class: 'table_search' });
                     table.append(`
@@ -875,7 +874,7 @@ function searchCategoryInfo() {
                     let modal_menu = $('<div>', { 
                         class: 'modal_select modal_search',
                         append: $('<div>', { class: 'title', html: `
-                            <span>Поиск по номеру телефона</span>
+                            <span>Поиск</span>
                             <div class="close" onclick="closeModalMenu()">
                                 <img src="static/images/cancel.png">
                             </div>
@@ -902,7 +901,6 @@ function searchCategoryInfo() {
                 $('.overflow').remove();
 
                 let data = JSON.parse(result);
-                console.log(data);
                 function fillTable() {
                     let table = $('<table>', { class: 'table_search' });
                     table.append(`

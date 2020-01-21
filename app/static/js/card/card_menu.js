@@ -251,7 +251,7 @@ function createCardMenu(element, index = 0) {
         }
     }
 
-    $('.next .btn, #add_new_comment').attr('name', getInfo.join('_'));
+    $('.next .btn, #add_new_comment, #save_new_comment').attr('name', getInfo.join('_'));
     itemSelection(getInfo[0], selectedLine);
     if (getInfo[0] === 'stock') categoryInStock[0].lastCard[0] = null;
 
@@ -536,7 +536,10 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="last_comment">
-                        <div class="title">Последние комментарии</div>
+                        <div class="title">
+                            <div>Последние комментарии</div>
+                            <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                        </div>
                         <div class="messages">
                             <table class="message">
                                 <tbody id="comments"></tbody>
@@ -666,7 +669,10 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="last_comment">
-                        <div class="title">Последние комментарии</div>
+                        <div class="title">
+                            <div>Последние комментарии</div>
+                            <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                        </div>
                         <div class="messages">
                             <table class="message">
                                 <tbody id="comments"></tbody>
@@ -814,7 +820,10 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="last_comment">
-                        <div class="title">Последние комментарии</div>
+                        <div class="title">
+                            <div>Последние комментарии</div>
+                            <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                        </div>
                         <div class="messages">
                             <table class="message">
                                 <tbody id="comments"></tbody>
@@ -1596,7 +1605,6 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    console.log(`/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`);
                     link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                     if (select_cusmoter == 'ООО') {
                         link.download = 'Заявка ООО.docx';
