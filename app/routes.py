@@ -1008,11 +1008,14 @@ def addProvider():
 
         if not new:
             Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
-            Stock = models.Stock()
+            Stock = models.Stock.query.filter_by(Name=Provider.Adress).first()
+            Stock.Name = data['prrovider_address']
+
         else:
             Provider = models.Provider()
             Stock = models.Stock()
             Stock.Name = data['provider_address']
+            Provider.Create_date = data['provider_create_date']
 
         Provider.Name = data['provider_name']
         Provider.Rayon = data['provider_area']

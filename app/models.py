@@ -252,6 +252,8 @@ class Provider(db.Model):
     kc = db.Column(db.String)
     rc = db.Column(db.String)
     Item_list = db.Column(db.String)
+    Create_date = db.Column(db.String)
+
 
 
 class Debt(db.Model):
