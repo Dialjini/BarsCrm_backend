@@ -254,14 +254,14 @@ function contractContentCard(elem) {
 
                             if (account_data.Payment_history != undefined) {
                                 let payment_list = JSON.parse(account_data.Payment_history);
-                                let amount = account_data.Sum;
+                                let amount = deleteSpaces(account_data.Sum);
                                 let payment_amount = 0;
 
                                 for (let i = 0; i < payment_list.length; i++) {
-                                    payment_amount += +payment_list[i].sum
+                                    payment_amount += deleteSpaces(+payment_list[i].sum)
                                 }
 
-                                if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
+                                if (deleteSpaces(+amount )<= deleteSpaces(+payment_amount)) status = '<span class="green">Оплачено</span>'
                                 else status = '<span class="red">Не оплачено</span>'
                             } else {
                                 status = '<span class="red">Не оплачено</span>';
@@ -279,7 +279,7 @@ function contractContentCard(elem) {
                             let hello_sum = 0;
                             let hello_list = JSON.parse(account_data.Hello);
                             for (let g = 0; g < hello_list.length; g++) {
-                                hello_sum += +hello_list[g];
+                                hello_sum += deleteSpaces(+hello_list[g]);
                             }
 
                             let items = JSON.parse(account_data.Items_amount);
@@ -297,10 +297,10 @@ function contractContentCard(elem) {
                                     <td rowspan="${items.length}">${accounts[i].items[0].Prefix}</td>
                                     <td rowspan="${items.length}">${account_data.Date}</td>
                                     <td>${items_name[0]}</td>
-                                    <td>${items[0].amount}</td>
-                                    <td rowspan="${items.length}">${account_data.Sum}</td>
+                                    <td>${returnSpaces(items[0].amount)}</td>
+                                    <td rowspan="${items.length}">${returnSpaces(account_data.Sum)}</td>
                                     <td rowspan="${items.length}">${status}</td>
-                                    <td rowspan="${items.length}">${+hello_sum.toFixed(2)}</td>
+                                    <td rowspan="${items.length}">${returnSpaces(+hello_sum.toFixed(2))}</td>
                                     <td rowspan="${items.length}">${managerSecondName}</td>
                                 </tr>
                             `
@@ -309,7 +309,7 @@ function contractContentCard(elem) {
                                 tr += `
                                     <tr>
                                         <td>${items_name[k]}</td>
-                                        <td>${items[k].amount}</td>
+                                        <td>${returnSpaces(items[k].amount)}</td>
                                     </tr>`
                             }
                             tbody += tr + '</tbody>';
@@ -483,7 +483,7 @@ function invoicingContentCard(elem, data) {
             if (data[i].stock_address !== null) {
                 for (let j = 0; j < data[i].items.length; j++) {
                     let tr = $('<tr>', { onclick: 'invoiceInTable(this)', id: `invoice_${data[i].items[j].Item_id}`});
-                    const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
+                    const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, returnSpaces(data[i].items[j].Volume), data[i].items[j].Packing, data[i].items[j].NDS, returnSpaces(data[i].items[j].Cost), data[i].stock_address];
                     for (let k = 0; k < name.length; k++) {
                         tr.append($('<td>', {
                             html: name[k]
@@ -576,7 +576,7 @@ function invoicingContentCard(elem, data) {
             append: $('<div>', {
                 class: 'info_block full ' + className,
                 append: $('<table>', {
-                    class: 'account_table',
+                    class: 'account_table new_table',
                     id: idTable,
                     html: listFunctions[0](),
                     append: listFunctions[1]()
@@ -593,22 +593,22 @@ function invoicingContentCard(elem, data) {
                 class: 'costs gray',
                 html: ` <div class="costs_element">
                             <span>Всего затраты</span>
-                            <input type="number" onkeyup="all_costs()"  id="total_costs_inv" class="total_count red bold mrl">
+                            <input type="text" onkeyup="maskNumberWithout(this.id); all_costs()"  id="total_costs_inv" class="total_count red bold mrl">
                             <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
                         </div> 
                         <div class="costs_element">
                             <span>Скидка</span> 
-                            <input type="number" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
+                            <input type="text" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Привет</span> 
-                            <input type="number" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
+                            <input type="text" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Доставка</span> 
-                            <input type="number" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
+                            <input type="text" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>`,
             })
@@ -763,7 +763,7 @@ function invoiceInTable(element) {
                                 if (list[k].id.includes('invoiled_volume')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
-                                            type: 'number', onkeyup: 'tarCalculation(this.id)', id: list[k].id, max: account.Volume
+                                            type: 'text', onkeyup: 'maskNumberWithout(this.id); tarCalculation(this.id)', id: list[k].id, max: account.Volume
                                         })
                                     }))
                                 } else if (list[k].id.includes('calc')) {
@@ -783,7 +783,7 @@ function invoiceInTable(element) {
 
                             let sum = 0;
                             $('#exposed_list .invoiled #amount_product').each(function(i, element) {
-                                sum += +$(element).html()
+                                sum += deleteSpaces(+$(element).html())
                             });
                             account.NDS = account.NDS[0] + account.NDS[1];
                             let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
@@ -805,21 +805,21 @@ function dataСalculation(element) {
             list_inv[i].value = $(element).val();
         }
     }
-    let total = $('#total_costs_inv').val();
-    let sale = Math.abs($('#total_discount_inv').val());
-    let privet = $('#total_privet_inv').val();
-    let delivery = $('#total_delivery_inv').val();
+    let total = deleteSpaces($('#total_costs_inv').val());
+    let sale = Math.abs(deleteSpaces($('#total_discount_inv').val()));
+    let privet = deleteSpaces($('#total_privet_inv').val());
+    let delivery = deleteSpaces($('#total_delivery_inv').val());
     let sum = +sale + +privet + +delivery;
     $('#total_costs_inv').val(sum);
 
-    let total_costs = $('#total_costs_inv').val();
+    let total_costs = deleteSpaces($('#total_costs_inv').val());
 
     let count = 0;
     for (let element of $('#exposed_list .invoiled')) {
         count++;
     }
     for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML) + Math.ceil(total_costs / count);
+        $(element).children()[11].innerHTML = (deleteSpaces(+$(element).children()[5].children[0].value) * deleteSpaces(+$(element).children()[6].innerHTML)) + Math.ceil(+total_costs / +count);
     }
     calculationIndicators();
 }
@@ -840,25 +840,25 @@ function calculationIndicators() {
             for (let k = 0; k < data[j].items.length; k++) {
                 $('#exposed_list .invoiled').each(function(i, element) {
                     if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
-                        let totalSale       = (+$('#total_discount_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        let totalPrivet     = (+$('#total_privet_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        let totalDelivery   = (+$('#total_delivery_inv').val() / $(`#invoiled_volume_${data[j].items[k].Item_id}`).val() / count).toFixed(2);
-                        let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +$(`#product_cost_${data[j].items[k].Item_id}`).html()).toFixed(2);
+                        let totalSale       = ((+deleteSpaces($('#total_discount_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
+                        let totalPrivet     = ((+deleteSpaces($('#total_privet_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
+                        let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
+                        let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html())).toFixed(2);
 
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : (+totalSale * -1).toFixed(2));
                         $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
                         $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
                         $(`#product_unit_${data[j].items[k].Item_id}`).html(isNaN(price_unit) || price_unit == Infinity || price_unit == -Infinity ? '' : price_unit)
-                        let total = (+$(`#calcDelivery_${data[j].items[k].Item_id}`).val() + +$(`#calcPrivet_${data[j].items[k].Item_id}`).val() + +$(`#calcSale_${data[j].items[k].Item_id}`).val()) * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val();
-                        let amount = Math.round(+$(`#product_cost_${data[j].items[k].Item_id}`).html() * +$(`#invoiled_volume_${data[j].items[k].Item_id}`).val()).toFixed(2);
+                        let total = deleteSpaces((+deleteSpaces($(`#calcDelivery_${data[j].items[k].Item_id}`).val()) + +deleteSpaces($(`#calcPrivet_${data[j].items[k].Item_id}`).val()) + +deleteSpaces($(`#calcSale_${data[j].items[k].Item_id}`).val())) * +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()));
+                        let amount = deleteSpaces(Math.round(+deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html()) * +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val())).toFixed(2));
                         $(`#amountC_${data[j].items[k].Item_id}`).html(+amount + total);
 
                         let sum = 0;
                         for (let element of $('#exposed_list .invoiled')) {
-                            sum += +$(element).children()[11].innerHTML;
+                            sum += +deleteSpaces($(element).children()[11].innerHTML);
                         }
                         data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
-                        let vat = sum > 0 ? sum - ((sum * +data[j].items[k].NDS) / 100) : 0;
+                        let vat = sum > 0 ? deleteSpaces(sum - ((sum * +data[j].items[k].NDS) / 100)) : 0;
                         currentVatValue = +data[j].items[k].NDS;
                         $('#total').html(Math.round(sum));
                         $('#vat').html(Math.round(sum - vat));
@@ -871,12 +871,12 @@ function calculationIndicators() {
 }
 function tarCalculation(id) {
     let idElement = id.split('_')[2];
-    let volume = +$(`#${id}`).val();
-    let weight = +$(`#product_weight_${idElement}`).html();
-    let unit = Math.round(+$(`#product_cost_${idElement}`).html() + +$(`#calcSale_${idElement}`).val() + +$(`#calcPrivet_${idElement}`).val() + +$(`#calcDelivery_${idElement}`).val()).toFixed(2);
+    let volume = +deleteSpaces($(`#${id}`).val());
+    let weight = +deleteSpaces($(`#product_weight_${idElement}`).html());
+    let unit = Math.round(+deleteSpaces($(`#product_cost_${idElement}`).html()) + +deleteSpaces($(`#calcSale_${idElement}`).val()) + +deleteSpaces($(`#calcPrivet_${idElement}`).val()) + +deleteSpaces($(`#calcDelivery_${idElement}`).val())).toFixed(2);
 
-    $(`#product_containers_${idElement}`).html(Math.floor(volume / weight));
-    $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : unit);
+    $(`#product_containers_${idElement}`).html(returnSpaces(Math.floor(volume / weight)));
+    $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : returnSpaces(unit));
     calculationIndicators();
 }
 function recountPrice(id) {
@@ -884,8 +884,8 @@ function recountPrice(id) {
     let product = $(`#exposed_list #invoiled_${dataProduct[1]}_product`);
 
     product.children().last().html(
-        (+product.children()[5].children[0].value * +product.children()[6].innerHTML)
-        + (+product.children()[7].children[0].value * +product.children()[5].children[0].value + +product.children()[8].children[0].value * +product.children()[5].children[0].value + +product.children()[9].children[0].value * +product.children()[5].children[0].value)
+        (+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
+        + (+deleteSpaces(product.children()[7].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[8].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[9].children[0].value) * +deleteSpaces(product.children()[5].children[0].value))
     );
 
     let list = [
@@ -898,7 +898,7 @@ function recountPrice(id) {
         if (dataProduct[0].includes(list[i].type)) {
             let other_total_sale = 0;
             $('#exposed_list .invoiled').each(function(i, element) {
-                other_total_sale += (+$(`#${dataProduct[0]}_${i + 1}`).val() * +$(`#invoiled_volume_${i + 1}`).val());
+                other_total_sale += (+deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val()) * +deleteSpaces($(`#invoiled_volume_${i + 1}`).val()));
             });
             if (list[i].id == 'total_discount_inv') {
                 other_total_sale *= -1;
@@ -910,7 +910,7 @@ function recountPrice(id) {
     
     let sum = 0;
     $('#exposed_list .invoiled').each(function(i, element) {
-        sum += +$(element).children()[11].innerHTML;
+        sum += +deleteSpaces($(element).children()[11].innerHTML);
     });
     
     $('#total').html(Math.round(sum));
@@ -924,20 +924,20 @@ function all_costs() {
     for (let i = 0; i < list_inv.length; i++) {
         if (list_inv[i].disable) {
             amount--;
-            disableValue += +$(`#${list_inv[i].id}`).val();
+            disableValue += +deleteSpaces($(`#${list_inv[i].id}`).val());
         }
     }
-    let value = $('#total_costs_inv').val() - disableValue;
+    let value = +deleteSpaces($('#total_costs_inv').val()) - disableValue;
     if (typeof value == typeof '') return;
     let averageValue = Math.round(value / amount);
     for (let i = 0; i < list_inv.length; i++) {
         if (!list_inv[i].disable) {
-            $(`#${list_inv[i].id}`).val(averageValue);
+            $(`#${list_inv[i].id}`).val(returnSpaces(averageValue));
         }
     }
     for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (+$(element).children()[5].children[0].value * +$(element).children()[6].innerHTML)
-        + (+$(element).children()[7].children[0].value * +$(element).children()[5].children[0].value + +$(element).children()[8].innerHTML * +$(element).children()[5].children[0].value + +$(element).children()[9].innerHTML * +$(element).children()[5].children[0].value);
+        $(element).children()[11].innerHTML = (+deleteSpaces($(element).children()[5].children[0].value) * +deleteSpaces($(element).children()[6].innerHTML))
+        + (+deleteSpaces($(element).children()[7].children[0].value) * +deleteSpaces($(element).children()[5].children[0].value) + +deleteSpaces($(element).children()[8].innerHTML) * +deleteSpaces($(element).children()[5].children[0].value) + +deleteSpaces($(element).children()[9].innerHTML) * +deleteSpaces($(element).children()[5].children[0].value));
     }
     calculationIndicators();
 }
@@ -962,7 +962,7 @@ function returnBack(element) {
 
                         let sum = 0;
                         $('#exposed_list .invoiled').each(function(i, element) {
-                            sum += +$(element).children()[11].innerHTML;
+                            sum += +deleteSpaces($(element).children()[11].innerHTML);
                         });
                         account.NDS = account.NDS[0] + account.NDS[1];
                         let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
@@ -1305,8 +1305,8 @@ function checkEmail() {
     return true;
 }
 function deleteSpaces(string) {
-    string = string.replace(/\s/g,"");
-    return string;
+    if (typeof string != 'string') return string;
+    return string.replace(/\s/g,"");
 }
 // Удаление последнего контакта в карточках
 // Удаление последней строки в таблицах карточек
@@ -1320,6 +1320,31 @@ function removeMemberOrRow(id) {
 function maskNumber(id) {
     $(`#${id}`).mask('# ##0.00', { reverse: true });
 }
+function maskNumberWithout(id) {
+    $(`#${id}`).mask('# ##0', { reverse: true });
+}
+function returnSpaces(string) {
+    string = String(string)
+    let new_string = string;
+    let count = 0, array = [];
+    if (string.includes('.')) new_string = string.split('.')[0];
+
+    for (let i = new_string.length - 1; i >= 0; i--) {
+        array.push(new_string[i]); 
+        count++;
+        if (count % 3 == 0) {
+            if (new_string[i - 1] == '-') {
+                array.push('-');
+                break;
+            };
+            array.push(' ');
+        };
+    }
+    if (string.includes('.') && string.split('.')[1] != '00') {
+        return array.reverse().join('').trim() + '.' + string.split('.')[1]
+    }
+    return array.reverse().join('').trim();
+}
 function changeSearchMode() {
     if ($('#active_comment_seach').prop('checked')) {
         $('#search').attr('placeholder', 'Введите текст комментария');
@@ -1328,8 +1353,183 @@ function changeSearchMode() {
     }
     
 }
+// Период для информации по счетам (Дебеторка)
+function visibleSelectPeriod(type = 'account') {
+    $('#select_period_info_accounts').append(`
+        <div class="period_info_accounts">
+            <ul>
+                <li id="day" onclick="selectPeriod(this.id, '${type}')">за последний день</li>
+                <li id="weak" onclick="selectPeriod(this.id, '${type}')">за последнюю неделю</li>
+                <li id="month" onclick="selectPeriod(this.id, '${type}')">за последний месяц</li>
+                <li id="year" onclick="selectPeriod(this.id, '${type}')">за последний год</li>
+            </ul>
+        </div>
+    `) 
+}
+function selectPeriod(period = 'month', table) {
+    let filter = [
+        {id: 'account', request: '/getAccounts'},
+        {id: 'delivery', request: '/getDeliveries'},
+        {id: 'provider', request: '/getProviders'},
+    ]
+    function getCurrRequest() {
+        for (let i = 0; i < filter.length; i++) {
+            if (filter[i].id == table) {
+                return filter[i].request;
+            }
+        }
+    }
+    let request = getCurrRequest();
+    $.ajax({
+        url: request,
+        type: 'GET',
+        dataType: 'html',
+        beforeSend: function() {
+            $('body').prepend(`
+                <div id="preloader">
+                    <div id="preloader_preload"></div>
+                </div>
+            `)
+            preloader = document.getElementById("preloader_preload");
+        },
+        success: function(data) {
+            account_data = JSON.parse(data);
+            let date_period = datePeriod();
+            function datePeriod() {
+                let date_filter = [
+                    {id: 'day', period: 0, text: 'за последний день'},
+                    {id: 'weak', period: 7, text: 'за последнюю неделю'},
+                    {id: 'month', period: 30, text: 'за последний месяц'},
+                    {id: 'year', period: 365, text: 'за последний год'},
+                ]
+                for (let i = 0; i < date_filter.length; i++) {
+                    if (period == date_filter[i].id) {
+                        let today = getCurrentDate('year');
+                        let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+            
+                        let date_arr = datetime_regex.exec(today);
+                        let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                        let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                        second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                        $('#period_accounts').html(date_filter[i].text);
+                        return [second_datetime, first_datetime];
+                    }
+                }
+            }
+            let sort_accounts = [];
+            let list_table = [
+                {id: 'debit', table: filterDebit, date: 'account'},
+                {id: 'account', table: filterAccount, date: 'account'},
+                {id: 'delivery', table: filterDelivery, date: 'delivery'},
+                {id: 'filter_provider', table: filterProvider, date: ''},
+            ]
+            for (let i = 0; i < account_data.length; i++) {
+                function getCurrDate() {
+                    for (let j = 0; j < list_table.length; j++) {
+                        if (saveTableAndCard[0].id.includes(list_table[j].id)) {
+                            return getValidationDate(account_data[i][list_table[j].date].Date);
+                        }
+                    }
+                }
+                let date_create_account = getCurrDate();
+                if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                    sort_accounts.push(account_data[i]);
+                }
+            }
+            function select_current_table() {
+                for (let i = 0; i < list_table.length; i++) {
+                    if (saveTableAndCard[0].id.includes(list_table[i].id)) {
+                        return list_table[i].table;
+                    }
+                }
+            }
+            let select_table = select_current_table()
+            select_table[1][1] = [];
+            select_table[1][1] = sort_accounts;
+            $('.period_info_accounts').remove();
+            $('.table').remove();
+            $('.info').append(fillingTables(select_table));
+        },
+        complete: function() {
+            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+        }
+    });
+}
+// End
+function selectThisProvider(element) {
+    let text = $(element).html();
+    $(element).parent().parent().parent().children()[0].value = text;
+}
+function contextualSearch(element) {
+    $.ajax({
+        url: '/getProviders',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data).reverse();
+            let parent = $(element).parent();
+            let id = element.id.split('_')[2];
+            function fillList() {
+                let list = '';
+                for (let i = 0; i < data.length; i++) {
+                    list += `<li id="${data[i].id}" onclick="selectThisProvider(this)">${data[i].Name}</li>`
+                }
+                return list;
+            }
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
+            parent.append(`
+                <div class="context_search hmax" id="search_${id}">
+                    <ul id="list_providers_for_search">
+                        ${fillList()}
+                    </ul>
+                </div>
+            `)
+            searchWord(element.value);
+        }
+    });
+}
+function searchWord(value) {
+    $.ajax({
+        url: '/getProviders',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data).reverse();
+            $('#list_providers_for_search').empty();
+            for (let i = 0; i < data.length; i++) {
+                let current_name = data[i].Name.toLowerCase();
+                let search_name = value.toLowerCase();
+                if (current_name.includes(search_name)) {
+                    $('#list_providers_for_search').append(`
+                        <li id="${data[i].id}" onclick="selectThisProvider(this)">${data[i].Name}</li>
+                    `)
+                }
+            }
+            if ($('#list_providers_for_search').html() == '') {
+                $('#list_providers_for_search').append(`
+                    <span>Ничего не найдено</span>
+                `)
+            }
+        }
+    });
+}
+function hiddenSearch(element) {
+    setTimeout(function() {
+        let id = element.id.split('_')[2];
+        $(`#search_${id}`).remove();
+    }, 150);
+}
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
+    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 210, type: 'text'},
@@ -1381,46 +1581,6 @@ function addRow(id, selectedLine = '') {
     function trFill(table) {
         let tr = $('<tr>');
 
-        function getListCompetitor(id) {
-            $.ajax({
-                url: '/getProviders',
-                type: 'GET',
-                dataType: 'html',
-                success: function(data) {
-                    data = JSON.parse(data);
-                    let competitors = [];
-                    let options = '';
-                    for (let i = 0; i < data.length; i++) {
-                        let name = data[i].Name
-                        competitors.push(name);
-                    }
-                    options += `<option disabled selected>Не выбран</option>`
-                    for (let i = 0; i < competitors.length; i++) {
-                        options += `<option value='${competitors[i]}'>${competitors[i]}</option>`
-                    }
-                    if (competitors.length == 0) {
-                        options = `<option disabled selected>Конкурентов нет</option>`
-                    }
-                    $(`#${id}`).empty();
-                    $(`#${id}`).append(options);
-                    let count = 0;
-                    $('.hmax #group [name="items_creator"]').each(function() {
-                        if (selectedLine.Creator == '') {
-                            $(`#${id} option:contains('Выбрать')`).attr('selected', true)
-                        } else {
-                            $(`#${id} option`).each(function(i, element) {
-                                if ($(element).html() == selectedLine.Creator) {
-                                    $(element).attr('selected', true);
-                                }
-                            });
-                            $(`#${id} :selected`).val($(`#${id} :selected`).html());       
-                        }
-                        count++;
-                    })
-                }
-            });
-        }
-
         function getListFraction(id) {
             $.ajax({
                 url: '/getAllItems',
@@ -1469,11 +1629,15 @@ function addRow(id, selectedLine = '') {
                     count++;
                 })
                 tr.append($('<td>', {
-                    append: $('<select>', {
+                    append: $('<input>', {
                         css: { width: table.widthInput[i].width + 'px', padding: '0' },
                         id: 'item_creator_' + count,
                         name: 'items_creator',
-                        append: getListCompetitor('item_creator_' + count)
+                        value: selectedLine[table.html[i]],
+                        onfocus: 'contextualSearch(this)',
+                        onblur: 'hiddenSearch(this)',
+                        onkeyup: 'searchWord(this.value)',
+                        autocomplete: 'off'
                     })
                 }));  
             } else if (table.widthInput[i].id  == 'item_fraction') {

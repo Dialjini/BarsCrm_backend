@@ -10,7 +10,9 @@ function linkField() {
             price: {status: false, filter: null},
             area: {status: false, filter: null},
             category: {status: false, filter: null, last: null},
-            manager: {status: false, filter: null, last: null}
+            manager: {status: false, filter: null, last: null},
+            customer: {status: false, filter: null, last: null},
+            date: {status: false, filter: null, last: null},
         }
         $('.table').remove();
 
@@ -287,7 +289,9 @@ function linkCategory(element) {
         price: {status: false, filter: null},
         area: {status: false, filter: null},
         category: {status: false, filter: null, last: null},
-        manager: {status: false, filter: null, last: null}
+        manager: {status: false, filter: null, last: null},
+        customer: {status: false, filter: null, last: null},
+        date: {status: false, filter: null, last: null},
     }
     categoryInFilterStock[1][1] = [];
     for (let i = 0; i < linkCategoryInfo.length; i++) {
@@ -1093,16 +1097,16 @@ function getValidationDate(date) {
                                 if (j == 0) {
                                     trContent += `<td rowspan="${items_list[i].account.length}">${items_list[i].item.Name}</td>`;
                                 }
-                                let price = +delivery[v] + +hello[v] + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
+                                let price = deleteSpaces(+delivery[v]) + deleteSpaces(+hello[v]) + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
                                 trContent += `<td>${items_list[i].account[j].Name}</td>
-                                            <td>${volume[v].volume}</td>
-                                            <td>${price}</td>
-                                            <td>${delivery[v]}</td>
-                                            <td>${hello[v]}</td>
-                                            <td>${items_list[i].item.Cost}</td>
-                                            <td>${items_list[i].item.Purchase_price}</td>
-                                            <td>${Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)}</td>
-                                            <td>${(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume}</td>`
+                                            <td>${returnSpaces(volume[v].volume)}</td>
+                                            <td>${returnSpaces(price)}</td>
+                                            <td>${returnSpaces(delivery[v])}</td>
+                                            <td>${returnSpaces(hello[v])}</td>
+                                            <td>${returnSpaces(items_list[i].item.Cost)}</td>
+                                            <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
+                                            <td>${returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
+                                            <td>${returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume)}</td>`
                                 return trContent;
                             }
                             let tr;
@@ -1120,7 +1124,7 @@ function getValidationDate(date) {
             <table class="table analytics">
                 <tr>
                     <th>Товар</th>
-                    <th width="270">Клиент</th>
+                    <th width="230">Клиент</th>
                     <th>Объем, кг.</th>
                     <th>Цена, руб.</th>
                     <th>Доставка</th>
@@ -1232,7 +1236,7 @@ function getValidationDate(date) {
                         for (let l = 0; l < volume_one.length - 1; l++) {
                             for (let h = l + 1; h < volume_one.length; h++) {
                                 if (volume_one[l].id === volume_one[h].id) {
-                                    volume_one[l].volume = +volume_one[l].volume + +volume_one[h].volume;
+                                    volume_one[l].volume = deleteSpaces(+volume_one[l].volume) + deleteSpaces(+volume_one[h].volume);
                                     volume_one.splice(h, 1);
                                     h--;
                                 }
@@ -1264,8 +1268,8 @@ function getValidationDate(date) {
                         for (let j = 0; j < items_volume.length; j++) {
                             for (let l = 0; l < all_items.length; l++) {
                                 if (+all_items[l].Item_id == +items_volume[j].id) {
-                                    amounts[l] += +items_volume[j].volume;
-                                    td += `<td id="item_${l + 1}">${items_volume[j].volume}</td>`
+                                    amounts[l] += deleteSpaces(+items_volume[j].volume);
+                                    td += `<td id="item_${l + 1}">${returnSpaces(items_volume[j].volume)}</td>`
                                     if (items_volume.length - 1 != j) {
                                         j++;
                                     }
@@ -1282,7 +1286,7 @@ function getValidationDate(date) {
             function fillAmountRow() {
                 let td = '<td></td>'
                 for (let i = 0; i < amounts.length; i++) {
-                    td += `<td class="bold">${amounts[i]}</td>`
+                    td += `<td class="bold">${returnSpaces(amounts[i])}</td>`
                 }
                 return td;
             }
@@ -1383,7 +1387,7 @@ function getValidationDate(date) {
                         for (let l = 0; l < volume_one.length - 1; l++) {
                             for (let h = l + 1; h < volume_one.length; h++) {
                                 if (volume_one[l].id === volume_one[h].id) {
-                                    volume_one[l].volume = +volume_one[l].volume + +volume_one[h].volume;
+                                    volume_one[l].volume = deleteSpaces(+volume_one[l].volume) + deleteSpaces(+volume_one[h].volume);
                                     volume_one.splice(h, 1);
                                     h--;
                                 }
@@ -1416,9 +1420,9 @@ function getValidationDate(date) {
                                             trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
                                         }
                                         trContent += `<td>${items_list[i].items[j].Name}</td>
-                                                    <td>${volume[v].volume}</td>
+                                                    <td>${returnSpaces(volume[v].volume)}</td>
                                                     <td>${delivery_data[delivery].delivery.Start_date != null ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
-                                                    <td>${amounts[v].amount}</td>`
+                                                    <td>${returnSpaces(amounts[v].amount)}</td>`
                                         return trContent;
                                     }
                                     let tr = `<tr>${fillTr()}</tr>`
@@ -1498,7 +1502,7 @@ function getValidationDate(date) {
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                     let items_volume = JSON.parse(accounts[i].account.Item_ids);
                     let items_hello = JSON.parse(accounts[i].account.Hello);
-                    let sum_volume = items_volume.reduce((a, b) => ({volume: +a.volume + +b.volume}));
+                    let sum_volume = items_volume.reduce((a, b) => ({volume: deleteSpaces(+a.volume) + deleteSpaces(+b.volume)}));
                     let sum_hello_volume = 0, id_client = 0;
                     let client_data = categoryInListClient[1][1];
 
@@ -1510,7 +1514,7 @@ function getValidationDate(date) {
                     }
 
                     for (let sum = 0; sum < items_volume.length; sum++) {
-                        sum_hello_volume += +items_volume[sum].volume * +items_hello[sum];
+                        sum_hello_volume += deleteSpaces(+items_volume[sum].volume) * deleteSpaces(+items_hello[sum]);
                     }
                     all_data.push({
                         client_id: id_client,
@@ -1518,15 +1522,15 @@ function getValidationDate(date) {
                         volume: +sum_volume.volume,
                         average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
                         amount_hello: Math.ceil(+sum_hello_volume),
-                        amount: Math.round(+accounts[i].account.Sum * 0.9)
+                        amount: Math.round(deleteSpaces(+accounts[i].account.Sum) * 0.9)
                     });
                 }
             }
             for (let i = 0; i < all_data.length - 1; i++) {
                 for (let j = i + 1; j < all_data.length; j++) {
                     if (all_data[i].name === all_data[j].name) {
-                        all_data[i].volume += all_data[j].volume;
-                        all_data[i].amount_hello += all_data[j].amount_hello;
+                        all_data[i].volume += deleteSpaces(all_data[j].volume);
+                        all_data[i].amount_hello += deleteSpaces(all_data[j].amount_hello);
                         all_data[i].average_volume = Math.ceil(all_data[i].amount_hello / all_data[i].volume);
                         all_data[i].amount = Math.round((all_data[i].amount + all_data[j].amount) * 0.9);
                         all_data.splice(j, 1);
@@ -1538,10 +1542,10 @@ function getValidationDate(date) {
                 table += `
                     <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
                         <td>${all_data[i].name}</td>
-                        <td>${all_data[i].volume}</td>
-                        <td>${all_data[i].average_volume}</td>
-                        <td>${all_data[i].amount_hello}</td>
-                        <td>${all_data[i].amount}</td>
+                        <td>${returnSpaces(all_data[i].volume)}</td>
+                        <td>${returnSpaces(all_data[i].average_volume)}</td>
+                        <td>${returnSpaces(all_data[i].amount_hello)}</td>
+                        <td>${returnSpaces(all_data[i].amount)}</td>
                     </tr>
                 `
             }
@@ -1647,7 +1651,7 @@ function getValidationDate(date) {
                     for (let l = 0; l < amount.length - 1; l++) {
                         for (let h = l + 1; h < amount.length; h++) {
                             if (amount[l].id === amount[h].id) {
-                                amount[l].amount = +amount[l].amount + +amount[h].amount;
+                                amount[l].amount = deleteSpaces(+amount[l].amount) + deleteSpaces(+amount[h].amount);
                                 amount.splice(h, 1);
                                 h--;
                             }
@@ -1674,7 +1678,7 @@ function getValidationDate(date) {
                     for (let l = 0; l < volume_one.length - 1; l++) {
                         for (let h = l + 1; h < volume_one.length; h++) {
                             if (volume_one[l].id === volume_one[h].id) {
-                                volume_one[l].volume = +volume_one[l].volume + +volume_one[h].volume;
+                                volume_one[l].volume = deleteSpaces(+volume_one[l].volume) + deleteSpaces(+volume_one[h].volume);
                                 volume_one.splice(h, 1);
                                 h--;
                             }
@@ -1735,15 +1739,15 @@ function getValidationDate(date) {
                         let general_amount = 0;
 
                         for (let element = 0; element < items_amount.length; element++) {
-                            general_amount += Math.round(+items_amount[element].amount);
+                            general_amount += Math.round(deleteSpaces(+items_amount[element].amount));
                         }
                         all_amounts += general_amount;
-                        td += `<td>${general_amount}</td>`
+                        td += `<td>${returnSpaces(general_amount)}</td>`
                         for (let j = 0; j < items_volume.length; j++) {
                             for (let k = 0; k < all_items.length; k++) {
                                 if (+all_items[k].Item_id == +items_volume[j].id) {
-                                    amounts[k] += +items_volume[j].volume;
-                                    td += `<td id="item_${k + 1}">${items_volume[j].volume}</td>`
+                                    amounts[k] += deleteSpaces(+items_volume[j].volume);
+                                    td += `<td id="item_${k + 1}">${returnSpaces(items_volume[j].volume)}</td>`
                                     if (items_volume.length - 1 != j) {
                                         j++;
                                     }
@@ -1776,9 +1780,9 @@ function getValidationDate(date) {
             }
             let amount_tr = `<tr>${fillAmountRow()}</tr>`;
             function fillAmountRow() {
-                let td = `<td></td><td>${all_amounts}</td>`
+                let td = `<td></td><td>${returnSpaces(all_amounts)}</td>`
                 for (let i = 0; i < amounts.length; i++) {
-                    td += `<td class="bold">${amounts[i]}</td>`
+                    td += `<td class="bold">${returnSpaces(amounts[i])}</td>`
                 }
                 return td;
             }

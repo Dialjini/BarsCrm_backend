@@ -90,6 +90,7 @@ const categoryInDelivery = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Цена с НДС, руб.', width: 10 },
             { name: 'Цена без НДС, руб.', width: 10 },
+            { name: 'Статус', width: 10 },
             { name: 'Дата оплаты', width: 10 },
         ],
     ]
@@ -103,7 +104,7 @@ const categoryInStock = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
-            { name: 'Вес', width: 5 },
+            { name: 'Вес, кг.', width: 5 },
             { name: 'Упаковка', width: 10 },
             { name: 'Объем, кг.', width: 5 },
             { name: 'Цена прайса, руб.', width: 5 },
@@ -120,7 +121,7 @@ const categoryInFilterStock = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
-            { name: 'Вес', width: 5 },
+            { name: 'Вес, кг.', width: 5 },
             { name: 'Упаковка', width: 10 },
             { name: 'Объем, кг.', width: 5 },
             { name: 'Цена прайса, руб.', width: 5 },
@@ -171,7 +172,7 @@ const filterCarrier = [
     ]
 ]
 const filterAccount = [
-    { id: 'account', name: 'Финансы', active: false, lastCard: [null] },
+    { id: 'filter_account', name: 'Финансы', active: false, lastCard: [null] },
     [
         [
             { name: 'Юр. лицо', width: 5 },
@@ -184,8 +185,23 @@ const filterAccount = [
         ],
     ]
 ]
+const filterDebit = [
+    { id: 'filter_debit', name: 'Финансы', active: false, lastCard: [null] },
+    [
+        [
+            { name: 'Юр. лицо', width: 5 },
+            { name: 'Наименование', width: 20 },
+            { name: 'Дата отгрузки', width: 5 },
+            { name: 'Дней отсрочки', width: 5 },
+            { name: 'Сумма, руб.', width: 5 },
+            { name: 'Оплачено', width: 5 },
+            { name: 'Осталось', width: 5 },
+            { name: 'Менеджер', width: 10 },
+        ],
+    ]
+]
 const filterDelivery = [
-    { id: 'delivery', name: 'Доставка', active: true, lastCard: [null] },
+    { id: 'filter_delivery', name: 'Доставка', active: true, lastCard: [null] },
     [
         [
             { name: 'Дата', width: 5 },
@@ -195,6 +211,7 @@ const filterDelivery = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Цена с НДС, руб.', width: 10 },
             { name: 'Цена без НДС, руб.', width: 10 },
+            { name: 'Статус', width: 10 },
             { name: 'Дата оплаты', width: 10 },
         ],
     ]
@@ -214,8 +231,10 @@ const dataName = [
     { name: 'delivery', link: categoryInDelivery },
     { name: 'stock', link: categoryInStock },
     { name: 'item', link: categoryInStock },
-    { name: 'filter_provider', link: categoryInListProvider },
     { name: 'analytics', link: categoryInAnalytics },
+    { name: 'filter_delivery', link: categoryInDelivery },
+    { name: 'filter_provider', link: categoryInListProvider },
+    { name: 'filter_account', link: categoryInFinanceAccount },
 ]
 
 const simpleObject = [
@@ -234,7 +253,6 @@ const subcategoryButtons = [
         'Финансы',
         { id: 'debitButton', objectName: categoryInFinanceDebit, name: 'Дебеторка', class: 'field' },
         { id: 'accountButton', objectName: categoryInFinanceAccount, name: 'Счета', class: 'field' },
-        { id: 'unknown', objectName: simpleObject, name: `Осталось <span class="gray">${categoryInFinanceAccount[1].length - 1}</span> счета на <span class="green">+ 234 000</span> за месяц`, class: 'info_about_accounts' }
     ],
     [
         'Доставка',
