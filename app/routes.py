@@ -140,7 +140,6 @@ def to_PDF(name, owner, address, delivery):
     else:
         return '400 Bad Request'
 
-
 @app.route('/')
 @app.route('/index')
 def index():
@@ -151,7 +150,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1488)
+        return render_template('index.html', last_update=1712)
     else:
         return render_template('login.html', last_update=1017)
 
@@ -231,6 +230,12 @@ def addAccountPaymentHistory():
     db.session.commit()
     return 'OK'
 
+@app.route('/editAccount', methods=['GET'])
+def editAccount():
+    table = models.Account.query.filter_by(id=request.args['account_id']).first()
+    table.Status = request.args['status']
+    db.session.commit()
+    return 'OK'
 
 @app.route('/getTemplates', methods=['GET'])
 def getTemplates():

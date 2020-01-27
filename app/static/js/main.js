@@ -162,6 +162,9 @@ function getTableData(table, input = false, close = false) {
                             <div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>
                         `)
                     }
+                    if (saveTableAndCard[0].id != 'debit') {
+                        $('#info_in_accounts').remove();
+                    }
                     if (saveTableAndCard[0].name == 'Список') {
                         $('.fields').append(`
                             <div id="amount_cards">
@@ -304,12 +307,19 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             url: '/addAccountPaymentHistory',
             data: {account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)},
             type: 'GET',
-            async: false,
             dataType: 'html',
-            success: function() {}
+            success: function() { 
+                $.ajax({
+                    url: '/editAccount',
+                    data: {account_id: +idAccount, status: String($('#account_status').prop('checked'))},
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function() {
+                        return getTableData(saveTableAndCard);
+                    }
+                });
+            }
         });
-        getTableData(saveTableAndCard);
-        return;
     }
                                                      // Временно, пока не будет заполнение счетов и дебита
     if (card === 'contract' || data[0] == 'stock' || data[0] == 'debit') {
@@ -442,6 +452,10 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             idData[`livestock_general`] = $('#livestock_general').val();
             idData[`livestock_milking`] = $('#livestock_milking').val();
             idData[`livestock_milkyield`] = $('#livestock_milkyield').val();   
+        }
+        if (data[0] == 'provider' && data[3] == 'new') {
+            console.log(data);
+            idData[`provider_create_date`] = getCurrentDate('year');
         }
         idData[`${data[0]}_data`] = card;
         idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
@@ -708,7 +722,9 @@ function cancelSearch() {
         price: {status: false, filter: null},
         area: {status: false, filter: null},
         category: {status: false, filter: null, last: null},
-        manager: {status: false, filter: null, last: null}
+        manager: {status: false, filter: null, last: null},
+        customer: {status: false, filter: null, last: null},
+        date: {status: false, filter: null, last: null},
     }
 }
 function searchRegionFill(element) {

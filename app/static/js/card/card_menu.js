@@ -39,7 +39,9 @@ function createCardMenu(element, index = 0) {
         price: {status: false, filter: null},
         area: {status: false, filter: null},
         category: {status: false, filter: null, last: null},
-        manager: {status: false, filter: null, last: null}
+        manager: {status: false, filter: null, last: null},
+        customer: {status: false, filter: null, last: null},
+        date: {status: false, filter: null, last: null},
     }
     // Вывод обычной карточки или карточки-окна
     if (index == 0) {
@@ -913,7 +915,7 @@ function createCardMenu(element, index = 0) {
         }
         return ` <div class="row_card">
                     <div class="info_block full">
-                        <table class="account_table">
+                        <table class="account_table new_table">
                             <tr>
                                 <th rowspan="2">Товар</th>
                                 <th colspan="2">Упаковка</th>
@@ -932,7 +934,9 @@ function createCardMenu(element, index = 0) {
                                 <th>Доставка</th>
                                 <th>За единицу</th>
                             </tr>
-                            ${fillingProducts()}
+                            <tbody id="acc_list">
+                                ${fillingProducts()}
+                            </tbody>
                             <tr>
                                 <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
@@ -970,6 +974,11 @@ function createCardMenu(element, index = 0) {
                             <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
+                    </div>
+                    <div class="info_block">
+                        <span class="lightgray">Актуальность счета</span>
+                        ${selectedLine.account.Status == 'true' ? `<input checked type="checkbox" id="account_status">` : `<input type="checkbox" id="account_status">`}
+                        <label for="account_status">Этот счет не актуален</label>
                     </div>
                 </div>
                 <div class="next">
@@ -1266,7 +1275,7 @@ function createCardMenu(element, index = 0) {
                                             <td>${listStocks[k].Name}</td>
                                             <td>${inputVolume[m].volume}</td>
                                             <td>${listAllItems[i].Packing}</td>
-                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[i]}" type="text"></td>
+                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts.length == 1 ? amounts[0] : amounts[i]}" type="text"></td>
                                         </tr>
                                         `
                                     }
@@ -1677,7 +1686,6 @@ function makeRequest(element) {
         data['payment_list'] = JSON.stringify(payment_list);
     } else {
         data['delivery_payment_date'] = '';
-
     }
     data['delivery_prefix'] = infoAccount.items[0].Prefix;
     data['delivery_price'] = infoAccount.account.Sum;
@@ -1688,6 +1696,7 @@ function makeRequest(element) {
         items_ids.push($(element).attr('id').split('_')[2]);
     }
     data['delivery_item_ids'] = JSON.stringify(items_ids);
+    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',

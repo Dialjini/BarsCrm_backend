@@ -465,15 +465,57 @@ body {
   display: flex;
 }
 
-.page .centerBlock .container .info .row .fields .info_about_accounts {
-  margin-left: 20px;
-  padding: 10px;
+.page .centerBlock .container .info .row .fields #info_in_accounts {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  margin-top: 7px;
+  margin-left: 50px;
   color: #595959;
 }
 
-.page .centerBlock .container .info .row .fields .info_about_accounts span {
-  border-bottom: 1px solid #595959;
-  padding: 0 5px;
+.page .centerBlock .container .info .row .fields #info_in_accounts #select_period_info_accounts {
+  position: relative;
+}
+
+.page .centerBlock .container .info .row .fields #info_in_accounts #select_period_info_accounts:hover {
+  cursor: pointer;
+}
+
+.page .centerBlock .container .info .row .fields #info_in_accounts #select_period_info_accounts .period_info_accounts {
+  position: absolute;
+  width: 186px;
+  left: -10px;
+  background: white;
+  padding: 10px 0;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-shadow: 0 2px 3px lightgrey;
+          box-shadow: 0 2px 3px lightgrey;
+}
+
+.page .centerBlock .container .info .row .fields #info_in_accounts #select_period_info_accounts .period_info_accounts li {
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  padding: 0 10px;
+}
+
+.page .centerBlock .container .info .row .fields #info_in_accounts #select_period_info_accounts .period_info_accounts li:hover {
+  cursor: pointer;
+  background-color: whitesmoke;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .centerBlock .container .info .row .fields #info_in_accounts #info_in_accounts_amount {
+  padding: 0 10px;
+  border-bottom: 1px solid;
+  margin: 0 10px;
+}
+
+.page .centerBlock .container .info .row .fields #info_in_accounts img {
+  margin-left: 5px;
 }
 
 .page .centerBlock .container .info .row .fields .field {
@@ -710,20 +752,20 @@ body {
   cursor: pointer;
 }
 
-.page .centerBlock .container .info .table #all_area {
+.page .centerBlock .container .info .table #all_area, .page .centerBlock .container .info .table #cl_category, .page .centerBlock .container .info .table #pd_group, .page .centerBlock .container .info .table #pd_price, .page .centerBlock .container .info .table #pd_manager, .page .centerBlock .container .info .table #dl_customer, .page .centerBlock .container .info .table #dl_date {
   position: relative;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }
 
-.page .centerBlock .container .info .table #all_area .all_area {
+.page .centerBlock .container .info .table #all_area .drop_arrow, .page .centerBlock .container .info .table #cl_category .drop_arrow, .page .centerBlock .container .info .table #pd_group .drop_arrow, .page .centerBlock .container .info .table #pd_price .drop_arrow, .page .centerBlock .container .info .table #pd_manager .drop_arrow, .page .centerBlock .container .info .table #dl_customer .drop_arrow, .page .centerBlock .container .info .table #dl_date .drop_arrow {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
   margin-right: 10px;
 }
 
-.page .centerBlock .container .info .table #all_area .list_area {
+.page .centerBlock .container .info .table #all_area .filter_list, .page .centerBlock .container .info .table #cl_category .filter_list, .page .centerBlock .container .info .table #pd_group .filter_list, .page .centerBlock .container .info .table #pd_price .filter_list, .page .centerBlock .container .info .table #pd_manager .filter_list, .page .centerBlock .container .info .table #dl_customer .filter_list, .page .centerBlock .container .info .table #dl_date .filter_list {
   display: none;
   position: absolute;
   width: 101%;
@@ -736,7 +778,7 @@ body {
   color: #26282f;
 }
 
-.page .centerBlock .container .info .table #all_area .list_area .list li {
+.page .centerBlock .container .info .table #all_area .filter_list .list li, .page .centerBlock .container .info .table #cl_category .filter_list .list li, .page .centerBlock .container .info .table #pd_group .filter_list .list li, .page .centerBlock .container .info .table #pd_price .filter_list .list li, .page .centerBlock .container .info .table #pd_manager .filter_list .list li, .page .centerBlock .container .info .table #dl_customer .filter_list .list li, .page .centerBlock .container .info .table #dl_date .filter_list .list li {
   font-weight: 500;
   padding: 5px;
   -webkit-transition: 0.3s all;
@@ -744,206 +786,14 @@ body {
   font-size: 12px;
 }
 
-.page .centerBlock .container .info .table #all_area .list_area .list li:hover {
+.page .centerBlock .container .info .table #all_area .filter_list .list li:hover, .page .centerBlock .container .info .table #cl_category .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_group .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_price .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_manager .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_customer .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_date .filter_list .list li:hover {
   cursor: pointer;
   -webkit-transition: 0.3s all;
   transition: 0.3s all;
   background-color: whitesmoke;
 }
 
-.page .centerBlock .container .info .table #all_area:hover {
-  cursor: pointer;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-  background-color: #614FAD;
-}
-
-.page .centerBlock .container .info .table #cl_category {
-  position: relative;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-}
-
-.page .centerBlock .container .info .table #cl_category .cl_category {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin-right: 10px;
-}
-
-.page .centerBlock .container .info .table #cl_category .list_category {
-  display: none;
-  position: absolute;
-  width: 101%;
-  left: -1px;
-  background: #fff;
-  border: 1px solid #cecece;
-  border-radius: 0 0 5px 5px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  color: #26282f;
-}
-
-.page .centerBlock .container .info .table #cl_category .list_category .list li {
-  font-weight: 500;
-  padding: 5px;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  font-size: 12px;
-}
-
-.page .centerBlock .container .info .table #cl_category .list_category .list li:hover {
-  cursor: pointer;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  background-color: whitesmoke;
-}
-
-.page .centerBlock .container .info .table #cl_category:hover {
-  cursor: pointer;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-  background-color: #614FAD;
-}
-
-.page .centerBlock .container .info .table #pd_group {
-  position: relative;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-}
-
-.page .centerBlock .container .info .table #pd_group .pd_group {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin-right: 10px;
-}
-
-.page .centerBlock .container .info .table #pd_group .list_group {
-  display: none;
-  position: absolute;
-  width: 101%;
-  left: -1px;
-  background: #fff;
-  border: 1px solid #cecece;
-  border-radius: 0 0 5px 5px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  color: #26282f;
-}
-
-.page .centerBlock .container .info .table #pd_group .list_group .list li {
-  font-weight: 500;
-  padding: 5px;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  font-size: 12px;
-}
-
-.page .centerBlock .container .info .table #pd_group .list_group .list li:hover {
-  cursor: pointer;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  background-color: whitesmoke;
-}
-
-.page .centerBlock .container .info .table #pd_group:hover {
-  cursor: pointer;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-  background-color: #614FAD;
-}
-
-.page .centerBlock .container .info .table #pd_price {
-  position: relative;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-}
-
-.page .centerBlock .container .info .table #pd_price .pd_price {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin-right: 10px;
-}
-
-.page .centerBlock .container .info .table #pd_price .list_price {
-  display: none;
-  position: absolute;
-  width: 101%;
-  left: -1px;
-  background: #fff;
-  border: 1px solid #cecece;
-  border-radius: 0 0 5px 5px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  color: #26282f;
-}
-
-.page .centerBlock .container .info .table #pd_price .list_price .list li {
-  font-weight: 500;
-  padding: 5px;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  font-size: 12px;
-}
-
-.page .centerBlock .container .info .table #pd_price .list_price .list li:hover {
-  cursor: pointer;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  background-color: whitesmoke;
-}
-
-.page .centerBlock .container .info .table #pd_price:hover {
-  cursor: pointer;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-  background-color: #614FAD;
-}
-
-.page .centerBlock .container .info .table #pd_manager {
-  position: relative;
-  -webkit-transition: 0.2s all;
-  transition: 0.2s all;
-}
-
-.page .centerBlock .container .info .table #pd_manager .pd_manager {
-  -ms-flex-item-align: center;
-      -ms-grid-row-align: center;
-      align-self: center;
-  margin-right: 10px;
-}
-
-.page .centerBlock .container .info .table #pd_manager .list_manager {
-  display: none;
-  position: absolute;
-  width: 101%;
-  left: -1px;
-  background: #fff;
-  border: 1px solid #cecece;
-  border-radius: 0 0 5px 5px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  color: #26282f;
-}
-
-.page .centerBlock .container .info .table #pd_manager .list_manager .list li {
-  font-weight: 500;
-  padding: 5px;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  font-size: 12px;
-}
-
-.page .centerBlock .container .info .table #pd_manager .list_manager .list li:hover {
-  cursor: pointer;
-  -webkit-transition: 0.3s all;
-  transition: 0.3s all;
-  background-color: whitesmoke;
-}
-
-.page .centerBlock .container .info .table #pd_manager:hover {
+.page .centerBlock .container .info .table #all_area:hover, .page .centerBlock .container .info .table #cl_category:hover, .page .centerBlock .container .info .table #pd_group:hover, .page .centerBlock .container .info .table #pd_price:hover, .page .centerBlock .container .info .table #pd_manager:hover, .page .centerBlock .container .info .table #dl_customer:hover, .page .centerBlock .container .info .table #dl_date:hover {
   cursor: pointer;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
@@ -976,7 +826,7 @@ body {
   font-size: 12px;
   background: #7764CA;
   color: white;
-  border: none;
+  border: 1px solid #614fad;
 }
 
 .page .centerBlock .container .info .new_table tbody {
@@ -1483,6 +1333,40 @@ body {
   width: 30px;
 }
 
+.page .centerBlock .container .info .card_menu .content .row_card .hmax .context_search {
+  position: absolute;
+  border: 1px solid #e9e9e9;
+  width: 241px;
+  border-radius: 0 0 5px 5px;
+  background-color: #FBFBFE;
+  margin-left: -11px;
+  margin-top: 5px;
+  z-index: 1000;
+}
+
+.page .centerBlock .container .info .card_menu .content .row_card .hmax .context_search li {
+  width: 100%;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  height: 30px;
+  line-height: 30px;
+  padding-left: 10px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.page .centerBlock .container .info .card_menu .content .row_card .hmax .context_search li:last-child {
+  border-bottom: none;
+}
+
+.page .centerBlock .container .info .card_menu .content .row_card .hmax .context_search li:hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #f0f0f0;
+}
+
 .page .centerBlock .container .info .card_menu .content .row_card .events {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1508,8 +1392,7 @@ body {
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block td,
 .page .centerBlock .container .info .card_menu .content .row_card .info_block th {
-  -webkit-box-shadow: 0 0 1px #9a9a9a;
-          box-shadow: 0 0 1px #9a9a9a;
+  border: 1px solid #e9e9e9;
   padding: 5px 10px;
 }
 
@@ -1540,10 +1423,11 @@ body {
   border-bottom-right-radius: 5px;
 }
 
-.page .centerBlock .container .info .card_menu .content .row_card .info_block td, .page .centerBlock .container .info .card_menu .content .row_card .info_block th {
+.page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table {
+  background-color: #FBFBFE;
   -webkit-box-shadow: none;
           box-shadow: none;
-  border: 1px solid #e9e9e9;
+  margin-bottom: 0;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #filter_list tr {
@@ -1570,7 +1454,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table .product td {
-  height: 20px;
+  height: 22px;
   border: none;
   border-left: 1px solid #e9e9e9;
 }
@@ -1585,8 +1469,20 @@ body {
   vertical-align: middle;
 }
 
+.page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #exposed_list tr, .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #filter_list tr, .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #acc_list tr {
+  background: white;
+}
+
+.page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #exposed_list tr:nth-child(2n - 1), .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #filter_list tr:nth-child(2n - 1), .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #acc_list tr:nth-child(2n - 1) {
+  background: #F9FAFE;
+}
+
 .page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table #exposed_list .invoiled td:first-child:hover {
   cursor: pointer;
+}
+
+.page .centerBlock .container .info .card_menu .content .row_card .info_block .account_table th {
+  border: 1px solid #614fad;
 }
 
 .page .centerBlock .container .info .card_menu .content .row_card .table_block {
@@ -1778,7 +1674,7 @@ body {
 }
 
 .page .centerBlock .container .info .card_menu .content .search_items {
-  margin-top: -45px;
+  margin-top: -50px;
   margin-bottom: 20px;
   margin-left: 2px;
 }

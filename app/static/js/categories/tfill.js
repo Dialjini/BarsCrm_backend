@@ -35,7 +35,7 @@ let rowFilling = (object, id, table) => {
                 <th id="all_area" onclick="selectFilterArea(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu.svg" class="drop_down_img all_area">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                     </div>
                 </th>`
             } else if (i == 3 && id == 'provider' || i == 3 && id == 'filter_provider') {
@@ -43,7 +43,7 @@ let rowFilling = (object, id, table) => {
                 <th id="pd_group" onclick="selectGroupProduct(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu.svg" class="drop_down_img pd_group">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                     </div>
                 </th>`
             } else if (i == 4 && id == 'provider' || i == 4 && id == 'filter_provider') {
@@ -51,7 +51,7 @@ let rowFilling = (object, id, table) => {
                 <th id="pd_price" onclick="selectFilterPrice(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu.svg" class="drop_down_img pd_price">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                     </div>
                 </th>`
             } else if (i == 4 && id == 'client') {
@@ -59,7 +59,15 @@ let rowFilling = (object, id, table) => {
                 <th id="cl_category" onclick="selectFilterCategory(this)" width="${object[0][i].width}%">
                     <div class="flex jc-sb">
                         <span>${object[0][i].name}</span>
-                        <img src="static/images/dropmenu.svg" class="drop_down_img cl_category">
+                        <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                    </div>
+                </th>`
+            } else if (i == 4 && id == 'delivery' || i == 4 && id == 'filter_delivery') {
+                elementTr = `
+                <th id="dl_customer" onclick="selectFilterCustomer(this)" width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                     </div>
                 </th>`
             } else {
@@ -72,9 +80,17 @@ let rowFilling = (object, id, table) => {
             <th id="pd_manager" onclick="selectManager(this)" width="${object[0][object[0].length - 1].width}%">
                 <div class="flex jc-sb">
                     <span>${object[0][object[0].length - 1].name}</span>
-                    <img src="static/images/dropmenu.svg" class="drop_down_img pd_manager">
+                    <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                 </div>
             </th>`);
+        } else if (id == 'delivery' || id == 'filter_delivery') {
+            element.append(`
+            <th id="dl_date" onclick="selectFilterDate(this)" width="${object[0][object[0].length - 1].width}%">
+                <div class="flex jc-sb">
+                    <span>${object[0][object[0].length - 1].name}</span>
+                    <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                </div>
+            </th>`)
         } else {
             element.append(`<th width="${object[0][object[0].length - 1].width}%">${object[0][object[0].length - 1].name}</th>`);
         }
@@ -106,7 +122,7 @@ let rowFilling = (object, id, table) => {
 
             let name, data = [
                 { id: 'client', list: [selectTableData[i].id, selectTableData[i].Name, selectTableData[i].Oblast, selectTableData[i].Rayon, selectTableData[i].Category, managerSecondName] },
-                { id: 'carrier', list: [selectTableData[i].Name, selectTableData[i].Region, selectTableData[i].Area, selectTableData[i].Capacity, selectTableData[i].View, managerSecondName] },
+                { id: 'carrier', list: [selectTableData[i].Name, selectTableData[i].Region, selectTableData[i].Area, returnSpaces(selectTableData[i].Capacity), selectTableData[i].View, managerSecondName] },
             ]
 
             for (let j = 0; j < data.length; j++) {
@@ -166,7 +182,7 @@ let rowFilling = (object, id, table) => {
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${area}</td>
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${name}</td>
                     <td>${item_list[0].item_product}</td>
-                    <td>${item_list[0].item_price}</td>
+                    <td>${returnSpaces(item_list[0].item_price)}</td>
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${managerSecondName}</td>
                 </tr>
             `)
@@ -178,7 +194,7 @@ let rowFilling = (object, id, table) => {
                     tbody.append(`
                     <tr>
                         <td>${item_list[j].item_product}</td>
-                        <td>${item_list[j].item_price}</td>
+                        <td>${returnSpaces(item_list[j].item_price)}</td>
                     </tr>
                     `)
                 }
@@ -223,7 +239,7 @@ let rowFilling = (object, id, table) => {
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${area}</td>
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${name}</td>
                     <td>${item_list[0].item_product}</td>
-                    <td>${item_list[0].item_price}</td>
+                    <td>${returnSpaces(item_list[0].item_price)}</td>
                     <td rowspan="${item_list.length == 0 ? 1 : item_list.length}">${managerSecondName}</td>
                 </tr>
             `)
@@ -235,7 +251,7 @@ let rowFilling = (object, id, table) => {
                     tbody.append(`
                     <tr>
                         <td>${item_list[j].item_product}</td>
-                        <td>${item_list[j].item_price}</td>
+                        <td>${returnSpaces(item_list[j].item_price)}</td>
                     </tr>
                     `)
                 }
@@ -248,21 +264,55 @@ let rowFilling = (object, id, table) => {
     let rowFillingDelivery = (id) => {
         table.append(getTitleTable());
         for (let i = selectTableData.length - 1; i >= 0; i--) {
+            let list = selectTableData[i].delivery.Payment_list, sum_list = 0;
+            if (list == null) list = '';
+            if (list.length > 0) {
+                list = JSON.parse(selectTableData[i].delivery.Payment_list);
+                for (let i = 0; i < list.length; i++) {
+                    sum_list += +deleteSpaces(list[i].price);
+                }
+            }
             let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
             let carrier_name = selectTableData[i].carrier == null ? 'Не выбран' : selectTableData[i].carrier.Name
             selectTableData[i].delivery.NDS = selectTableData[i].delivery.NDS[0] + selectTableData[i].delivery.NDS[1];
             let amount = 0;
             let count = selectTableData[i].delivery.Amounts != undefined ? JSON.parse(selectTableData[i].delivery.Amounts) : [];
-            let vat = selectTableData[i].delivery.Customer == 'ООО' ? 0.74 : 1.26;
+            let vat = selectTableData[i].delivery.Customer == 'ООО' ? '' : 1.26;
             for (let i = 0; i < count.length; i++) {
                 amount += +deleteSpaces(count[i]);
             }
-            const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, Math.ceil(amount * vat), amount, selectTableData[i].delivery.Payment_date];
+
+            let status = +amount - +sum_list <= 0 ? '<span class="green">Оплачено</span>' : '<span class="red">Не оплачено</span>'
+            let price_without_vat = returnSpaces(Math.ceil(amount * vat));
+            let customer = selectTableData[i].delivery.Customer;
+            let payment_date = selectTableData[i].delivery.Payment_date;
+            const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? '' : price_without_vat, returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
             }
             table.append(element);
+        }
+        if (id != 'filter_delivery') {
+            $('#info_in_accounts').remove()
+            console.log($('.fields').append(`
+                <div id="info_in_accounts">
+                    <span id="info_in_accounts_count" style="margin-right: 5px;">Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'доставк', 2)}</span> 
+                    <div id="select_period_info_accounts" onclick="visibleSelectPeriod('delivery')">
+                        <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                    </div>
+                </div>
+            `))
+            $('.fields').append(`
+                <div id="info_in_accounts">
+                    <span id="info_in_accounts_count" style="margin-right: 5px;">Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'доставк', 2)}</span> 
+                    <div id="select_period_info_accounts" onclick="visibleSelectPeriod('delivery')">
+                        <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                    </div>
+                </div>
+            `)
+        } else {
+            $('#info_in_accounts_count').html(`Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'доставк', 2)}`);
         }
         return table;
     }
@@ -282,7 +332,7 @@ let rowFilling = (object, id, table) => {
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             if (selectTableData[i].account.Payment_history != undefined) {
                 let payment_list = JSON.parse(selectTableData[i].account.Payment_history);
-                let amount = selectTableData[i].account.Sum;
+                let amount = deleteSpaces(selectTableData[i].account.Sum);
                 let payment_amount = 0;
 
                 for (let i = 0; i < payment_list.length; i++) {
@@ -290,6 +340,9 @@ let rowFilling = (object, id, table) => {
                 }
                 if (+amount <= +payment_amount) status = '<span class="green">Оплачено</span>'
                 else status = '<span class="red">Не оплачено</span>'
+                if (selectTableData[i].account.Status == 'true') {
+                    status = '<span class="red">Не актуальный</span>'
+                }
             } else {
                 status = '<span class="red">Не оплачено</span>';
             }
@@ -306,19 +359,65 @@ let rowFilling = (object, id, table) => {
             let hello_sum = 0;
             let hello_list = JSON.parse(selectTableData[i].account.Hello);
             for (let i = 0; i < hello_list.length; i++) {
-                hello_sum += +hello_list[i];
+                hello_sum += +deleteSpaces(hello_list[i]);
             }
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, selectTableData[i].account.Sum, status, +hello_sum.toFixed(2), managerSecondName];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, returnSpaces(selectTableData[i].account.Sum), status, returnSpaces(+hello_sum.toFixed(2)), managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
-                let elementTr = $('<td>', { html: name[j] });
+                let elementTr = status.includes('Не актуальный') ? $('<td>', { html: `<span style="color: #e8e8e8">${name[j]}</span>` }) : $('<td>', { html: name[j] });
                 element.append(elementTr);
             }
             table.append(element);
         }
+        if (id != 'filter_account') {
+            $('.fields').append(`
+                <div id="info_in_accounts">
+                    <span id="info_in_accounts_count" style="margin-right: 5px;">${selectTableData.length} ${current_count_accounts(selectTableData.length, 'счет', 1)}</span> 
+                    <div id="select_period_info_accounts" onclick="visibleSelectPeriod()">
+                        <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                    </div>
+                </div>
+            `)
+        } else {
+            $('#info_in_accounts_count').html(`${selectTableData.length} ${current_count_accounts(selectTableData.length, 'счет', 1)}`);
+        }
         return table;
+    }
+
+    function current_count_accounts(value, text, type) {
+        let current_count = [
+            {type: 1, array: [
+                {numbers: [1], name: ''},
+                {numbers: [2, 3, 4], name: 'а'},
+                {numbers: [5, 6, 7, 8, 9, 0], name: 'ов'},
+            ]},
+            {type: 2, array: [
+                {numbers: [1], name: 'а'},
+                {numbers: [2, 3, 4], name: 'и'},
+                {numbers: [5, 6, 7, 8, 9, 0], name: 'ов'},
+            ]},
+        ]
+        let divider = '1';
+        for (let i = 1; i < value.length; i++) {
+            divider += '0';
+        }
+        for (let k = 0; k < current_count.length; k++) {
+            if (current_count[k].type == type) {
+                for (let i = 0; i < current_count[k].array.length; i++) {
+                    for (let j = 0; j < current_count[k].array[i].numbers.length; j++) {
+                        if (value / divider == 1) {
+                            return text + 'ов'
+                        } else {
+                            if (value % 10 == current_count[k].array[i].numbers[j]) {
+                                return text + current_count[k].array[i].name;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     let rowFillingDebit = (id) => {
@@ -341,6 +440,7 @@ let rowFilling = (object, id, table) => {
             success: function(result) { deliveryTable = JSON.parse(result) },
         });
         table.append(getTitleTable());
+        let balance_owed = 0, count_accounts = 0;
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
@@ -351,16 +451,28 @@ let rowFilling = (object, id, table) => {
                     managerSecondName = 'Не выбран';
                 }
             }
-            let payment_amount = 0;
+            let payment_amount = 0, item_amount = 0;
             if (selectTableData[i].account.Payment_history != undefined) {
                 let payment_list = JSON.parse(selectTableData[i].account.Payment_history);
-                let amount = selectTableData[i].account.Sum;
-
                 for (let i = 0; i < payment_list.length; i++) {
                     payment_amount += +deleteSpaces(payment_list[i].sum)
                 }
             } else {
                 payment_amount = 0;
+            }
+
+            if (selectTableData[i].account.Items_amount != undefined) {
+                let amount_all = JSON.parse(selectTableData[i].account.Items_amount);
+                for (let i = 0; i < amount_all.length; i++) {
+                    item_amount += +deleteSpaces(amount_all[i].amount)
+                }
+            } else {
+                item_amount = 0;
+            }
+
+            if (payment_amount < item_amount) {
+                balance_owed += (item_amount - payment_amount);
+                count_accounts++;
             }
 
             let first_date, postponement_date;
@@ -376,7 +488,7 @@ let rowFilling = (object, id, table) => {
             if (postponement_date == undefined) postponement_date = 'Не указано';
             if (payment_amount == 0) continue;
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, selectTableData[i].account.Sum, payment_amount, +selectTableData[i].account.Sum - payment_amount, managerSecondName];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, returnSpaces(selectTableData[i].account.Sum), returnSpaces(payment_amount), returnSpaces(+selectTableData[i].account.Sum - payment_amount), managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
@@ -384,6 +496,22 @@ let rowFilling = (object, id, table) => {
             }
             table.append(element);
         }
+        if (id != 'filter_debit') {
+            $('#info_in_accounts').remove();
+            $('.fields').append(`
+            <div id="info_in_accounts">
+                <span id="info_in_accounts_count">Осталось ${count_accounts} ${current_count_accounts(count_accounts, 'счет', 1)} на </span> 
+                <span id="info_in_accounts_amount" class="red">${returnSpaces(balance_owed)} руб.</span>
+                <div id="select_period_info_accounts" onclick="visibleSelectPeriod()">
+                    <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                </div>
+            </div>
+        `)
+        } else {
+            $('#info_in_accounts_count').html(`Осталось ${count_accounts} ${current_count_accounts(count_accounts, 'счет', 1)} на `);
+            $('#info_in_accounts_amount').html(`${returnSpaces(balance_owed)} руб.`);
+        }
+
         return table;
     }
 
@@ -393,7 +521,7 @@ let rowFilling = (object, id, table) => {
             for (let k = selectTableData[i].items.length - 1; k >= 0; k--) {
                 if (selectTableData[i].stock_address != null) {
                     let element = $('<tr>', {id: `stock_${selectTableData[i].items[k].Item_id}`, onclick: 'createCardMenu(this, 1)'});
-                    const name = [selectTableData[i].items[k].Prefix, selectTableData[i].items[k].Group_name, selectTableData[i].items[k].Name, selectTableData[i].items[k].Weight, selectTableData[i].items[k].Packing, selectTableData[i].items[k].Volume, selectTableData[i].items[k].Cost, selectTableData[i].items[k].NDS, selectTableData[i].stock_address];
+                    const name = [selectTableData[i].items[k].Prefix, selectTableData[i].items[k].Group_name, selectTableData[i].items[k].Name, returnSpaces(selectTableData[i].items[k].Weight), selectTableData[i].items[k].Packing, returnSpaces(selectTableData[i].items[k].Volume), returnSpaces(selectTableData[i].items[k].Cost), selectTableData[i].items[k].NDS, selectTableData[i].stock_address];
     
                     for (let j = 0; j < name.length; j++) {
                         let elementTr = $('<td>', { html: name[j] });
@@ -412,8 +540,11 @@ let rowFilling = (object, id, table) => {
         { id: 'filter_provider', function: rowFillingFilterProvider },
         { id: 'carrier', function: rowFillingDefault },
         { id: 'debit', function: rowFillingDebit },
+        { id: 'filter_debit', function: rowFillingDebit },
         { id: 'account', function: rowFillingAccount },
+        { id: 'filter_account', function: rowFillingAccount },
         { id: 'delivery', function: rowFillingDelivery },
+        { id: 'filter_delivery', function: rowFillingDelivery },
         { id: 'stock', function: rowFillingStock },
         { id: 'filter_stock', function: rowFillingStock },
     ]
@@ -479,7 +610,9 @@ let sortStatus = {
     price: {status: false, filter: null},
     area: {status: false, filter: null},
     category: {status: false, filter: null, last: null},
-    manager: {status: false, filter: null, last: null}
+    manager: {status: false, filter: null, last: null},
+    customer: {status: false, filter: null, last: null},
+    date: {status: false, filter: null, last: null},
 }
 // Фильтры таблиц Start
 function sortTableByCategory(filter) {
@@ -519,6 +652,80 @@ function sortTableByCategory(filter) {
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
         </div>
     `)
+}
+function sortTableByDate(element) {
+    let value = $(element).html();
+    if (saveTableAndCard[0].id == 'delivery' || saveTableAndCard[0].id == 'filter_delivery') {
+        let data;
+        if (!sortStatus.customer.status) {
+            if (filterDelivery[1][1] != undefined) filterDelivery[1].pop();
+            data = categoryInDelivery[1][1];
+        } else {
+            if (filterDelivery[1][1] == undefined) {
+                data = categoryInDelivery[1][1];
+            } else {
+                data = sortStatus.date.last == null ? filterDelivery[1][1] : sortStatus.date.last;
+            }
+        }
+        let filter_table = [];
+        for (let i = 0; i < data.length; i++) {
+            if (element.id == 'true' && data[i].delivery.Payment_date != '') {
+                filter_table.push(data[i]);
+            }
+            if (element.id == 'false' && data[i].delivery.Payment_date == '') {
+                filter_table.push(data[i]);
+            }
+        }
+        filterDelivery[1][1] = filter_table;
+        $('.table').remove();
+        $('.info').append(fillingTables(filterDelivery));
+
+        sortStatus.date.status = true;
+        sortStatus.date.filter = value;
+
+        $('.centerBlock .header .cancel').remove();
+        $('.centerBlock .header').append(`
+            <div class="cancel">
+                <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+            </div>
+        `)
+    } 
+}
+function sortTableByCustomer(element) {
+    let value = $(element).html();
+    if (saveTableAndCard[0].id == 'delivery' || saveTableAndCard[0].id == 'filter_delivery') {
+        let data;
+        if (!sortStatus.date.status) {
+            if (filterDelivery[1][1] != undefined) filterDelivery[1].pop();
+            data = categoryInDelivery[1][1];
+        } else {
+            if (filterDelivery[1][1] == undefined) {
+                data = categoryInDelivery[1][1];
+            } else {
+                data = sortStatus.customer.last == null ? filterDelivery[1][1] : sortStatus.customer.last;
+            }
+        }
+        let filter_table = [];
+        for (let i = 0; i < data.length; i++) {
+            console.log(data[i].delivery.Customer, value)
+            if (data[i].delivery.Customer == value) {
+                filter_table.push(data[i]);
+            }
+        }
+        filterDelivery[1][1] = filter_table;
+        $('.table').remove();
+        $('.info').append(fillingTables(filterDelivery));
+
+        sortStatus.customer.status = true;
+        sortStatus.customer.filter = value;
+
+        $('.centerBlock .header .cancel').remove();
+        $('.centerBlock .header').append(`
+            <div class="cancel">
+                <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+            </div>
+        `)
+    }
 }
 function sortTableByManagers(element) {
     let searchWord = element.innerHTML;
@@ -720,7 +927,7 @@ function sortTableByPrice(filter) {
     for (let i = 0; i < data.length; i++) {
         let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
         for (let j = 0; j < item_list.length; j++) {
-            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +item_list[j].item_price});
+            filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +deleteSpaces(item_list[j].item_price)});
         }
     }
         
@@ -731,7 +938,9 @@ function sortTableByPrice(filter) {
             for (let j = 0; j < filter_data.length; j++) {
                 if (filter_data[j].id == data[i].id
                     && filter_data[j].product == item_list[k].item_product
-                    && filter_data[j].price == item_list[k].item_price) {
+                    && filter_data[j].price == +deleteSpaces(item_list[k].item_price)
+                    && filter_data[j].product != 'Выбрать' && item_list[k].item_product != 'Выбрать'
+                    && item_list[k].item_price != '') {
                         table_data.push({
                             Oblast: data[i].Oblast, Rayon: data[i].Rayon, Name: data[i].Name,
                             Item_list: JSON.stringify([{item_product: item_list[k].item_product, item_price: item_list[k].item_price}]),
@@ -743,8 +952,8 @@ function sortTableByPrice(filter) {
     }
 
     table_data.sort(function (a, b) {
-        if (+JSON.parse(a.Item_list)[0].item_price > +JSON.parse(b.Item_list)[0].item_price) return 1;
-        if (+JSON.parse(a.Item_list)[0].item_price < +JSON.parse(b.Item_list)[0].item_price) return -1;
+        if (+deleteSpaces(JSON.parse(a.Item_list)[0].item_price) > +deleteSpaces(JSON.parse(b.Item_list)[0].item_price)) return 1;
+        if (+deleteSpaces(JSON.parse(a.Item_list)[0].item_price) < +deleteSpaces(JSON.parse(b.Item_list)[0].item_price)) return -1;
         return 0;
     });
 
@@ -818,7 +1027,70 @@ function sortTableByProduct(filter) {
 }
 // End
 // Выпадающие меню Start
+function selectFilterDate(element) {
+    let id = element.id;
+    function listDate() {
+        let ul = $('<ul>', { class: 'list'});
+        ul.append(`
+            <li id="true" onclick="sortTableByDate(this)">Указана</li>
+            <li id="false" onclick="sortTableByDate(this)">Не указана</li>
+        `)
+        return ul;
+    }
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
+    }
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listDate()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
+}
+function selectFilterCustomer(element) {
+    let id = element.id;
+    function listCustomer() {
+        let ul = $('<ul>', { class: 'list'});
+        let filter_table = ['ООО', 'ИП'];
+        for (let i = 0; i < filter_table.length; i++) {
+            ul.append(`
+                <li onclick="sortTableByCustomer(this)">${filter_table[i]}</li>
+            `)
+        }
+        return ul;
+    }
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
+    }
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listCustomer()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
+}
 function selectFilterCategory(element) {
+    let id = element.id;
     function listCategory() {
         let ul = $('<ul>', { class: 'list'});
         let data = saveTableAndCard[1][1];
@@ -843,24 +1115,29 @@ function selectFilterCategory(element) {
         }
         return ul;
     }
-    if ($('.table .cl_category').hasClass('drop_active')) {
-        $('.table .cl_category').removeClass('drop_active');
-        $('.list_category').fadeOut(200);
-        setTimeout(function() {
-            $('.list_category').remove();
-        }, 200);
-        return;
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
     }
-    $('.table .cl_category').addClass('drop_active');
-    $(element).append($('<div>', { 
-        class: 'list_category',
-        css: {'top': `${$(element).height() + 30}px`},
-        append: listCategory()
-    }))
-    $('.list_category').fadeIn(200);
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listCategory()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
 }
 function selectFilterArea(element) {
-    function listPrice() {
+    let id = element.id;
+    function listArea() {
         let ul = $('<ul>', { class: 'list'});
         ul.append(`
             <li id="min" onclick="sortTableByArea(this)">От А до Я</li>
@@ -869,23 +1146,28 @@ function selectFilterArea(element) {
         // получить список групп товаров
         return ul;
     }
-    if ($('.table .all_area').hasClass('drop_active')) {
-        $('.table .all_area').removeClass('drop_active');
-        $('.list_area').fadeOut(200);
-        setTimeout(function() {
-            $('.list_area').remove();
-        }, 200);
-        return;
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
     }
-    $('.table .all_area').addClass('drop_active');
-    $(element).append($('<div>', { 
-        class: 'list_area',
-        css: {'top': `${$(element).height() + 30}px`},
-        append: listPrice()
-    }))
-    $('.list_area').fadeIn(200);
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listArea()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
 }
 function selectFilterPrice(element) {
+    let id = element.id;
     function listPrice() {
         let ul = $('<ul>', { class: 'list'});
         ul.append(`
@@ -895,23 +1177,28 @@ function selectFilterPrice(element) {
         // получить список групп товаров
         return ul;
     }
-    if ($('.table .pd_price').hasClass('drop_active')) {
-        $('.table .pd_price').removeClass('drop_active');
-        $('.list_price').fadeOut(200);
-        setTimeout(function() {
-            $('.list_price').remove();
-        }, 200);
-        return;
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
     }
-    $('.table .pd_price').addClass('drop_active');
-    $(element).append($('<div>', { 
-        class: 'list_price',
-        css: {'top': `${$(element).height() + 30}px`},
-        append: listPrice()
-    }))
-    $('.list_price').fadeIn(200);
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listPrice()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
 }
 function selectGroupProduct(element) {
+    let id = element.id;
     function listGroup() {
         let ul = $('<ul>', { class: 'list'});
         let data = categoryInListProvider[1][1];
@@ -940,23 +1227,28 @@ function selectGroupProduct(element) {
         
         return ul;
     }
-    if ($('.table .pd_group').hasClass('drop_active')) {
-        $('.table .pd_group').removeClass('drop_active');
-        $('.list_group').fadeOut(200);
-        setTimeout(function() {
-            $('.list_group').remove();
-        }, 200);
-        return;
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
     }
-    $('.table .pd_group').addClass('drop_active');
-    $(element).append($('<div>', { 
-        class: 'list_group',
-        css: {'top': `${$(element).height() + 30}px`},
-        append: listGroup()
-    }))
-    $('.list_group').fadeIn(200);
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listGroup()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
 }
 function selectManager(element) {
+    let id = element.id;
     function listManager() {
         let ul = $('<ul>', { class: 'list'});
         let filter_tabledata;
@@ -995,21 +1287,25 @@ function selectManager(element) {
         }
         return ul;
     }
-    if ($('.table .pd_manager').hasClass('drop_active')) {
-        $('.table .pd_manager').removeClass('drop_active');
-        $('.list_manager').fadeOut(200);
-        setTimeout(function() {
-            $('.list_manager').remove();
-        }, 200);
-        return;
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
     }
-    $('.table .pd_manager').addClass('drop_active');
-    $(element).append($('<div>', { 
-        class: 'list_manager',
-        css: {'top': `${$(element).height() + 30}px`},
-        append: listManager()
-    }))
-    $('.list_manager').fadeIn(200);
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listManager()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
 }
 // End
 function fillingTables(object, filter = false) {
