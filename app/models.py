@@ -194,6 +194,7 @@ class Notes(db.Model):
     Manager = db.Column(db.String)
     File_Path = db.Column(db.String)
     Creator = db.Column(db.String)
+    Creator_id = db.Column(db.Integer)
 
 
 class BadItems(db.Model):
