@@ -231,13 +231,13 @@ def getManagerStat():
                 continue
             else:
                 manager_info = {}
+                manager_info['orgs'] = {}
                 for i in comments:
                     if i.Creator_id == j.id:
                         print('here')
                         all_comments += 1
                         manager_info['id'] = j.id
                         manager_info['name'] = j.name + ' ' + j.second_name
-                        manager_info['orgs'] = {}
                         if i.Client_id:
                             manager_info['orgs'][clients[i.Client_id - 1].Name] = i.Date
                         elif i.Provider_id:
