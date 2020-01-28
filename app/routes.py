@@ -234,7 +234,6 @@ def getManagerStat():
                 manager_info['orgs'] = {}
                 for i in comments:
                     if i.Creator_id == j.id:
-                        print('here')
                         all_comments += 1
                         manager_info['id'] = j.id
                         manager_info['name'] = j.name + ' ' + j.second_name
