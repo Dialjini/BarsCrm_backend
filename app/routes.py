@@ -226,6 +226,7 @@ def getManagerStat():
         carriers = models.Carrier.query.all()
         all_comments = 0
         result = []
+        comments = {}
         for j in managers:
             if j.role == 'admin':
                 continue
@@ -246,7 +247,9 @@ def getManagerStat():
                         else:
                             continue
                 result.append(manager_info)
-        return json.dumps(result)
+        comments['all_comments'] = all_comments
+        comments['data'] = result
+        return json.dumps(comments)
     else:
         return redirect('/', code=302)
 
