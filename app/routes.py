@@ -218,35 +218,38 @@ def auth():
 
 @app.route('/getManagerStat', methods=['GET'])
 def getManagerStat():
-    managers = models.User.query.all()
-    comments = models.Notes.query.all()
-    clients = models.Client.query.all()
-    providers = models.Provider.query.all()
-    carriers = models.Carrier.query.all()
-    all_comments = 0
-    result = []
-    for j in managers:
-        if j.role == 'admin':
-            continue
-        else:
-            manager_info = {}
-            for i in comments:
-                if i.Creator_id == j.id:
-                    print('here')
-                    all_comments += 1
-                    manager_info['id'] = j.id
-                    manager_info['name'] = j.name + ' ' + j.second_name
-                    manager_info['orgs'] = {}
-                    if i.Client_id:
-                        manager_info['orgs'][clients[i.Client_id - 1]] = i.Date
-                    elif i.Provider_id:
-                        manager_info['orgs'][providers[i.Provider_id - 1]] = i.Date
-                    elif i.Carrier_id:
-                        manager_info['orgs'][carriers[i.Carrier_id - 1]] = i.Date
-                    else:
-                        continue
-            result.append(manager_info)
-    return json.dumps(result)
+    if 'username' in session:
+        managers = models.User.query.all()
+        comments = models.Notes.query.all()
+        clients = models.Client.query.all()
+        providers = models.Provider.query.all()
+        carriers = models.Carrier.query.all()
+        all_comments = 0
+        result = []
+        for j in managers:
+            if j.role == 'admin':
+                continue
+            else:
+                manager_info = {}
+                for i in comments:
+                    if i.Creator_id == j.id:
+                        print('here')
+                        all_comments += 1
+                        manager_info['id'] = j.id
+                        manager_info['name'] = j.name + ' ' + j.second_name
+                        manager_info['orgs'] = {}
+                        if i.Client_id:
+                            manager_info['orgs'][clients[i.Client_id - 1].Name] = i.Date
+                        elif i.Provider_id:
+                            manager_info['orgs'][providers[i.Provider_id - 1].Name] = i.Date
+                        elif i.Carrier_id:
+                            manager_info['orgs'][carriers[i.Carrier_id - 1].Name] = i.Date
+                        else:
+                            continue
+                result.append(manager_info)
+        return json.dumps(result)
+    else:
+        return redirect('/', code=302)
 
 
 
@@ -261,28 +264,34 @@ def logout():
 
 @app.route('/addAccountPaymentHistory', methods=['GET'])
 def addAccountPaymentHistory():
-    table = models.Account.query.filter_by(id=request.args['account_id']).first()
-    table.Payment_history = request.args['account_payment_history']
-    db.session.commit()
-    return 'OK'
+    if 'username' in session:
+        table = models.Account.query.filter_by(id=request.args['account_id']).first()
+        table.Payment_history = request.args['account_payment_history']
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 @app.route('/editAccount', methods=['GET'])
 def editAccount():
-    table = models.Account.query.filter_by(id=request.args['account_id']).first()
-    data = request.args
-    table.Name = data['name']
-    table.Status = data['status']
-    table.Date = data['date']
-    table.Hello = data['hello']
-    table.Sale = data['sale']
-    table.Shipping = data['shipping']
-    table.Sum = data['sum']
-    table.Item_ids = data['item_ids']
-    table.Items_amount = data['items_amount']
-    table.Manager_id = data['manager_id']
+    if 'username' in session:
+        table = models.Account.query.filter_by(id=request.args['account_id']).first()
+        data = request.args
+        table.Name = data['name']
+        table.Status = data['status']
+        table.Date = data['date']
+        table.Hello = data['hello']
+        table.Sale = data['sale']
+        table.Shipping = data['shipping']
+        table.Sum = data['sum']
+        table.Item_ids = data['item_ids']
+        table.Items_amount = data['items_amount']
+        table.Manager_id = data['manager_id']
 
-    db.session.commit()
-    return 'OK'
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 @app.route('/getTemplates', methods=['GET'])
 def getTemplates():
