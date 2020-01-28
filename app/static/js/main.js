@@ -591,7 +591,8 @@ let getCommentsInfo = (function() {
                             comment_date: $('#comment_date').val(),
                             comment_role: $('#comment_role').val(),
                             comment_content: $('#comment_content').val(),
-                            comment_creator: user.second_name
+                            comment_creator: user.second_name,
+                            comment_creator_id: user.id
                         };
                         if (list.comment_role == null) {
                             addComment();

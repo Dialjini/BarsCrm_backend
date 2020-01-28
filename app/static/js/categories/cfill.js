@@ -63,7 +63,7 @@ function linkField() {
         const list = [
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
-            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
+            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
             { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] }
         ]
 
@@ -1828,91 +1828,28 @@ function getValidationDate(date) {
             }
         }
         function fillTable() {
-            let accounts;
             $.ajax({
-                url: '/getAccounts',
+                url: '/getManagerStat',
                 type: 'GET',
                 async: false,
                 dataType: 'html',
-                beforeSend: function() {
-                    $('body').prepend(`
-                        <div id="preloader">
-                            <div id="preloader_preload"></div>
-                        </div>
-                    `)
-                    preloader = document.getElementById("preloader_preload");
-                },
-                complete: function() {
-                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
-                },
                 success: function(data) {
-                    accounts = JSON.parse(data);
-                }
-            });
-            let table = '';
-            let all_data = [];
-            for (let i = 0; i < accounts.length; i++) {
-                let date_create_account = getValidationDate(accounts[i].account.Date);
-                if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
-                    let items_volume = JSON.parse(accounts[i].account.Item_ids);
-                    let items_hello = JSON.parse(accounts[i].account.Hello);
-                    let sum_volume = items_volume.reduce((a, b) => ({volume: deleteSpaces(+a.volume) + deleteSpaces(+b.volume)}));
-                    let sum_hello_volume = 0, id_client = 0;
-                    let client_data = categoryInListClient[1][1];
-
-                    for (let j = 0; j < client_data.length; j++) {
-                        if (client_data[j].Name === accounts[i].account.Name) {
-                            id_client = client_data[j].id;
-                            break;
+                    data = JSON.parse(data);
+                    for (let i = 0; i < data.length; i++) {
+                        for (let key in data[i].orgs) {
+                            console.log(key, data[i].orgs[key]);
                         }
                     }
-
-                    for (let sum = 0; sum < items_volume.length; sum++) {
-                        sum_hello_volume += deleteSpaces(+items_volume[sum].volume) * deleteSpaces(+items_hello[sum]);
-                    }
-                    all_data.push({
-                        client_id: id_client,
-                        name: accounts[i].account.Name,
-                        volume: +sum_volume.volume,
-                        average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
-                        amount_hello: Math.ceil(+sum_hello_volume),
-                        amount: Math.round(deleteSpaces(+accounts[i].account.Sum) * 0.9)
-                    });
                 }
-            }
-            for (let i = 0; i < all_data.length - 1; i++) {
-                for (let j = i + 1; j < all_data.length; j++) {
-                    if (all_data[i].name === all_data[j].name) {
-                        all_data[i].volume += deleteSpaces(all_data[j].volume);
-                        all_data[i].amount_hello += deleteSpaces(all_data[j].amount_hello);
-                        all_data[i].average_volume = Math.ceil(all_data[i].amount_hello / all_data[i].volume);
-                        all_data[i].amount = Math.round((all_data[i].amount + all_data[j].amount) * 0.9);
-                        all_data.splice(j, 1);
-                        j--;
-                    }
-                }
-            }
-            for (let i = 0; i < all_data.length; i++) {
-                table += `
-                    <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
-                        <td>${all_data[i].name}</td>
-                        <td>${returnSpaces(all_data[i].volume)}</td>
-                        <td>${returnSpaces(all_data[i].average_volume)}</td>
-                        <td>${returnSpaces(all_data[i].amount_hello)}</td>
-                        <td>${returnSpaces(all_data[i].amount)}</td>
-                    </tr>
-                `
-            }
-            return table;
+            });
+            return 'test';
         }
         return `
             <table class="table analytics">
                 <tr>
-                    <th width="350">Клиент</th>
-                    <th>Объём</th>
-                    <th>Сколько</th>
-                    <th>Сумма, руб.</th>
-                    <th>Итого</th>
+                    <th>Менеджер</th>
+                    <th width="350">Наименование</th>
+                    <th>Дата последнего комментария</th>
                 </tr>
                 ${fillTable()}
             </table>

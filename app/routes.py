@@ -151,7 +151,7 @@ def index():
 
     if 'username' in session:
 
-        return render_template('index.html', last_update=1740)
+        return render_template('index.html', last_update=1762)
     else:
         return render_template('login.html', last_update=1010)
 
