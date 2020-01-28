@@ -268,7 +268,6 @@ const subcategoryButtons = [
     [
         'Аналитика',
         { id: 'analytics_reports', objectName: categoryInAnalytics, name: 'Прибыль по клиентам', class: 'field_with_modal' },
-        { id: 'analytics_period', objectName: categoryInAnalytics, name: 'Период', class: 'field_with_modal' },
     ]
 ];
 let filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''} ];

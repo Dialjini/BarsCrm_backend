@@ -1355,16 +1355,20 @@ function changeSearchMode() {
 }
 // Период для информации по счетам (Дебеторка)
 function visibleSelectPeriod(type = 'account') {
-    $('#select_period_info_accounts').append(`
-        <div class="period_info_accounts">
-            <ul>
-                <li id="day" onclick="selectPeriod(this.id, '${type}')">за последний день</li>
-                <li id="weak" onclick="selectPeriod(this.id, '${type}')">за последнюю неделю</li>
-                <li id="month" onclick="selectPeriod(this.id, '${type}')">за последний месяц</li>
-                <li id="year" onclick="selectPeriod(this.id, '${type}')">за последний год</li>
-            </ul>
-        </div>
-    `) 
+    if ($('div').is('.period_info_accounts')) {
+        $('.period_info_accounts').remove();
+    } else {
+        $('#select_period_info_accounts').append(`
+            <div class="period_info_accounts">
+                <ul>
+                    <li id="day" onclick="selectPeriod(this.id, '${type}')">за последний день</li>
+                    <li id="weak" onclick="selectPeriod(this.id, '${type}')">за последнюю неделю</li>
+                    <li id="month" onclick="selectPeriod(this.id, '${type}')">за последний месяц</li>
+                    <li id="year" onclick="selectPeriod(this.id, '${type}')">за последний год</li>
+                </ul>
+            </div>
+        `) 
+    }
 }
 function selectPeriod(period = 'month', table) {
     let filter = [
@@ -1535,7 +1539,6 @@ function hiddenSearch(element) {
 }
 // Добавление строк в таблицах карточек
 function addRow(id, selectedLine = '') {
-    console.log(selectedLine);
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 210, type: 'text'},

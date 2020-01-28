@@ -64,7 +64,6 @@ function linkField() {
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
             { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
-            { width: 150, id: 'analytics_period', list: ['За всё время', 'За день', 'За неделю', 'За месяц', 'За год'] }
         ]
 
         let idList = this.id, element;
@@ -198,23 +197,9 @@ function linkField() {
                         analyticsFilterTable_4,
                         analyticsFilterTable_5,
                     ]
-                    $('#analytics_period .field_with_modal')[0].children[0].innerHTML = 'Период';
-                    return functions[this_id.split('_')[2]]();
-                } else if (idList.includes('analytics_period')) {
-                    let functions = [
-                        analyticsFilterTable_0,
-                        analyticsFilterTable_1,
-                        analyticsFilterTable_2,
-                        analyticsFilterTable_3,
-                        analyticsFilterTable_4,
-                        analyticsFilterTable_5,
-                    ]
-                    let list = this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
-                    for (let i = 0; i < list.length; i++) {
-                        if ($('#analytics_reports').children()[0].children[0].innerHTML == list[i]) {
-                            return functions[this_id.split('_')[2]]();
-                        }
-                    }
+                    $('#analytics_block_hidden').remove();
+                    $('#info_in_accounts').remove();
+                    return functions[this_id.split('_')[2]](datePeriod('month'));
                 } else {
                     $('.centerBlock .header .cancel').remove();
                     $('.centerBlock .header').append(`
@@ -1020,30 +1005,7 @@ function getValidationDate(date) {
 }
 // Отчеты
     // Прибыль по клиентам
-    function analyticsFilterTable_0(period = 'all') {
-        let date_period = datePeriod();
-        function datePeriod() {
-            let date_filter = [ 
-                {id: 'all', period: 3650},
-                {id: 0, period: 3650},
-                {id: 1, period: 0},
-                {id: 2, period: 7},
-                {id: 3, period: 30},
-                {id: 4, period: 365},
-            ]
-            for (let i = 0; i < date_filter.length; i++) {
-                if (period == date_filter[i].id) {
-                    let today = getCurrentDate('year');
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
-                    let date_arr = datetime_regex.exec(today);
-                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                    return [second_datetime, first_datetime];
-                }
-            }
-        }
+    function analyticsFilterTable_0(date_period) {
         let account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1087,6 +1049,8 @@ function getValidationDate(date) {
         }
         function fillTable() {
             let table = '';
+            let total_count = 0;
+            console.log(items_list);
             for (let i = 0; i < items_list.length; i++) {
                 for (let j = 0; j < items_list[i].account.length; j++) {
                     let volume = JSON.parse(items_list[i].account[j].Item_ids);
@@ -1116,9 +1080,23 @@ function getValidationDate(date) {
                             else if (j == items_list[i].account.length - 1) tr = `<tr>${fillTr()}</tr></tbody>`
                             else tr = `<tr>${fillTr()}</tr>`
                             table += tr;
+                            total_count++;
                         }
                     }
                 }
+            }
+            if (!$('div').is('#analytics_block_hidden')) {
+                $('.fields').append(`
+                    <div id="info_in_accounts">
+                        <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
+                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                        </div>
+                    </div>
+                `)
+                $('body').append(`<div id="analytics_block_hidden"></div>`)
+            } else {
+                $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
             }
             return table;
         }
@@ -1141,30 +1119,7 @@ function getValidationDate(date) {
         `
     }
     // Сводный по объёмам
-    function analyticsFilterTable_1(period = 'all') {
-        let date_period = datePeriod();
-        function datePeriod() {
-            let date_filter = [ 
-                {id: 'all', period: 3650},
-                {id: 0, period: 3650},
-                {id: 1, period: 0},
-                {id: 2, period: 7},
-                {id: 3, period: 30},
-                {id: 4, period: 365},
-            ]
-            for (let i = 0; i < date_filter.length; i++) {
-                if (period == date_filter[i].id) {
-                    let today = getCurrentDate('year');
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
-                    let date_arr = datetime_regex.exec(today);
-                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                    return [second_datetime, first_datetime];
-                }
-            }
-        }
+    function analyticsFilterTable_1(date_period) {
         let account_data;
         let stocks;
         $.ajax({
@@ -1250,6 +1205,7 @@ function getValidationDate(date) {
                 }
                 return volume_one;
             }
+            let total_count = 0;
             for (let i = 0; i < account_data.length; i++) {
                 let date_create_account = getValidationDate(account_data[i].account.Date);
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
@@ -1282,7 +1238,21 @@ function getValidationDate(date) {
                         }
                         return td;
                     }
+                    total_count++;
                 }
+            }
+            if (!$('div').is('#analytics_block_hidden')) {
+                $('.fields').append(`
+                    <div id="info_in_accounts">
+                        <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
+                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                        </div>
+                    </div>
+                `)
+                $('body').append(`<div id="analytics_block_hidden"></div>`)
+            } else {
+                $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
             }
             let amount_tr = `<tr>${fillAmountRow()}</tr>`;
             function fillAmountRow() {
@@ -1306,30 +1276,7 @@ function getValidationDate(date) {
         `
     }
     // По клиентам
-    function analyticsFilterTable_2(period = 'all') {
-        let date_period = datePeriod();
-        function datePeriod() {
-            let date_filter = [ 
-                {id: 'all', period: 3650},
-                {id: 0, period: 3650},
-                {id: 1, period: 0},
-                {id: 2, period: 7},
-                {id: 3, period: 30},
-                {id: 4, period: 365},
-            ]
-            for (let i = 0; i < date_filter.length; i++) {
-                if (period == date_filter[i].id) {
-                    let today = getCurrentDate('year');
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
-                    let date_arr = datetime_regex.exec(today);
-                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                    return [second_datetime, first_datetime];
-                }
-            }
-        }
+    function analyticsFilterTable_2(date_period) {
         let account_data, delivery_data;
         $.ajax({
             url: '/getAccounts',
@@ -1361,6 +1308,7 @@ function getValidationDate(date) {
             }
         });
         let items_list = [];
+        let total_count = 0;
         for (let i = 0; i < account_data.length; i++) {
             let date_create_account = getValidationDate(account_data[i].account.Date);
             if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
@@ -1429,11 +1377,25 @@ function getValidationDate(date) {
                                     }
                                     let tr = `<tr>${fillTr()}</tr>`
                                     table += tr;
+                                    total_count++;
                                 }
                             }  
                         }      
                     }
                 }
+            }
+            if (!$('div').is('#analytics_block_hidden')) {
+                $('.fields').append(`
+                    <div id="info_in_accounts">
+                        <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
+                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                        </div>
+                    </div>
+                `)
+                $('body').append(`<div id="analytics_block_hidden"></div>`)
+            } else {
+                $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
             }
             return table;
         }
@@ -1451,30 +1413,7 @@ function getValidationDate(date) {
         `
     }
     // По приветам
-    function analyticsFilterTable_3(period = 'all') {
-        let date_period = datePeriod();
-        function datePeriod() {
-            let date_filter = [ 
-                {id: 'all', period: 3650},
-                {id: 0, period: 3650},
-                {id: 1, period: 0},
-                {id: 2, period: 7},
-                {id: 3, period: 30},
-                {id: 4, period: 365},
-            ]
-            for (let i = 0; i < date_filter.length; i++) {
-                if (period == date_filter[i].id) {
-                    let today = getCurrentDate('year');
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
-                    let date_arr = datetime_regex.exec(today);
-                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                    return [second_datetime, first_datetime];
-                }
-            }
-        }
+    function analyticsFilterTable_3(date_period) {
         function fillTable() {
             let accounts;
             $.ajax({
@@ -1499,6 +1438,7 @@ function getValidationDate(date) {
             });
             let table = '';
             let all_data = [];
+            let total_count = 0;
             for (let i = 0; i < accounts.length; i++) {
                 let date_create_account = getValidationDate(accounts[i].account.Date);
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
@@ -1526,7 +1466,21 @@ function getValidationDate(date) {
                         amount_hello: Math.ceil(+sum_hello_volume),
                         amount: Math.round(deleteSpaces(+accounts[i].account.Sum) * 0.9)
                     });
+                    total_count++;
                 }
+            }
+            if (!$('div').is('#analytics_block_hidden')) {
+                $('.fields').append(`
+                    <div id="info_in_accounts">
+                        <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
+                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                        </div>
+                    </div>
+                `)
+                $('body').append(`<div id="analytics_block_hidden"></div>`)
+            } else {
+                $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
             }
             for (let i = 0; i < all_data.length - 1; i++) {
                 for (let j = i + 1; j < all_data.length; j++) {
@@ -1567,30 +1521,7 @@ function getValidationDate(date) {
         `
     }
     // Отгрузки менеджеров
-    function analyticsFilterTable_4(period = 'all') {
-        let date_period = datePeriod();
-        function datePeriod() {
-            let date_filter = [ 
-                {id: 'all', period: 3650},
-                {id: 0, period: 3650},
-                {id: 1, period: 0},
-                {id: 2, period: 7},
-                {id: 3, period: 30},
-                {id: 4, period: 365},
-            ]
-            for (let i = 0; i < date_filter.length; i++) {
-                if (period == date_filter[i].id) {
-                    let today = getCurrentDate('year');
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
-                    let date_arr = datetime_regex.exec(today);
-                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                    return [second_datetime, first_datetime];
-                }
-            }
-        }
+    function analyticsFilterTable_4(date_period) {
         let stocks, account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1772,6 +1703,7 @@ function getValidationDate(date) {
                 return `<td>0</td><td>0</td><td>0</td><td>0</td>`;
             }
             let table = '';
+            let total_count = 0;
             for (let i = 0; i < managers.length; i++) {
                 table += `
                     <tr>
@@ -1779,6 +1711,20 @@ function getValidationDate(date) {
                         ${checkManager(managers[i].id)}
                     </tr>
                 `
+                total_count++;
+            }
+            if (!$('div').is('#analytics_block_hidden')) {
+                $('.fields').append(`
+                    <div id="info_in_accounts">
+                        <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'менеджер', 1)}</span> 
+                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                        </div>
+                    </div>
+                `)
+                $('body').append(`<div id="analytics_block_hidden"></div>`)
+            } else {
+                $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'менеджер', 1)}`);
             }
             let amount_tr = `<tr>${fillAmountRow()}</tr>`;
             function fillAmountRow() {
@@ -1803,55 +1749,141 @@ function getValidationDate(date) {
         `
     }
     // Проделанная работа
-    function analyticsFilterTable_5(period = 'all') {
-        let date_period = datePeriod();
-        function datePeriod() {
-            let date_filter = [ 
-                {id: 'all', period: 3650},
-                {id: 0, period: 3650},
-                {id: 1, period: 0},
-                {id: 2, period: 7},
-                {id: 3, period: 30},
-                {id: 4, period: 365},
-            ]
-            for (let i = 0; i < date_filter.length; i++) {
-                if (period == date_filter[i].id) {
-                    let today = getCurrentDate('year');
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
-
-                    let date_arr = datetime_regex.exec(today);
-                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                    return [second_datetime, first_datetime];
-                }
-            }
-        }
+    function analyticsFilterTable_5(date_period) {
         function fillTable() {
+            let tbody = '';
             $.ajax({
                 url: '/getManagerStat',
                 type: 'GET',
                 async: false,
                 dataType: 'html',
+                beforeSend: function() {
+                    $('body').prepend(`
+                        <div id="preloader">
+                            <div id="preloader_preload"></div>
+                        </div>
+                    `)
+                    preloader = document.getElementById("preloader_preload");
+                },
+                complete: function() {
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                },
                 success: function(data) {
-                    data = JSON.parse(data);
-                    for (let i = 0; i < data.length; i++) {
-                        for (let key in data[i].orgs) {
-                            console.log(key, data[i].orgs[key]);
+                    result = JSON.parse(data);
+                    let total_count = 0;
+                    for (let i = 0; i < result.data.length; i++) {
+                        let count = 0, length = 0;
+
+                        for (let key in result.data[i].orgs) {
+                            let current_date = getValidationDate(result.data[i].orgs[key]);
+                            if (current_date >= date_period[0] && current_date <= date_period[1]) length++;
                         }
+
+                        for (let key in result.data[i].orgs) {
+                            let current_date = getValidationDate(result.data[i].orgs[key]);
+                            if (current_date >= date_period[0] && current_date <= date_period[1]) {
+                                if (count == 0) {
+                                    tbody += `
+                                        <tr>
+                                            <td rowspan="${length}">${result.data[i].name}</td>
+                                            <td>${key}</td>
+                                            <td>${result.data[i].orgs[key]}</td>
+                                        </tr>
+                                    `
+                                } else {
+                                    tbody += `
+                                        <tr>
+                                            <td>${key}</td>
+                                            <td>${result.data[i].orgs[key]}</td>
+                                        </tr>
+                                    `
+                                }
+                                count++;
+                            }
+                        }
+                        total_count += count;
+                    }
+                    if (!$('div').is('#analytics_block_hidden')) {
+                        $('.fields').append(`
+                            <div id="info_in_accounts">
+                                <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'комментари', 3)}</span> 
+                                <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                                    <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                                </div>
+                            </div>
+                        `)
+                        $('body').append(`<div id="analytics_block_hidden"></div>`)
+                    } else {
+                        $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'комментари', 3)}`);
                     }
                 }
             });
-            return 'test';
+            return tbody;
         }
         return `
             <table class="table analytics">
                 <tr>
                     <th>Менеджер</th>
-                    <th width="350">Наименование</th>
-                    <th>Дата последнего комментария</th>
+                    <th>Наименование</th>
+                    <th width="350">Дата последнего комментария</th>
                 </tr>
                 ${fillTable()}
             </table>
         `
+    }
+    function visibleSelectPeriodInAnalytics() {
+        if ($('div').is('.period_info_accounts')) {
+            $('.period_info_accounts').remove();
+        } else {
+            $('#select_period_info_accounts').append(`
+                <div class="period_info_accounts">
+                    <ul>
+                        <li id="day" onclick="selectPeriodInAnalytics(this.id)">за последний день</li>
+                        <li id="weak" onclick="selectPeriodInAnalytics(this.id)">за последнюю неделю</li>
+                        <li id="month" onclick="selectPeriodInAnalytics(this.id)">за последний месяц</li>
+                        <li id="year" onclick="selectPeriodInAnalytics(this.id)">за последний год</li>
+                    </ul>
+                </div>
+            `) 
+        }
+    }
+    function selectPeriodInAnalytics(period) {
+        let date_period = datePeriod(period);
+        let list = [
+            {function: analyticsFilterTable_0, name: 'Прибыль по клиентам'},
+            {function: analyticsFilterTable_1, name: 'Сводный по объёмам'},
+            {function: analyticsFilterTable_2, name: 'По клиентам'},
+            {function: analyticsFilterTable_3, name: 'По приветам'},
+            {function: analyticsFilterTable_4, name: 'Отгрузки менеджеров'},
+            {function: analyticsFilterTable_5, name: 'Проделанная работа'}
+        ]
+
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].name == $('#analytics_reports #active_field').html()) {
+                $('.table').remove();
+                $('.info').append(list[i].function(date_period));
+                break;
+            }
+        }
+    }
+    function datePeriod(period) {
+        let date_filter = [
+            {id: 'day', period: 0, text: 'за последний день'},
+            {id: 'weak', period: 7, text: 'за последнюю неделю'},
+            {id: 'month', period: 30, text: 'за последний месяц'},
+            {id: 'year', period: 365, text: 'за последний год'},
+        ]
+        for (let i = 0; i < date_filter.length; i++) {
+            if (period == date_filter[i].id) {
+                let today = getCurrentDate('year');
+                let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+    
+                let date_arr = datetime_regex.exec(today);
+                let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                $('#period_accounts').html(date_filter[i].text);
+                return [second_datetime, first_datetime];
+            }
+        }
     }

@@ -1,6 +1,45 @@
 /**
  * Функции для работы с таблиц
  */
+function current_count_accounts(value, text, type) {
+    let current_count = [
+        {type: 1, array: [
+            {numbers: [1], name: ''},
+            {numbers: [2, 3, 4], name: 'а'},
+            {numbers: [5, 6, 7, 8, 9, 0], name: 'ов'},
+        ]},
+        {type: 2, array: [
+            {numbers: [1], name: 'а'},
+            {numbers: [2, 3, 4], name: 'и'},
+            {numbers: [5, 6, 7, 8, 9, 0], name: 'ов'},
+        ]},
+        {type: 3, array: [
+            {numbers: [1], name: 'й'},
+            {numbers: [2, 3, 4], name: 'я'},
+            {numbers: [5, 6, 7, 8, 9, 0], name: 'ев'},
+        ]},
+    ]
+    let divider = '1';
+    for (let i = 1; i < value.length; i++) {
+        divider += '0';
+    }
+    for (let k = 0; k < current_count.length; k++) {
+        if (current_count[k].type == type) {
+            for (let i = 0; i < current_count[k].array.length; i++) {
+                for (let j = 0; j < current_count[k].array[i].numbers.length; j++) {
+                    if (value / divider == 1 && divider != 1) {
+                        return text + 'ов'
+                    } else {
+                        if (value % 10 == current_count[k].array[i].numbers[j]) {
+                            return text + current_count[k].array[i].name;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 let rowFilling = (object, id, table) => {
     let selectTableData = object[1];
     let getTitleTable = () => {
@@ -210,7 +249,7 @@ let rowFilling = (object, id, table) => {
             $('#info_in_accounts').remove()
             $('.fields').append(`
             <div id="info_in_accounts">
-                <span id="info_in_accounts_count" style="margin-right: 5px;">Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'перевозчик', 1)}</span> 
+                <span id="info_in_accounts_count" style="margin-right: 5px;">${selectTableData.length} ${current_count_accounts(selectTableData.length, 'перевозчик', 1)}</span> 
                 <div id="select_period_info_accounts" onclick="visibleSelectPeriod('provider')">
                     <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                 </div>
@@ -395,40 +434,6 @@ let rowFilling = (object, id, table) => {
             $('#info_in_accounts_count').html(`${selectTableData.length} ${current_count_accounts(selectTableData.length, 'счет', 1)}`);
         }
         return table;
-    }
-
-    function current_count_accounts(value, text, type) {
-        let current_count = [
-            {type: 1, array: [
-                {numbers: [1], name: ''},
-                {numbers: [2, 3, 4], name: 'а'},
-                {numbers: [5, 6, 7, 8, 9, 0], name: 'ов'},
-            ]},
-            {type: 2, array: [
-                {numbers: [1], name: 'а'},
-                {numbers: [2, 3, 4], name: 'и'},
-                {numbers: [5, 6, 7, 8, 9, 0], name: 'ов'},
-            ]},
-        ]
-        let divider = '1';
-        for (let i = 1; i < value.length; i++) {
-            divider += '0';
-        }
-        for (let k = 0; k < current_count.length; k++) {
-            if (current_count[k].type == type) {
-                for (let i = 0; i < current_count[k].array.length; i++) {
-                    for (let j = 0; j < current_count[k].array[i].numbers.length; j++) {
-                        if (value / divider == 1 && divider != 1) {
-                            return text + 'ов'
-                        } else {
-                            if (value % 10 == current_count[k].array[i].numbers[j]) {
-                                return text + current_count[k].array[i].name;
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     let rowFillingDebit = (id) => {
@@ -1333,8 +1338,9 @@ function fillingTables(object, filter = false) {
         }
     }
     if (object[0].id === 'analytics') {
-        if (user.role == 'admin') return analyticsFilterTable_0();
-        if (user.role == 'manager') return analyticsFilterTable_1();
+        let current_period_month = datePeriod('month');
+        if (user.role == 'admin') return analyticsFilterTable_0(current_period_month);
+        if (user.role == 'manager') return analyticsFilterTable_1(current_period_month);
     }
 
     let table = $('<table />', {
