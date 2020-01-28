@@ -1421,11 +1421,17 @@ function selectPeriod(period = 'month', table) {
                 {id: 'debit', table: filterDebit, date: 'account'},
                 {id: 'account', table: filterAccount, date: 'account'},
                 {id: 'delivery', table: filterDelivery, date: 'delivery'},
-                {id: 'filter_provider', table: filterProvider, date: ''},
+                {id: 'provider', table: filterProvider, date: ''},
             ]
             for (let i = 0; i < account_data.length; i++) {
                 function getCurrDate() {
                     for (let j = 0; j < list_table.length; j++) {
+                        if (list_table[j].id.includes('provider')) {
+                            if (account_data[i].Create_date == null) {
+                                account_data[i].Create_date = '01.01.20'
+                            }
+                            return getValidationDate(account_data[i].Create_date);
+                        }
                         if (saveTableAndCard[0].id.includes(list_table[j].id)) {
                             return getValidationDate(account_data[i][list_table[j].date].Date);
                         }

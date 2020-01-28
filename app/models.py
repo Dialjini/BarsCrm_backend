@@ -106,6 +106,7 @@ class Client(db.Model):
     UTC = db.Column(db.Integer)
     UHH = db.Column(db.String)
     Adress = db.Column(db.String)
+    Fact_address = db.Column(db.String)
     Junk_items = db.relationship('Junk_item', backref='Client', lazy='dynamic')
     Notes = db.relationship('Notes', backref='Author', lazy='dynamic')
     Tag = db.Column(db.String)

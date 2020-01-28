@@ -157,21 +157,13 @@ function getTableData(table, input = false, close = false) {
                     });
                     $('#find_competitor').remove();
                     $('#amount_cards').remove();
-                    if (saveTableAndCard[0].id == 'client') {
-                        $('.fields').append(`
-                            <div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>
-                        `)
-                    }
-                    if (saveTableAndCard[0].id != 'debit') {
-                        $('#info_in_accounts').remove();
-                    }
-                    if (saveTableAndCard[0].name == 'Список') {
-                        $('.fields').append(`
-                            <div id="amount_cards">
-                                <span>Кол-во карточек: ${saveTableAndCard[1][1].length}</span>
-                            </div>
-                        `)
-                    }
+
+                    if (saveTableAndCard[0].id == 'client')     $('.fields').append(`<div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>`)
+                    if (   saveTableAndCard[0].id == 'client' 
+                        || saveTableAndCard[0].id == 'carrier'
+                        || saveTableAndCard[0].id == 'account') $('#info_in_accounts').remove()
+                    if (saveTableAndCard[0].name == 'Список')   $('.fields').append(` <div id="amount_cards"> <span>Кол-во карточек: ${saveTableAndCard[1][1].length}</span> </div> `)
+                    if (saveTableAndCard[0].id == 'provider')   $('#amount_cards').remove();
                 }
             }
         }
@@ -284,6 +276,10 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     let idData = {};
     const data = id.split('_');
     let card = data[data.length - 1];
+
+    if (data[0] == 'account' && card == 'new') {
+        card = categoryInFinanceAccount[1][1].length + 1;
+    }
 
     if (card !== 'contract') {
         if (!checkEmail()) return
