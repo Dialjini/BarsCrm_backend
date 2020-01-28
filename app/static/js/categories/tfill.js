@@ -201,7 +201,24 @@ let rowFilling = (object, id, table) => {
             }
             table.append(tbody);
         }
+        info_in_providers(id);
         return table;
+    }
+
+    function info_in_providers(id) {
+        if (id != 'filter_provider') {
+            $('#info_in_accounts').remove()
+            $('.fields').append(`
+            <div id="info_in_accounts">
+                <span id="info_in_accounts_count" style="margin-right: 5px;">Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'перевозчик', 1)}</span> 
+                <div id="select_period_info_accounts" onclick="visibleSelectPeriod('provider')">
+                    <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                </div>
+            </div>
+        `)
+        } else {
+            $('#info_in_accounts_count').html(`${selectTableData.length} ${current_count_accounts(selectTableData.length, 'перевозчик', 1)}`);
+        }
     }
 
     let rowFillingProvider = (id) => {
@@ -258,6 +275,7 @@ let rowFilling = (object, id, table) => {
             }
             table.append(tbody);
         }
+        info_in_providers(id);
         return table;
     }
 
@@ -295,14 +313,6 @@ let rowFilling = (object, id, table) => {
         }
         if (id != 'filter_delivery') {
             $('#info_in_accounts').remove()
-            console.log($('.fields').append(`
-                <div id="info_in_accounts">
-                    <span id="info_in_accounts_count" style="margin-right: 5px;">Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'доставк', 2)}</span> 
-                    <div id="select_period_info_accounts" onclick="visibleSelectPeriod('delivery')">
-                        <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                    </div>
-                </div>
-            `))
             $('.fields').append(`
                 <div id="info_in_accounts">
                     <span id="info_in_accounts_count" style="margin-right: 5px;">Выставлено ${selectTableData.length} ${current_count_accounts(selectTableData.length, 'доставк', 2)}</span> 
@@ -346,6 +356,7 @@ let rowFilling = (object, id, table) => {
             } else {
                 status = '<span class="red">Не оплачено</span>';
             }
+            let shipment = '<span class="red">Не отгружено</span>';
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
                 if (+managers[j].id == +selectTableData[i].account.Manager_id) {
@@ -363,7 +374,7 @@ let rowFilling = (object, id, table) => {
             }
 
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, returnSpaces(selectTableData[i].account.Sum), status, returnSpaces(+hello_sum.toFixed(2)), managerSecondName];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, returnSpaces(selectTableData[i].account.Sum), status, shipment, returnSpaces(+hello_sum.toFixed(2)), managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = status.includes('Не актуальный') ? $('<td>', { html: `<span style="color: #e8e8e8">${name[j]}</span>` }) : $('<td>', { html: name[j] });
@@ -407,7 +418,7 @@ let rowFilling = (object, id, table) => {
             if (current_count[k].type == type) {
                 for (let i = 0; i < current_count[k].array.length; i++) {
                     for (let j = 0; j < current_count[k].array[i].numbers.length; j++) {
-                        if (value / divider == 1) {
+                        if (value / divider == 1 && divider != 1) {
                             return text + 'ов'
                         } else {
                             if (value % 10 == current_count[k].array[i].numbers[j]) {

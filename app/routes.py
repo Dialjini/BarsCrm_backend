@@ -150,7 +150,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1712)
+        return render_template('index.html', last_update=1740)
     else:
         return render_template('login.html', last_update=1017)
 
@@ -1165,6 +1165,7 @@ def addClient():
         Client.Oblast = data['client_region']
         Client.Station = data['client_station']
         Client.Adress = data['client_address']
+        Client.Fact_address = data['client_factual_address']
         Client.Holding = data['client_holding']
         Client.Site = data['client_site']
         Client.Livestock_all = data['livestock_general']

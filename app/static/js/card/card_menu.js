@@ -174,7 +174,7 @@ function createCardMenu(element, index = 0) {
                 }
             } else {
                 const emptyData = [
-                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc', 'rc'] },
+                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Fact_address', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc', 'rc'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View', 'Bik', 'kc', 'rc'] },
                     { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
@@ -411,6 +411,10 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Адрес</td>
                             <td><input type="text" class="string" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
+                        </tr>
+                        <tr>
+                            <td>Факт. адрес</td>
+                            <td><input type="text" class="string" id="client_factual_address" onchange="saveCard()" value="${selectedLine.Fact_address}"></td>
                         </tr>
                     `)
             }).add(`

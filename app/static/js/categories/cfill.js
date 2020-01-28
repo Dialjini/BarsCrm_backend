@@ -195,7 +195,8 @@ function linkField() {
                         analyticsFilterTable_1,
                         analyticsFilterTable_2,
                         analyticsFilterTable_3,
-                        analyticsFilterTable_4
+                        analyticsFilterTable_4,
+                        analyticsFilterTable_5,
                     ]
                     $('#analytics_period .field_with_modal')[0].children[0].innerHTML = 'Период';
                     return functions[this_id.split('_')[2]]();
@@ -205,9 +206,10 @@ function linkField() {
                         analyticsFilterTable_1,
                         analyticsFilterTable_2,
                         analyticsFilterTable_3,
-                        analyticsFilterTable_4
+                        analyticsFilterTable_4,
+                        analyticsFilterTable_5,
                     ]
-                    let list = this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
+                    let list = this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров'];
                     for (let i = 0; i < list.length; i++) {
                         if ($('#analytics_reports').children()[0].children[0].innerHTML == list[i]) {
                             return functions[this_id.split('_')[2]]();
@@ -1795,6 +1797,122 @@ function getValidationDate(date) {
                     <th width="170">Менеджер</th>
                     <th width="130">Итого</th>
                     ${outputAllItems()}
+                </tr>
+                ${fillTable()}
+            </table>
+        `
+    }
+    // Проделанная работа
+    function analyticsFilterTable_5(period = 'all') {
+        let date_period = datePeriod();
+        function datePeriod() {
+            let date_filter = [ 
+                {id: 'all', period: 3650},
+                {id: 0, period: 3650},
+                {id: 1, period: 0},
+                {id: 2, period: 7},
+                {id: 3, period: 30},
+                {id: 4, period: 365},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                    second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
+        function fillTable() {
+            let accounts;
+            $.ajax({
+                url: '/getAccounts',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                beforeSend: function() {
+                    $('body').prepend(`
+                        <div id="preloader">
+                            <div id="preloader_preload"></div>
+                        </div>
+                    `)
+                    preloader = document.getElementById("preloader_preload");
+                },
+                complete: function() {
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                },
+                success: function(data) {
+                    accounts = JSON.parse(data);
+                }
+            });
+            let table = '';
+            let all_data = [];
+            for (let i = 0; i < accounts.length; i++) {
+                let date_create_account = getValidationDate(accounts[i].account.Date);
+                if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                    let items_volume = JSON.parse(accounts[i].account.Item_ids);
+                    let items_hello = JSON.parse(accounts[i].account.Hello);
+                    let sum_volume = items_volume.reduce((a, b) => ({volume: deleteSpaces(+a.volume) + deleteSpaces(+b.volume)}));
+                    let sum_hello_volume = 0, id_client = 0;
+                    let client_data = categoryInListClient[1][1];
+
+                    for (let j = 0; j < client_data.length; j++) {
+                        if (client_data[j].Name === accounts[i].account.Name) {
+                            id_client = client_data[j].id;
+                            break;
+                        }
+                    }
+
+                    for (let sum = 0; sum < items_volume.length; sum++) {
+                        sum_hello_volume += deleteSpaces(+items_volume[sum].volume) * deleteSpaces(+items_hello[sum]);
+                    }
+                    all_data.push({
+                        client_id: id_client,
+                        name: accounts[i].account.Name,
+                        volume: +sum_volume.volume,
+                        average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
+                        amount_hello: Math.ceil(+sum_hello_volume),
+                        amount: Math.round(deleteSpaces(+accounts[i].account.Sum) * 0.9)
+                    });
+                }
+            }
+            for (let i = 0; i < all_data.length - 1; i++) {
+                for (let j = i + 1; j < all_data.length; j++) {
+                    if (all_data[i].name === all_data[j].name) {
+                        all_data[i].volume += deleteSpaces(all_data[j].volume);
+                        all_data[i].amount_hello += deleteSpaces(all_data[j].amount_hello);
+                        all_data[i].average_volume = Math.ceil(all_data[i].amount_hello / all_data[i].volume);
+                        all_data[i].amount = Math.round((all_data[i].amount + all_data[j].amount) * 0.9);
+                        all_data.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+            for (let i = 0; i < all_data.length; i++) {
+                table += `
+                    <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
+                        <td>${all_data[i].name}</td>
+                        <td>${returnSpaces(all_data[i].volume)}</td>
+                        <td>${returnSpaces(all_data[i].average_volume)}</td>
+                        <td>${returnSpaces(all_data[i].amount_hello)}</td>
+                        <td>${returnSpaces(all_data[i].amount)}</td>
+                    </tr>
+                `
+            }
+            return table;
+        }
+        return `
+            <table class="table analytics">
+                <tr>
+                    <th width="350">Клиент</th>
+                    <th>Объём</th>
+                    <th>Сколько</th>
+                    <th>Сумма, руб.</th>
+                    <th>Итого</th>
                 </tr>
                 ${fillTable()}
             </table>

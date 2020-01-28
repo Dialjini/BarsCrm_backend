@@ -72,6 +72,7 @@ const categoryInFinanceAccount = [
             { name: 'Наименование', width: 20 },
             { name: 'Сумма, руб.', width: 10 },
             { name: 'Статус', width: 10 },
+            { name: 'Отгрузки', width: 10 },
             { name: 'Приветы', width: 10 },
             { name: 'Менеджер', width: 15 },
         ],
@@ -180,6 +181,7 @@ const filterAccount = [
             { name: 'Наименование', width: 20 },
             { name: 'Сумма, руб.', width: 10 },
             { name: 'Статус', width: 10 },
+            { name: 'Отгрузки', width: 10 },
             { name: 'Приветы', width: 10 },
             { name: 'Менеджер', width: 15 },
         ],
@@ -289,7 +291,7 @@ const contactsFormInfo = [
 const idCardFields = [
     {   
         name: 'client', ids:
-        ['client_site', 'client_holding', 'client_name', 'client_area', 'client_region', 'client_address', 'client_inn',
+        ['client_site', 'client_holding', 'client_name', 'client_area', 'client_region', 'client_address', 'client_factual_address', 'client_inn',
         'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc', 'client_rc'],
         request: '/addClient'
     },
