@@ -865,17 +865,28 @@ function createCardMenu(element, index = 0) {
                 sum += +items_amount[i].amount;
                 table = table.concat(`
                     <tr class="product" id="product_${list_items[i].Item_id}">
+                        <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this)">
+                            <img src="../static/images/returnBack.png" style="width: 12px;">
+                        </td>
                         <td>${list_items[i].Name}</td>
                         <td>${list_items[i].Packing}</td>
-                        <td>${list_items[i].Weight}</td>
-                        <td>${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
-                        <td>${list_items[i].Transferred_volume}</td>
-                        <td>${list_items[i].Cost}</td>
-                        <td>${+sale[i]}</td>
-                        <td>${+privet[i]}</td>
-                        <td>${+delivery[i]}</td>
-                        <td>${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
-                        <td>${+items_amount[i].amount}</td>
+                        <td id="product_weight_${list_items[i].Item_id}">${list_items[i].Weight}</td>
+                        <td id="product_containers_${list_items[i].Item_id}">${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
+                        <td>
+                            <input type="text" id="invoiled_volume_${list_items[i].Item_id}" value="${list_items[i].Transferred_volume}">
+                        </td>
+                        <td id="product_cost_${list_items[i].Item_id}">${list_items[i].Cost}</td>
+                        <td>
+                            <input type="text" value="${+sale[i]}" id="calcSale_${list_items[i].Item_id}">
+                        </td>
+                        <td>
+                            <input type="text" value="${+privet[i]}" id="calcPrivet_${list_items[i].Item_id}">
+                        </td>
+                        <td>
+                            <input type="text" value="${+delivery[i]}" id="calcDelivery_${list_items[i].Item_id}">
+                        </td>
+                        <td id="product_unit_${list_items[i].Item_id}">${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
+                        <td id="amountC_${list_items[i].Item_id}">${+items_amount[i].amount}</td>
                     </tr>
                 `)
             }
@@ -911,17 +922,43 @@ function createCardMenu(element, index = 0) {
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                         </tr>
                     `);
                 }
             }
             return table;
         }
-        return ` <div class="row_card">
+        return `<div class="row_card">
+                    <div class="costs gray">
+                        <div class="costs_element">
+                            <span>Всего затраты</span>
+                            <input type="text" onkeyup="maskNumberWithout(this.id); all_costs()"  id="total_costs_inv" class="total_count red bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
+                        </div> 
+                        <div class="costs_element">
+                            <span>Скидка</span> 
+                            <input type="text" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
+                        </div>
+                        <div class="costs_element">
+                            <span>Привет</span> 
+                            <input type="text" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
+                        </div>
+                        <div class="costs_element">
+                            <span>Доставка</span> 
+                            <input type="text" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
+                            <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row_card">
                     <div class="info_block full">
                         <table class="account_table new_table">
                             <tr>
-                                <th rowspan="2">Товар</th>
+                                <th width="15" rowspan="2"></th>
+                                <th width="150" rowspan="2">Товар</th>
                                 <th colspan="2">Упаковка</th>
                                 <th colspan="2">Количество</th>
                                 <th colspan="5">Цена, руб.</th>
@@ -929,34 +966,34 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tr>
                                 <th>Вид</th>
-                                <th>Вес, кг.</th>
-                                <th>Всего, шт.</th>
-                                <th>Объем, кг.</th>
-                                <th>Цена прайса, руб.</th>
-                                <th>Скидка</th>
-                                <th>Привет</th>
-                                <th>Доставка</th>
-                                <th>За единицу</th>
+                                <th width="55">Вес, кг.</th>
+                                <th width="65">Всего, шт.</th>
+                                <th width="75">Объем, кг.</th>
+                                <th width="85">Цена прайса, руб.</th>
+                                <th width="60">Скидка</th>
+                                <th width="60">Привет</th>
+                                <th width="60">Доставка</th>
+                                <th width="75">За единицу</th>
                             </tr>
                             <tbody id="acc_list">
                                 ${fillingProducts()}
                             </tbody>
                             <tr>
-                                <td colspan="9" style="border: none; border-top: 1px solid #e9e9e9"></td>
+                                <td colspan="10" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">НДС</span><span>${Math.round(sum - vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">НДС</span><span id="vat">${Math.round(sum - vat)}</span></div>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="9" style="border: none;"></td>
+                                <td colspan="10" style="border: none;"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span>${Math.round(vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span id="without-vat">${Math.round(vat)}</span></div>
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="9" style="border: none;"></td>
+                                <td colspan="10" style="border: none;"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Общая</span><span>${Math.round(sum)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Общая</span><span id="total">${Math.round(sum)}</span></div>
                                 </td>
                             </tr>
                         </table>
@@ -2122,7 +2159,10 @@ function completionCard(elem) {
                         $.ajax({
                             url: '/addAccount',
                             type: 'GET',
-                            data: {manager_id: this_user.id, name: name, status: status, date: date, hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery), items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems)},
+                            data: {manager_id: this_user.id, name: name, status: status, date: date,
+                                hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
+                                items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
+                                },
                             dataType: 'html',
                             success: function() {
                                 closeCardMenu('account_new');

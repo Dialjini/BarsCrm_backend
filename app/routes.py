@@ -151,9 +151,9 @@ def index():
 
     if 'username' in session:
 
-        return render_template('index.html', last_update=2288)
+        return render_template('index.html', last_update=1882)
     else:
-        return render_template('login.html', last_update=2288)
+        return render_template('login.html', last_update=1880)
 
 
 @app.route('/getAllTasks')
@@ -287,7 +287,7 @@ def editAccount():
         table.Item_ids = data['item_ids']
         table.Items_amount = data['items_amount']
         table.Manager_id = data['manager_id']
-        table.Total_costs = data['sale_costs']
+        table.Total_costs = data['total_costs']
         table.Sale_costs = data['sale_costs']
         table.Hello_costs = data['hello_costs']
         table.Delivery_costs = data['delivery_costs']
@@ -728,7 +728,7 @@ def addAccount():
         table.Item_ids = data['item_ids']
         table.Items_amount = data['items_amount']
         table.Manager_id = data['manager_id']
-        table.Total_costs = data['sale_costs']
+        table.Total_costs = data['total_costs']
         table.Sale_costs = data['sale_costs']
         table.Hello_costs = data['hello_costs']
         table.Delivery_costs = data['delivery_costs']
