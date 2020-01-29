@@ -201,6 +201,42 @@ def addTemplate(name):
     db.session.add(table)
     db.session.commit()
 
+# ---------------------------------------------------Excel_Creator------------------------------------------------------
+def firstScenario():
+    return 'ok'
+
+def secondScenario():
+    return 'ok'
+
+def thirdScenario():
+    return 'ok'
+
+def fourthScenario():
+    return 'ok'
+
+def fifthScenario():
+    return 'ok'
+
+def sixthScenario():
+    return 'ok'
+
+def createExel(id, data):
+    if int(id) == 0:
+        return firstScenario()
+    if int(id) == 1:
+        return secondScenario()
+    if int(id) == 2:
+        return thirdScenario()
+    if int(id) == 3:
+        return fourthScenario()
+    if int(id) == 4:
+        return fifthScenario()
+    if int(id) == 5:
+        return sixthScenario()
+
+    return 'ok'
+
+
 # ----------------------------------------------------Testing_Room------------------------------------------------------
 def table_to_json(query):
     result = []
