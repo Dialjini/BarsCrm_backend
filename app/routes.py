@@ -254,8 +254,6 @@ def getManagerStat():
         return redirect('/', code=302)
 
 
-
-
 @app.route('/logout', methods=['GET'])
 def logout():
     if 'username' in session:
@@ -1240,5 +1238,14 @@ def addClient():
         db.session.commit()
 
         return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
+@app.route('/exelStat', methods=['GET'])
+def exelStat():
+    if 'username' in session:
+        print(request.args)
+        return 'ok'
     else:
         return redirect('/', code=302)
