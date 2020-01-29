@@ -1365,6 +1365,7 @@ function visibleSelectPeriod(type = 'account') {
                     <li id="weak" onclick="selectPeriod(this.id, '${type}')">за последнюю неделю</li>
                     <li id="month" onclick="selectPeriod(this.id, '${type}')">за последний месяц</li>
                     <li id="year" onclick="selectPeriod(this.id, '${type}')">за последний год</li>
+                    <li id="all" onclick="selectPeriod(this.id, '${type}')">за все время</li>
                 </ul>
             </div>
         `) 
@@ -1405,6 +1406,7 @@ function selectPeriod(period = 'month', table) {
                     {id: 'weak', period: 7, text: 'за последнюю неделю'},
                     {id: 'month', period: 30, text: 'за последний месяц'},
                     {id: 'year', period: 365, text: 'за последний год'},
+                    {id: 'all', period: 5475, text: 'за все время'},
                 ]
                 for (let i = 0; i < date_filter.length; i++) {
                     if (period == date_filter[i].id) {

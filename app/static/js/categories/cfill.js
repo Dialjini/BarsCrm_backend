@@ -198,6 +198,7 @@ function linkField() {
                         analyticsFilterTable_5,
                     ]
                     $('#analytics_block_hidden').remove();
+                    $('[name="unload_table"]').remove();
                     $('#info_in_accounts').remove();
                     return functions[this_id.split('_')[2]](datePeriod('month'));
                 } else {
@@ -1005,7 +1006,7 @@ function getValidationDate(date) {
 }
 // Отчеты
     // Прибыль по клиентам
-    function analyticsFilterTable_0(date_period) {
+    function analyticsFilterTable_0(date_period, unload_status = false) {
         let account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1050,7 +1051,7 @@ function getValidationDate(date) {
         function fillTable() {
             let table = '';
             let total_count = 0;
-            console.log(items_list);
+            let unload_table = [];
             for (let i = 0; i < items_list.length; i++) {
                 for (let j = 0; j < items_list[i].account.length; j++) {
                     let volume = JSON.parse(items_list[i].account[j].Item_ids);
@@ -1058,32 +1059,42 @@ function getValidationDate(date) {
                     let hello = JSON.parse(items_list[i].account[j].Hello);
                     for (let v = 0; v < volume.length; v++) {
                         if (+volume[v].id == +items_list[i].item.Item_id) {
-                            function fillTr() {
-                                let trContent = '';
-                                if (j == 0) {
-                                    trContent += `<td rowspan="${items_list[i].account.length}">${items_list[i].item.Name}</td>`;
+                            let price = deleteSpaces(+delivery[v]) + deleteSpaces(+hello[v]) + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
+                            if (!unload_status) {
+                                function fillTr() {
+                                    let trContent = '';
+                                    if (j == 0) {
+                                        trContent += `<td rowspan="${items_list[i].account.length}">${items_list[i].item.Name}</td>`;
+                                    }
+                                    trContent += `<td>${items_list[i].account[j].Name}</td>
+                                                <td>${returnSpaces(volume[v].volume)}</td>
+                                                <td>${returnSpaces(price)}</td>
+                                                <td>${returnSpaces(delivery[v])}</td>
+                                                <td>${returnSpaces(hello[v])}</td>
+                                                <td>${returnSpaces(items_list[i].item.Cost)}</td>
+                                                <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
+                                                <td>${returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
+                                                <td>${returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume)}</td>`
+                                    return trContent;
                                 }
-                                let price = deleteSpaces(+delivery[v]) + deleteSpaces(+hello[v]) + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
-                                trContent += `<td>${items_list[i].account[j].Name}</td>
-                                            <td>${returnSpaces(volume[v].volume)}</td>
-                                            <td>${returnSpaces(price)}</td>
-                                            <td>${returnSpaces(delivery[v])}</td>
-                                            <td>${returnSpaces(hello[v])}</td>
-                                            <td>${returnSpaces(items_list[i].item.Cost)}</td>
-                                            <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
-                                            <td>${returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
-                                            <td>${returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume)}</td>`
-                                return trContent;
+                                let tr;
+                                if (j == 0) tr = `<tbody class="tr_tr"><tr>${fillTr()}</tr>`
+                                else if (j == items_list[i].account.length - 1) tr = `<tr>${fillTr()}</tr></tbody>`
+                                else tr = `<tr>${fillTr()}</tr>`
+                                table += tr;
+                                total_count++;
+                            } else {
+                                unload_table.push({product: items_list[i].item.Name, name: items_list[i].account[j].Name, volume: returnSpaces(volume[v].volume),
+                                    price: returnSpaces(price), delivery: returnSpaces(delivery[v]), hello: returnSpaces(hello[v]), cost: returnSpaces(items_list[i].item.Cost),
+                                    purchase_price: returnSpaces(items_list[i].item.Purchase_price), earned: returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)),
+                                    profit: returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume)})
                             }
-                            let tr;
-                            if (j == 0) tr = `<tbody class="tr_tr"><tr>${fillTr()}</tr>`
-                            else if (j == items_list[i].account.length - 1) tr = `<tr>${fillTr()}</tr></tbody>`
-                            else tr = `<tr>${fillTr()}</tr>`
-                            table += tr;
-                            total_count++;
                         }
                     }
                 }
+            }
+            if (unload_status) {
+                return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
                 $('.fields').append(`
@@ -1093,6 +1104,7 @@ function getValidationDate(date) {
                             <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                         </div>
                     </div>
+                    <div id="analytics_0" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
@@ -1100,7 +1112,10 @@ function getValidationDate(date) {
             }
             return table;
         }
-        return `
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
             <table class="table analytics">
                 <tr>
                     <th>Товар</th>
@@ -1117,9 +1132,10 @@ function getValidationDate(date) {
                 ${fillTable()}
             </table>
         `
+        }
     }
     // Сводный по объёмам
-    function analyticsFilterTable_1(date_period) {
+    function analyticsFilterTable_1(date_period, unload_status = false) {
         let account_data;
         let stocks;
         $.ajax({
@@ -1206,6 +1222,7 @@ function getValidationDate(date) {
                 return volume_one;
             }
             let total_count = 0;
+            let unload_table = [];
             for (let i = 0; i < account_data.length; i++) {
                 let date_create_account = getValidationDate(account_data[i].account.Date);
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
@@ -1215,31 +1232,58 @@ function getValidationDate(date) {
                         if (a.id < b.id) return -1;
                         return 0;
                     })
-                    table += `
-                        <tr>
-                            <td>${account_data[i].account.Name}</td>
-                            ${fillVolume()}
-                        </tr>
-                    `
-                    function fillVolume() {
-                        let td = '';
+                    if (!unload_status) {
+                        table += `
+                            <tr>
+                                <td>${account_data[i].account.Name}</td>
+                                ${fillVolume()}
+                            </tr>
+                        `
+                        function fillVolume() {
+                            let td = '';
+                            for (let j = 0; j < items_volume.length; j++) {
+                                for (let l = 0; l < all_items.length; l++) {
+                                    if (+all_items[l].Item_id == +items_volume[j].id) {
+                                        amounts[l] += deleteSpaces(+items_volume[j].volume);
+                                        td += `<td id="item_${l + 1}">${returnSpaces(items_volume[j].volume)}</td>`
+                                        if (items_volume.length - 1 != j) {
+                                            j++;
+                                        }
+                                    } else {
+                                        td += `<td id="item_${l + 1}">0</td>`
+                                    }
+                                }
+                            }
+                            return td;
+                        }
+                        total_count++;
+                    } else {
                         for (let j = 0; j < items_volume.length; j++) {
                             for (let l = 0; l < all_items.length; l++) {
+                                unload_table.push({name: account_data[i].account.Name, list: []});
                                 if (+all_items[l].Item_id == +items_volume[j].id) {
-                                    amounts[l] += deleteSpaces(+items_volume[j].volume);
-                                    td += `<td id="item_${l + 1}">${returnSpaces(items_volume[j].volume)}</td>`
+                                    for (let g = 0; g < unload_table.length; g++) {
+                                        if (account_data[i].account.Name == unload_table[g].name) {
+                                            unload_table[i].list.push({id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume)})
+                                        }
+                                    }
                                     if (items_volume.length - 1 != j) {
                                         j++;
                                     }
                                 } else {
-                                    td += `<td id="item_${l + 1}">0</td>`
+                                    for (let g = 0; g < unload_table.length; g++) {
+                                        if (account_data[i].account.Name == unload_table[g].name) {
+                                            unload_table[i].list.push({id: +items_volume[j].id, volume: '0'})
+                                        }
+                                    }
                                 }
                             }
                         }
-                        return td;
                     }
-                    total_count++;
                 }
+            }
+            if (unload_status) {
+                return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
                 $('.fields').append(`
@@ -1249,6 +1293,7 @@ function getValidationDate(date) {
                             <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                         </div>
                     </div>
+                    <div id="analytics_1" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
@@ -1265,18 +1310,22 @@ function getValidationDate(date) {
             table += amount_tr;
             return table;
         }
-        return `
-            <table class="table analytics">
-                <tr>
-                    <th width="270">Клиент</th>
-                    ${outputAllItems()}
-                </tr>
-                ${fillTable()}
-            </table>
-        `
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
+                <table class="table analytics">
+                    <tr>
+                        <th width="270">Клиент</th>
+                        ${outputAllItems()}
+                    </tr>
+                    ${fillTable()}
+                </table>
+            `
+        }
     }
     // По клиентам
-    function analyticsFilterTable_2(date_period) {
+    function analyticsFilterTable_2(date_period, unload_status = false) {
         let account_data, delivery_data;
         $.ajax({
             url: '/getAccounts',
@@ -1353,6 +1402,7 @@ function getValidationDate(date) {
         }
         function fillTable() {
             let table = '';
+            let unload_table = [];
             for (let i = 0; i < items_list.length; i++) {
                 for (let j = 0; j < items_list[i].items.length; j++) {
                     let volume = JSON.parse(items_list[i].account.Item_ids);
@@ -1364,25 +1414,34 @@ function getValidationDate(date) {
                                 if (+volume[v].id == +items_list[i].items[j].Item_id
                                     && +items_list[i].items[j].Item_id == +deliveries_ids[id]
                                     && delivery_data[delivery].delivery.Account_id == +items_list[i].account.id) {
-                                    function fillTr() {
-                                        let trContent = '';
-                                        if (j == 0) {
-                                            trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
+                                    if (!unload_status) {
+                                        function fillTr() {
+                                            let trContent = '';
+                                            if (j == 0) {
+                                                trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
+                                            }
+                                            trContent += `<td>${items_list[i].items[j].Name}</td>
+                                                        <td>${returnSpaces(volume[v].volume)}</td>
+                                                        <td>${delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
+                                                        <td>${returnSpaces(amounts[v].amount)}</td>`
+                                            return trContent;
                                         }
-                                        trContent += `<td>${items_list[i].items[j].Name}</td>
-                                                    <td>${returnSpaces(volume[v].volume)}</td>
-                                                    <td>${delivery_data[delivery].delivery.Start_date != null ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
-                                                    <td>${returnSpaces(amounts[v].amount)}</td>`
-                                        return trContent;
+                                        let tr = `<tr>${fillTr()}</tr>`
+                                        table += tr;
+                                        total_count++;
+                                    } else {
+                                        unload_table.push({ name: items_list[i].account.Name, product: items_list[i].items[j].Name, volume: returnSpaces(volume[v].volume),
+                                            start_date: delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана',
+                                            amount: returnSpaces(amounts[v].amount)})
                                     }
-                                    let tr = `<tr>${fillTr()}</tr>`
-                                    table += tr;
-                                    total_count++;
                                 }
                             }  
                         }      
                     }
                 }
+            }
+            if (unload_status) {
+                return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
                 $('.fields').append(`
@@ -1392,6 +1451,7 @@ function getValidationDate(date) {
                             <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                         </div>
                     </div>
+                    <div id="analytics_2" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
@@ -1399,21 +1459,25 @@ function getValidationDate(date) {
             }
             return table;
         }
-        return `
-            <table class="table analytics">
-                <tr>
-                    <th width="350">Клиент</th>
-                    <th>Товары</th>
-                    <th>Вес</th>
-                    <th>Дата отгрузки</th>
-                    <th>Сумма, руб.</th>
-                </tr>
-                ${fillTable()}
-            </table>
-        `
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
+                <table class="table analytics">
+                    <tr>
+                        <th width="350">Клиент</th>
+                        <th>Товары</th>
+                        <th>Вес</th>
+                        <th>Дата отгрузки</th>
+                        <th>Сумма, руб.</th>
+                    </tr>
+                    ${fillTable()}
+                </table>
+            `
+        }
     }
     // По приветам
-    function analyticsFilterTable_3(date_period) {
+    function analyticsFilterTable_3(date_period, unload_status = false) {
         function fillTable() {
             let accounts;
             $.ajax({
@@ -1437,7 +1501,7 @@ function getValidationDate(date) {
                 }
             });
             let table = '';
-            let all_data = [];
+            let all_data = [], unload_table = [];
             let total_count = 0;
             for (let i = 0; i < accounts.length; i++) {
                 let date_create_account = getValidationDate(accounts[i].account.Date);
@@ -1477,6 +1541,7 @@ function getValidationDate(date) {
                             <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                         </div>
                     </div>
+                    <div id="analytics_3" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
@@ -1495,33 +1560,45 @@ function getValidationDate(date) {
                 }
             }
             for (let i = 0; i < all_data.length; i++) {
-                table += `
-                    <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
-                        <td>${all_data[i].name}</td>
-                        <td>${returnSpaces(all_data[i].volume)}</td>
-                        <td>${returnSpaces(all_data[i].average_volume)}</td>
-                        <td>${returnSpaces(all_data[i].amount_hello)}</td>
-                        <td>${returnSpaces(all_data[i].amount)}</td>
-                    </tr>
-                `
+                if (!unload_status) {
+                    table += `
+                        <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
+                            <td>${all_data[i].name}</td>
+                            <td>${returnSpaces(all_data[i].volume)}</td>
+                            <td>${returnSpaces(all_data[i].average_volume)}</td>
+                            <td>${returnSpaces(all_data[i].amount_hello)}</td>
+                            <td>${returnSpaces(all_data[i].amount)}</td>
+                        </tr>
+                    `
+                } else {
+                    unload_table.push({ name: all_data[i].name, volume: returnSpaces(all_data[i].volume),
+                        average_volume: returnSpaces(all_data[i].average_volume), hello: returnSpaces(all_data[i].amount_hello), amount: returnSpaces(all_data[i].amount)});
+                }
+            }
+            if (unload_status) {
+                return unload_table;
             }
             return table;
         }
-        return `
-            <table class="table analytics">
-                <tr>
-                    <th width="350">Клиент</th>
-                    <th>Объём</th>
-                    <th>Сколько</th>
-                    <th>Сумма, руб.</th>
-                    <th>Итого</th>
-                </tr>
-                ${fillTable()}
-            </table>
-        `
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
+                <table class="table analytics">
+                    <tr>
+                        <th width="350">Клиент</th>
+                        <th>Объём</th>
+                        <th>Сколько</th>
+                        <th>Сумма, руб.</th>
+                        <th>Итого</th>
+                    </tr>
+                    ${fillTable()}
+                </table>
+            `
+        }
     }
     // Отгрузки менеджеров
-    function analyticsFilterTable_4(date_period) {
+    function analyticsFilterTable_4(date_period, unload_status = false) {
         let stocks, account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1627,7 +1704,7 @@ function getValidationDate(date) {
         function outputAllItems() {
             let th = '';
             for (let i = 0; i < all_items.length; i++) {
-                th += `<th width="70">${all_items[i].Name}</th>`
+                th += `<th width="150">${all_items[i].Name}</th>`
             }
             return th;
         }
@@ -1676,18 +1753,29 @@ function getValidationDate(date) {
                         }
                         all_amounts += general_amount;
                         td += `<td>${returnSpaces(general_amount)}</td>`
+                        let unload_table_ = [{total: returnSpaces(general_amount)}];
                         for (let j = 0; j < items_volume.length; j++) {
                             for (let k = 0; k < all_items.length; k++) {
                                 if (+all_items[k].Item_id == +items_volume[j].id) {
-                                    amounts[k] += deleteSpaces(+items_volume[j].volume);
-                                    td += `<td id="item_${k + 1}">${returnSpaces(items_volume[j].volume)}</td>`
-                                    if (items_volume.length - 1 != j) {
-                                        j++;
+                                    if (!unload_status) {
+                                        amounts[k] += deleteSpaces(+items_volume[j].volume);
+                                        td += `<td id="item_${k + 1}">${returnSpaces(items_volume[j].volume)}</td>`
+                                        if (items_volume.length - 1 != j) {
+                                            j++;
+                                        }
+                                    } else {
+                                        unload_table_.push({ id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume) });
                                     }
                                 } else {
-                                    td += `<td id="item_${k + 1}">0</td>`
+                                    if (!unload_status) 
+                                        td += `<td id="item_${k + 1}">0</td>`
+                                    else 
+                                        unload_table_.push({id: +items_volume[j].id, volume: 0});
                                 }
                             }
+                        }
+                        if (unload_status) {
+                            return unload_table_;
                         }
                         break;
                     }
@@ -1700,18 +1788,29 @@ function getValidationDate(date) {
                         return fillItemsInfo(manager);
                     }
                 }
-                return `<td>0</td><td>0</td><td>0</td><td>0</td>`;
+                if (!unload_status) 
+                    return `<td>0</td>`;
+                else 
+                    return {total: 0};
             }
             let table = '';
             let total_count = 0;
+            let unload_table = [];
             for (let i = 0; i < managers.length; i++) {
-                table += `
-                    <tr>
-                        <td>${managers[i].second_name}</td>
-                        ${checkManager(managers[i].id)}
-                    </tr>
-                `
-                total_count++;
+                if (!unload_status) {
+                    table += `
+                        <tr>
+                            <td>${managers[i].second_name}</td>
+                            ${checkManager(managers[i].id)}
+                        </tr>
+                    `
+                    total_count++;
+                } else {
+                    unload_table.push({ manager: managers[i].second_name, list: checkManager(managers[i].id) });
+                }
+            }
+            if (unload_status) {
+                return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
                 $('.fields').append(`
@@ -1721,6 +1820,7 @@ function getValidationDate(date) {
                             <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                         </div>
                     </div>
+                    <div id="analytics_4" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
@@ -1737,19 +1837,23 @@ function getValidationDate(date) {
             table += amount_tr;
             return table;
         }
-        return `
-            <table class="table analytics">
-                <tr>
-                    <th width="170">Менеджер</th>
-                    <th width="130">Итого</th>
-                    ${outputAllItems()}
-                </tr>
-                ${fillTable()}
-            </table>
-        `
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
+                <table class="table analytics">
+                    <tr>
+                        <th width="170">Менеджер</th>
+                        <th width="130">Итого</th>
+                        ${outputAllItems()}
+                    </tr>
+                    ${fillTable()}
+                </table>
+            `
+        }
     }
     // Проделанная работа
-    function analyticsFilterTable_5(date_period) {
+    function analyticsFilterTable_5(date_period, unload_status = false, filter_manager = '') {
         function fillTable() {
             let tbody = '';
             $.ajax({
@@ -1771,6 +1875,7 @@ function getValidationDate(date) {
                 success: function(data) {
                     result = JSON.parse(data);
                     let total_count = 0;
+                    let unload_info = [];
                     for (let i = 0; i < result.data.length; i++) {
                         let count = 0, length = 0;
 
@@ -1781,27 +1886,35 @@ function getValidationDate(date) {
 
                         for (let key in result.data[i].orgs) {
                             let current_date = getValidationDate(result.data[i].orgs[key]);
-                            if (current_date >= date_period[0] && current_date <= date_period[1]) {
-                                if (count == 0) {
-                                    tbody += `
-                                        <tr>
-                                            <td rowspan="${length}">${result.data[i].name}</td>
-                                            <td>${key}</td>
-                                            <td>${result.data[i].orgs[key]}</td>
-                                        </tr>
-                                    `
+                            if (current_date >= date_period[0] && current_date <= date_period[1] && (filter_manager == result.data[i].name || filter_manager == '')) {
+                                if (!unload_status) {
+                                    if (count == 0) {
+                                        tbody += `
+                                            <tr>
+                                                <td name="username_analytics" rowspan="${length}">${result.data[i].name}</td>
+                                                <td>${key}</td>
+                                                <td>${result.data[i].orgs[key]}</td>
+                                            </tr>
+                                        `
+                                    } else {
+                                        tbody += `
+                                            <tr>
+                                                <td>${key}</td>
+                                                <td>${result.data[i].orgs[key]}</td>
+                                            </tr>
+                                        `
+                                    }
                                 } else {
-                                    tbody += `
-                                        <tr>
-                                            <td>${key}</td>
-                                            <td>${result.data[i].orgs[key]}</td>
-                                        </tr>
-                                    `
+                                    unload_info.push({ manager: result.data[i].name, name: key, last_comment: result.data[i].orgs[key] });
                                 }
                                 count++;
                             }
                         }
                         total_count += count;
+                    }
+                    if (unload_status) {
+                        tbody = unload_info;
+                        return;
                     }
                     if (!$('div').is('#analytics_block_hidden')) {
                         $('.fields').append(`
@@ -1811,6 +1924,7 @@ function getValidationDate(date) {
                                     <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                                 </div>
                             </div>
+                            <div id="analytics_5" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                         `)
                         $('body').append(`<div id="analytics_block_hidden"></div>`)
                     } else {
@@ -1820,16 +1934,108 @@ function getValidationDate(date) {
             });
             return tbody;
         }
-        return `
-            <table class="table analytics">
-                <tr>
-                    <th>Менеджер</th>
-                    <th>Наименование</th>
-                    <th width="350">Дата последнего комментария</th>
-                </tr>
-                ${fillTable()}
-            </table>
-        `
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
+                <table class="table analytics">
+                    <tr>
+                        <th id="pd_manager" onclick="selectManagerAnalytics(this)">
+                            <div class="flex jc-sb">
+                                <span>Менеджер</span>
+                                <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                            </div>
+                        </th>
+                        <th>Наименование</th>
+                        <th width="350">Дата последнего комментария</th>
+                    </tr>
+                    ${fillTable()}
+                </table>
+            `
+        }
+    }
+    function selectManagerAnalytics(element) {
+        let id = element.id;
+        function listManager() {
+            let ul = $('<ul>', { class: 'list'});
+            let filter_tabledata;
+    
+            $.ajax({
+                url: '/getUsers',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(result) {
+                    data = JSON.parse(result);
+                }
+            });
+            let filter_table = [];
+            for (let i = 0; i < data.length; i++) {
+                for (let name of $('[name="username_analytics"]')) {
+                    if (data[i].second_name == $(name).html().split(' ')[1] && data[i].name == $(name).html().split(' ')[0]) {
+                        filter_table.push({ name: $(name).html(), id: data[i].id});
+                    }
+                }
+            }
+            
+            for (let i = 0; i < filter_table.length; i++) {
+                ul.append($('<li>', {
+                    html: filter_table[i].name,
+                    id: filter_table[i].id,
+                    onclick: 'sortTableByManagersAn(this)'
+                }))
+            }
+            return ul;
+        }
+        $('.filter_list').fadeOut(200);
+        setTimeout(function() {
+            $('.filter_list').remove();
+        }, 200);
+        
+        if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+            return $(`#${id} .drop_arrow`).removeClass('drop_active');
+        }
+    
+        $(`.drop_arrow`).removeClass('drop_active');
+        $(`#${id} .drop_arrow`).addClass('drop_active');
+        setTimeout(function() {
+            $(element).append($('<div>', { 
+                class: 'filter_list',
+                css: {'top': `${$(element).height() + 30}px`},
+                append: listManager()
+            }))
+            $('.filter_list').fadeIn(100);
+        }, 250);
+    }
+    function sortTableByManagersAn(element) {
+        let searchWord = element.innerHTML;
+        $('.centerBlock .header .cancel').remove();
+    
+        let managers;
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                managers = JSON.parse(result);
+            }
+        });
+        let date = $('#period_accounts').html();
+        let date_filter = [
+            {id: 'day', text: 'за последний день'},
+            {id: 'weak', text: 'за последнюю неделю'},
+            {id: 'month', text: 'за последний месяц'},
+            {id: 'year', text: 'за последний год'},
+            {id: 'all', text: 'за все время'},
+        ]
+        for (let i = 0; i < date_filter.length; i++) {
+            if (date_filter[i].text == date) {
+                $('.table').remove();
+                $('.info').append(analyticsFilterTable_5(datePeriod(date_filter[i].id), false, searchWord));
+                break;
+            }
+        }
     }
     function visibleSelectPeriodInAnalytics() {
         if ($('div').is('.period_info_accounts')) {
@@ -1842,6 +2048,7 @@ function getValidationDate(date) {
                         <li id="weak" onclick="selectPeriodInAnalytics(this.id)">за последнюю неделю</li>
                         <li id="month" onclick="selectPeriodInAnalytics(this.id)">за последний месяц</li>
                         <li id="year" onclick="selectPeriodInAnalytics(this.id)">за последний год</li>
+                        <li id="all" onclick="selectPeriodInAnalytics(this.id)">за все время</li>
                     </ul>
                 </div>
             `) 
@@ -1872,6 +2079,7 @@ function getValidationDate(date) {
             {id: 'weak', period: 7, text: 'за последнюю неделю'},
             {id: 'month', period: 30, text: 'за последний месяц'},
             {id: 'year', period: 365, text: 'за последний год'},
+            {id: 'all', period: 5475, text: 'за все время'},
         ]
         for (let i = 0; i < date_filter.length; i++) {
             if (period == date_filter[i].id) {
@@ -1884,6 +2092,23 @@ function getValidationDate(date) {
                 second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
                 $('#period_accounts').html(date_filter[i].text);
                 return [second_datetime, first_datetime];
+            }
+        }
+    }
+    function unloadThisTable(id) {
+        let number = id.split('_')[1];
+        let list = [
+            {function: analyticsFilterTable_0, id: 0},
+            {function: analyticsFilterTable_1, id: 1},
+            {function: analyticsFilterTable_2, id: 2},
+            {function: analyticsFilterTable_3, id: 3},
+            {function: analyticsFilterTable_4, id: 4},
+            {function: analyticsFilterTable_5, id: 5}
+        ]
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id == number) {
+                let current_data = list[i].function(datePeriod('all'), true);
+                console.log(current_data);
             }
         }
     }
