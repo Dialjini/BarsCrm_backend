@@ -1,4 +1,75 @@
 let list_items_acc, list_stock_acc;
+function editAccount(elem) {
+    let idAccount = elem.name.split('_')[1];
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);
+            let name;
+            let idsItems = [];
+            for (let element of $('#exposed_list .invoiled')) {
+                let idProduct = $(element).attr('id').split('_')[1];
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].items.length; j++) {
+                        let account = data[i].items[j];
+                        if (account.Item_id == idProduct) {
+                            idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
+                        }
+                    }
+                }
+            }
+
+            for (let i = 0; i < categoryInFinanceAccount[1][1].length; i++) {
+                if (categoryInFinanceAccount[1][1][i].account.id == idAccount) {
+                    name = categoryInFinanceAccount[1][1][i].account.Name;
+                }
+            }
+            
+            if (idsItems.length > 0) {
+                let sale = [], privet = [], delivery = [], items_amount = [];
+                for (let element of $('#exposed_list .invoiled')) {
+                    let idProduct = $(element).attr('id').split('_')[1];
+                    sale.push($(element).children()[7].children[0].value);
+                    privet.push($(element).children()[8].children[0].value);
+                    delivery.push($(element).children()[9].children[0].value);
+                    items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
+                }
+
+                let status = 'false';
+                let date = getCurrentDate('year');
+                let sum = $('#total').html();
+
+                $.ajax({
+                    url: '/getThisUser',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(user) {
+                        let this_user = JSON.parse(user);
+                        $.ajax({
+                            url: '/editAccount',
+                            type: 'GET',
+                            data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
+                                manager_id: this_user.id, name: name, status: status, date: date,
+                                hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
+                                items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
+                                total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
+                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val()},
+                            dataType: 'html',
+                            success: function() {
+                                checkStocks(elem);
+                            }
+                        })
+                    }
+                })
+            } else if (idsItems.length == 0) {
+                alert('Невозможно отредактировать счет, ни один товара нет в счете!');
+                return;
+            }
+        }
+    })
+}
 function checkStocks(element) {
     let idAccount = element.name.split('_')[1];
     let payment_history = [];
@@ -844,6 +915,7 @@ function calculationIndicators() {
                         let totalPrivet     = ((+deleteSpaces($('#total_privet_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html())).toFixed(2);
+                        console.log(data[j].items[k].Item_id, totalSale, totalPrivet, totalDelivery);
 
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : (+totalSale * -1).toFixed(2));
                         $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);

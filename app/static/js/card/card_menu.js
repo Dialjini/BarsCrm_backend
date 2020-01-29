@@ -844,16 +844,23 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        $.ajax({
+            url: '/getStockTable',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                data = JSON.parse(data);
+                if (categoryInStock[1][1] == undefined) categoryInStock[1].push(data);
+            }
+        })
+
         let sum = 0, vat = 0;
 
         let sale = JSON.parse(selectedLine.account.Sale);
         let privet = JSON.parse(selectedLine.account.Hello);
         let delivery = JSON.parse(selectedLine.account.Shipping);
         let items_amount = JSON.parse(selectedLine.account.Items_amount);
-
-        for (let i = 0; i < sale; i++) {
-            sum += +sale[i] + +privet[i] + +delivery[i];
-        }
 
         function fillingProducts() {
             let list_items = selectedLine.items;
@@ -862,31 +869,31 @@ function createCardMenu(element, index = 0) {
             for (let i = 0; i < list_items.length; i++) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
-                sum += +items_amount[i].amount;
+                sum += +deleteSpaces(items_amount[i].amount);
                 table = table.concat(`
-                    <tr class="product" id="product_${list_items[i].Item_id}">
-                        <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this)">
+                    <tr class="product invoiled" id="product_${list_items[i].Item_id}">
+                        <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this.id)">
                             <img src="../static/images/returnBack.png" style="width: 12px;">
                         </td>
                         <td>${list_items[i].Name}</td>
                         <td>${list_items[i].Packing}</td>
-                        <td id="product_weight_${list_items[i].Item_id}">${list_items[i].Weight}</td>
-                        <td id="product_containers_${list_items[i].Item_id}">${Math.round(list_items[i].Transferred_volume / list_items[i].Weight)}</td>
+                        <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
+                        <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
                         <td>
-                            <input type="text" id="invoiled_volume_${list_items[i].Item_id}" value="${list_items[i].Transferred_volume}">
+                            <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
                         </td>
-                        <td id="product_cost_${list_items[i].Item_id}">${list_items[i].Cost}</td>
+                        <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                         <td>
-                            <input type="text" value="${+sale[i]}" id="calcSale_${list_items[i].Item_id}">
-                        </td>
-                        <td>
-                            <input type="text" value="${+privet[i]}" id="calcPrivet_${list_items[i].Item_id}">
+                            <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(sale[i])}" id="calcSale_${list_items[i].Item_id}">
                         </td>
                         <td>
-                            <input type="text" value="${+delivery[i]}" id="calcDelivery_${list_items[i].Item_id}">
+                            <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(privet[i])}" id="calcPrivet_${list_items[i].Item_id}">
                         </td>
-                        <td id="product_unit_${list_items[i].Item_id}">${Math.round(list_items[i].Cost / list_items[i].Transferred_volume)}</td>
-                        <td id="amountC_${list_items[i].Item_id}">${+items_amount[i].amount}</td>
+                        <td>
+                            <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(delivery[i])}" id="calcDelivery_${list_items[i].Item_id}">
+                        </td>
+                        <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
+                        <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
                     </tr>
                 `)
             }
@@ -933,22 +940,22 @@ function createCardMenu(element, index = 0) {
                     <div class="costs gray">
                         <div class="costs_element">
                             <span>Всего затраты</span>
-                            <input type="text" onkeyup="maskNumberWithout(this.id); all_costs()"  id="total_costs_inv" class="total_count red bold mrl">
+                            <input type="text" value="${selectedLine.account.Total_costs}" onkeyup="maskNumberWithout(this.id); all_costs()" id="total_costs_inv" class="total_count red bold mrl">
                             <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
                         </div> 
                         <div class="costs_element">
                             <span>Скидка</span> 
-                            <input type="text" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
+                            <input type="text" value="${selectedLine.account.Sale_costs}" onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Привет</span> 
-                            <input type="text" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
+                            <input type="text" value="${selectedLine.account.Hello_costs}" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
                         </div>
                         <div class="costs_element">
                             <span>Доставка</span> 
-                            <input type="text" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
+                            <input type="text" value="${selectedLine.account.Delivery_costs}" onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>
                     </div>
@@ -975,25 +982,25 @@ function createCardMenu(element, index = 0) {
                                 <th width="60">Доставка</th>
                                 <th width="75">За единицу</th>
                             </tr>
-                            <tbody id="acc_list">
+                            <tbody id="exposed_list">
                                 ${fillingProducts()}
                             </tbody>
                             <tr>
                                 <td colspan="10" style="border: none; border-top: 1px solid #e9e9e9"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">НДС</span><span id="vat">${Math.round(sum - vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">НДС</span><span id="vat">${returnSpaces(Math.round(sum - vat))}</span></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="10" style="border: none;"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span id="without-vat">${Math.round(vat)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span id="without-vat">${returnSpaces(Math.round(vat))}</span></div>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="10" style="border: none;"></td>
                                 <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Общая</span><span id="total">${Math.round(sum)}</span></div>
+                                    <div class="flex jc-sb"><span class="gray">Общая</span><span id="total">${returnSpaces(Math.round(sum))}</span></div>
                                 </td>
                             </tr>
                         </table>
@@ -1024,7 +1031,7 @@ function createCardMenu(element, index = 0) {
                 </div>
                 <div class="next">
                     <div style="display:none" id="list_stock" data-stock=""></div>
-                    <button class="btn btn-main" id="delivery_new" onclick="checkStocks(this)">Отгрузить</button>
+                    <button class="btn btn-main" id="delivery_new" onclick="editAccount(this)">Отгрузить</button>
                 </div>`
     }
     // Контентная часть Дебеторки
@@ -1589,6 +1596,45 @@ function createCardMenu(element, index = 0) {
             </div>
         `;
     }
+}
+function deleteProduct(id) {
+    let check = confirm('Вы уверены, что хотите удалить этот товар из счета? После этого действия товар вернуться будет невозможно!')
+    if (!check) return;
+    $(`#product_${id.split('_')[1]}`).remove();
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            // Возвращаем столбец из верхней таблицы обратно
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].items.length; j++) {
+                    let account = data[i].items[j];
+                    if (account.Item_id == id.split('_')[1]) {
+                        let sum = 0;
+                        $('#exposed_list .invoiled').each(function(i, element) {
+                            sum += +deleteSpaces($(element).children()[11].innerHTML);
+                        });
+                        account.NDS = account.NDS[0] + account.NDS[1];
+                        let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
+                        $('#total').html(Math.round(sum));
+                        $('#vat').html(Math.round(sum - vat));
+                        $('#without-vat').html(Math.round(vat));
+                        break;
+                    }
+                }
+            }
+
+            // Возвращаем пустой столбец в верхнюю таблицу
+            let returnEmptyRow = $('<tr>', {class: 'product', id: 'empty'});
+            for (let j = 0; j < 12; j++) {
+                returnEmptyRow.append($('<td>', { html: '' }));
+            }
+            $('#exposed_list').append(returnEmptyRow);
+            calculationIndicators();
+        },
+    });
 }
 function getListAreas(element, area = '') {
     let region = element.value;
@@ -2162,7 +2208,8 @@ function completionCard(elem) {
                             data: {manager_id: this_user.id, name: name, status: status, date: date,
                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
-                                },
+                                total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
+                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val()},
                             dataType: 'html',
                             success: function() {
                                 closeCardMenu('account_new');
