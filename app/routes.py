@@ -151,9 +151,9 @@ def index():
 
     if 'username' in session:
 
-        return render_template('index.html', last_update=1848)
+        return render_template('index.html', last_update=2288)
     else:
-        return render_template('login.html', last_update=1010)
+        return render_template('login.html', last_update=2288)
 
 
 @app.route('/getAllTasks')
@@ -287,6 +287,10 @@ def editAccount():
         table.Item_ids = data['item_ids']
         table.Items_amount = data['items_amount']
         table.Manager_id = data['manager_id']
+        table.Total_costs = data['sale_costs']
+        table.Sale_costs = data['sale_costs']
+        table.Hello_costs = data['hello_costs']
+        table.Delivery_costs = data['delivery_costs']
 
         db.session.commit()
         return 'OK'
@@ -724,6 +728,10 @@ def addAccount():
         table.Item_ids = data['item_ids']
         table.Items_amount = data['items_amount']
         table.Manager_id = data['manager_id']
+        table.Total_costs = data['sale_costs']
+        table.Sale_costs = data['sale_costs']
+        table.Hello_costs = data['hello_costs']
+        table.Delivery_costs = data['delivery_costs']
 
         db.session.add(table)
         db.session.commit()
@@ -1245,7 +1253,8 @@ def addClient():
 @app.route('/excelStat', methods=['GET'])
 def excelStat():
     if 'username' in session:
-        print(request.args)
+        print(request.args['id'])
+        print(json.loads(request.args['data']))
         return 'ok'
     else:
         return redirect('/', code=302)

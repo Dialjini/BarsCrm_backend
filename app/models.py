@@ -285,6 +285,10 @@ class Account(db.Model):
     Item_ids = db.Column(db.String)
     Items_amount = db.Column(db.String)
     Payment_history = db.Column(db.String)
+    Total_costs = db.Column(db.String)
+    Sale_costs = db.Column(db.String)
+    Hello_costs = db.Column(db.String)
+    Delivery_costs = db.Column(db.String)
 
 
 class Role(db.Model):
