@@ -157,7 +157,6 @@ function getTableData(table, input = false, close = false) {
                     });
                     $('#find_competitor').remove();
                     $('#amount_cards').remove();
-
                     if (saveTableAndCard[0].id == 'client')     $('.fields').append(`<div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>`)
                     if (   saveTableAndCard[0].id == 'client' 
                         || saveTableAndCard[0].id == 'carrier'
@@ -305,15 +304,19 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             type: 'GET',
             dataType: 'html',
             success: function() { 
-                $.ajax({
-                    url: '/editAccount',
-                    data: {account_id: +idAccount, status: String($('#account_status').prop('checked'))},
-                    type: 'GET',
-                    dataType: 'html',
-                    success: function() {
-                        return getTableData(saveTableAndCard);
-                    }
-                });
+                if (data[data.length - 1] == 'new') {
+                    return getTableData(saveTableAndCard);
+                } else {
+                    $.ajax({
+                        url: '/editAccount',
+                        data: {account_id: +idAccount, status: String($('#account_status').prop('checked'))},
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function() {
+                            return getTableData(saveTableAndCard);
+                        }
+                    });
+                }
             }
         });
     }

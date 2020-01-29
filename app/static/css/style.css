@@ -460,6 +460,7 @@ body {
 }
 
 .page .centerBlock .container .info .row .fields {
+  width: 65%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -485,6 +486,7 @@ body {
 }
 
 .page .centerBlock .container .info .row .fields #info_in_accounts #select_period_info_accounts .period_info_accounts {
+  z-index: 1;
   position: absolute;
   width: 186px;
   left: -10px;
@@ -599,6 +601,7 @@ body {
   border-radius: 0 0 5px 5px;
   -webkit-box-shadow: 0 1px 2px lightgray;
           box-shadow: 0 1px 2px lightgray;
+  z-index: 1;
 }
 
 .page .centerBlock .container .info .row .fields .list .report_list ul {
