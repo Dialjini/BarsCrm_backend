@@ -16,28 +16,50 @@ def firstScenario(data):
     sheet['H1'].value = 'Закупочная цена'
     sheet['I1'].value = 'Заработали'
     sheet['J1'].value = 'Прибыль'
+    column_counter = 1
+    for i in data:
+        column_counter += 1
+        for j in range(10):
+            sheet[alphabet[j] + str(column_counter)].value = list(i.values())[j]
 
-    print(data)
+    wb.save('app/upload/last_stat.xlsx')
 
-
-    wb.save('test.xlsx')
-
-    return 'ok'
+    return '/upload'
 
 def secondScenario(data):
-    return 'ok'
+    for i in data:
+        print(i)
+    return '/upload'
 
 def thirdScenario(data):
-    return 'ok'
+    print(data)
+    return '/upload'
 
 def fourthScenario(data):
-    return 'ok'
+    wb = openpyxl.Workbook()
+    sheet = wb.active
+    sheet['A1'].value = 'Клиент'
+    sheet['B1'].value = 'Объем'
+    sheet['C1'].value = 'Сколько'
+    sheet['D1'].value = 'Сумма, руб.'
+    sheet['E1'].value = 'Итого'
+
+    column_counter = 1
+    for i in data:
+        column_counter += 1
+        for j in range(5):
+            sheet[alphabet[j] + str(column_counter)].value = list(i.values())[j]
+
+    wb.save('app/upload/last_stat.xlsx')
+    return '/upload'
 
 def fifthScenario(data):
-    return 'ok'
+    print(data)
+    return '/upload'
 
 def sixthScenario(data):
-    return 'ok'
+    print(data)
+    return '/upload'
 
 def createExel(id, data):
     if int(id) == 0:

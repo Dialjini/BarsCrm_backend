@@ -1271,13 +1271,14 @@ def editAccountShipment():
     else:
         return redirect('/', code=302)
 
+
 @app.route('/excelStat', methods=['GET'])
 def excelStat():
     if 'username' in session:
-        xlsx_creator.createExel(id=0, data=None)
-        print(request.args)
-        print(request.args['id'])
-        print(json.loads(request.args['data']))
-        return 'ok'
+        print(os.path.abspath(os.path.dirname(__file__) + xlsx_creator.createExel(id=request.args['id'], data=json.loads(request.args['data']))))
+        print('last_stat.xlsx')
+        return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) +
+                                                             xlsx_creator.createExel(id=request.args['id'], data=json.loads(request.args['data']))),
+                                   filename='last_stat.xlsx')
     else:
         return redirect('/', code=302)
