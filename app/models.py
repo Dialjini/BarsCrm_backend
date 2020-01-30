@@ -289,6 +289,7 @@ class Account(db.Model):
     Sale_costs = db.Column(db.String)
     Hello_costs = db.Column(db.String)
     Delivery_costs = db.Column(db.String)
+    Shipment = db.Column(db.String)
 
 
 class Role(db.Model):
