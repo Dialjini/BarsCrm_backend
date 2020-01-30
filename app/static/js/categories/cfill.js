@@ -2108,6 +2108,7 @@ function getValidationDate(date) {
         for (let i = 0; i < list.length; i++) {
             if (list[i].id == number) {
                 let current_data = list[i].function(datePeriod('all'), true);
+                console.log(JSON.stringify({id: +number, data: current_data}));
                 $.ajax({
                     url: '/excelStat',
                     type: 'GET',

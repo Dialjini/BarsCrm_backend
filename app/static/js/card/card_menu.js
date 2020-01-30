@@ -159,7 +159,7 @@ function createCardMenu(element, index = 0) {
                 }
                 let date = new Date();
                 titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id || selectedLine.account.id}`);
-                if (getInfo[0] === 'client' || getInfo[0] === 'provider' || getInfo[0] === 'account' || getInfo[0] === 'carrier') {
+                if (getInfo[0] === 'client' || getInfo[0] === 'provider' || getInfo[0] === 'carrier') {
                     titleObject[i].list.push(selectedLine.UTC == '' || selectedLine.UTC == undefined ? 'Местное время неопределенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours() < 10 ? '0' + (+selectedLine.UTC + +date.getUTCHours()) : selectedLine.UTC + date.getUTCHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}`)
                     if (getInfo[0] === 'client') {
                         titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
@@ -168,9 +168,9 @@ function createCardMenu(element, index = 0) {
                     if (getInfo[0] === 'provider') {
                         titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
                     } 
-                    if (getInfo[0] === 'account') {
-                        titleObject[i].list.push(`Счета от ${selectedLine.items[0].Prefix}`)
-                    }
+                }
+                if (getInfo[0] === 'account') {
+                    titleObject[i].list.push(`Счёт от ${selectedLine.items[0].Prefix}`)
                 }
             } else {
                 const emptyData = [
