@@ -202,37 +202,40 @@ def addTemplate(name):
     db.session.commit()
 
 # ---------------------------------------------------Excel_Creator------------------------------------------------------
-def firstScenario():
+def firstScenario(data):
+    wb = openpyxl.Workbook()
+    sheet = wb.active
+
     return 'ok'
 
-def secondScenario():
+def secondScenario(data):
     return 'ok'
 
-def thirdScenario():
+def thirdScenario(data):
     return 'ok'
 
-def fourthScenario():
+def fourthScenario(data):
     return 'ok'
 
-def fifthScenario():
+def fifthScenario(data):
     return 'ok'
 
-def sixthScenario():
+def sixthScenario(data):
     return 'ok'
 
 def createExel(id, data):
     if int(id) == 0:
-        return firstScenario()
+        return firstScenario(data)
     if int(id) == 1:
-        return secondScenario()
+        return secondScenario(data)
     if int(id) == 2:
-        return thirdScenario()
+        return thirdScenario(data)
     if int(id) == 3:
-        return fourthScenario()
+        return fourthScenario(data)
     if int(id) == 4:
-        return fifthScenario()
+        return fifthScenario(data)
     if int(id) == 5:
-        return sixthScenario()
+        return sixthScenario(data)
 
     return 'ok'
 

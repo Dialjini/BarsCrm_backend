@@ -2111,7 +2111,7 @@ function getValidationDate(date) {
                 $.ajax({
                     url: '/excelStat',
                     type: 'GET',
-                    data: JSON.stringify({id: +number, data: current_data}),
+                    data: {id: +number, data: JSON.stringify(current_data)},
                     dataType: 'html',
                     success: function(result) {
                         console.log(result);

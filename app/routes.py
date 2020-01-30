@@ -151,9 +151,9 @@ def index():
 
     if 'username' in session:
 
-        return render_template('index.html', last_update=1917)
+        return render_template('index.html', last_update=1919)
     else:
-        return render_template('login.html', last_update=1880)
+        return render_template('login.html', last_update=1882)
 
 
 @app.route('/getAllTasks')
@@ -1253,6 +1253,7 @@ def addClient():
 @app.route('/excelStat', methods=['GET'])
 def excelStat():
     if 'username' in session:
+        print(request.args)
         print(request.args['id'])
         print(json.loads(request.args['data']))
         return 'ok'
