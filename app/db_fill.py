@@ -201,45 +201,6 @@ def addTemplate(name):
     db.session.add(table)
     db.session.commit()
 
-# ---------------------------------------------------Excel_Creator------------------------------------------------------
-def firstScenario(data):
-    wb = openpyxl.Workbook()
-    sheet = wb.active
-
-    return 'ok'
-
-def secondScenario(data):
-    return 'ok'
-
-def thirdScenario(data):
-    return 'ok'
-
-def fourthScenario(data):
-    return 'ok'
-
-def fifthScenario(data):
-    return 'ok'
-
-def sixthScenario(data):
-    return 'ok'
-
-def createExel(id, data):
-    if int(id) == 0:
-        return firstScenario(data)
-    if int(id) == 1:
-        return secondScenario(data)
-    if int(id) == 2:
-        return thirdScenario(data)
-    if int(id) == 3:
-        return fourthScenario(data)
-    if int(id) == 4:
-        return fifthScenario(data)
-    if int(id) == 5:
-        return sixthScenario(data)
-
-    return 'ok'
-
-
 # ----------------------------------------------------Testing_Room------------------------------------------------------
 def table_to_json(query):
     result = []

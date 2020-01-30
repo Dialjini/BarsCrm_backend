@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
-from app import models, db, reqs, DocCreator
+from app import models, db, reqs, DocCreator, xlsx_creator
 from flask_socketio import SocketIO, emit
 import json
 import os
@@ -1260,9 +1260,21 @@ def addClient():
         return redirect('/', code=302)
 
 
+@app.route('/editAccountShipment', methods=['GET'])
+def editAccountShipment():
+    if 'username' in session:
+        Account = models.Account.query.filter_by(id=request.args['id']).first()
+        Account.Shipment = request.args['shipment']
+
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
 @app.route('/excelStat', methods=['GET'])
 def excelStat():
     if 'username' in session:
+        xlsx_creator.createExel(id=0, data=None)
         print(request.args)
         print(request.args['id'])
         print(json.loads(request.args['data']))
