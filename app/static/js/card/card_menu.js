@@ -1783,7 +1783,6 @@ function makeRequest(element) {
         items_ids.push($(element).attr('id').split('_')[2]);
     }
     data['delivery_item_ids'] = JSON.stringify(items_ids);
-    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -2188,10 +2187,16 @@ function completionCard(elem) {
                 let date = getCurrentDate('year');
                 let name;
                 let sum = $('#total').html();
+                let shipment = 'false';
 
                 // Передать данные на сервер и создать карточку счета
                 for (let i = 0; i < dataName.length; i++) {
-                    if (elem.name === dataName[i].name) {
+                    if ('client' == dataName[i].name) {
+                        console.log(dataName[i].link[0].lastCard[0]);
+                        console.log(dataName[i].link[0].lastCard[0].children()[1]);
+                        console.log(dataName[i].link[0].lastCard[0].children()[1].children[0].children[0]);
+                        console.log(dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1]);
+                        console.log(dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1].children[0].value);
                         name = dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1].children[0].value;
                         dataName[i].link[0].lastCard = [null, null];
                     }
@@ -2209,7 +2214,8 @@ function completionCard(elem) {
                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
-                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val()},
+                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
+                                shipment: shipment},
                             dataType: 'html',
                             success: function() {
                                 closeCardMenu('account_new');

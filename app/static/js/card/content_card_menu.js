@@ -915,7 +915,6 @@ function calculationIndicators() {
                         let totalPrivet     = ((+deleteSpaces($('#total_privet_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html())).toFixed(2);
-                        console.log(data[j].items[k].Item_id, totalSale, totalPrivet, totalDelivery);
 
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : (+totalSale * -1).toFixed(2));
                         $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);

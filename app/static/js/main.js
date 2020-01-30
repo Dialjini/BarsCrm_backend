@@ -512,7 +512,6 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             idData[`livestock_milkyield`] = $('#livestock_milkyield').val();   
         }
         if (data[0] == 'provider' && data[3] == 'new') {
-            console.log(data);
             idData[`provider_create_date`] = getCurrentDate('year');
         }
         idData[`${data[0]}_data`] = card;

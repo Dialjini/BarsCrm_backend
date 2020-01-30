@@ -395,7 +395,7 @@ let rowFilling = (object, id, table) => {
             } else {
                 status = '<span class="red">Не оплачено</span>';
             }
-            let shipment = '<span class="red">Не отгружено</span>';
+            let shipment = selectTableData[i].account.Shipment == 'false' ? '<span class="red">Не отгружено</span>' : selectTableData[i].account.Shipment == 'true' ? '<span class="green">Отгружено</span>' : '<span class="red">Частично отгружено</span>';
             let managerSecondName;
             for (let j = 0; j < managers.length; j++) {
                 if (+managers[j].id == +selectTableData[i].account.Manager_id) {
@@ -723,7 +723,6 @@ function sortTableByCustomer(element) {
         }
         let filter_table = [];
         for (let i = 0; i < data.length; i++) {
-            console.log(data[i].delivery.Customer, value)
             if (data[i].delivery.Customer == value) {
                 filter_table.push(data[i]);
             }
