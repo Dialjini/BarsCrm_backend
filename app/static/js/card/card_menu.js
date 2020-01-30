@@ -844,6 +844,8 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Счета
     function accountContentCard(selectedLine) {
+        let data_del;
+        let edit = false;
         $.ajax({
             url: '/getStockTable',
             type: 'GET',
@@ -852,6 +854,15 @@ function createCardMenu(element, index = 0) {
             success: function(data) {
                 data = JSON.parse(data);
                 if (categoryInStock[1][1] == undefined) categoryInStock[1].push(data);
+                $.ajax({
+                    url: '/getDeliveries',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(data) {
+                        data_del = JSON.parse(data);
+                    }
+                })
             }
         })
 
@@ -861,41 +872,80 @@ function createCardMenu(element, index = 0) {
         let privet = JSON.parse(selectedLine.account.Hello);
         let delivery = JSON.parse(selectedLine.account.Shipping);
         let items_amount = JSON.parse(selectedLine.account.Items_amount);
+        let account_id = selectedLine.account.id;
+
+        for (let i = 0; i < data_del.length; i++) {
+            console.log(data_del[i].delivery.Account_id, account_id);
+            if (data_del[i].delivery.Account_id == account_id) {
+                edit = true;
+            }
+        }
 
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
             let list_stock_id = [], list_items_id = [];
+
+            
             for (let i = 0; i < list_items.length; i++) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
                 sum += +deleteSpaces(items_amount[i].amount);
-                table = table.concat(`
-                    <tr class="product invoiled" id="product_${list_items[i].Item_id}">
-                        <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this.id)">
-                            <img src="../static/images/returnBack.png" style="width: 12px;">
-                        </td>
-                        <td>${list_items[i].Name}</td>
-                        <td>${list_items[i].Packing}</td>
-                        <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
-                        <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
-                        <td>
-                            <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
-                        </td>
-                        <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
-                        <td>
-                            <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(sale[i])}" id="calcSale_${list_items[i].Item_id}">
-                        </td>
-                        <td>
-                            <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(privet[i])}" id="calcPrivet_${list_items[i].Item_id}">
-                        </td>
-                        <td>
-                            <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(delivery[i])}" id="calcDelivery_${list_items[i].Item_id}">
-                        </td>
-                        <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
-                        <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
-                    </tr>
-                `)
+                if (!edit) {
+                    table = table.concat(`
+                        <tr class="product invoiled" id="product_${list_items[i].Item_id}">
+                            <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this.id)">
+                                <img src="../static/images/returnBack.png" style="width: 12px;">
+                            </td>
+                            <td>${list_items[i].Name}</td>
+                            <td>${list_items[i].Packing}</td>
+                            <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
+                            <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
+                            <td>
+                                <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
+                            </td>
+                            <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
+                            <td>
+                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(sale[i])}" id="calcSale_${list_items[i].Item_id}">
+                            </td>
+                            <td>
+                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(privet[i])}" id="calcPrivet_${list_items[i].Item_id}">
+                            </td>
+                            <td>
+                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(delivery[i])}" id="calcDelivery_${list_items[i].Item_id}">
+                            </td>
+                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
+                            <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
+                        </tr>
+                    `)
+                } else {
+                    table = table.concat(`
+                        <tr class="product invoiled" id="product_${list_items[i].Item_id}">
+                            <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this.id)">
+                                <img src="../static/images/returnBack.png" style="width: 12px;">
+                            </td>
+                            <td>${list_items[i].Name}</td>
+                            <td>${list_items[i].Packing}</td>
+                            <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
+                            <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
+                            <td>
+                                <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" disabled id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
+                            </td>
+                            <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
+                            <td>
+                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(sale[i])}" id="calcSale_${list_items[i].Item_id}" disabled>
+                            </td>
+                            <td>
+                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(privet[i])}" id="calcPrivet_${list_items[i].Item_id}" disabled>
+                            </td>
+                            <td>
+                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(delivery[i])}" id="calcDelivery_${list_items[i].Item_id}" disabled>
+                            </td>
+                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
+                            <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
+                        </tr>
+                    `)
+                }
             }
             
             for (let i = 0; i < list_stock_id.length - 1; i++) {
@@ -936,7 +986,88 @@ function createCardMenu(element, index = 0) {
             }
             return table;
         }
-        return `<div class="row_card">
+        function tableShipments() {
+            function fillFlights() {
+                let data_del, data_items, data_user;
+                $.ajax({
+                    url: '/getDeliveries',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(data) {
+                        data_del = JSON.parse(data);
+                        $.ajax({
+                            url: '/getStockTable',
+                            type: 'GET',
+                            async: false,
+                            dataType: 'html',
+                            success: function(data) {
+                                data_items = JSON.parse(data);
+                                $.ajax({
+                                    url: '/getThisUser',
+                                    type: 'GET',
+                                    async: false,
+                                    dataType: 'html',
+                                    success: function(data) {
+                                        data_user = JSON.parse(data);
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
+
+                let table = `
+                    <tr>
+                        <th>Дата</th>
+                        <th>Товар</th>
+                        <th>Склад</th>
+                        <th>Объем, кг.</th>
+                        <th>Вид упаковки</th>
+                        <th>Сумма, руб.</th>
+                        ${data_user.role == 'admin' ? `<th>Закупочная цена</th>` : ''}
+                    </tr>
+                `;
+
+                for (let i = 0; i < data_del.length; i++) {
+                    if (+data_del[i].delivery.Account_id == +selectedLine.account.id) {
+                        let amounts = JSON.parse(data_del[i].delivery.Amounts);
+                        let item_ids = JSON.parse(data_del[i].delivery.Item_ids);
+                        let date = data_del[i].delivery.Date;
+                        for (let j = 0; j < data_items.length; j++) {
+                            for (let k = 0; k < data_items[j].items.length; k++) {
+                                for (let l = 0; l < item_ids.length; l++) {
+                                    if (data_items[j].items[k].Item_id == item_ids[l]) {
+                                        table += `
+                                            <tr id="item_flight_${data_items[j].items[k].Item_id}" name="item_flight">
+                                                <td>${date}</td>
+                                                <td>${data_items[j].items[k].Name}</td>
+                                                <td>${data_items[j].stock_address}</td>
+                                                <td>${returnSpaces(amounts[l].volume)}</td>
+                                                <td>${data_items[j].items[k].Packing}</td>
+                                                <td>${returnSpaces(amounts[l].sum)}</td>
+                                                ${data_user.role == 'admin' ? `<td>${data_items[j].items[k].Purchase_price}</td>` : ''}
+                                            </tr>
+                                        `
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return table;
+            }
+            return `
+                <tbody id="shipments">
+                    ${fillFlights()}
+                </tbody>
+            `
+        }
+        function checkEdit() {
+            if (!edit) {
+                return `
+                <div class="row_card">
                     <div class="costs gray">
                         <div class="costs_element">
                             <span>Всего затраты</span>
@@ -960,6 +1091,37 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                 </div>
+            `
+            } else {
+                return `
+                    <div class="row_card">
+                        <div class="costs gray">
+                            <div class="costs_element">
+                                <span>Всего затраты</span>
+                                <input type="text" value="${selectedLine.account.Total_costs}" disabled onkeyup="maskNumberWithout(this.id); all_costs()" id="total_costs_inv" class="total_count red bold mrl">
+                                <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
+                            </div> 
+                            <div class="costs_element">
+                                <span>Скидка</span> 
+                                <input type="text" value="${selectedLine.account.Sale_costs}" disabled onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
+                                <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
+                            </div>
+                            <div class="costs_element">
+                                <span>Привет</span> 
+                                <input type="text" value="${selectedLine.account.Hello_costs}" disabled onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
+                                <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
+                            </div>
+                            <div class="costs_element">
+                                <span>Доставка</span> 
+                                <input type="text" value="${selectedLine.account.Delivery_costs}" disabled onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
+                                <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }   
+        }
+        return `${checkEdit()}
                 <div class="row_card">
                     <div class="info_block full">
                         <table class="account_table new_table">
@@ -1021,6 +1183,14 @@ function createCardMenu(element, index = 0) {
                         <div class="events">
                             <img class="add_something" id="account-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
+                        </div>
+                    </div>
+                    <div class="info_block">
+                        <span class="lightgray">Отгрузки</span>
+                        <div class="hmax">
+                            <table>
+                                ${tableShipments()}
+                            </table>
                         </div>
                     </div>
                     <div class="info_block">
@@ -1268,15 +1438,15 @@ function createCardMenu(element, index = 0) {
                 dataType: 'html',
                 success: function(data) {
                     listAllItems = JSON.parse(data);
-                }
-            });
-            $.ajax({
-                url: '/getStocks',
-                type: 'GET',
-                async: false,
-                dataType: 'html',
-                success: function(data) {
-                    listStocks = JSON.parse(data);
+                    $.ajax({
+                        url: '/getStocks',
+                        type: 'GET',
+                        async: false,
+                        dataType: 'html',
+                        success: function(data) {
+                            listStocks = JSON.parse(data);
+                        }
+                    });
                 }
             });
 
@@ -1309,9 +1479,10 @@ function createCardMenu(element, index = 0) {
                                     if (amounts == undefined) {
                                         tr += `
                                         <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                            <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
                                             <td>${listAllItems[i].Name}</td>
                                             <td>${listStocks[k].Name}</td>
-                                            <td>${inputVolume[m].volume}</td>
+                                            <td><input onkeyup="maskNumber(this.id)" id="item_volume" type="text"></td>
                                             <td>${listAllItems[i].Packing}</td>
                                             <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
                                         </tr>
@@ -1319,11 +1490,12 @@ function createCardMenu(element, index = 0) {
                                     } else {
                                         tr += `
                                         <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                            <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
                                             <td>${listAllItems[i].Name}</td>
                                             <td>${listStocks[k].Name}</td>
-                                            <td>${inputVolume[m].volume}</td>
+                                            <td><input onkeyup="maskNumber(this.id)" id="item_volume" value="${amounts.length == 1 ? amounts[0].volume : amounts[i].volume}" type="text"></td>
                                             <td>${listAllItems[i].Packing}</td>
-                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts.length == 1 ? amounts[0] : amounts[i]}" type="text"></td>
+                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts.length == 1 ? amounts[0].sum : amounts[i].sum}" type="text"></td>
                                         </tr>
                                         `
                                     }
@@ -1451,9 +1623,10 @@ function createCardMenu(element, index = 0) {
                                 <span class="lightgray">Рейс</span>
                                 <table>
                                     <tr>
+                                        <th width="15"></th>
                                         <th>Товар</th>
                                         <th>Склад</th>
-                                        <th>Вес</th>
+                                        <th>Объем, кг.</th>
                                         <th>Вид упаковки</th>
                                         <th>Сумма, руб.</th>
                                     </tr>
@@ -1597,8 +1770,39 @@ function createCardMenu(element, index = 0) {
         `;
     }
 }
+function deleteItemInFlight(element) {
+    let check = confirm('Вы уверены, что хотите удалить этот товар из заявки? После этого действия товар вернуть будет невозможно!')
+    if (!check) return;
+
+    let item_id = element.id.split('_')[1];
+    let account_id = $(element).attr('name').split('_')[1];
+    let delivery_id = $(element).attr('name').split('_')[2];
+    let data = categoryInDelivery[1][1];
+    $(`#item_${element.id}`).remove();
+
+    for (let i = 0; i < data.length; i++) {
+        if (+data[i].delivery.Account_id == +account_id && +data[i].delivery.id == +delivery_id) {
+            let item_ids = JSON.parse(data[i].delivery.Item_ids);
+            let amounts = JSON.parse(data[i].delivery.Amounts);
+            for (let j = 0; j < item_ids.length; j++) {
+                if (+item_ids[j] == +item_id) {
+                    item_ids.splice(j, 1);
+                    amounts.splice(j, 1);
+                }
+            }
+            console.log({id: +delivery_id, items_ids: JSON.stringify(item_ids), amounts: JSON.stringify(amounts)},);
+            $.ajax({
+                url: '/fixDelivery',
+                type: 'GET',
+                data: {id: +delivery_id, items_ids: JSON.stringify(item_ids), amounts: JSON.stringify(amounts)},
+                dataType: 'html',
+                success: function() {}
+            });
+        }
+    }
+}
 function deleteProduct(id) {
-    let check = confirm('Вы уверены, что хотите удалить этот товар из счета? После этого действия товар вернуться будет невозможно!')
+    let check = confirm('Вы уверены, что хотите удалить этот товар из счета? После этого действия товар вернуть будет невозможно!')
     if (!check) return;
     $(`#product_${id.split('_')[1]}`).remove();
     $.ajax({
@@ -1734,7 +1938,8 @@ function makeRequest(element) {
     }
 
     let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
-    data['delivery_id'] = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1];
+    let delivery_id = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1]
+    data['delivery_id'] = delivery_id;
     data['delivery_date'] = getCurrentDate('year');
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
     data['delivery_contact_number'] = '';
@@ -1745,9 +1950,72 @@ function makeRequest(element) {
     data['delivery_passport'] = $('#delivery_passport').val();
     data['delivery_postponement_date'] = $('#delivery_postponement_date').val();
 
-    let amounts = [];
+    let amounts = [], items_ids = [];
+    for (let element of $('#flight [name="item_flight"]')) {
+        items_ids.push($(element).attr('id').split('_')[2]);
+    }
     for (let element of $('#flight #item_sum')) {
-        amounts.push(element.value);
+        amounts.push({sum: element.value});
+    }
+    for (let i = 0; i < $('#flight #item_volume').length; i++){
+        amounts[i].volume = $('#flight #item_volume')[i].value;
+        amounts[i].id = $('#flight [name="item_flight"]')[i].id.split('_')[2];
+    }
+    let amounts_sum = [];
+    for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
+        if (+categoryInDelivery[1][1][i].delivery.Account_id == +$('#delivery_account')[0].value && +delivery_id != +categoryInDelivery[1][1][i].delivery.id) {
+            let data_amounts = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
+            for (let j = 0; j < data_amounts.length; j++) {
+                amounts_sum.push(data_amounts[j]);
+            }
+        }
+    }
+
+    console.log(amounts)
+    for (let i = 0; i < amounts.length; i++) {
+        amounts_sum.push(amounts[i]);
+    }
+    console.log(amounts_sum)
+
+    for (let i = 0; i < amounts_sum.length - 1; i++) {
+        for (let j = i + 1; j < amounts_sum.length; j++) {
+            if (+amounts_sum[i].id == +amounts_sum[j].id) {
+                amounts_sum[i].volume = +deleteSpaces(amounts_sum[i].volume) + +deleteSpaces(amounts_sum[j].volume)
+                amounts_sum.splice(j, 1);
+                j--;
+            }
+            
+        }
+    }
+
+    let count = 0;
+    for (let i = 0; i < infoAccount.items.length; i++) {
+        for (let j = 0; j < amounts_sum.length; j++) {
+            if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) < +deleteSpaces(amounts_sum[j].volume)) {
+                return alert(`Товар "${infoAccount.items[i].Name}" отгрузается на больший объем, чем есть в счете!`)
+            }
+            if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) == +deleteSpaces(amounts_sum[j].volume)) {
+                count++;
+            }
+        }
+    }
+
+    if (amounts_sum.length == count) {
+        $.ajax({
+            url: '/editAccountShipment',
+            type: 'GET',
+            data: {id: infoAccount.account.id, shipment: 'true'},
+            dataType: 'html',
+            success: function() {}
+        });
+    } else {
+        $.ajax({
+            url: '/editAccountShipment',
+            type: 'GET',
+            data: {id: infoAccount.account.id, shipment: 'polutrue'},
+            dataType: 'html',
+            success: function() {}
+        });
     }
 
     data['delivery_amounts'] = JSON.stringify(amounts);
@@ -1778,10 +2046,6 @@ function makeRequest(element) {
     data['delivery_price'] = infoAccount.account.Sum;
     data['delivery_vat'] = infoAccount.items[0].NDS;
     data['delivery_name'] = infoAccount.account.Name;
-    let items_ids = [];
-    for (let element of $('#flight [name="item_flight"]')) {
-        items_ids.push($(element).attr('id').split('_')[2]);
-    }
     data['delivery_item_ids'] = JSON.stringify(items_ids);
     $.ajax({
         url: '/addDelivery',
@@ -2192,12 +2456,11 @@ function completionCard(elem) {
                 // Передать данные на сервер и создать карточку счета
                 for (let i = 0; i < dataName.length; i++) {
                     if ('client' == dataName[i].name) {
-                        console.log(dataName[i].link[0].lastCard[0]);
-                        console.log(dataName[i].link[0].lastCard[0].children()[1]);
-                        console.log(dataName[i].link[0].lastCard[0].children()[1].children[0].children[0]);
-                        console.log(dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1]);
-                        console.log(dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1].children[0].value);
-                        name = dataName[i].link[0].lastCard[0].children()[1].children[0].children[0].children[0].children[1].children[0].value;
+                        for (let j = 0; j < categoryInListClient[1][1].length; j++) {
+                            if (categoryInListClient[1][1][j].id == $(elem).attr('data_name').split('_')[1]) {
+                                name = categoryInListClient[1][1][j].Name
+                            }
+                        }
                         dataName[i].link[0].lastCard = [null, null];
                     }
                 }
@@ -2296,6 +2559,7 @@ function getTitleInfo(element, selectedLine) {
             return $('<div>', {
                 class: 'close',
                 id: `${element.id}_close_card_${element.status}`,
+                name: element.id == 'account' ? `${element.id}_${element.status}` : '',
                 onclick: element.id !== 'delivery' ? 'closeCardMenu(this.id)' : 'makeRequest(this)',
                 append: $('<img>', {src: 'static/images/cancel.png'})
             })

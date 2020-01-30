@@ -7,7 +7,7 @@ function editAccount(elem) {
         dataType: 'html',
         success: function(data) {
             data = JSON.parse(data);
-            let name;
+            let name, date;
             let idsItems = [];
             for (let element of $('#exposed_list .invoiled')) {
                 let idProduct = $(element).attr('id').split('_')[1];
@@ -24,6 +24,8 @@ function editAccount(elem) {
             for (let i = 0; i < categoryInFinanceAccount[1][1].length; i++) {
                 if (categoryInFinanceAccount[1][1][i].account.id == idAccount) {
                     name = categoryInFinanceAccount[1][1][i].account.Name;
+                    date = categoryInFinanceAccount[1][1][i].account.Date;
+                    shipment = categoryInFinanceAccount[1][1][i].account.Shipment;
                 }
             }
             
@@ -37,8 +39,6 @@ function editAccount(elem) {
                     items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
                 }
 
-                let status = 'false';
-                let date = getCurrentDate('year');
                 let sum = $('#total').html();
 
                 $.ajax({
@@ -51,11 +51,12 @@ function editAccount(elem) {
                             url: '/editAccount',
                             type: 'GET',
                             data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
-                                manager_id: this_user.id, name: name, status: status, date: date,
+                                manager_id: this_user.id, name: name, date: date,
                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
-                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val()},
+                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
+                                shipment: shipment},
                             dataType: 'html',
                             success: function() {
                                 checkStocks(elem);
@@ -217,13 +218,14 @@ function fillVolume(value) {
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
     function buttonsCategory() {
+        let name = $(elem).attr('name').split('_');
+
         if (elem.name.includes('client')) {
             return `
                 <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
-                <button class="btn btn-main" id="${elem.id}" onclick="invoiceCard(this)">Вперёд</button> 
+                <button class="btn btn-main" name="${name[0]}_${name[1]}" id="${elem.id}" onclick="invoiceCard(this)">Вперёд</button> 
             `
         } else if (elem.name.includes('carrier')) {
-            let name = $(elem).attr('name').split('_');
             return `
                 <button class="btn" style="margin-right: 10px" id="${elem.id}" onclick="comeBack(this.id)">Назад</button> 
                 <button class="btn btn-main" name="${name[0]}_close_card_${name[1]}_contract" onclick="closeCardMenu(this.name)">Закрыть</button> 
@@ -708,6 +710,7 @@ function invoicingContentCard(elem, data) {
                 class: 'btn btn-main',
                 id: 'account',
                 name: elem.id,
+                data_name: elem.name,
                 onclick: 'completionCard(this)',
                 html: 'Выставить'
             })

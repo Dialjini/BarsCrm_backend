@@ -336,7 +336,7 @@ let rowFilling = (object, id, table) => {
             let count = selectTableData[i].delivery.Amounts != undefined ? JSON.parse(selectTableData[i].delivery.Amounts) : [];
             let vat = selectTableData[i].delivery.Customer == 'ООО' ? '' : 1.26;
             for (let i = 0; i < count.length; i++) {
-                amount += +deleteSpaces(count[i]);
+                amount += +deleteSpaces(count[i].sum);
             }
 
             let status = +amount - +sum_list <= 0 ? '<span class="green">Оплачено</span>' : '<span class="red">Не оплачено</span>'
@@ -504,7 +504,7 @@ let rowFilling = (object, id, table) => {
             if (postponement_date == undefined) postponement_date = 'Не указано';
             if (payment_amount == 0) continue;
             let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, returnSpaces(selectTableData[i].account.Sum), returnSpaces(payment_amount), returnSpaces(+selectTableData[i].account.Sum - payment_amount), managerSecondName];
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, returnSpaces(selectTableData[i].account.Sum), returnSpaces(payment_amount), returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount)), managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
