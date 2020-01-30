@@ -150,9 +150,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=1920)
+        return render_template('index.html', last_update=1921)
     else:
-        return render_template('login.html', last_update=1882)
+        return render_template('login.html', last_update=1883)
 
 
 @app.route('/getAllTasks')
@@ -568,6 +568,15 @@ def addDelivery():
     else:
         return redirect('/', code=302)
 
+
+@app.route('/fixDelivery', methods=['GET'])
+def fixDelivery():
+    Delivery = models.Delivery.query.filter_by(id=request.args['id']).first()
+    Delivery.Item_ids = request.args['items_ids']
+    Delivery.Amounts = request.args['amounts']
+
+    db.session.commit()
+    return 'OK'
 
 @app.route('/getContacts', methods=['GET'])
 def getContacts():
