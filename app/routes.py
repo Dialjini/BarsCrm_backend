@@ -732,6 +732,7 @@ def addAccount():
         table.Sale_costs = data['sale_costs']
         table.Hello_costs = data['hello_costs']
         table.Delivery_costs = data['delivery_costs']
+        table.Shipment = data['shipment']
 
         db.session.add(table)
         db.session.commit()
