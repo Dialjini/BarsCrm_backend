@@ -1462,6 +1462,7 @@ function createCardMenu(element, index = 0) {
                 if (selectedLine.Amounts != undefined) {
                     amounts = JSON.parse(selectedLine.Amounts);
                 }
+                console.log(amounts);
                 
                 for (let j = 0; j < list_items_acc.length; j++) {
                     for (let k = 0; k < listStocks.length; k++) {
@@ -1484,16 +1485,20 @@ function createCardMenu(element, index = 0) {
                                         </tr>
                                         `
                                     } else {
-                                        tr += `
-                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                            <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
-                                            <td>${listAllItems[i].Name}</td>
-                                            <td>${listStocks[k].Name}</td>
-                                            <td><input onkeyup="maskNumber(this.id)" id="item_volume" value="${amounts.length == 1 ? amounts[0].volume : amounts[i].volume}" type="text"></td>
-                                            <td>${listAllItems[i].Packing}</td>
-                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts.length == 1 ? amounts[0].sum : amounts[i].sum}" type="text"></td>
-                                        </tr>
-                                        `
+                                        for (let am = 0; am < amounts.length; am++) {
+                                            if (list_items_acc[j] == amounts[am].id) {
+                                                tr += `
+                                                    <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                                        <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
+                                                        <td>${listAllItems[i].Name}</td>
+                                                        <td>${listStocks[k].Name}</td>
+                                                        <td><input onkeyup="maskNumber(this.id)" id="item_volume" value="${amounts[am].volume}" type="text"></td>
+                                                        <td>${listAllItems[i].Packing}</td>
+                                                        <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[am].sum}" type="text"></td>
+                                                    </tr>
+                                                `
+                                            }
+                                        }
                                     }
                                 }
                             }

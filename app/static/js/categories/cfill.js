@@ -1136,8 +1136,7 @@ function getValidationDate(date) {
     }
     // Сводный по объёмам
     function analyticsFilterTable_1(date_period, unload_status = false) {
-        let account_data;
-        let stocks;
+        let account_data, stocks;
         $.ajax({
             url: '/getStockTable',
             type: 'GET',
@@ -1244,7 +1243,7 @@ function getValidationDate(date) {
                             for (let j = 0; j < items_volume.length; j++) {
                                 for (let l = 0; l < all_items.length; l++) {
                                     if (+all_items[l].Item_id == +items_volume[j].id) {
-                                        amounts[l] += deleteSpaces(+items_volume[j].volume);
+                                        amounts[l] += +deleteSpaces(items_volume[j].volume);
                                         td += `<td id="item_${l + 1}">${returnSpaces(items_volume[j].volume)}</td>`
                                         if (items_volume.length - 1 != j) {
                                             j++;
@@ -1271,7 +1270,13 @@ function getValidationDate(date) {
                                 if (+all_items[l].Item_id == +items_volume[j].id) {
                                     for (let g = 0; g < unload_table.length; g++) {
                                         if (account_data[i].account.Name == unload_table[g].name) {
-                                            unload_table[g].list.push({id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume)})
+                                            for (let q = 0; q < stocks.length; q++) {
+                                                for (let n = 0; n < stocks[q].items.length; n++) {
+                                                    if (stocks[q].items[n].Item_id == items_volume[j].id) {
+                                                        unload_table[g].list.push({name: stocks[q].items[n].Name, volume: deleteSpaces(items_volume[j].volume)})
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                     if (items_volume.length - 1 != j) {
@@ -1280,7 +1285,13 @@ function getValidationDate(date) {
                                 } else {
                                     for (let g = 0; g < unload_table.length; g++) {
                                         if (account_data[i].account.Name == unload_table[g].name) {
-                                            unload_table[g].list.push({id: +items_volume[j].id, volume: '0'})
+                                            for (let q = 0; q < stocks.length; q++) {
+                                                for (let n = 0; n < stocks[q].items.length; n++) {
+                                                    if (stocks[q].items[n].Item_id == items_volume[j].id) {
+                                                        unload_table[g].list.push({name: stocks[q].items[n].Name, volume: '0'})
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -1376,38 +1387,17 @@ function getValidationDate(date) {
         }
         for (let i = 0; i < items_list.length - 1; i++) {
             for (let j = i + 1; j < items_list.length; j++) {
-                if (items_list[i].account.Name === items_list[j].account.Name && items_list[i].account.id === items_list[j].account.id) {
+                if (items_list[i].account.Name === items_list[j].account.Name && +items_list[i].account.id === +items_list[j].account.id) {
                     for (let k = 0; k < items_list[j].items.length; k++) {
                         items_list[i].items.push(items_list[j].items[k])
-                    }
-                    if (items_list[i].account.id !== items_list[j].account.id) {
-                        let volume_two = JSON.parse(items_list[j].account.Item_ids);
-                        let amount_two = JSON.parse(items_list[j].account.Items_amount);
-                        let volume_one = JSON.parse(items_list[i].account.Item_ids);
-                        let amount_one = JSON.parse(items_list[i].account.Items_amount);
-
-                        for (let g = 0; g < volume_two.length; g++) {
-                            volume_one.push(volume_two[g]);
-                            amount_one.push(amount_two[g]);
-                        }
-
-                        for (let l = 0; l < volume_one.length - 1; l++) {
-                            for (let h = l + 1; h < volume_one.length; h++) {
-                                if (volume_one[l].id === volume_one[h].id) {
-                                    volume_one[l].volume = deleteSpaces(+volume_one[l].volume) + deleteSpaces(+volume_one[h].volume);
-                                    volume_one.splice(h, 1);
-                                    h--;
-                                }
-                            }
-                        }
-                        items_list[i].account.Item_ids = JSON.stringify(volume_one);
-                        items_list[i].account.Items_amount = JSON.stringify(amount_one);
                     }
                     items_list.splice(j, 1);
                     j--;
                 }
             }
         }
+        console.log(items_list);
+        let delivery_id = null;
         function fillTable() {
             let table = '';
             let unload_table = [];
@@ -1421,11 +1411,18 @@ function getValidationDate(date) {
                             for (let id = 0; id < deliveries_ids.length; id++) {
                                 if (+volume[v].id == +items_list[i].items[j].Item_id
                                     && +items_list[i].items[j].Item_id == +deliveries_ids[id]
-                                    && delivery_data[delivery].delivery.Account_id == +items_list[i].account.id) {
+                                    && +delivery_data[delivery].delivery.Account_id == +items_list[i].account.id) {
+                                    if (delivery_id == null) {
+                                        delivery_id = +delivery_data[delivery].delivery.id
+                                    } else if (delivery_id != +delivery_data[delivery].delivery.id) {
+                                        continue;
+                                    }
+                                    
                                     if (!unload_status) {
                                         function fillTr() {
                                             let trContent = '';
                                             if (j == 0) {
+                                                console.log(items_list[i].items[j]);
                                                 trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
                                             }
                                             trContent += `<td>${items_list[i].items[j].Name}</td>
@@ -1443,12 +1440,14 @@ function getValidationDate(date) {
                                             amount: returnSpaces(amounts[v].amount)})
                                     }
                                 }
-                            }  
-                        }      
+                            }
+                        }  
+                        delivery_id = null;    
                     }
                 }
             }
             if (unload_status) {
+                console.log(unload_table);
                 return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {

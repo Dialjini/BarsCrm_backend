@@ -1396,6 +1396,7 @@ function maskNumberWithout(id) {
 }
 function returnSpaces(string) {
     string = String(string)
+    string = deleteSpaces(string);
     let new_string = string;
     let count = 0, array = [];
     if (string.includes('.')) new_string = string.split('.')[0];

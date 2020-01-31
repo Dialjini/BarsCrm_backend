@@ -20,14 +20,14 @@ function current_count_accounts(value, text, type) {
         ]},
     ]
     let divider = '1';
-    for (let i = 1; i < value.length; i++) {
+    for (let i = 1; i < String(value).length; i++) {
         divider += '0';
     }
     for (let k = 0; k < current_count.length; k++) {
         if (current_count[k].type == type) {
             for (let i = 0; i < current_count[k].array.length; i++) {
                 for (let j = 0; j < current_count[k].array[i].numbers.length; j++) {
-                    if (value / divider == 1 && divider != 1) {
+                    if (Math.floor(+value / +divider )== 1 && divider != '1') {
                         return text + 'ов'
                     } else {
                         if (value % 10 == current_count[k].array[i].numbers[j]) {
