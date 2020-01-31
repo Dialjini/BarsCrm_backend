@@ -654,7 +654,7 @@ function adminPanel(close = '') {
                     function getContent() {
                         $('.info').append(`
                             <div class="row">
-                                <div class="fields">
+                                <div class="fields" style="width: auto">
                                     <div class="field active" id="persons" onclick="persons()">Сотрудники</div>
                                     <div class="field" id="positions" onclick="positions()">Должности</div>
                                     <div class="field" id="items" onclick="items()">Редактирование товаров</div>
@@ -1260,11 +1260,18 @@ function getValidationDate(date) {
                     } else {
                         for (let j = 0; j < items_volume.length; j++) {
                             for (let l = 0; l < all_items.length; l++) {
-                                unload_table.push({name: account_data[i].account.Name, list: []});
+                                let create_status = 0;
+                                for (let element = 0; element < unload_table.length; element++) {
+                                    if (unload_table[element].name == account_data[i].account.Name) {
+                                        create_status++;
+                                    }
+                                }
+                                if (create_status == 0) unload_table.push({name: account_data[i].account.Name, list: []});
+                                
                                 if (+all_items[l].Item_id == +items_volume[j].id) {
                                     for (let g = 0; g < unload_table.length; g++) {
                                         if (account_data[i].account.Name == unload_table[g].name) {
-                                            unload_table[i].list.push({id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume)})
+                                            unload_table[g].list.push({id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume)})
                                         }
                                     }
                                     if (items_volume.length - 1 != j) {
@@ -1273,7 +1280,7 @@ function getValidationDate(date) {
                                 } else {
                                     for (let g = 0; g < unload_table.length; g++) {
                                         if (account_data[i].account.Name == unload_table[g].name) {
-                                            unload_table[i].list.push({id: +items_volume[j].id, volume: '0'})
+                                            unload_table[g].list.push({id: +items_volume[j].id, volume: '0'})
                                         }
                                     }
                                 }
@@ -1283,6 +1290,7 @@ function getValidationDate(date) {
                 }
             }
             if (unload_status) {
+                console.log(unload_table);
                 return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
@@ -1508,7 +1516,7 @@ function getValidationDate(date) {
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
                     let items_volume = JSON.parse(accounts[i].account.Item_ids);
                     let items_hello = JSON.parse(accounts[i].account.Hello);
-                    let sum_volume = items_volume.reduce((a, b) => ({volume: deleteSpaces(+a.volume) + deleteSpaces(+b.volume)}));
+                    let sum_volume = items_volume.reduce((a, b) => ({volume: +deleteSpaces(a.volume) + +deleteSpaces(b.volume)}));
                     let sum_hello_volume = 0, id_client = 0;
                     let client_data = categoryInListClient[1][1];
 
@@ -1520,7 +1528,7 @@ function getValidationDate(date) {
                     }
 
                     for (let sum = 0; sum < items_volume.length; sum++) {
-                        sum_hello_volume += deleteSpaces(+items_volume[sum].volume) * deleteSpaces(+items_hello[sum]);
+                        sum_hello_volume += +deleteSpaces(items_volume[sum].volume) * +deleteSpaces(items_hello[sum]);
                     }
                     all_data.push({
                         client_id: id_client,
@@ -1528,7 +1536,7 @@ function getValidationDate(date) {
                         volume: +sum_volume.volume,
                         average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
                         amount_hello: Math.ceil(+sum_hello_volume),
-                        amount: Math.round(deleteSpaces(+accounts[i].account.Sum) * 0.9)
+                        amount: Math.round(+deleteSpaces(accounts[i].account.Sum) * 0.9)
                     });
                     total_count++;
                 }
@@ -1550,10 +1558,10 @@ function getValidationDate(date) {
             for (let i = 0; i < all_data.length - 1; i++) {
                 for (let j = i + 1; j < all_data.length; j++) {
                     if (all_data[i].name === all_data[j].name) {
-                        all_data[i].volume += deleteSpaces(all_data[j].volume);
-                        all_data[i].amount_hello += deleteSpaces(all_data[j].amount_hello);
-                        all_data[i].average_volume = Math.ceil(all_data[i].amount_hello / all_data[i].volume);
-                        all_data[i].amount = Math.round((all_data[i].amount + all_data[j].amount) * 0.9);
+                        all_data[i].volume = +deleteSpaces(all_data[i].volume) + +deleteSpaces(all_data[j].volume);
+                        all_data[i].amount_hello = +deleteSpaces(all_data[i].amount_hello) + +deleteSpaces(all_data[j].amount_hello);
+                        all_data[i].average_volume = Math.ceil(+deleteSpaces(all_data[i].amount_hello) / +deleteSpaces(all_data[i].volume));
+                        all_data[i].amount = Math.round((+deleteSpaces(all_data[i].amount) + +deleteSpaces(all_data[j].amount)) * 0.9);
                         all_data.splice(j, 1);
                         j--;
                     }

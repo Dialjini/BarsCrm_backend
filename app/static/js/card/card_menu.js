@@ -1098,23 +1098,19 @@ function createCardMenu(element, index = 0) {
                         <div class="costs gray">
                             <div class="costs_element">
                                 <span>Всего затраты</span>
-                                <input type="text" value="${selectedLine.account.Total_costs}" disabled onkeyup="maskNumberWithout(this.id); all_costs()" id="total_costs_inv" class="total_count red bold mrl">
-                                <div name="unlock" class="lock_input" id="mode_costs" onclick="switchMode(this)"></div>
+                                <input type="text" value="${selectedLine.account.Total_costs}" disabled id="total_costs_inv" class="total_count red bold mrl">
                             </div> 
                             <div class="costs_element">
                                 <span>Скидка</span> 
-                                <input type="text" value="${selectedLine.account.Sale_costs}" disabled onkeyup="calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_discount_inv" class="total_count bold mrl">
-                                <div name="unlock" class="lock_input" id="mode_discount" onclick="switchMode(this)"></div>
+                                <input type="text" value="${selectedLine.account.Sale_costs}" disabled id="total_discount_inv" class="total_count bold mrl">
                             </div>
                             <div class="costs_element">
                                 <span>Привет</span> 
-                                <input type="text" value="${selectedLine.account.Hello_costs}" disabled onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_privet_inv" class="total_count bold mrl">
-                                <div name="unlock" class="lock_input" id="mode_privet" onclick="switchMode(this)"></div>
+                                <input type="text" value="${selectedLine.account.Hello_costs}" disabled id="total_privet_inv" class="total_count bold mrl">
                             </div>
                             <div class="costs_element">
                                 <span>Доставка</span> 
-                                <input type="text" value="${selectedLine.account.Delivery_costs}" disabled onkeyup="maskNumberWithout(this.id); calculationIndicators()" value="" onblur="dataСalculation(this)" id="total_delivery_inv" class="total_count bold mrl">
-                                <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
+                                <input type="text" value="${selectedLine.account.Delivery_costs}" disabled id="total_delivery_inv" class="total_count bold mrl">
                             </div>
                         </div>
                     </div>
@@ -1271,7 +1267,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                         <div class="mb">
                             <span class="bold">Объем, кг.</span>
-                            <input onkeyup="maskNumber(this.id)" style="width: 60px" type="text" id="volume_transit" class="margin" oninput="fillVolume(this.value)">
+                            <input onkeyup="maskNumberWithout(this.id)" style="width: 60px" type="text" id="volume_transit" class="margin" oninput="fillVolume(this)">
                         </div>
                         <div>
                             <table class="full">
@@ -2091,7 +2087,7 @@ function transitProduct(element) {
 
             let idProduct = element.name.split('_')[1];
             let stock_select = $('#stock_select').val();
-            let product_volume = $('#volume_transit').val();
+            let product_volume = deleteSpaces($('#volume_transit').val());
 
             if (stock_select == null) {
                 return $('.page').append($('<div>', { class: 'background' }).add(`
@@ -2127,7 +2123,7 @@ function transitProduct(element) {
 
             for (let i = 0; i < products.length; i++) {
                 if (products[i].Item_id == idProduct) {
-                    if (+products[i].Volume < +product_volume) {
+                    if (+deleteSpaces(products[i].Volume) < +deleteSpaces(product_volume)) {
                         return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
                                     <div class="title">
@@ -2145,7 +2141,7 @@ function transitProduct(element) {
                 }
             }
 
-            let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +product_volume};
+            let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume)};
 
             $.ajax({
                 url: '/stockTransit',

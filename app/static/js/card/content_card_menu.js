@@ -207,13 +207,10 @@ function arrangeDelivery(element) {
     createDelCardMenu(element);
 }
 // Заполнение объема в карточке категории Склад для переноса груза из одного склада в другой
-function fillVolume(value) { 
+function fillVolume(element) { 
     // Делать проверку на объем, если больше, чем есть = ошибка
-    value.trim();
-    if (value.length > 4) { return };
-    let spaceIndex = value.indexOf(' ');
-    if (spaceIndex > 0) { value = value.substring(0, spaceIndex) }
-    $('#volume_goods').html(value);
+    let value = $(element).val();
+    $('#volume_goods').html(returnSpaces(deleteSpaces(value)));
 }
 // Контентная часть вкладки Оформление договора
 function contractContentCard(elem) {
