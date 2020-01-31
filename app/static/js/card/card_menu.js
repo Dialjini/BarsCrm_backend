@@ -875,7 +875,6 @@ function createCardMenu(element, index = 0) {
         let account_id = selectedLine.account.id;
 
         for (let i = 0; i < data_del.length; i++) {
-            console.log(data_del[i].delivery.Account_id, account_id);
             if (data_del[i].delivery.Account_id == account_id) {
                 edit = true;
             }
@@ -1462,7 +1461,6 @@ function createCardMenu(element, index = 0) {
                 if (selectedLine.Amounts != undefined) {
                     amounts = JSON.parse(selectedLine.Amounts);
                 }
-                console.log(amounts);
                 
                 for (let j = 0; j < list_items_acc.length; j++) {
                     for (let k = 0; k < listStocks.length; k++) {
@@ -1791,7 +1789,6 @@ function deleteItemInFlight(element) {
                     amounts.splice(j, 1);
                 }
             }
-            console.log({id: +delivery_id, items_ids: JSON.stringify(item_ids), amounts: JSON.stringify(amounts)},);
             $.ajax({
                 url: '/fixDelivery',
                 type: 'GET',
@@ -1972,11 +1969,9 @@ function makeRequest(element) {
         }
     }
 
-    console.log(amounts)
     for (let i = 0; i < amounts.length; i++) {
         amounts_sum.push(amounts[i]);
     }
-    console.log(amounts_sum)
 
     for (let i = 0; i < amounts_sum.length - 1; i++) {
         for (let j = i + 1; j < amounts_sum.length; j++) {

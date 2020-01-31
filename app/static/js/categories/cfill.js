@@ -1287,7 +1287,7 @@ function getValidationDate(date) {
                                         if (account_data[i].account.Name == unload_table[g].name) {
                                             for (let q = 0; q < stocks.length; q++) {
                                                 for (let n = 0; n < stocks[q].items.length; n++) {
-                                                    if (stocks[q].items[n].Item_id == items_volume[j].id) {
+                                                    if (stocks[q].items[n].Item_id == all_items[l].Item_id) {
                                                         unload_table[g].list.push({name: stocks[q].items[n].Name, volume: '0'})
                                                     }
                                                 }
@@ -1396,7 +1396,6 @@ function getValidationDate(date) {
                 }
             }
         }
-        console.log(items_list);
         let delivery_id = null;
         function fillTable() {
             let table = '';
@@ -1422,7 +1421,6 @@ function getValidationDate(date) {
                                         function fillTr() {
                                             let trContent = '';
                                             if (j == 0) {
-                                                console.log(items_list[i].items[j]);
                                                 trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
                                             }
                                             trContent += `<td>${items_list[i].items[j].Name}</td>
@@ -1447,7 +1445,6 @@ function getValidationDate(date) {
                 }
             }
             if (unload_status) {
-                console.log(unload_table);
                 return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
