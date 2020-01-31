@@ -313,7 +313,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                         dataType: 'html',
                         success: function(data) {
                             data = JSON.parse(data);
-                            let name;
+                            let name, date;
                             let idsItems = [];
                             for (let element of $('#exposed_list .invoiled')) {
                                 let idProduct = $(element).attr('id').split('_')[1];
@@ -330,6 +330,8 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                             for (let i = 0; i < categoryInFinanceAccount[1][1].length; i++) {
                                 if (categoryInFinanceAccount[1][1][i].account.id == idAccount) {
                                     name = categoryInFinanceAccount[1][1][i].account.Name;
+                                    date = categoryInFinanceAccount[1][1][i].account.Date;
+                                    shipment = categoryInFinanceAccount[1][1][i].account.Shipment;
                                 }
                             }
                             
@@ -342,9 +344,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     delivery.push($(element).children()[9].children[0].value);
                                     items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
                                 }
-                
-                                let status = 'false';
-                                let date = getCurrentDate('year');
+
                                 let sum = $('#total').html();
                 
                                 $.ajax({
@@ -357,14 +357,15 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                             url: '/editAccount',
                                             type: 'GET',
                                             data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
-                                                manager_id: this_user.id, name: name, status: status, date: date,
+                                                manager_id: this_user.id, name: name, date: date,
                                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
-                                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val()},
+                                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
+                                                shipment: shipment},
                                             dataType: 'html',
                                             success: function() {
-                                                return getTableData(saveTableAndCard);
+                                                getTableData(categoryInFinanceAccount);
                                             }
                                         })
                                     }
