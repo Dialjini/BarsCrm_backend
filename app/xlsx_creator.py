@@ -37,15 +37,13 @@ def firstScenario(data):
     return '/upload'
 
 def secondScenario(data):
-    for i in data:
-        print(i)
-        print('this')
+    print(data)
 
     wb = openpyxl.Workbook()
     sheet = wb.active
     sheet['A1'].value = 'Товар'
     # for i in data[0]:
-
+    wb.save('app/upload/last_stat.xlsx')
 
     return '/upload'
 
