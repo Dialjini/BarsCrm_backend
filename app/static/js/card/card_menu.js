@@ -16,7 +16,18 @@ function getCurrentTime() {
 // Получение текущей даты в формате dd.mm или dd.mm.yy
 function getCurrentDate(year = 'none') {
     let time = new Date();
-    let month = +time.getMonth() + 1 < 10 ? '0' + (+time.getMonth() + 1) : +time.getMonth() + 1;
+    let month = +time.getMonth() < 10 ? '0' + (+time.getMonth()) : +time.getMonth();
+    let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
+    if (year !== 'none') {
+        let year = time.getFullYear();
+        year = String(year).substring(2, 4);
+        return `${day}.${month}.${year}`;
+    }
+    return `${day}.${month}`;
+}
+function getCurrentDateNotComparison(year = 'none') {
+    let time = new Date();
+    let month = +time.getMonth() < 9 ? '0' + (+time.getMonth() + 1) : +time.getMonth() + 1;
     let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
     if (year !== 'none') {
         let year = time.getFullYear();
@@ -1937,8 +1948,14 @@ function makeRequest(element) {
 
     let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
     let delivery_id = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1]
+    let date = getCurrentDateNotComparison('year');
+    for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
+        if (categoryInDelivery[1][1][i].delivery.id == delivery_id) {
+            date = categoryInDelivery[1][1][i].delivery.Date;
+        }
+    }
     data['delivery_id'] = delivery_id;
-    data['delivery_date'] = getCurrentDate('year');
+    data['delivery_date'] = date;
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
     data['delivery_contact_number'] = '';
     data['delivery_contact_name'] = $('#delivery_driver').val();

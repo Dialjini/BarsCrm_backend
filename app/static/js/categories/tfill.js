@@ -437,8 +437,7 @@ let rowFilling = (object, id, table) => {
     }
 
     let rowFillingDebit = (id) => {
-        let deliveryTable;
-        let managers;
+        let deliveryTable, managers;
         $.ajax({
             url: '/getUsers',
             type: 'GET',
@@ -446,15 +445,16 @@ let rowFilling = (object, id, table) => {
             dataType: 'html',
             success: function(result) {
                 managers = JSON.parse(result);
+                $.ajax({
+                    url: '/getDeliveries',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(result) { deliveryTable = JSON.parse(result) },
+                });
             }
         });
-        $.ajax({
-            url: '/getDeliveries',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(result) { deliveryTable = JSON.parse(result) },
-        });
+        $(table).attr('class', 'table analytics')
         table.append(getTitleTable());
         let balance_owed = 0, count_accounts = 0;
         for (let i = selectTableData.length - 1; i >= 0; i--) {
@@ -491,21 +491,52 @@ let rowFilling = (object, id, table) => {
                 count_accounts++;
             }
 
-            let first_date, postponement_date;
+            let count_delivery = 0;
+            let delivery_data = [];
 
             for (let j = 0; j < deliveryTable.length; j++) {
                 if (deliveryTable[j].delivery.Account_id == i + 1) {
-                    first_date = deliveryTable[j].delivery.Start_date;
-                    postponement_date = deliveryTable[j].delivery.Postponement_date;
-                    break;
+                    count_delivery++;
+                    delivery_data.push({ first_date: deliveryTable[j].delivery.Start_date,
+                                         id: deliveryTable[j].delivery.Account_id,
+                                         postponement_date: deliveryTable[j].delivery.Postponement_date,
+                                         customer: deliveryTable[j].delivery.Customer});
                 }
             }
-            if (first_date == undefined) first_date = 'Не указано';
-            if (postponement_date == undefined) postponement_date = 'Не указано';
+            for (let j = 0; j < delivery_data.length; j++) {
+                if (delivery_data[j].first_date == '' || delivery_data[j].first_date == null) {
+                    delivery_data[j].first_date = 'Не указано';
+                }
+                if (delivery_data[j].postponement_date == '' || delivery_data[j].postponement_date == null) {
+                    delivery_data[j].postponement_date = 'Не указано';
+                }
+            }
             if (payment_amount == 0) continue;
-            let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Name, first_date, postponement_date, returnSpaces(selectTableData[i].account.Sum), returnSpaces(payment_amount), returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount)), managerSecondName];
-
+            let element = $('<tbody>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
+            for (let j = 0; j < delivery_data.length; j++) {
+                if (j == 0) {
+                    element.append(`
+                        <tr>
+                            <td>${delivery_data[j].customer}</td>
+                            <td rowspan="${count_delivery}">${selectTableData[i].account.Name}</td>
+                            <td>${delivery_data[j].first_date}</td>
+                            <td>${delivery_data[j].postponement_date}</td>
+                            <td rowspan="${count_delivery}">${returnSpaces(selectTableData[i].account.Sum)}</td>
+                            <td rowspan="${count_delivery}">${returnSpaces(payment_amount)}</td>
+                            <td rowspan="${count_delivery}">${returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount))}</td>
+                            <td rowspan="${count_delivery}">${managerSecondName}</td>
+                        </tr>
+                    `)
+                } else {
+                    element.append(`
+                        <tr>
+                            <td>${delivery_data[j].customer}</td>
+                            <td>${delivery_data[j].first_date}</td>
+                            <td>${delivery_data[j].postponement_date}</td>
+                        </tr>
+                    `)
+                }
+            }
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);

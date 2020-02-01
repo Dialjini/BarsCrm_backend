@@ -1486,8 +1486,8 @@ function selectPeriod(period = 'month', table) {
                         let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
             
                         let date_arr = datetime_regex.exec(today);
-                        let first_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
-                        let second_datetime = new Date('20' + +date_arr[3] - 1, date_arr[2], date_arr[1]);
+                        let first_datetime = new Date('20' + +date_arr[3], +date_arr[2], date_arr[1]);
+                        let second_datetime = new Date('20' + +date_arr[3], +date_arr[2], date_arr[1]);
                         second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
                         $('#period_accounts').html(date_filter[i].text);
                         return [second_datetime, first_datetime];
