@@ -39,8 +39,6 @@ def user_connected():
 @socketio.on('add user')
 def add_user(data):
     global usernames
-    print("add user")
-    print(data)
     session['username'] = data
     usernames[data] = session['username']
 
@@ -51,11 +49,8 @@ def sendTasks():
     tasks = []
     Tasks = models.Tasks.query.all()
 
-    print(session['id'])
     for i in Tasks:
         socketio.sleep(0)
-        print(session['id'])
-        print(tasks)
         try:
             if 'all' in json.loads(i.Visibility):
                 tasks.append(json.loads(table_to_json([i]))[0])
@@ -104,7 +99,7 @@ def table_to_json(query):
                 try:
                     subres['Date'] = subres['Date'].strftime("%d.%m.%Y")
                 except Exception:
-                    print(subres['Date'])
+                    nothing = 'foo bar??'
 
         result.append(subres)
     return json.dumps(result)
@@ -122,8 +117,6 @@ def to_PDF(name, owner, address, delivery):
 
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
-
-    print(name)
 
     if name == 'DogovorNaDostavkuIP':
         return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
@@ -150,7 +143,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=2051)
+        return render_template('index.html', last_update=2076)
     else:
         return render_template('login.html', last_update=1883)
 
@@ -507,7 +500,6 @@ def getDeliveries():
         carriers = models.Carrier.query.all()
         for delivery in deliveries:
             if delivery.Carrier_id:
-                print(len(carriers))
                 carrier = carriers[delivery.Carrier_id - 1]
                 result.append({'carrier': json.loads(table_to_json([carrier]))[0],
                                'delivery': json.loads(table_to_json([delivery]))[0]})
@@ -522,7 +514,6 @@ def getDeliveries():
 def addDelivery():
     if 'username' in session:
         data = request.args
-        print(data['delivery_id'])
         if data['delivery_id'] == 'new':
             table = models.Delivery()
         else:
@@ -683,7 +674,6 @@ def getAccounts():
         for i in models.Account.query.all():
             items = []
             for j in json.loads(i.Item_ids):
-                print(j)
                 item = Items[int(j['id']) - 1]
                 subres = json.loads(table_to_json([item]))[0]
                 subres['Transferred_volume'] = j['volume']
@@ -960,7 +950,6 @@ def deleteManagerFromCard():
 @app.route('/getThisUser', methods=['GET'])
 def getThisUser():
     if 'username' in session:
-        print(session['username'])
         if models.User.query.filter_by(login=session['username']).first():
             user = models.User.query.filter_by(login=session['username']).first()
         else:
@@ -1141,7 +1130,6 @@ def getDocs():
 def downloadOldDoc():
     if 'username' in session:
         document = models.Document.query.filter_by(id=request.args['id']).first()
-        print(os.path.abspath(os.path.dirname(__file__) + '/upload')+document.Path)
         return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
                                    filename=document.Path)
     else:
@@ -1274,9 +1262,10 @@ def editAccountShipment():
 
 @app.route('/excelStat', methods=['GET'])
 def excelStat():
+    if not request.args:
+        return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__)), filename='SATANE.png')
+
     if 'username' in session:
-        print(os.path.abspath(os.path.dirname(__file__) + xlsx_creator.createExel(id=request.args['id'], data=json.loads(request.args['data']))))
-        print('last_stat.xlsx')
         return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) +
                                                              xlsx_creator.createExel(id=request.args['id'], data=json.loads(request.args['data']))),
                                    filename='last_stat.xlsx')
