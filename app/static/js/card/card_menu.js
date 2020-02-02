@@ -2236,7 +2236,6 @@ function transitProduct(element) {
     let product_volume = deleteSpaces($('#volume_transit').val());
     $(element).attr('id', 'delivery_new');
 
-    createTransitCardMenu(element);
     function createTransitCardMenu(element) {
         $.ajax({
             url: '/getCarriers',
@@ -2368,7 +2367,7 @@ function transitProduct(element) {
                 data: data,
                 dataType: 'html',
                 success: function() {
-                    // closeCardMenu('stock_new');
+                    createTransitCardMenu(element);
                 }
             });
         }
