@@ -28,6 +28,22 @@ function editAccount(elem) {
                     shipment = categoryInFinanceAccount[1][1][i].account.Shipment;
                 }
             }
+
+            if (shipment === 'true') {
+                return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px; color: #595959;">Товар этого счета уже полностью отгружен</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+            }
             
             if (idsItems.length > 0) {
                 let sale = [], privet = [], delivery = [], items_amount = [];
@@ -397,7 +413,7 @@ function contractContentCard(elem) {
         <div class="row_card column">
             <div class="row_card" style="justify-content: flex-start">
                 <table class="fit gray">
-                    <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDate('currentYear')}</td></tr>
+                    <tr><td class="bold" style="padding-right: 10px;">Договор от</td><td>${getCurrentDateNotComparison('currentYear')}</td></tr>
                     <tr>
                         <td class="bold">Юр. лицо</td><td>
                             <select id="select_cusmoter">
@@ -1130,7 +1146,7 @@ function addComment(manager = '', data, last = false) {
                 id: 'message',
                 append: `
                     <td>
-                        <input type="text" onchange="saveCard()" value="${getCurrentDate('year')}" id="comment_date" class="m_date">
+                        <input type="text" onchange="saveCard()" value="${getCurrentDateNotComparison('year')}" id="comment_date" class="m_date">
                     </td>
                     <td>
                         <select onselect="saveCard()" id="comment_role" class="m_role">
@@ -1893,7 +1909,7 @@ function detachmentCard(element) {
     $.ajax({
         url: '/deleteManagerFromCard',
         type: 'GET',
-        data: {category: idName[0], card_id: idName[1], date: getCurrentDate('year')},
+        data: {category: idName[0], card_id: idName[1], date: getCurrentDateNotComparison('year')},
         dataType: 'html',
         success: function() {}
     });
@@ -1910,7 +1926,7 @@ function detachmentCard(element) {
                 html: `Снято с ${username}`
             }).add($('<div>', {
                 class: 'time',
-                html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDate()}</span>`
+                html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDateNotComparison()}</span>`
             }))
         }))
     }));

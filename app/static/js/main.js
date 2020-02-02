@@ -419,7 +419,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">В начале адреса нужно указать почтовый индекс, содержащий 6 цифр</p>
+                                            <p style="font-size: 13px; color: #595959;">В начале адреса нужно указать почтовый индекс, содержащий 6 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -434,7 +434,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">Введите ИНН</p>
+                                            <p style="font-size: 14px; color: #595959;">Введите ИНН</p>
                                         </div>
                                     </div>
                                 </div>
@@ -448,7 +448,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">ИНН должен содержать от 10 до 12 цифр</p>
+                                            <p style="font-size: 13px; color: #595959;">ИНН должен содержать от 10 до 12 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -463,7 +463,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">БИК должен содержать 9 цифр</p>
+                                            <p style="font-size: 14px; color: #595959;">БИК должен содержать 9 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -478,7 +478,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">Корреспондентский счёт должен содержать 20 цифр</p>
+                                            <p style="font-size: 14px; color: #595959;">Корреспондентский счёт должен содержать 20 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -493,7 +493,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">Расчётный счёт должен содержать 20 цифр</p>
+                                            <p style="font-size: 14px; color: #595959;">Расчётный счёт должен содержать 20 цифр</p>
                                         </div>
                                     </div>
                                 </div>
@@ -513,7 +513,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             idData[`livestock_milkyield`] = $('#livestock_milkyield').val();   
         }
         if (data[0] == 'provider' && data[3] == 'new') {
-            idData[`provider_create_date`] = getCurrentDate('year');
+            idData[`provider_create_date`] = getCurrentDateNotComparison('year');
         }
         idData[`${data[0]}_data`] = card;
         idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();

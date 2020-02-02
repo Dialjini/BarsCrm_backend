@@ -65,7 +65,7 @@ body {
 }
 
 .page .modal_select .title span {
-  color: lightgray;
+  color: #ce4a50;
 }
 
 .page .modal_select .title img {
@@ -1729,6 +1729,7 @@ body {
 }
 
 .page .rightBlock .profile {
+  position: relative;
   padding: 16px 0;
   background-color: #fff;
   display: -webkit-box;
@@ -1744,6 +1745,48 @@ body {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+}
+
+.page .rightBlock .profile .profile_menu_l {
+  position: absolute;
+  top: 15px;
+  right: 30px;
+  background-color: #fff;
+  display: none;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 0px 3px 0px lightgrey;
+          box-shadow: 0 0px 3px 0px lightgrey;
+  z-index: 1;
+}
+
+.page .rightBlock .profile .profile_menu_l ul {
+  margin: 5px 0;
+}
+
+.page .rightBlock .profile .profile_menu_l ul li {
+  color: #595959;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  padding: 0 15px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  vertical-align: middle;
+  height: 30px;
+  line-height: 30px;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .rightBlock .profile .profile_menu_l ul li:hover {
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  cursor: pointer;
+  background-color: #f7f7f7;
+}
+
+.page .rightBlock .profile .profile_menu_l ul .active {
+  background-color: #f7f7f7;
 }
 
 .page .rightBlock .profile .photo {
