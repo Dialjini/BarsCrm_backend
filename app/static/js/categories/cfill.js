@@ -1766,7 +1766,7 @@ function getValidationDate(date) {
                         }
                         all_amounts += general_amount;
                         td += `<td>${returnSpaces(general_amount)}</td>`
-                        let unload_table_ = [{id: 'total', name: 'Итого', volume: returnSpaces(general_amount)}];
+                        let unload_table_ = [{id: 'total', name: 'Итого', volume: +deleteSpaces(general_amount)}];
                         console.log(items_volume);
                         if (!unload_status) {
                             for (let j = 0; j < items_volume.length; j++) {
@@ -1797,7 +1797,7 @@ function getValidationDate(date) {
                                     function findItemName(id) {
                                         for (let i = 0; i < all_items.length; i++) {
                                             if (all_items[i].Item_id == id) {
-                                                return all_items[i].Name;
+                                                return all_items[i].Name; 
                                             }
                                         }
                                     }
@@ -1809,7 +1809,7 @@ function getValidationDate(date) {
                                     if (+all_items[l].Item_id == +items_volume[j].id) {
                                         for (let g = 0; g < unload_table_.length; g++) {
                                             if (unload_table_[g].id == items_volume[j].id) {
-                                                unload_table_[g].volume = returnSpaces(items_volume[j].volume);
+                                                unload_table_[g].volume = +deleteSpaces(items_volume[j].volume);
                                             }
                                         }
                                         if (items_volume.length - 1 != j) {
