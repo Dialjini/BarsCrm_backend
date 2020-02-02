@@ -38,6 +38,73 @@ def replace_doc(words, replacements, doc):
     return doc
 
 
+def Generate_Transit(dir_u, date, delivery, adress):
+    document = models.Document()
+    delivery = models.Delivery.query.filter_by(id=delivery).first()
+    document.MonthNum = models.getMonthNum()
+    document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
+    document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
+    account = models.Account.query.filter_by(id=delivery.Account_id).first()
+    transit_type = adress.split(' ')
+
+    document.Client_name = 'transit'
+
+    Items = models.Item.query.all()
+    item_info = {'mass': 0}
+    for i in Items:
+        if str(i.Item_id) in json.loads(delivery.Item_ids):
+            item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
+            item_info['packing'] = i.Packing
+
+    db.session.add(document)
+    db.session.commit()
+    document.Path = '{}.docx'.format('Transit N' + document.id)
+    db.session.commit()
+
+    if transit_type[0] == 'OOO':
+        doc = Document(os.path.dirname(__file__) + '/files/Zayavka_OOO.docx')
+    else:
+        doc = Document(os.path.dirname(__file__) + '/files/Zayavka_IP.docx')
+
+    if transit_type[1] == 'OOO':
+        doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
+                                    'document.Client_contact_name', 'document.Client_name'],
+                    replacements=[document.Date, date.d, date.m, date.y, document.Client_contact_name, 'ООО "Барс"'])
+        doc = replace_request(words=['{{Имя_клиента}}', '{{ИНН}}', '{{КПП}}', '{{Юр_адрес}}',
+                                     '{{МаркаАвто}}', '{{Контакт водителя}}', '{{ПаспортныеДанныеВодителя}}',
+                                     '{{Адресс_погрузки}}', '{{Контактное_лицо}}', '{{Наименование_грузополучателя}}',
+                                     '{{Адрес_разгрузки}}', '{{Дата_и_время_разгрузки}}', '{{Контактное лицо на выгрузке}}',
+                                     '{{Вес_груза}}', '{{Вид_упаковки}}', '{{Способ погрузки}}', '{{Погрузка}}',
+                                     '{{Разгрузка}}', '{{Сумма}}', '{{Сумма_словами}}'],
+                              replacements=['ООО "Барс"', '540863594080', '318547600198880',
+                                            'ООО', delivery.Auto,
+                                            delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
+                                            delivery.Stock, delivery.Contact_End, 'ООО "Барс"', 'Новосибирск, ул.Варшвская, 4',
+                                            delivery.End_date, delivery.Contact_End, str(item_info['mass']),
+                                            item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
+                                            str(account.Sum), num2text(float(account.Sum))], doc=doc)
+    else:
+        doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
+                                    'document.Client_contact_name', 'document.Client_name'],
+                    replacements=[document.Date, date.d, date.m, date.y, document.Client_contact_name, 'ИП Балкина Ирина Николаевна'])
+        doc = replace_request(words=['{{Имя_клиента}}', '{{ИНН}}', '{{КПП}}', '{{Юр_адрес}}',
+                                     '{{МаркаАвто}}', '{{Контакт водителя}}', '{{ПаспортныеДанныеВодителя}}',
+                                     '{{Адресс_погрузки}}', '{{Контактное_лицо}}', '{{Наименование_грузополучателя}}',
+                                     '{{Адрес_разгрузки}}', '{{Дата_и_время_разгрузки}}', '{{Контактное лицо на выгрузке}}',
+                                     '{{Вес_груза}}', '{{Вид_упаковки}}', '{{Способ погрузки}}', '{{Погрузка}}',
+                                     '{{Разгрузка}}', '{{Сумма}}', '{{Сумма_словами}}'],
+                              replacements=['ИП Балкина Ирина Николаевна', '540863594080', '318547600198880',
+                                            'ООО', delivery.Auto,
+                                            delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
+                                            delivery.Stock, delivery.Contact_End, 'ИП Балкина Ирина Николаевна', 'Новосибирск, ул.Варшвская, 4',
+                                            delivery.End_date, delivery.Contact_End, str(item_info['mass']),
+                                            item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
+                                            str(account.Sum), num2text(float(account.Sum))], doc=doc)
+
+    doc.save(dir_u + '/{}.docx'.format('Transit N' + document.id))
+    return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
+                                   filename=document.Path)
+
 def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()

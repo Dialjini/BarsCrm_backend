@@ -107,6 +107,10 @@ def table_to_json(query):
 
 def to_PDF(name, owner, address, delivery):
     info = {}
+    date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
+    dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
+    if name == 'Transit':
+        return DocCreator.Generate_Transit(dir_u=dir_u, date=date, delivery=delivery, adress=address)
     for i in reqs.getINNinfo(owner.UHH)['suggestions']:
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
@@ -114,9 +118,6 @@ def to_PDF(name, owner, address, delivery):
         return 'BAD ADDRESS or INN'
     owner.UTC = int(info['data']['address']['data']['timezone'][3:])
     db.session.commit()
-
-    date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
-    dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
 
     if name == 'DogovorNaDostavkuIP':
         return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
@@ -339,8 +340,8 @@ def stockTransit():
 
     for i in Stock.Items:
         if i.Name == Item.Name:
-            Item.Volume = str(int(Item.Volume.replace(' ', '')) - int(request.args['product_volume']))
-            i.Volume = str(int(i.Volume) + int(request.args['product_volume']))
+            Item.Volume = str(float(Item.Volume.replace(' ', '')) - float(request.args['product_volume']))
+            i.Volume = str(float(i.Volume) + float(request.args['product_volume']))
 
             db.session.commit()
             return 'OK'
