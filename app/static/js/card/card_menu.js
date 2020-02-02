@@ -2185,6 +2185,7 @@ function makeRequest(element) {
         data['delivery_price']  = infoAccount.account.Sum;
         data['delivery_vat']    = infoAccount.items[0].NDS;
         data['delivery_name']   = infoAccount.account.Name;
+        data['delivery_contact_number'] = '';
     } else {
         let info = $('#transit_info').attr('data-info').split('ç');
         data['delivery_prefix'] = $('#delivery_client').val();
