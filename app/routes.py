@@ -143,7 +143,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=2076)
+        return render_template('index.html', last_update=2215)
     else:
         return render_template('login.html', last_update=1883)
 
@@ -1266,8 +1266,7 @@ def excelStat():
         return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__)), filename='SATANE.png')
 
     if 'username' in session:
-        return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) +
-                                                             xlsx_creator.createExel(id=request.args['id'], data=json.loads(request.args['data']))),
-                                   filename='last_stat.xlsx')
+        xlsx_creator.createExel(id=request.args['id'], data=json.loads(request.args['data']))
+        return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'), filename='last_stat.xlsx')
     else:
         return redirect('/', code=302)

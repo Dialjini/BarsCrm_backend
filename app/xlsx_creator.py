@@ -78,7 +78,6 @@ def sixthScenario(data):
     return '/upload'
 
 def createExel(id, data):
-    print('HERE', id)
     if int(id) == 0:
         return firstScenario(data)
     if int(id) == 1:
