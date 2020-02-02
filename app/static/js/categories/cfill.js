@@ -1307,7 +1307,6 @@ function getValidationDate(date) {
                 }
             }
             if (unload_status) {
-                console.log(unload_table);
                 return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {

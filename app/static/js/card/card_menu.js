@@ -207,7 +207,7 @@ function createCardMenu(element, index = 0) {
                 } if (getInfo[0] === 'provider') {
                     titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`);
                 } if (getInfo[0] === 'delivery') {
-                    if (element.name !== undefined) {
+                    if (element.name != undefined && element.name != '') {
                         let id = element.name.split('_')[1];
                         selectedLine['Account_id'] = categoryInFinanceAccount[1][1][id - 1].account.id;
                     }
@@ -252,7 +252,7 @@ function createCardMenu(element, index = 0) {
     // Получаем контент карточки
     function getContentInfo(infoElement) {
         let content = $('<div>', { class: 'content' });
-        content.append(infoElement.link(selectedLine));
+        content.append(infoElement.link(selectedLine, element));
         return content;
     }
     for (let i = 0; i < dataName.length; i++) {
@@ -264,8 +264,9 @@ function createCardMenu(element, index = 0) {
         }
     }
 
-    $('.next .btn, #add_new_comment, #save_new_comment').attr('name', getInfo.join('_'));
+    
     itemSelection(getInfo[0], selectedLine);
+    $('.next .btn, #add_new_comment, #save_new_comment').attr('name', getInfo.join('_'));
     if (getInfo[0] === 'stock') categoryInStock[0].lastCard[0] = null;
 
     // Получаем данные по клиентам // Временно, пока не будем работать с счетами и доставкой
@@ -1239,7 +1240,7 @@ function createCardMenu(element, index = 0) {
                     <div class="info_block full">
                         <div class="mb">
                             <span class="bold">Транзит со склада</span>
-                            <select class="margin">
+                            <select id="transit_from_stock" class="margin">
                                 <option selected disabled value="${selectedLine.stock_address}">${selectedLine.stock_address}</option>
                             </select>
                         </div>
@@ -1309,7 +1310,16 @@ function createCardMenu(element, index = 0) {
                 `
     }
     // Контентная часть Доставки
-    function deliveryContentCard(selectedLine) {
+    function deliveryContentCard(selectedLine, category) {
+        console.log(selectedLine);
+        if ($(category).attr('data-name') != undefined) {
+            array_info = $(category).attr('data-info').split('ç');
+            $('.info').append(`<div style="display: none;" id="transit_info" data-info="${array_info[1]}ç${array_info[5]}"></div>`)
+        }
+        if (selectedLine.Name == 'Транзит') {
+            array_info = [];
+            $('.info').append(`<div style="display: none;" id="transit_info" data-info="${selectedLine.Price}ç${selectedLine.Contact_Number}"></div>`)
+        }
         function carrierSelect() {
             let data = categoryInListCarrier[1][1];
             let list_name = [];
@@ -1328,46 +1338,59 @@ function createCardMenu(element, index = 0) {
             return select;
         }
         function fillAccounts() {
-            let options = '';
-            $.ajax({
-                url: '/getAccounts',
-                type: 'GET',
-                async: false,
-                dataType: 'html',
-                success: function(data) {
-                    data = JSON.parse(data);
-                    if (categoryInFinanceAccount[1][1] == undefined) {
-                        categoryInFinanceAccount[1].push(data);
-                    }   
-                    if (selectedLine.Account_id == '') {
-                        options += `<option disabled selected>Не выбран</option>`;
-                        for (let i = 0; i < data.length; i++) {
-                            options += `<option value="${data[i].account.id}">Счёт ${data[i].account.id}</option>`
-                        }
-                    } else options += `<option disabled selected value="${selectedLine.Account_id}">Счёт ${selectedLine.Account_id}</option>`
-                }
-            });
-            return options;
+            if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
+                return `<option disabled selected value="Транзит">Транзит</option>`
+            } else {
+                let options = '';
+                $.ajax({
+                    url: '/getAccounts',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (categoryInFinanceAccount[1][1] == undefined) {
+                            categoryInFinanceAccount[1].push(data);
+                        }   
+                        if (selectedLine.Account_id == '') {
+                            options += `<option disabled selected>Не выбран</option>`;
+                            for (let i = 0; i < data.length; i++) {
+                                options += `<option value="${data[i].account.id}">Счёт ${data[i].account.id}</option>`
+                            }
+                        } else options += `<option disabled selected value="${selectedLine.Account_id}">Счёт ${selectedLine.Account_id}</option>`
+                    }
+                });
+                return options;
+            }
         }
         function fillClients() {
-            let options = '';
-            let data = categoryInFinanceAccount[1][1];
-
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].account.id == selectedLine.Account_id) {
-                    if (selectedLine.Account_id != '') {
-                        selectedLine.Name = data[i].account.Name;
-                        options += `<option disabled selected value="${data[i].account.Name}">${data[i].account.Name}</option>`
-                    } else {
-                        options += `<option selected disabled>Не выбран</option>`;
-                    }
-                    break;
+            if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
+                if (array_info[1] != undefined) {
+                    return `<option disabled selected value="${array_info[3]}">${array_info[3]}</option>`
+                } else {
+                    return `<option disabled selected value="${selectedLine.Client}">${selectedLine.Client}</option>`
                 }
+                
+            } else {
+                let options = '';
+                let data = categoryInFinanceAccount[1][1];
+
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].account.id == selectedLine.Account_id) {
+                        if (selectedLine.Account_id != '') {
+                            selectedLine.Name = data[i].account.Name;
+                            options += `<option disabled selected value="${data[i].account.Name}">${data[i].account.Name}</option>`
+                        } else {
+                            options += `<option selected disabled>Не выбран</option>`;
+                        }
+                        break;
+                    }
+                }
+                if (selectedLine.Account_id == '') {
+                    options += `<option selected disabled>Выберите счёт</option>`;
+                }
+                return options;
             }
-            if (selectedLine.Account_id == '') {
-                options += `<option selected disabled>Выберите счёт</option>`;
-            }
-            return options;
         }
         function fillCustomer() {
             let options = '';
@@ -1385,53 +1408,105 @@ function createCardMenu(element, index = 0) {
             return options;
         }
         function fillContacts() {
-            let dataClients = categoryInListClient[1][1];
-            let listContacts, data;
-            let options = '';
-
-            for (let i = 0; i < dataClients.length; i++) {
-                if (dataClients[i].Name == selectedLine.Name) {
-                    data = {id: dataClients[i].id, category: 'client'}
-                    break;
-                }
-            }
-
-            if (data == undefined) {
-                return `<option selected disabled>Выберите счёт</option>`
-            }
-
-            $.ajax({
-                url: '/getContacts',
-                type: 'GET',
-                async: false,
-                data: data,
-                dataType: 'html',
-                success: function(data) {
-                    listContacts = JSON.parse(data);
-                }
-            });
-            if (listContacts.length == 0) {
-                options += '<option selected disabled>Контакты не указаны</option>'
-            } else {
-                for (let i = 0; i < listContacts.length; i++) {
-                    if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
-                        options += `<option selected value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+            if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
+                if (array_info[1] === 'null') {
+                    return `<option selected disabled>Нет контактов</option>`
+                } else {
+                    let listContacts, data;
+                    if (array_info[1] != undefined) {
+                        data = {id: array_info[1], category: 'provider'};
                     } else {
-                        options += `<option value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                        if (selectedLine.Price == '' || selectedLine.Price == null || selectedLine.Price == 'null') {
+                            return `<option selected disabled>Нет контактов</option>`;
+                        }
+                        data = {id: selectedLine.Price, category: 'provider'};
+                    }
+                    let options = '';
+
+                    if (data == undefined) {
+                        return `<option selected disabled>Выберите счёт</option>`
+                    }
+
+                    $.ajax({
+                        url: '/getContacts',
+                        type: 'GET',
+                        async: false,
+                        data: data,
+                        dataType: 'html',
+                        success: function(data) {
+                            listContacts = JSON.parse(data);
+                        }
+                    });
+                    if (listContacts.length == 0) {
+                        options += '<option selected disabled>Контакты не указаны</option>'
+                    } else {
+                        for (let i = 0; i < listContacts.length; i++) {
+                            if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
+                                options += `<option selected value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                            } else {
+                                options += `<option value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                            }
+                        }
+                    }
+                    return options;
+                }
+            } else {
+                let dataClients = categoryInListClient[1][1];
+                let listContacts, data;
+                let options = '';
+
+                for (let i = 0; i < dataClients.length; i++) {
+                    if (dataClients[i].Name == selectedLine.Name) {
+                        data = {id: dataClients[i].id, category: 'client'}
+                        break;
                     }
                 }
+
+                if (data == undefined) {
+                    return `<option selected disabled>Выберите счёт</option>`
+                }
+
+                $.ajax({
+                    url: '/getContacts',
+                    type: 'GET',
+                    async: false,
+                    data: data,
+                    dataType: 'html',
+                    success: function(data) {
+                        listContacts = JSON.parse(data);
+                    }
+                });
+                if (listContacts.length == 0) {
+                    options += '<option selected disabled>Контакты не указаны</option>'
+                } else {
+                    for (let i = 0; i < listContacts.length; i++) {
+                        if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
+                            options += `<option selected value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                        } else {
+                            options += `<option value="${listContacts[i].Contact_id}">${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number}</option>`
+                        }
+                    }
+                }
+                return options;
             }
-            return options;
         }
         function fillStocks() {
-            if (list_stock_acc == undefined) {
-                if (selectedLine.Stock == '') {
-                    return `<option selected value="null">Выберите счёт</option>`
+            if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
+                if (array_info[1] != undefined) {
+                    return `<option selected value="${array_info[4]}">${array_info[4]}</option>`
                 } else {
                     return `<option selected value="${selectedLine.Stock}">${selectedLine.Stock}</option>`
                 }
             } else {
-                return `<option selected value="${list_stock_acc}">${list_stock_acc}</option>`
+                if (list_stock_acc == undefined) {
+                    if (selectedLine.Stock == '') {
+                        return `<option selected value="null">Выберите счёт</option>`
+                    } else {
+                        return `<option selected value="${selectedLine.Stock}">${selectedLine.Stock}</option>`
+                    }
+                } else {
+                    return `<option selected value="${list_stock_acc}">${list_stock_acc}</option>`
+                }
             }
         }
         function fillFlights() {
@@ -1457,55 +1532,92 @@ function createCardMenu(element, index = 0) {
             });
 
             let tr = '';
-            let dataAccount = categoryInFinanceAccount[1][1];
+            let amounts;
+            if (selectedLine.Amounts != undefined) {
+                amounts = JSON.parse(selectedLine.Amounts);
+            }
 
-            for (let i = 0; i < listAllItems.length; i++) {
-                if (list_items_acc == undefined) {
-                    if (selectedLine.Item_ids != '') {
-                        list_items_acc = JSON.parse(selectedLine.Item_ids);
-                    } else {
-                        return '';
+            if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
+                let id;
+                if (array_info[1] == undefined) {
+                    id = JSON.parse(selectedLine.Item_ids)[0];
+                } else {
+                    id = array_info[2];
+                }
+                for (let i = 0; i < listAllItems.length; i++) {
+                    for (let j = 0; j < listStocks.length; j++) {
+                        if (listAllItems[i].Item_id == id && listAllItems[i].Stock_id == listStocks[j].id) {
+                            if (amounts == undefined) {
+                                tr += `
+                                <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                    <td></td>
+                                    <td>${listAllItems[i].Name}</td>
+                                    <td>${listStocks[j].Name}</td>
+                                    <td id="item_volume">${returnSpaces(array_info[0])}</td>
+                                    <td>${listAllItems[i].Packing}</td>
+                                    <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
+                                </tr>
+                                `
+                            } else {
+                                tr += `
+                                    <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                        <td></td>
+                                        <td>${listAllItems[i].Name}</td>
+                                        <td>${listStocks[j].Name}</td>
+                                        <td id="item_volume">${amounts[0].volume}</td>
+                                        <td>${listAllItems[i].Packing}</td>
+                                        <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[0].sum}" type="text"></td>
+                                    </tr>
+                                `
+                            }
+                        }
                     }
                 }
-
-                let amounts;
-                if (selectedLine.Amounts != undefined) {
-                    amounts = JSON.parse(selectedLine.Amounts);
-                }
-                
-                for (let j = 0; j < list_items_acc.length; j++) {
-                    for (let k = 0; k < listStocks.length; k++) {
-                        for (let l = 0; l < dataAccount.length; l++) {
-                            let inputVolume = JSON.parse(dataAccount[l].account.Item_ids);
-                            for (let m = 0; m < inputVolume.length; m++) {
-                                if (+list_items_acc[j] == +listAllItems[i].Item_id 
-                                    && +listAllItems[i].Stock_id == listStocks[k].id
-                                    && dataAccount[l].account.id == selectedLine.Account_id
-                                    && +listAllItems[i].Item_id == inputVolume[m].id) {
-                                    if (amounts == undefined) {
-                                        tr += `
-                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                            <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
-                                            <td>${listAllItems[i].Name}</td>
-                                            <td>${listStocks[k].Name}</td>
-                                            <td><input onkeyup="maskNumber(this.id)" id="item_volume" type="text"></td>
-                                            <td>${listAllItems[i].Packing}</td>
-                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
-                                        </tr>
-                                        `
-                                    } else {
-                                        for (let am = 0; am < amounts.length; am++) {
-                                            if (list_items_acc[j] == amounts[am].id) {
-                                                tr += `
-                                                    <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
-                                                        <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
-                                                        <td>${listAllItems[i].Name}</td>
-                                                        <td>${listStocks[k].Name}</td>
-                                                        <td><input onkeyup="maskNumber(this.id)" id="item_volume" value="${amounts[am].volume}" type="text"></td>
-                                                        <td>${listAllItems[i].Packing}</td>
-                                                        <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[am].sum}" type="text"></td>
-                                                    </tr>
-                                                `
+            } else {
+                let dataAccount = categoryInFinanceAccount[1][1];
+                for (let i = 0; i < listAllItems.length; i++) {
+                    if (list_items_acc == undefined) {
+                        if (selectedLine.Item_ids != '') {
+                            list_items_acc = JSON.parse(selectedLine.Item_ids);
+                        } else {
+                            return '';
+                        }
+                    }
+                    
+                    for (let j = 0; j < list_items_acc.length; j++) {
+                        for (let k = 0; k < listStocks.length; k++) {
+                            for (let l = 0; l < dataAccount.length; l++) {
+                                let inputVolume = JSON.parse(dataAccount[l].account.Item_ids);
+                                for (let m = 0; m < inputVolume.length; m++) {
+                                    if (+list_items_acc[j] == +listAllItems[i].Item_id 
+                                        && +listAllItems[i].Stock_id == listStocks[k].id
+                                        && dataAccount[l].account.id == selectedLine.Account_id
+                                        && +listAllItems[i].Item_id == inputVolume[m].id) {
+                                        if (amounts == undefined) {
+                                            tr += `
+                                            <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                                <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
+                                                <td>${listAllItems[i].Name}</td>
+                                                <td>${listStocks[k].Name}</td>
+                                                <td><input onkeyup="maskNumber(this.id)" id="item_volume" type="text"></td>
+                                                <td>${listAllItems[i].Packing}</td>
+                                                <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
+                                            </tr>
+                                            `
+                                        } else {
+                                            for (let am = 0; am < amounts.length; am++) {
+                                                if (list_items_acc[j] == amounts[am].id) {
+                                                    tr += `
+                                                        <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
+                                                            <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
+                                                            <td>${listAllItems[i].Name}</td>
+                                                            <td>${listStocks[k].Name}</td>
+                                                            <td><input onkeyup="maskNumber(this.id)" id="item_volume" value="${amounts[am].volume}" type="text"></td>
+                                                            <td>${listAllItems[i].Packing}</td>
+                                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[am].sum}" type="text"></td>
+                                                        </tr>
+                                                    `
+                                                }
                                             }
                                         }
                                     }
@@ -1927,7 +2039,13 @@ function createDocument(element) {
     }); 
 }
 function makeRequest(element) {
-    let infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
+    let infoAccount;
+    if ($('#delivery_account')[0].value == 'Транзит') {
+        infoAccount = 'Транзит'
+    } else {
+        infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
+    }
+
     let data = {};
     for (let i = 0; i < idCardFields[3].ids.length; i++) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
@@ -1957,7 +2075,6 @@ function makeRequest(element) {
     data['delivery_id'] = delivery_id;
     data['delivery_date'] = date;
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
-    data['delivery_contact_number'] = '';
     data['delivery_contact_name'] = $('#delivery_driver').val();
     data['delivery_account_id'] = +$('#delivery_account')[0].value;
     data['delivery_client'] = $('#delivery_client')[0].value;
@@ -1973,62 +2090,68 @@ function makeRequest(element) {
         amounts.push({sum: element.value});
     }
     for (let i = 0; i < $('#flight #item_volume').length; i++){
-        amounts[i].volume = $('#flight #item_volume')[i].value;
+        if (infoAccount == 'Транзит') {
+            amounts[i].volume = $('#flight #item_volume')[0].innerHTML;
+        } else {
+            amounts[i].volume = $('#flight #item_volume')[i].value;
+        }
         amounts[i].id = $('#flight [name="item_flight"]')[i].id.split('_')[2];
     }
-    let amounts_sum = [];
-    for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
-        if (+categoryInDelivery[1][1][i].delivery.Account_id == +$('#delivery_account')[0].value && +delivery_id != +categoryInDelivery[1][1][i].delivery.id) {
-            let data_amounts = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
-            for (let j = 0; j < data_amounts.length; j++) {
-                amounts_sum.push(data_amounts[j]);
+    if ($('#delivery_account')[0].value !== 'Транзит') {
+        let amounts_sum = [];
+        for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
+            if (+categoryInDelivery[1][1][i].delivery.Account_id == +$('#delivery_account')[0].value && +delivery_id != +categoryInDelivery[1][1][i].delivery.id) {
+                let data_amounts = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
+                for (let j = 0; j < data_amounts.length; j++) {
+                    amounts_sum.push(data_amounts[j]);
+                }
             }
         }
-    }
 
-    for (let i = 0; i < amounts.length; i++) {
-        amounts_sum.push(amounts[i]);
-    }
-
-    for (let i = 0; i < amounts_sum.length - 1; i++) {
-        for (let j = i + 1; j < amounts_sum.length; j++) {
-            if (+amounts_sum[i].id == +amounts_sum[j].id) {
-                amounts_sum[i].volume = +deleteSpaces(amounts_sum[i].volume) + +deleteSpaces(amounts_sum[j].volume)
-                amounts_sum.splice(j, 1);
-                j--;
-            }
-            
+        for (let i = 0; i < amounts.length; i++) {
+            amounts_sum.push(amounts[i]);
         }
-    }
 
-    let count = 0;
-    for (let i = 0; i < infoAccount.items.length; i++) {
-        for (let j = 0; j < amounts_sum.length; j++) {
-            if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) < +deleteSpaces(amounts_sum[j].volume)) {
-                return alert(`Товар "${infoAccount.items[i].Name}" отгрузается на больший объем, чем есть в счете!`)
-            }
-            if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) == +deleteSpaces(amounts_sum[j].volume)) {
-                count++;
+        for (let i = 0; i < amounts_sum.length - 1; i++) {
+            for (let j = i + 1; j < amounts_sum.length; j++) {
+                if (+amounts_sum[i].id == +amounts_sum[j].id) {
+                    amounts_sum[i].volume = +deleteSpaces(amounts_sum[i].volume) + +deleteSpaces(amounts_sum[j].volume)
+                    amounts_sum.splice(j, 1);
+                    j--;
+                }
+                
             }
         }
-    }
 
-    if (amounts_sum.length == count) {
-        $.ajax({
-            url: '/editAccountShipment',
-            type: 'GET',
-            data: {id: infoAccount.account.id, shipment: 'true'},
-            dataType: 'html',
-            success: function() {}
-        });
-    } else {
-        $.ajax({
-            url: '/editAccountShipment',
-            type: 'GET',
-            data: {id: infoAccount.account.id, shipment: 'polutrue'},
-            dataType: 'html',
-            success: function() {}
-        });
+        let count = 0;
+        for (let i = 0; i < infoAccount.items.length; i++) {
+            for (let j = 0; j < amounts_sum.length; j++) {
+                if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) < +deleteSpaces(amounts_sum[j].volume)) {
+                    return alert(`Товар "${infoAccount.items[i].Name}" отгрузается на больший объем, чем есть в счете!`)
+                }
+                if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) == +deleteSpaces(amounts_sum[j].volume)) {
+                    count++;
+                }
+            }
+        }
+
+        if (amounts_sum.length == count) {
+            $.ajax({
+                url: '/editAccountShipment',
+                type: 'GET',
+                data: {id: infoAccount.account.id, shipment: 'true'},
+                dataType: 'html',
+                success: function() {}
+            });
+        } else {
+            $.ajax({
+                url: '/editAccountShipment',
+                type: 'GET',
+                data: {id: infoAccount.account.id, shipment: 'polutrue'},
+                dataType: 'html',
+                success: function() {}
+            });
+        }
     }
 
     data['delivery_amounts'] = JSON.stringify(amounts);
@@ -2055,11 +2178,22 @@ function makeRequest(element) {
     } else {
         data['delivery_payment_date'] = '';
     }
-    data['delivery_prefix'] = infoAccount.items[0].Prefix;
-    data['delivery_price'] = infoAccount.account.Sum;
-    data['delivery_vat'] = infoAccount.items[0].NDS;
-    data['delivery_name'] = infoAccount.account.Name;
+
     data['delivery_item_ids'] = JSON.stringify(items_ids);
+    if (infoAccount !== 'Транзит') {
+        data['delivery_prefix'] = infoAccount.items[0].Prefix;
+        data['delivery_price']  = infoAccount.account.Sum;
+        data['delivery_vat']    = infoAccount.items[0].NDS;
+        data['delivery_name']   = infoAccount.account.Name;
+    } else {
+        let info = $('#transit_info').attr('data-info').split('ç');
+        data['delivery_prefix'] = $('#delivery_client').val();
+        data['delivery_price']  = info[0];
+        data['delivery_vat']    = '';
+        data['delivery_contact_number'] = info[1];
+        data['delivery_name']   = 'Транзит';
+        $('#transit_info').remove()
+    }
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -2095,17 +2229,85 @@ function transferToAccounts(element) {
 }
 function transitProduct(element) {
     let products;
+    let idProduct = element.name.split('_')[1];
+    let stock_transit = $('#transit_from_stock').children()[0].value;
+    let stock_select = $('#stock_select').val();
+    let product_volume = deleteSpaces($('#volume_transit').val());
+    $(element).attr('id', 'delivery_new');
+
+    createTransitCardMenu(element);
+    function createTransitCardMenu(element) {
+        $.ajax({
+            url: '/getCarriers',
+            type: 'GET',
+            dataType: 'html',
+            success: function(data) { 
+                data = JSON.parse(data);
+                if (categoryInListCarrier[1][1] === undefined) {
+                    categoryInListCarrier[1].push(data);
+                }
+                $.ajax({
+                    url: '/getDeliveries',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data) { 
+                        data = JSON.parse(data);
+                        if (categoryInDelivery[1][1] === undefined) {
+                            categoryInDelivery[1].push(data);
+                        }
+                        createTransit(element);
+                    },
+                });
+            },
+        });
+        function createTransit(element) {
+            let prefix = null, id_provider = null;
+            $.ajax({
+                url: '/getStockTable',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data) { 
+                    data = JSON.parse(data);
+                    for (let i = 0; i < data.length; i++) {
+                        for (let j = 0; j < data[i].items.length; j++) {
+                            if (+data[i].items[j].Item_id == +idProduct) {
+                                prefix = data[i].items[j].Prefix;
+                                break;
+                            }
+                        }
+                    }
+                    $.ajax({
+                        url: '/getProviders',
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function(data) { 
+                            data = JSON.parse(data);
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i].Adress == stock_select) {
+                                    id_provider = data[i].id;
+                                    break;
+                                }
+                            }
+                            $(element).attr('data-name', element.name);
+                            $(element).attr('data-info', `${product_volume}ç${id_provider}ç${idProduct}ç${prefix}ç${stock_transit}ç${stock_select}`);
+                            element.name = '';
+
+                            $('.overflow').remove();
+                            createDelCardMenu(element);
+                        },
+                    });
+                    
+                },
+            });
+        }
+    }
+
     $.ajax({
         url: '/getAllItems',
         type: 'GET',
         dataType: 'html',
         success: function(result) {
             products = JSON.parse(result);
-
-            let idProduct = element.name.split('_')[1];
-            let stock_select = $('#stock_select').val();
-            let product_volume = deleteSpaces($('#volume_transit').val());
-
             if (stock_select == null) {
                 return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
@@ -2121,7 +2323,6 @@ function transitProduct(element) {
                                 </div>
                             `));
             }
-
             if (Math.sign(product_volume) != 1) {
                 return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
@@ -2166,7 +2367,7 @@ function transitProduct(element) {
                 data: data,
                 dataType: 'html',
                 success: function() {
-                    closeCardMenu('stock_new');
+                    // closeCardMenu('stock_new');
                 }
             });
         }

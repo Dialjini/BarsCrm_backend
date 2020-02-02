@@ -343,7 +343,10 @@ let rowFilling = (object, id, table) => {
             let price_without_vat = returnSpaces(Math.ceil(amount * vat));
             let customer = selectTableData[i].delivery.Customer;
             let payment_date = selectTableData[i].delivery.Payment_date;
-            const name = [selectTableData[i].delivery.Date, selectTableData[i].delivery.Name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? '' : price_without_vat, returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
+            if (selectTableData[i].delivery.Name == 'Транзит') {
+                full_name = `${selectTableData[i].delivery.Name} из ${selectTableData[i].delivery.Stock} в ${selectTableData[i].delivery.Contact_Number}`;
+            }
+            const name = [selectTableData[i].delivery.Date, full_name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? '' : price_without_vat, returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
