@@ -1766,7 +1766,7 @@ function getValidationDate(date) {
                         }
                         all_amounts += general_amount;
                         td += `<td>${returnSpaces(general_amount)}</td>`
-                        let unload_table_ = [{id: 'total', volume: returnSpaces(general_amount)}];
+                        let unload_table_ = [{id: 'total', name: 'Итого', volume: returnSpaces(general_amount)}];
                         console.log(items_volume);
                         if (!unload_status) {
                             for (let j = 0; j < items_volume.length; j++) {
@@ -1793,7 +1793,18 @@ function getValidationDate(date) {
                                             create_status++;
                                         }
                                     }
-                                    if (create_status == 0) unload_table_.push({id: +items_volume[j].id});
+
+                                    function findItemName(id) {
+                                        for (let i = 0; i < all_items.length; i++) {
+                                            if (all_items[i].Item_id == id) {
+                                                return all_items[i].Name;
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (create_status == 0) {
+                                        unload_table_.push({id: +items_volume[j].id, name: findItemName(+items_volume[j].id)});
+                                    }
                                     
                                     if (+all_items[l].Item_id == +items_volume[j].id) {
                                         for (let g = 0; g < unload_table_.length; g++) {
@@ -1812,7 +1823,7 @@ function getValidationDate(date) {
                                             }
                                         }
                                         if (count == unload_table_.length) {
-                                            unload_table_.push({id: all_items[l].Item_id, volume: 0})
+                                            unload_table_.push({id: all_items[l].Item_id, name: all_items[l].Name, volume: 0})
                                         }
                                     }
                                 }
