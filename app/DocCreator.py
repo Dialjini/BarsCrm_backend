@@ -335,7 +335,6 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
     account = models.Account.query.filter_by(id=delivery.Account_id).first()
-
     document.UHH = owner.UHH
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ООО'
@@ -356,7 +355,6 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
     if info['data']['address']['data']['postal_box'] != None:
         document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data']['postal_box']
-
     Items = models.Item.query.all()
     item_info = {'mass': 0}
     for i in Items:
@@ -368,7 +366,6 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     db.session.commit()
     document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
     db.session.commit()
-
     if Client.Fact_address:
         Adress = Client.Fact_address
     else:

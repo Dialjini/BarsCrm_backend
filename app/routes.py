@@ -118,7 +118,6 @@ def to_PDF(name, owner, address, delivery):
         return 'BAD ADDRESS or INN'
     owner.UTC = int(info['data']['address']['data']['timezone'][3:])
     db.session.commit()
-
     if name == 'DogovorNaDostavkuIP':
         return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
     elif name == 'DogovorNaDostavkuOOO':

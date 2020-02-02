@@ -14,4 +14,4 @@ def getAreaInfo():
     result = []
 
     return result
-# print(getINNinfo('7707083893'))
+# print(getINNinfo('7707083893')['suggestions'][0]['data']['address']['data']['postal_code'])
