@@ -100,6 +100,32 @@ def fourthScenario(data):
 
 def fifthScenario(data):
     print(data)
+    wb = openpyxl.Workbook()
+    sheet = wb.active
+    sheet['A1'].value = 'Менеджер'
+    counter = 1
+    column_counter = 1
+    sum_count = []
+    for i in data[0]['list']:
+        counter += 1
+        if i['name'] == 'total':
+            i['name'] = 'Итого'
+        sheet[getLetter(counter) + '1'].value = i['name']
+        sum_count.append(0)
+    counter = 1
+    for i in data:
+        column_counter += 1
+        sheet[getLetter(counter) + str(column_counter)].value = i['manager']
+        for item in i['list']:
+            counter += 1
+            sheet[getLetter(counter) + str(column_counter)].value = item['volume']
+            sum_count[counter - 2] += int(item['volume'])
+        counter = 1
+    for i in sum_count:
+        counter += 1
+        sheet[getLetter(counter) + str(column_counter + 1)].value = str(i)
+
+    wb.save('app/upload/last_stat.xlsx')
     return '/upload'
 
 def sixthScenario(data):
