@@ -58,7 +58,7 @@ def Generate_Transit(dir_u, date, delivery, adress):
 
     db.session.add(document)
     db.session.commit()
-    document.Path = '{}.docx'.format('Transit N' + document.id)
+    document.Path = '{}.docx'.format('Transit N' + str(document.id))
     db.session.commit()
 
     if transit_type[0] == 'OOO':
@@ -101,7 +101,7 @@ def Generate_Transit(dir_u, date, delivery, adress):
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                             str(account.Sum), num2text(float(account.Sum))], doc=doc)
 
-    doc.save(dir_u + '/{}.docx'.format('Transit N' + document.id))
+    doc.save(dir_u + '/{}.docx'.format('Transit N' + str(document.id)))
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
                                    filename=document.Path)
 
