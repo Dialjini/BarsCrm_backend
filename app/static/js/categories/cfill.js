@@ -1766,24 +1766,55 @@ function getValidationDate(date) {
                         }
                         all_amounts += general_amount;
                         td += `<td>${returnSpaces(general_amount)}</td>`
-                        let unload_table_ = [{total: returnSpaces(general_amount)}];
-                        for (let j = 0; j < items_volume.length; j++) {
-                            for (let k = 0; k < all_items.length; k++) {
-                                if (+all_items[k].Item_id == +items_volume[j].id) {
-                                    if (!unload_status) {
+                        let unload_table_ = [{id: 'total', volume: returnSpaces(general_amount)}];
+                        console.log(items_volume);
+                        if (!unload_status) {
+                            for (let j = 0; j < items_volume.length; j++) {
+                                for (let k = 0; k < all_items.length; k++) {
+                                    if (+all_items[k].Item_id == +items_volume[j].id) {
                                         amounts[k] += deleteSpaces(+items_volume[j].volume);
                                         td += `<td id="item_${k + 1}">${returnSpaces(items_volume[j].volume)}</td>`
                                         if (items_volume.length - 1 != j) {
                                             j++;
                                         }
+                                        // unload_table_.push({ id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume) });
                                     } else {
-                                        unload_table_.push({ id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume) });
-                                    }
-                                } else {
-                                    if (!unload_status) 
                                         td += `<td id="item_${k + 1}">0</td>`
-                                    else 
-                                        unload_table_.push({id: +items_volume[j].id, volume: 0});
+                                        // unload_table_.push({id: +items_volume[j].id, volume: 0});
+                                    }
+                                }
+                            }
+                        } else {
+                            for (let j = 0; j < items_volume.length; j++) {
+                                for (let l = 0; l < all_items.length; l++) {
+                                    let create_status = 0;
+                                    for (let element = 0; element < unload_table_.length; element++) {
+                                        if (unload_table_[element].id == items_volume[j].id) {
+                                            create_status++;
+                                        }
+                                    }
+                                    if (create_status == 0) unload_table_.push({id: +items_volume[j].id});
+                                    
+                                    if (+all_items[l].Item_id == +items_volume[j].id) {
+                                        for (let g = 0; g < unload_table_.length; g++) {
+                                            if (unload_table_[g].id == items_volume[j].id) {
+                                                unload_table_[g].volume = returnSpaces(items_volume[j].volume);
+                                            }
+                                        }
+                                        if (items_volume.length - 1 != j) {
+                                            j++;
+                                        }
+                                    } else {
+                                        let count = 0;
+                                        for (let g = 0; g < unload_table_.length; g++) {
+                                            if (unload_table_[g].id != all_items[l].Item_id) {
+                                                count++;
+                                            }
+                                        }
+                                        if (count == unload_table_.length) {
+                                            unload_table_.push({id: all_items[l].Item_id, volume: 0})
+                                        }
+                                    }
                                 }
                             }
                         }
