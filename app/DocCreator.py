@@ -369,6 +369,11 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
     db.session.commit()
 
+    if Client.Fact_address:
+        Adress = Client.Fact_address
+    else:
+        Adress = Client.Adress
+
     doc = Document(os.path.dirname(__file__) + '/files/Zayavka_OOO.docx')
     doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                 'document.Client_contact_name', 'document.Client_name'],
@@ -382,12 +387,11 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
                           replacements=[document.Client_name, document.UHH, document.KPP,
                                         document.Client_prefix_address, delivery.Auto,
                                         delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                        delivery.Stock, delivery.Contact_End, Client.Name, Client.Adress,
+                                        delivery.Stock, delivery.Contact_End, Client.Name, Adress,
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(account.Sum), num2text(float(account.Sum))], doc=doc)
-    # for i in doc.paragraphs:
-     #    print(i.text)
+
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
                                    filename=document.Path)
@@ -436,6 +440,10 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     db.session.commit()
     document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
     db.session.commit()
+    if Client.Fact_address:
+        Adress = Client.Fact_address
+    else:
+        Adress = Client.Adress
     doc = Document(os.path.dirname(__file__) + '/files/Zayavka_IP.docx')
     doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                 'document.Client_contact_name', 'document.Client_name'],
@@ -449,7 +457,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
                           replacements=[document.Client_name, document.UHH, document.KPP,
                                         document.Client_prefix_address, delivery.Auto,
                                         delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                        delivery.Stock, delivery.Contact_End, Client.Name, Client.Adress,
+                                        delivery.Stock, delivery.Contact_End, Client.Name, Adress,
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(account.Sum), num2text(float(account.Sum))], doc=doc)

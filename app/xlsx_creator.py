@@ -1,5 +1,3 @@
-from flask import send_from_directory
-import json
 import openpyxl
 
 alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
