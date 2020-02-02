@@ -519,7 +519,7 @@ function items() {
                     for (let k = data[i].items.length - 1; k >= 0; k--) {
                         if (data[i].stock_address != null) {
                             let element = $('<tr>', {id: `stock_${data[i].items[k].Item_id}`, onclick: 'editItem(this.id)'});
-                            const name = [data[i].items[k].Prefix, data[i].items[k].Group_name, data[i].items[k].Name, data[i].items[k].Weight, data[i].items[k].Packing, data[i].items[k].Volume, data[i].items[k].Cost, data[i].items[k].NDS, data[i].stock_address];
+                            const name = [data[i].items[k].Prefix, data[i].items[k].Group_name, data[i].items[k].Name, returnSpaces(data[i].items[k].Weight), data[i].items[k].Packing, returnSpaces(data[i].items[k].Volume), returnSpaces(data[i].items[k].Cost), data[i].items[k].NDS, data[i].stock_address];
             
                             for (let j = 0; j < name.length; j++) {
                                 let elementTr = $('<td>', { html: name[j] });
@@ -917,11 +917,17 @@ function editItem(id) {
 }
 function saveEditItem(id) {
     let item_id = id.split('_')[1];
-    let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price', 'item_purchase_price'];
+    let list = [{type: 1, value: 'stock_id'}, {type: 1, value: 'group_id'}, {type: 1, value: 'item_product'},
+                {type: 1, value: 'item_prefix'}, {type: 2, value: 'item_volume'}, {type: 1, value: 'item_packing'},
+                {type: 2, value: 'item_weight'}, {type: 2, value: 'item_vat'}, {type: 2, value: 'item_price'},
+                {type: 2, value: 'item_purchase_price'}];
+
     let data = {};
 
     for (let i = 0; i < list.length; i++) {
-        data[list[i]] = $(`#${list[i]}`).val();
+        if (list[i].type == 2) data[list[i].value] = deleteSpaces($(`#${list[i].value}`).val());
+        else data[list[i].value] = $(`#${list[i].value}`).val();
+        
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
@@ -1401,6 +1407,7 @@ function getValidationDate(date) {
             let table = '';
             let unload_table = [];
             for (let i = 0; i < items_list.length; i++) {
+                let tbody = '<tbody class="tr_tr">';
                 for (let j = 0; j < items_list[i].items.length; j++) {
                     let volume = JSON.parse(items_list[i].account.Item_ids);
                     let amounts = JSON.parse(items_list[i].account.Items_amount);
@@ -1430,7 +1437,7 @@ function getValidationDate(date) {
                                             return trContent;
                                         }
                                         let tr = `<tr>${fillTr()}</tr>`
-                                        table += tr;
+                                        tbody += tr;
                                         total_count++;
                                     } else {
                                         unload_table.push({ name: items_list[i].account.Name, product: items_list[i].items[j].Name, volume: returnSpaces(volume[v].volume),
@@ -1442,6 +1449,9 @@ function getValidationDate(date) {
                         }  
                         delivery_id = null;    
                     }
+                }
+                if (tbody != '<tbody class="tr_tr">') {
+                    table += tbody + '</tbody>';
                 }
             }
             if (unload_status) {
@@ -1888,12 +1898,13 @@ function getValidationDate(date) {
                             if (current_date >= date_period[0] && current_date <= date_period[1]) length++;
                         }
 
+                        let table = '<tbody class="tr_tr">';
                         for (let key in result.data[i].orgs) {
                             let current_date = getValidationDate(result.data[i].orgs[key]);
                             if (current_date >= date_period[0] && current_date <= date_period[1] && (filter_manager == result.data[i].name || filter_manager == '')) {
                                 if (!unload_status) {
                                     if (count == 0) {
-                                        tbody += `
+                                        table += `
                                             <tr>
                                                 <td name="username_analytics" rowspan="${length}">${result.data[i].name}</td>
                                                 <td>${key}</td>
@@ -1901,7 +1912,7 @@ function getValidationDate(date) {
                                             </tr>
                                         `
                                     } else {
-                                        tbody += `
+                                        table += `
                                             <tr>
                                                 <td>${key}</td>
                                                 <td>${result.data[i].orgs[key]}</td>
@@ -1913,6 +1924,9 @@ function getValidationDate(date) {
                                 }
                                 count++;
                             }
+                        }
+                        if (table != '<tbody class="tr_tr">' && !unload_status) {
+                            tbody += table + '</tbody>';
                         }
                         total_count += count;
                     }
@@ -2112,15 +2126,11 @@ function getValidationDate(date) {
         for (let i = 0; i < list.length; i++) {
             if (list[i].id == number) {
                 let current_data = list[i].function(datePeriod('all'), true);
-                $.ajax({
-                    url: '/excelStat',
-                    type: 'GET',
-                    data: {id: +number, data: JSON.stringify(current_data)},
-                    dataType: 'html',
-                    success: function(result) {
-                        console.log(result);
-                    }
-                });
+                console.log({id: +number, data: current_data})
+                const link = document.createElement('a');
+                link.href = `/excelStat?id=${number}&data=${JSON.stringify(current_data)}`;
+                link.download = 'Аналитика.xlsx';
+                link.click();
             }
         }
     }

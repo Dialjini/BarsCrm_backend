@@ -48,8 +48,13 @@
         <div class="rightBlock">
             <div class="profile">
                 <div class="fieldInfo" id="username"></div>
-                <div class="logout" onclick="document.location.href = '/logout'">
+                <div class="logout" onclick="profileMenu()">
                     <img src="static/images/points.png" class="profile_menu">
+                </div>
+                <div class="profile_menu_l">
+                    <ul>
+                        <li onclick="document.location.href = '/logout'">Выйти</li>
+                    </ul>
                 </div>
             </div>
             <div class="sidebar">

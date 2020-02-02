@@ -1,3 +1,12 @@
+function profileMenu() {
+    if ($('.profile_menu_l').hasClass('active')) {
+        $('.profile_menu_l').removeClass('active');
+        $('.profile_menu_l').fadeOut(100);
+    } else {    
+        $('.profile_menu_l').fadeIn(100);
+        $('.profile_menu_l').addClass('active');
+    }
+}
 function createContactsFormTask(values) {
     const elementsInfo = [
         { id: 'task_type', html: 'Тип задачи', type: 'text', element: 'select' },
@@ -111,16 +120,19 @@ function taskCreate(tasks = 'new') {
                     }
 
                     let taskDate = tasks[i].Date.split('.');
-                    if (taskDate[2].length > 2) {
-                        taskDate[2] = taskDate[2].slice(2, 4)
+                    if (taskDate[2].length == 2) {
+                        taskDate[2] = '20' + taskDate[2];
                     }
-                    let firstDate = `${taskDate.join('.')} ${tasks[i].Time}`;
-                    let secondDate = `${getCurrentDate('year')} ${getCurrentTime()}`;
 
-                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)\s(\d\d):(\d\d)/;
+                    let date = getCurrentDate('year').split('.');
+                    date[2] = '20' + date[2];
+                    let firstDate = `${taskDate.join('.')} ${tasks[i].Time}`;
+                    let secondDate = `${date.join('.')} ${getCurrentTime()}`;
+
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d\d\d)\s(\d\d):(\d\d)/;
 
                     let first_date_arr = datetime_regex.exec(firstDate);
-                    let first_datetime = new Date(first_date_arr[3], first_date_arr[2], first_date_arr[1], first_date_arr[4], first_date_arr[5]);
+                    let first_datetime = new Date(first_date_arr[3], +first_date_arr[2] - 1, first_date_arr[1], first_date_arr[4], first_date_arr[5]);
 
                     let second_date_arr = datetime_regex.exec(secondDate);
                     let second_datetime = new Date(second_date_arr[3], second_date_arr[2], second_date_arr[1], second_date_arr[4], second_date_arr[5]);

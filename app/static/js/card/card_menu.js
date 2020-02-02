@@ -2131,7 +2131,7 @@ function transitProduct(element) {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 12px; color: #595959;">Введите корректное значение в поле Объём!</p>
+                                            <p style="font-size: 13px; color: #595959;">Введите корректное значение в поле Объём!</p>
                                         </div>
                                     </div>
                                 </div>
@@ -2258,11 +2258,17 @@ function selectAccount(value) {
     }
 }
 function createNewItem() {
-    let list = ['stock_id', 'group_id', 'item_product', 'item_prefix', 'item_volume', 'item_packing', 'item_weight', 'item_vat', 'item_price', 'item_purchase_price'];
+    let list = [{type: 1, value: 'stock_id'}, {type: 1, value: 'group_id'}, {type: 1, value: 'item_product'},
+                {type: 1, value: 'item_prefix'}, {type: 2, value: 'item_volume'}, {type: 1, value: 'item_packing'},
+                {type: 2, value: 'item_weight'}, {type: 2, value: 'item_vat'}, {type: 2, value: 'item_price'},
+                {type: 2, value: 'item_purchase_price'}];
+
     let data = {};
 
     for (let i = 0; i < list.length; i++) {
-        data[list[i]] = $(`#${list[i]}`).val();
+        if (list[i].type == 2) data[list[i].value] = deleteSpaces($(`#${list[i].value}`).val());
+        else data[list[i].value] = $(`#${list[i].value}`).val();
+        
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
@@ -2461,7 +2467,7 @@ function completionCard(elem) {
                 }
 
                 let status = 'false';
-                let date = getCurrentDate('year');
+                let date = getCurrentDateNotComparison('year');
                 let name;
                 let sum = $('#total').html();
                 let shipment = 'false';
