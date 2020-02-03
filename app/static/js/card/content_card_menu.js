@@ -474,20 +474,21 @@ function inputFieldDoc(data, document_name, address, elem) {
         type: 'GET',
         dataType: 'html',
         success: function(result) {
+            console.log(result);
             if (result == 'BAD ADDRESS or INN') {
-            return $('.page').append($('<div>', { class: 'background' }).add(`
-                <div class="modal_select">
-                    <div class="title">
-                        <span>Ошибка</span>
-                        <img onclick="closeModal()" src="static/images/cancel.png">
-                    </div>
-                    <div class="content">
-                        <div class="message">
-                            <p style="font-size: 13px; color: #595959;">Проверьте корректность ввода ИНН или почтового индекса в карточке клиента</p>
+                return $('.page').append($('<div>', { class: 'background' }).add(`
+                    <div class="modal_select">
+                        <div class="title">
+                            <span>Ошибка</span>
+                            <img onclick="closeModal()" src="static/images/cancel.png">
+                        </div>
+                        <div class="content">
+                            <div class="message">
+                                <p style="font-size: 13px; color: #595959;">Проверьте корректность ввода ИНН и почтового индекса в карточке клиента</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `));
+                `));
             }
             $.ajax({
                 url: '/getDocs',
