@@ -171,6 +171,7 @@ class Contacts(db.Model):
     Name = db.Column(db.String)
     Last_name = db.Column(db.String)
     Number = db.Column(db.String)
+    Phone_two = db.Column(db.String)
     Email = db.Column(db.String)
     Comment = db.Column(db.String)
     Department = db.Column(db.String)

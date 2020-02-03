@@ -420,7 +420,7 @@ def findContacts():
 
         for i in Contacts:
             try:
-                if data in i.Number or data in i.Email or data in i.Last_name:
+                if data in i.Number or data in i.Phone_two or data in i.Email or data in i.Last_name:
                     result.append(json.loads(table_to_json([i]))[0])
             except Exception:
                 a='nothin'
@@ -894,6 +894,7 @@ def addContacts():
             Contact.Name = i['first_name']
             Contact.Last_name = i['last_name']
             Contact.Number = i['phone']
+            Contact.Phone_two = i['phone_two']
             Contact.Email = i['email']
             Contact.Position = i['role']
             Contact.Visible = i['visible']
