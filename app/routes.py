@@ -1079,6 +1079,9 @@ def addProvider():
         if not new:
             Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
             Stock = models.Stock.query.filter_by(Name=Provider.Adress).first()
+            if not Stock:
+                Stock = models.Stock()
+                Provider.Create_date = data['provider_create_date']
             Stock.Name = data['provider_address']
 
         else:
