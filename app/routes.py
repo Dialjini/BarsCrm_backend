@@ -1082,6 +1082,7 @@ def addProvider():
             if not Stock:
                 Stock = models.Stock()
                 Provider.Create_date = data['provider_create_date']
+                new = True
             Stock.Name = data['provider_address']
 
         else:
