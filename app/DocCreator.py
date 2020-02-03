@@ -331,6 +331,11 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
     Client = models.Client.query.filter_by(Name=delivery.Name).first()
+    if not Client:
+        Client = models.Provider.query.filter_by(Name=delivery.Name).first()
+    if not Client:
+        Client = models.Carrier.query.filter_by(Name=delivery.Name).first()
+
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
@@ -339,10 +344,10 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ООО'
 
-    document.Bik = ''
+    document.Bik = Client.Bik
     document.KPP = info['data']['kpp']
-    document.rc = ''
-    document.kc = ''
+    document.rc = Client.rc
+    document.kc = Client.kc
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
@@ -357,10 +362,12 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
         document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data']['postal_box']
     Items = models.Item.query.all()
     item_info = {'mass': 0}
+    item_info['packing'] = ''
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
             item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
             item_info['packing'] = i.Packing
+
 
     db.session.add(document)
     db.session.commit()
@@ -398,8 +405,11 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
 def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
-    print(delivery.Name)
     Client = models.Client.query.filter_by(Name=delivery.Name).first()
+    if not Client:
+        Client = models.Provider.query.filter_by(Name=delivery.Name).first()
+    if not Client:
+        Client = models.Carrier.query.filter_by(Name=delivery.Name).first()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
@@ -408,11 +418,10 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     document.UHH = owner.UHH
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ИП'
-    document.Bik = ''
+    document.Bik = Client.Bik
     document.KPP = info['data']['kpp']
-    document.rc = ''
-    document.kc = ''
-    document.Prefix = 'ООО'
+    document.rc = Client.rc
+    document.kc = Client.kc
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
@@ -428,6 +437,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
 
     Items = models.Item.query.all()
     item_info = {'mass': 0}
+    item_info['packing'] = ''
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
             item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
