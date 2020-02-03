@@ -115,7 +115,7 @@ def to_PDF(name, owner, address, delivery):
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
     if str(info) == '{}':
-        return 'BAD ADDRESS or INN'
+        return 'Неправильно указан ИНН или 6 первых цифр адреса.'
     owner.UTC = int(info['data']['address']['data']['timezone'][3:])
     db.session.commit()
     if name == 'DogovorNaDostavkuIP':
