@@ -2032,7 +2032,6 @@ function createDocument(element) {
                         link.href = `/downloadDoc?category=${carrier[0]}&name=${transit}&card_id=${carrier[1]}&address=${prefixs}&delivery=${data[1]}`;
                         link.download = 'Транзит.docx';
                     } else {
-                        console.log(data_carrier[i]);
                         link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                         if (select_cusmoter == 'ООО') {
                             link.download = 'Заявка ООО.docx';
@@ -2040,7 +2039,6 @@ function createDocument(element) {
                             link.download = 'Заявка ИП.docx';
                         }
                     }
-                    console.log(link);
                     link.click();
                 }
             }
