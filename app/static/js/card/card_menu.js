@@ -2053,6 +2053,11 @@ function makeRequest(element) {
         infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
     }
 
+    if (categoryInFinanceAccount[1][1] != undefined) {
+        console.log(123);
+        categoryInFinanceAccount[1].pop();
+    }
+
     let data = {};
     for (let i = 0; i < idCardFields[3].ids.length; i++) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
