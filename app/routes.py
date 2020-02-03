@@ -115,7 +115,7 @@ def to_PDF(name, owner, address, delivery):
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
     if str(info) == '{}':
-        return 'BAD ADDRESS or INN.'
+        return 'BAD ADDRESS or INN'
     owner.UTC = int(info['data']['address']['data']['timezone'][3:])
     db.session.commit()
     if name == 'DogovorNaDostavkuIP':
@@ -143,7 +143,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=2254)
+        return render_template('index.html', last_update=2256)
     else:
         return render_template('login.html', last_update=1883)
 
