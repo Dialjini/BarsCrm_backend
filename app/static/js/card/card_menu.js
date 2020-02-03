@@ -2026,12 +2026,21 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
-                    if (select_cusmoter == 'ООО') {
-                        link.download = 'Заявка ООО.docx';
+                    
+                    if ($('#delivery_account')[0].value == 'Транзит') {
+                        let transit = 'Transit', prefixs = 'ООО ООО';
+                        link.href = `/downloadDoc?category=${carrier[0]}&name=${transit}&card_id=${carrier[1]}&address=${prefixs}&delivery=${data[1]}`;
+                        link.download = 'Транзит.docx';
                     } else {
-                        link.download = 'Заявка ИП.docx';
+                        console.log(data_carrier[i]);
+                        link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
+                        if (select_cusmoter == 'ООО') {
+                            link.download = 'Заявка ООО.docx';
+                        } else {
+                            link.download = 'Заявка ИП.docx';
+                        }
                     }
+                    console.log(link);
                     link.click();
                 }
             }
