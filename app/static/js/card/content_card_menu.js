@@ -38,7 +38,7 @@ function editAccount(elem) {
                                     </div>
                                     <div class="content">
                                         <div class="message">
-                                            <p style="font-size: 14px; color: #595959;">Товар этого счета уже полностью отгружен</p>
+                                            <p style="font-size: 14px; color: #595959;">Товар(/ы) этого счета уже полностью отгружен(/ы)</p>
                                         </div>
                                     </div>
                                 </div>
@@ -207,7 +207,6 @@ function arrangeDelivery(element) {
     list_items_acc = $(element).attr('data-items').split(',');
     closeModal();
     categoryInFinanceAccount[0].lastCard[0] = null;
-    categoryInFinanceAccount[1].pop();
     $.ajax({
         url: '/getAccounts',
         type: 'GET',
@@ -272,7 +271,7 @@ function contractContentCard(elem) {
                         <div class="format">DOCX</div>
                         <div class="date_number">
                             <div class="top">${old_docs[i].Creation_date}</div>
-                            <div class="bottom">${old_docs[i].MonthNum}/${old_docs[i].Date}</div>
+                            <div class="bottom">№ ${old_docs[i].MonthNum}/${old_docs[i].Date}</div>
                         </div>
                         <span>${names[j].name} ${old_docs[i].Prefix}</span>
                     </div>
@@ -344,10 +343,10 @@ function contractContentCard(elem) {
                                 let payment_amount = 0;
 
                                 for (let i = 0; i < payment_list.length; i++) {
-                                    payment_amount += deleteSpaces(+payment_list[i].sum)
+                                    payment_amount += +deleteSpaces(payment_list[i].sum)
                                 }
 
-                                if (deleteSpaces(+amount )<= deleteSpaces(+payment_amount)) status = '<span class="green">Оплачено</span>'
+                                if (+deleteSpaces(amount) <= +deleteSpaces(payment_amount)) status = '<span class="green">Оплачено</span>'
                                 else status = '<span class="red">Не оплачено</span>'
                             } else {
                                 status = '<span class="red">Не оплачено</span>';
@@ -365,7 +364,7 @@ function contractContentCard(elem) {
                             let hello_sum = 0;
                             let hello_list = JSON.parse(account_data.Hello);
                             for (let g = 0; g < hello_list.length; g++) {
-                                hello_sum += deleteSpaces(+hello_list[g]);
+                                hello_sum += +deleteSpaces(hello_list[g]);
                             }
 
                             let items = JSON.parse(account_data.Items_amount);
@@ -444,29 +443,18 @@ function downloadOldDocument(elem) {
     link.download = $(elem).attr('name') + '.docx';
     link.click();
 }
-// function check() {
-//     $('.page').prepend($('<div>', { class: 'background' }));
-//             $('.page').prepend(
-//                 $('<div>', {
-//                     class: 'modal_select',
-//                     append: `
-//                         <div class="title">
-//                             <span>Выбор действия</span>
-//                             <img onclick="closeModal()" src="static/images/cancel.png">
-//                         </div>
-//                         <div class="content">
-//                             <div class="message">
-//                                 <p>Вы уверены, что Вы хотите создать новый договор?</p>
-//                             </div>
-//                         </div>
-//                         <div class="buttons">
-//                             <button class="btn" style="margin-right: 15px" onclick="closeModal()">Отмена</button>
-//                             <button class="btn btn-main">Создать</button>
-//                         </div>
-//                     `
-//                 })
-//             );
-// }
+// Показ всего содержимого поля
+function viewFullField(id) {
+    if (!$(`div`).is(`#${id}_full_info`)) {
+        let value = $(`#${id}`).val();
+        $(`#${id}`).parent().append(`
+            <div class="full_field" id="${id}_full_info" style="">${value}</div>
+        `)
+    }
+}
+function hiddenFullField(id) {
+    $(`#${id}_full_info`).remove();
+}
 function inputFieldDoc(data, document_name, address, elem) {
     $.ajax({
         url: '/downloadDoc',
@@ -474,7 +462,6 @@ function inputFieldDoc(data, document_name, address, elem) {
         type: 'GET',
         dataType: 'html',
         success: function(result) {
-            console.log(result);
             if (result == 'BAD ADDRESS or INN') {
                 return $('.page').append($('<div>', { class: 'background' }).add(`
                     <div class="modal_select">
@@ -886,7 +873,7 @@ function invoiceInTable(element) {
 
                             let sum = 0;
                             $('#exposed_list .invoiled #amount_product').each(function(i, element) {
-                                sum += deleteSpaces(+$(element).html())
+                                sum += +deleteSpaces($(element).html())
                             });
                             account.NDS = account.NDS[0] + account.NDS[1];
                             let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
@@ -922,7 +909,7 @@ function dataСalculation(element) {
         count++;
     }
     for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (deleteSpaces(+$(element).children()[5].children[0].value) * deleteSpaces(+$(element).children()[6].innerHTML)) + Math.ceil(+total_costs / +count);
+        $(element).children()[11].innerHTML = (+deleteSpaces($(element).children()[5].children[0].value) * +deleteSpaces($(element).children()[6].innerHTML)) + Math.ceil(+total_costs / +count);
     }
     calculationIndicators();
 }
@@ -1275,10 +1262,10 @@ function showOrHideInfo(id) {
 // Добавление контакта в карточках, мб переделать в одну функцию
 function addMember(id = 'client', selectedLine = '') {
     if (selectedLine == '') {
-        selectedLine = {role: '', Number: '', Last_name: '', Name: '', Email: '', Car: '', visible: true};
+        selectedLine = {role: '', Number: '', Phone_two: '', Last_name: '', Name: '', Email: '', Car: '', visible: true};
     }
     if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт', select: selectedLine.Car};
-    else category = {class: 'phone', member: '', placeholder: 'Телефон', select: selectedLine.Number};
+    else category = {class: 'phone', member: '', placeholder: 'Телефон #1', select: selectedLine.Number};
     let count_members = 0;
     $('#member .member').each(function(i, element) {
         count_members++;
@@ -1306,12 +1293,13 @@ function addMember(id = 'client', selectedLine = '') {
     }
     function carrierPhone() {
         if (id === 'carrier') {
-            return `<input placeholder="Телефон" class="phone" id="phone" onchange="saveCard()" value="${selectedLine.Number}">`
+            return `<input placeholder="Телефон #1" class="phone" id="phone" onchange="saveCard()" value="${selectedLine.Number}">
+                    <input placeholder="Телефон #2" class="phone" id="phone_two" onchange="saveCard()" value="${selectedLine.Phone_two}">`
         } else {
-            return '';
+            return `<input placeholder="Телефон #2" class="phone" id="phone_two" onchange="saveCard()" value="${selectedLine.Phone_two}">`;
         }
     }
-    $('#member').append($('<div>', {
+    $('#member').prepend($('<div>', {
         class: `member ${category.member}`,
         id: `member_${count_members}`,
         append: $('<div>', {
@@ -1344,6 +1332,9 @@ function addMember(id = 'client', selectedLine = '') {
     for (let element of $('#member .member #phone')) {
         $(element).mask('8-999-999-99-99');
     }
+    for (let element of $('#member .member #phone_two')) {
+        $(element).mask('8-999-999-99-99');
+    }
     saveCard();
 }
 // Скрытие/Показ контакта
@@ -1355,6 +1346,7 @@ function visOrHidContact(idElem) {
 
         $(`#member_${id[1]} #role`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #phone`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} #phone_two`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #car`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #last_name`).attr('disabled', 'disabled')
         $(`#member_${id[1]} #first_name`).attr('disabled', 'disabled')
@@ -1371,6 +1363,7 @@ function visOrHidContact(idElem) {
         $(`#member_${id[1]} #role`).removeAttr('disabled')
         $(`#member_${id[1]} #car`).removeAttr('disabled')
         $(`#member_${id[1]} #phone`).removeAttr('disabled')
+        $(`#member_${id[1]} #phone_two`).removeAttr('disabled')
         $(`#member_${id[1]} #last_name`).removeAttr('disabled')
         $(`#member_${id[1]} #first_name`).removeAttr('disabled')
         $(`#member_${id[1]} #email`).removeAttr('disabled')

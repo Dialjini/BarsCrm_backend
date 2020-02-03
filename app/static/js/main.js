@@ -512,7 +512,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             idData[`livestock_milking`] = $('#livestock_milking').val();
             idData[`livestock_milkyield`] = $('#livestock_milkyield').val();   
         }
-        if (data[0] == 'provider' && data[3] == 'new') {
+        if (data[0] == 'provider') {
             idData[`provider_create_date`] = getCurrentDateNotComparison('year');
         }
         idData[`${data[0]}_data`] = card;
@@ -578,7 +578,8 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     first_name: $(element).children()[0].children[0].children[2].value,
                     car: $(element).children()[0].children[0].children[3].value,
                     phone: $(element).children()[0].children[0].children[4].value,
-                    email: $(element).children()[0].children[0].children[5].value,
+                    phone_two: $(element).children()[0].children[0].children[5].value,
+                    email: $(element).children()[0].children[0].children[6].value,
                     visible: visible_contact
                 })
             } else {
@@ -588,7 +589,8 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     first_name: $(element).children()[0].children[0].children[2].value,
                     car: 'null',
                     phone: $(element).children()[0].children[0].children[3].value,
-                    email: $(element).children()[0].children[0].children[4].value,
+                    phone_two: $(element).children()[0].children[0].children[4].value,
+                    email: $(element).children()[0].children[0].children[5].value,
                     visible: visible_contact
                 })
             }
@@ -1032,7 +1034,7 @@ function searchCategoryInfo() {
                     let modal_menu = $('<div>', { 
                         class: 'modal_select modal_search',
                         append: $('<div>', { class: 'title', html: `
-                            <span>Поиск по номеру телефона</span>
+                            <span>Поиск по номеру телефона/фамилии/почте</span>
                             <div class="close" onclick="closeModalMenu()">
                                 <img src="static/images/cancel.png">
                             </div>

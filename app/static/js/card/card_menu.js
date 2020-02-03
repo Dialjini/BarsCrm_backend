@@ -407,7 +407,9 @@ function createCardMenu(element, index = 0) {
                             id: 'client_name',
                             onchange: 'saveCard()',
                             value: selectedLine.Name,
-                            class: 'string'
+                            class: 'string',
+                            onblur: 'hiddenFullField(this.id)',
+                            onfocus: 'viewFullField(this.id)'
                         })
                     }))
                 }).add(`<tr>
@@ -422,11 +424,11 @@ function createCardMenu(element, index = 0) {
                         </tr>
                         <tr>
                             <td>Адрес</td>
-                            <td><input type="text" class="string" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
+                            <td><input type="text" autocomplete="off" class="string" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" id="client_address" onchange="saveCard()" value="${selectedLine.Adress}"></td>
                         </tr>
                         <tr>
                             <td>Факт. адрес</td>
-                            <td><input type="text" class="string" id="client_factual_address" onchange="saveCard()" value="${selectedLine.Fact_address}"></td>
+                            <td><input type="text" class="string" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" id="client_factual_address" onchange="saveCard()" value="${selectedLine.Fact_address}"></td>
                         </tr>
                     `)
             }).add(`
@@ -475,7 +477,7 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tr>
                                     <td>Ж/Д Станция</td>
-                                    <td> <input type="text" id="client_station" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
+                                    <td> <input type="text" id="client_station" autocomplete="off" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" onchange="saveCard()" class="string" value="${selectedLine.Station}"></td>
                                 </tr>
                                 <tr>
                                     <td>Цена вагона, руб.</td>
@@ -508,9 +510,9 @@ function createCardMenu(element, index = 0) {
                             </tr>
                             <tbody id="livestock">
                                 <tr>
-                                    <td><input onkeyup="maskNumber(this.id)" id="livestock_general" type="text" style="width: 75px" value="${selectedLine.Livestock_all}"></td>
-                                    <td><input onkeyup="maskNumber(this.id)" id="livestock_milking" type="text" style="width: 75px" value="${selectedLine.Livestock_milking}"></td>
-                                    <td><input onkeyup="maskNumber(this.id)" id="livestock_milkyield" type="text" style="width: 75px" value="${selectedLine.Livestock_milkyield}"></td>
+                                    <td><input onkeyup="maskNumberWithout(this.id)" id="livestock_general" type="text" style="width: 75px" value="${selectedLine.Livestock_all}"></td>
+                                    <td><input onkeyup="maskNumberWithout(this.id)" id="livestock_milking" type="text" style="width: 75px" value="${selectedLine.Livestock_milking}"></td>
+                                    <td><input onkeyup="maskNumberWithout(this.id)" id="livestock_milkyield" type="text" style="width: 75px" value="${selectedLine.Livestock_milkyield}"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -586,7 +588,9 @@ function createCardMenu(element, index = 0) {
                             id: 'provider_name',
                             value: selectedLine.Name,
                             onchange: 'saveCard()',
-                            class: 'string'
+                            class: 'string',
+                            onblur: 'hiddenFullField(this.id)',
+                            onfocus: 'viewFullField(this.id)'
                         })
                     }))
                 }).add(`<tr>
@@ -602,7 +606,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" class="string" id="provider_address" onchange="saveCard()" value="${selectedLine.Adress}">
+                                <input type="text" class="string" autocomplete="off" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" id="provider_address" onchange="saveCard()" value="${selectedLine.Adress}">
                             </td>
                         </tr>
                         <tr>
@@ -615,7 +619,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Ж/Д Станция</td>
                             <td>
-                                <input type="text" id="provider_station" class="string" onchange="saveCard()" value="${selectedLine.Train}">
+                                <input type="text" id="provider_station" autocomplete="off" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" class="string" onchange="saveCard()" value="${selectedLine.Train}">
                             </td>
                         </tr>
                         <tr>
@@ -742,7 +746,9 @@ function createCardMenu(element, index = 0) {
                             id: 'carrier_name',
                             value: selectedLine.Name,
                             onchange: 'saveCard()',
-                            class: 'string'
+                            class: 'string',
+                            onblur: 'hiddenFullField(this.id)',
+                            onfocus: 'viewFullField(this.id)'
                         })
                     }))
                 }).add(`<tr>
@@ -758,7 +764,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Адрес</td>
                             <td>
-                                <input type="text" id="carrier_address" onchange="saveCard()" class="string" value="${selectedLine.Address}">
+                                <input type="text" id="carrier_address" autocomplete="off" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" onchange="saveCard()" class="string" value="${selectedLine.Address}">
                             </td>
                         </tr>`)
             }).add(`<table class="table_block">
@@ -1311,7 +1317,6 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Доставки
     function deliveryContentCard(selectedLine, category) {
-        console.log(selectedLine);
         if ($(category).attr('data-name') != undefined) {
             array_info = $(category).attr('data-info').split('ç');
             $('.info').append(`<div style="display: none;" id="transit_info" data-info="${array_info[1]}ç${array_info[5]}"></div>`)
@@ -2026,18 +2031,11 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    
-                    if ($('#delivery_account')[0].value == 'Транзит') {
-                        let transit = 'Transit', prefixs = 'ООО ООО';
-                        link.href = `/downloadDoc?category=${carrier[0]}&name=${transit}&card_id=${carrier[1]}&address=${prefixs}&delivery=${data[1]}`;
-                        link.download = 'Транзит.docx';
+                    link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
+                    if (select_cusmoter == 'ООО') {
+                        link.download = 'Заявка ООО.docx';
                     } else {
-                        link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
-                        if (select_cusmoter == 'ООО') {
-                            link.download = 'Заявка ООО.docx';
-                        } else {
-                            link.download = 'Заявка ИП.docx';
-                        }
+                        link.download = 'Заявка ИП.docx';
                     }
                     link.click();
                 }
@@ -2051,11 +2049,6 @@ function makeRequest(element) {
         infoAccount = 'Транзит'
     } else {
         infoAccount = categoryInFinanceAccount[1][1][+$('#delivery_account')[0].value - 1];
-    }
-
-    if (categoryInFinanceAccount[1][1] != undefined) {
-        console.log(123);
-        categoryInFinanceAccount[1].pop();
     }
 
     let data = {};
@@ -2083,6 +2076,10 @@ function makeRequest(element) {
         if (categoryInDelivery[1][1][i].delivery.id == delivery_id) {
             date = categoryInDelivery[1][1][i].delivery.Date;
         }
+    }
+
+    if (categoryInFinanceAccount[1][1] != undefined) {
+        categoryInFinanceAccount[1].pop();
     }
     data['delivery_id'] = delivery_id;
     data['delivery_date'] = date;

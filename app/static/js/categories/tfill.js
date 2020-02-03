@@ -348,7 +348,7 @@ let rowFilling = (object, id, table) => {
             } else {
                 full_name = selectTableData[i].delivery.Name;
             }
-            const name = [selectTableData[i].delivery.Date, full_name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? '' : price_without_vat, returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
+            const name = [selectTableData[i].delivery.Date, full_name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? returnSpaces(amount) : price_without_vat, customer == 'ООО' ? '' : returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
@@ -491,9 +491,12 @@ let rowFilling = (object, id, table) => {
                 item_amount = 0;
             }
 
-            if (payment_amount < item_amount) {
-                balance_owed += (item_amount - payment_amount);
-                count_accounts++;
+            let payment_list_check = JSON.parse(selectTableData[i].account.Payment_history);
+            for (let i = 0; i < payment_list_check.length; i++) {
+                if (payment_list_check[i].sum != 0) {
+                    balance_owed += (item_amount - payment_amount);
+                    count_accounts++;
+                }
             }
 
             let count_delivery = 0;

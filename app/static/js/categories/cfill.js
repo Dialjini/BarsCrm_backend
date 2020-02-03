@@ -45,19 +45,8 @@ function linkField() {
             type: 'GET',
             async: false,
             dataType: 'html',
-            beforeSend: function() {
-                $('body').append(`
-                    <div id="preloader">
-                        <div id="preloader_preload"></div>
-                    </div>
-                `)
-                preloader = document.getElementById("preloader_preload");
-            },
             success: function(user) {
                 this_user = JSON.parse(user);
-            },
-            complete: function() {
-                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
             }
         })
         const list = [
@@ -1065,7 +1054,7 @@ function getValidationDate(date) {
                     let hello = JSON.parse(items_list[i].account[j].Hello);
                     for (let v = 0; v < volume.length; v++) {
                         if (+volume[v].id == +items_list[i].item.Item_id) {
-                            let price = deleteSpaces(+delivery[v]) + deleteSpaces(+hello[v]) + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
+                            let price = +deleteSpaces(delivery[v]) + +deleteSpaces(hello[v]) + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
                             if (!unload_status) {
                                 function fillTr() {
                                     let trContent = '';
@@ -1080,7 +1069,7 @@ function getValidationDate(date) {
                                                 <td>${returnSpaces(items_list[i].item.Cost)}</td>
                                                 <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
                                                 <td>${returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
-                                                <td>${returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume)}</td>`
+                                                <td>${returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume))}</td>`
                                     return trContent;
                                 }
                                 let tr;
@@ -1093,7 +1082,7 @@ function getValidationDate(date) {
                                 unload_table.push({product: items_list[i].item.Name, name: items_list[i].account[j].Name, volume: returnSpaces(volume[v].volume),
                                     price: returnSpaces(price), delivery: returnSpaces(delivery[v]), hello: returnSpaces(hello[v]), cost: returnSpaces(items_list[i].item.Cost),
                                     purchase_price: returnSpaces(items_list[i].item.Purchase_price), earned: returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)),
-                                    profit: returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +volume[v].volume)})
+                                    profit: returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume))})
                             }
                         }
                     }
@@ -1214,7 +1203,7 @@ function getValidationDate(date) {
                         for (let l = 0; l < volume_one.length - 1; l++) {
                             for (let h = l + 1; h < volume_one.length; h++) {
                                 if (volume_one[l].id === volume_one[h].id) {
-                                    volume_one[l].volume = deleteSpaces(+volume_one[l].volume) + deleteSpaces(+volume_one[h].volume);
+                                    volume_one[l].volume = +deleteSpaces(volume_one[l].volume) + +deleteSpaces(volume_one[h].volume);
                                     volume_one.splice(h, 1);
                                     h--;
                                 }
@@ -1674,7 +1663,7 @@ function getValidationDate(date) {
                     for (let l = 0; l < amount.length - 1; l++) {
                         for (let h = l + 1; h < amount.length; h++) {
                             if (amount[l].id === amount[h].id) {
-                                amount[l].amount = deleteSpaces(+amount[l].amount) + deleteSpaces(+amount[h].amount);
+                                amount[l].amount = +deleteSpaces(amount[l].amount) + +deleteSpaces(amount[h].amount);
                                 amount.splice(h, 1);
                                 h--;
                             }
@@ -1701,7 +1690,7 @@ function getValidationDate(date) {
                     for (let l = 0; l < volume_one.length - 1; l++) {
                         for (let h = l + 1; h < volume_one.length; h++) {
                             if (volume_one[l].id === volume_one[h].id) {
-                                volume_one[l].volume = deleteSpaces(+volume_one[l].volume) + deleteSpaces(+volume_one[h].volume);
+                                volume_one[l].volume = +deleteSpaces(volume_one[l].volume) + +deleteSpaces(volume_one[h].volume);
                                 volume_one.splice(h, 1);
                                 h--;
                             }
@@ -1762,25 +1751,22 @@ function getValidationDate(date) {
                         let general_amount = 0;
 
                         for (let element = 0; element < items_amount.length; element++) {
-                            general_amount += Math.round(deleteSpaces(+items_amount[element].amount));
+                            general_amount += Math.round(+deleteSpaces(items_amount[element].amount));
                         }
                         all_amounts += general_amount;
                         td += `<td>${returnSpaces(general_amount)}</td>`
                         let unload_table_ = [{id: 'total', name: 'Итого', volume: +deleteSpaces(general_amount)}];
-                        console.log(items_volume);
                         if (!unload_status) {
                             for (let j = 0; j < items_volume.length; j++) {
                                 for (let k = 0; k < all_items.length; k++) {
                                     if (+all_items[k].Item_id == +items_volume[j].id) {
-                                        amounts[k] += deleteSpaces(+items_volume[j].volume);
+                                        amounts[k] += +deleteSpaces(items_volume[j].volume);
                                         td += `<td id="item_${k + 1}">${returnSpaces(items_volume[j].volume)}</td>`
                                         if (items_volume.length - 1 != j) {
                                             j++;
                                         }
-                                        // unload_table_.push({ id: +items_volume[j].id, volume: returnSpaces(items_volume[j].volume) });
                                     } else {
                                         td += `<td id="item_${k + 1}">0</td>`
-                                        // unload_table_.push({id: +items_volume[j].id, volume: 0});
                                     }
                                 }
                             }
