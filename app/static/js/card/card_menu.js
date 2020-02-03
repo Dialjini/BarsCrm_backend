@@ -1778,7 +1778,7 @@ function createCardMenu(element, index = 0) {
                     </div>
                     <div class="next">
                         <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
-                        <button class="btn btn-main" id="delivery_new" onclick="createDocument(this)">Оформить Заявку</button>
+                        <button class="btn btn-main" data-name="document" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
     // Контентная часть добавления товара
@@ -2058,15 +2058,24 @@ function makeRequest(element) {
 
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
 
-    if (infoAccount == undefined) {
-        var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
-        if (result) { return closeCardMenu(element.id) }
-        else { return };
-    }
-    if (data['delivery_carrier_id'] == 0) {
-        var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали перевозчика!');
-        if (result) { return closeCardMenu(element.id) }
-        else { return };
+    if ($(element).attr('data-name') == 'document') {
+        if (infoAccount == undefined) {
+            return 'Оформить заявку невозможно, т.к вы не выбрали счет!';
+        }
+        if (data['delivery_carrier_id'] == 0) {
+            return 'Оформить заявку невозможно, т.к вы не выбрали перевозчика!';
+        }
+    } else {
+        if (infoAccount == undefined) {
+            var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
+            if (result) { return closeCardMenu(element.id) }
+            else { return };
+        }
+        if (data['delivery_carrier_id'] == 0) {
+            var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали перевозчика!');
+            if (result) { return closeCardMenu(element.id) }
+            else { return };
+        }
     }
 
     let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
@@ -2212,6 +2221,9 @@ function makeRequest(element) {
         success: function() {
             list_items_acc = null;
             list_stock_acc = null;
+            if ($(element).attr('data-name') == 'document') {
+                createDocument(element);
+            }
             closeCardMenu(element.id);
         }
     });
