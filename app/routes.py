@@ -111,9 +111,7 @@ def to_PDF(name, owner, address, delivery):
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
     if name == 'Transit':
         return DocCreator.Generate_Transit(dir_u=dir_u, date=date, delivery=delivery, adress=address)
-    print(reqs.getINNinfo(owner.UHH)['suggestions'])
     for i in reqs.getINNinfo(owner.UHH)['suggestions']:
-        print(i)
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
     if str(info) == '{}':

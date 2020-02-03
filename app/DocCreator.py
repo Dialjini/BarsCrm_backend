@@ -344,10 +344,10 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ООО'
 
-    document.Bik = Client.Bik
+    document.Bik = ''
     document.KPP = info['data']['kpp']
-    document.rc = Client.rc
-    document.kc = Client.kc
+    document.rc = ''
+    document.kc = ''
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
@@ -373,10 +373,16 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     db.session.commit()
     document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
     db.session.commit()
-    if Client.Fact_address:
-        Adress = Client.Fact_address
-    else:
-        Adress = Client.Adress
+    try:
+        if Client.Fact_address:
+            Adress = Client.Fact_address
+        else:
+            Adress = Client.Adress
+    except Exception:
+        if Client.__tablename__ == 'Carrier':
+            Adress = Client.Address
+        else:
+            Adress = Client.Address
 
     doc = Document(os.path.dirname(__file__) + '/files/Zayavka_OOO.docx')
     doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
@@ -418,10 +424,10 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     document.UHH = owner.UHH
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ИП'
-    document.Bik = Client.Bik
+    document.Bik = ''
     document.KPP = info['data']['kpp']
-    document.rc = Client.rc
-    document.kc = Client.kc
+    document.rc = ''
+    document.kc = ''
 
     document.Client_contact_name = info['data']['management']['name']
     document.Owner_id = owner.id
@@ -447,10 +453,17 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     db.session.commit()
     document.Path = '{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id))
     db.session.commit()
-    if Client.Fact_address:
-        Adress = Client.Fact_address
-    else:
-        Adress = Client.Adress
+    try:
+        if Client.Fact_address:
+            Adress = Client.Fact_address
+        else:
+            Adress = Client.Adress
+    except Exception:
+        if Client.__tablename__ == 'Carrier':
+            Adress = Client.Address
+        else:
+            Adress = Client.Address
+
     doc = Document(os.path.dirname(__file__) + '/files/Zayavka_IP.docx')
     doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                 'document.Client_contact_name', 'document.Client_name'],
