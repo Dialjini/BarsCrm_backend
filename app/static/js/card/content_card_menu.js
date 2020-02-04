@@ -995,7 +995,9 @@ function recountPrice(element) {
         if (dataProduct[0].includes(list[i].type)) {
             let other_total_sale = 0;
             $('#exposed_list .invoiled').each(function(i, element) {
-                other_total_sale += (+deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val()) * +deleteSpaces($(`#invoiled_volume_${i + 1}`).val()));
+                let first = +deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val());
+                let second = +deleteSpaces($(`#invoiled_volume__${i + 1}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${i + 1}`).val());
+                other_total_sale += (first * second);
             });
             if (list[i].id == 'total_discount_inv') {
                 other_total_sale *= -1;
