@@ -1199,6 +1199,7 @@ def addCarier():
         Carrier.Bik = data['carrier_bik']
         Carrier.kc = data['carrier_kc']
         Carrier.rc = data['carrier_rc']
+        Carrier.Items_delivery = data['items_delivery']
 
         if new:
             db.session.add(Carrier)

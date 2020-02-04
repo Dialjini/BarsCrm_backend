@@ -344,6 +344,7 @@ class Carrier(db.Model):
     Delivery = db.relationship('Delivery', backref='Carrier', lazy='dynamic')
     Contacts = db.relationship('Contacts', backref='Carrier', lazy='dynamic')
     Last_comment = db.Column(db.String)
+    Items_delivery = db.Column(db.String)
     Bik = db.Column(db.String)
     rc = db.Column(db.String)
     kc = db.Column(db.String)
