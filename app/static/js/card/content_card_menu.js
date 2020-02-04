@@ -1001,6 +1001,7 @@ function recountPrice(element) {
                 other_total_sale *= -1;
             }
             $(`#${list[i].id}`).val(other_total_sale);
+            $(`#product_unit_${dataProduct[1]}`).html(+deleteSpaces(product.children()[6].innerHTML) + (+deleteSpaces(product.children()[7].children[0].value)) + (+deleteSpaces(product.children()[8].children[0].value)) + (+deleteSpaces(product.children()[9].children[0].value)));
 
         }
     } 
