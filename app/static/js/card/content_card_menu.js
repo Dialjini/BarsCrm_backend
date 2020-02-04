@@ -995,12 +995,15 @@ function recountPrice(element) {
         if (dataProduct[0].includes(list[i].type)) {
             let other_total_sale = 0;
             $('#exposed_list .invoiled').each(function(i, element) {
-                other_total_sale += (+deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val()) * +deleteSpaces($(`#invoiled_volume_${i + 1}`).val()));
+                let first = +deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val());
+                let second = +deleteSpaces($(`#invoiled_volume__${i + 1}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${i + 1}`).val());
+                other_total_sale += (first * second);
             });
             if (list[i].id == 'total_discount_inv') {
                 other_total_sale *= -1;
             }
             $(`#${list[i].id}`).val(other_total_sale);
+            $(`#product_unit_${dataProduct[1]}`).html(+deleteSpaces(product.children()[6].innerHTML) + (+deleteSpaces(product.children()[7].children[0].value)) + (+deleteSpaces(product.children()[8].children[0].value)) + (+deleteSpaces(product.children()[9].children[0].value)));
 
         }
     } 
