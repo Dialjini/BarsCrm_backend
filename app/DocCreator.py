@@ -339,11 +339,16 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
-    account = models.Account.query.filter_by(id=delivery.Account_id).first()
     document.UHH = owner.UHH
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ООО'
-
+    Sum = 0
+    for i in json.loads(delivery.Amounts):
+        Sum += Sum + float(str(i['sum']).replace(' ', ''))
+    if int(Sum) == Sum:
+        Sum = int(Sum)
+    else:
+        Sum = round(Sum, 2)
     document.Bik = ''
     document.KPP = info['data']['kpp']
     document.rc = ''
@@ -400,7 +405,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
                                         delivery.Stock, delivery.Contact_End, Client.Name, Adress,
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                        str(account.Sum), num2text(float(str(account.Sum).replace(' ', '')))], doc=doc)
+                                        str(Sum), num2text(Sum)], doc=doc)
 
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
@@ -419,8 +424,14 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
-    account = models.Account.query.filter_by(id=delivery.Account_id).first()
+    Sum = 0
+    for i in json.loads(delivery.Amounts):
+        Sum += Sum + float(str(i['sum']).replace(' ', ''))
 
+    if int(Sum) == Sum:
+        Sum = int(Sum)
+    else:
+        Sum = round(Sum, 2)
     document.UHH = owner.UHH
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ИП'
@@ -480,7 +491,7 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
                                         delivery.Stock, delivery.Contact_End, Client.Name, Adress,
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                        str(account.Sum), num2text(float(str(account.Sum).replace(' ', '')))], doc=doc)
+                                        str(Sum), num2text(Sum)], doc=doc)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
                                    filename=document.Path)
