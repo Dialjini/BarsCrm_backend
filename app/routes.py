@@ -1098,6 +1098,7 @@ def getCarriers():
 def addProvider():
     if 'username' in session:
         data = request.args
+        newStock = False
         if data['provider_data'] != 'new':
             new = False
         else:
@@ -1107,15 +1108,18 @@ def addProvider():
             Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
             Stock = models.Stock.query.filter_by(Name=Provider.Adress).first()
             if not Stock:
-                Stock = models.Stock()
-                Provider.Create_date = data['provider_create_date']
-                new = True
+                if data['provider_address'] != '':
+                    Stock = models.Stock()
+                    newStock = True
+                    Stock.Name = data['provider_address']
             Stock.Name = data['provider_address']
 
         else:
             Provider = models.Provider()
-            Stock = models.Stock()
-            Stock.Name = data['provider_address']
+            if data['provider_address'] != '':
+                Stock = models.Stock()
+                newStock = True
+                Stock.Name = data['provider_address']
             Provider.Create_date = data['provider_create_date']
 
         Provider.Name = data['provider_name']
@@ -1133,6 +1137,7 @@ def addProvider():
 
         if new:
             db.session.add(Provider)
+        if newStock:
             db.session.add(Stock)
 
         db.session.commit()
