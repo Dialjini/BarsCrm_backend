@@ -404,14 +404,40 @@ def findComments():
         return redirect('/', code=302)
 
 
+def standartize_number(data):
+    result = ''
+    counter = 0
+    if len(data) == 4:
+        for i in data:
+            result = result + i
+            counter += 1
+            if counter == 2:
+                result = result + '-'
+        return result
+
+    sequence = [1, 3, 3, 2, 5]
+    seq_key = 0
+    for i in data:
+        result = result + i
+        counter += 1
+        if counter == sequence[seq_key]:
+            result = result + '-'
+            counter = 0
+            seq_key += 1
+    return result
+
+
 @app.route('/findContacts', methods=['GET'])
 def findContacts():
     if 'username' in session:
         result = []
-        data = request.args['data']
+        data = str(request.args['data'])
         Contacts = models.Contacts.query.all()
         Deliveryies = models.Delivery.query.all()
         Users = models.User.query.all()
+        if data.isdigit():
+            data = standartize_number(data=data)
+
         for i in Deliveryies:
             try:
                 if data in i['Contact_End'] or data in i['Contact_Number']:
@@ -429,9 +455,9 @@ def findContacts():
         for i in Users:
             try:
                 if data in i.email:
-                     subres = json.loads(table_to_json([i]))[0]
-                     subres.pop('password', None)
-                     result.append(subres)
+                    subres = json.loads(table_to_json([i]))[0]
+                    subres.pop('password', None)
+                    result.append(subres)
             except Exception:
                 a='nothin'
 
