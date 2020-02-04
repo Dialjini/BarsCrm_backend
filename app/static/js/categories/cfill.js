@@ -821,6 +821,19 @@ function editItem(id) {
                     `
                 }
             }
+            function fillPacking() {
+                data.Packing;
+                let list = ['Насыль', 'Мешки', 'ББ'];
+                let options = '';
+                for (let i = 0; i < list.length; i++) {
+                    if (data.Packing == list[i]) {
+                        options += `<option selected value="${list[i]}">${list[i]}</option>`
+                    } else {
+                        options += `<option value="${list[i]}">${list[i]}</option>`
+                    }
+                }
+                return options;
+            }
 
             $('.info').append(`
                 <div class="card_menu">
@@ -860,8 +873,10 @@ function editItem(id) {
                                     <td><input onkeyup="maskNumber(this.id)" type="text" id="item_volume" class="string" value="${data.Volume}"></td>
                                 </tr>
                                 <tr>
-                                    <td>Упаковка</td>
-                                    <td><input type="text" id="item_packing" class="string" value="${data.Packing}"></td>
+                                    <td>Фасовка</td>
+                                    <td>
+                                        <select type="text" id="item_packing">${fillPacking()}</select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Вес, кг.</td>

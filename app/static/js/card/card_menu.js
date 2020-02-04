@@ -665,7 +665,7 @@ function createCardMenu(element, index = 0) {
                                     <th>Цена, руб.</th>
                                     <th>Дата</th>
                                     <th>НДС</th>
-                                    <th>Упаковка</th>
+                                    <th>Фасовка</th>
                                     <th>Вес, кг.</th>
                                     <th>Фракция</th>
                                 </tr>
@@ -1140,7 +1140,7 @@ function createCardMenu(element, index = 0) {
                             <tr>
                                 <th width="15" rowspan="2"></th>
                                 <th width="150" rowspan="2">Товар</th>
-                                <th colspan="2">Упаковка</th>
+                                <th colspan="2">Фасовка</th>
                                 <th colspan="2">Количество</th>
                                 <th colspan="5">Цена, руб.</th>
                                 <th style="width: 90px;" rowspan="2">Сумма</th>
@@ -1256,7 +1256,7 @@ function createCardMenu(element, index = 0) {
                                     <td>Товар</td>
                                     <td>Юр. лицо</td>
                                     <td>Объем, кг.</td>
-                                    <td>Упаковка</td>
+                                    <td>Фасовка</td>
                                     <td>Цена прайса, руб.</td>
                                 </tr>
                                 <tbody>
@@ -1292,7 +1292,7 @@ function createCardMenu(element, index = 0) {
                                     <td>Товар</td>
                                     <td>Юр. лицо</td>
                                     <td>Объем, кг.</td>
-                                    <td>Упаковка</td>
+                                    <td>Фасовка</td>
                                     <td>Цена прайса, руб.</td>
                                 </tr>
                                 <tbody>
@@ -1844,8 +1844,14 @@ function createCardMenu(element, index = 0) {
                         <td><input onkeyup="maskNumber(this.id)" type="text" id="item_volume" onchange="saveCard()" class="string"></td>
                     </tr>
                     <tr>
-                        <td>Упаковка</td>
-                        <td><input type="text" id="item_packing" onchange="saveCard()" class="string"></td>
+                        <td>Фасовка</td>
+                        <td>
+                            <select id="item_packing" type="text">
+                                <option selected value="Насыпь">Насыпь</option>
+                                <option value="Мешки">Мешки</option>
+                                <option value="ББ">ББ</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <td>Вес, кг.</td>
@@ -2069,7 +2075,7 @@ function makeRequest(element) {
                     </div>
                     <div class="content">
                         <div class="message">
-                            <p style="font-size: 14px; color: #595959;">Введите сумму для каждого товара!</p>
+                            <p style="font-size: 14px; color: #595959;">Введите сумму доставки!</p>
                         </div>
                     </div>
                 </div>
@@ -2132,9 +2138,6 @@ function makeRequest(element) {
         }
     }
 
-    if (categoryInFinanceAccount[1][1] != undefined) {
-        categoryInFinanceAccount[1].pop();
-    }
     data['delivery_id'] = delivery_id;
     data['delivery_date'] = date;
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
@@ -2242,6 +2245,9 @@ function makeRequest(element) {
         data['delivery_contact_number'] = info[1];
         data['delivery_name']   = 'Транзит';
         $('#transit_info').remove()
+    }
+    if (categoryInFinanceAccount[1][1] != undefined) {
+        categoryInFinanceAccount[1].pop();
     }
     $.ajax({
         url: '/addDelivery',

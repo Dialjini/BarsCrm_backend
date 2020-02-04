@@ -161,7 +161,7 @@ function getTableData(table, input = false, close = false) {
                     if (   saveTableAndCard[0].id == 'client' 
                         || saveTableAndCard[0].id == 'carrier'
                         || saveTableAndCard[0].id == 'account') $('#info_in_accounts').remove()
-                    if (saveTableAndCard[0].name == 'Список')   $('.fields').append(` <div id="amount_cards"> <span>Кол-во карточек: ${saveTableAndCard[1][1].length}</span> </div> `)
+                    if (saveTableAndCard[0].name == 'Список')   $('.fields').append(`<div id="amount_cards"><span>${saveTableAndCard[1][1].length}</span></div>`)
                     if (saveTableAndCard[0].id == 'provider')   $('#amount_cards').remove();
                 }
             }
@@ -501,19 +501,43 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     }
                 }
             }
+            console.log(idData);
             createOrSaveCard.getRequest(idData, request);
             break;
         }
     }
 
     function additionalData(i) {
+        let this_user;
+        $.ajax({
+            url: '/getThisUser',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(user) {
+                this_user = JSON.parse(user);
+            }
+        })
         if (data[0] == 'client') {
             idData[`livestock_general`] = $('#livestock_general').val();
             idData[`livestock_milking`] = $('#livestock_milking').val();
-            idData[`livestock_milkyield`] = $('#livestock_milkyield').val();   
+            idData[`livestock_milkyield`] = $('#livestock_milkyield').val(); 
+            if (data[data.length - 1] == 'new') {
+                idData[`manager_id`] = this_user.role == 'manager' ? this_user.id : 'admin';  
+                idData[`manager_active`] = true;  
+                idData[`manager_date`] = getCurrentDateNotComparison('year'); 
+            } 
         }
         if (data[0] == 'provider') {
             idData[`provider_create_date`] = getCurrentDateNotComparison('year');
+            if (data[data.length - 1] == 'new') {
+                idData[`manager_id`] = this_user.role == 'manager' ? this_user.id : 'admin';  
+                idData[`manager_active`] = true;  
+                idData[`manager_date`] = getCurrentDateNotComparison('year'); 
+            } 
+        }
+        if (data[0] == 'carrier') {
+            idData[`items_delivery`] = JSON.stringify([]);
         }
         idData[`${data[0]}_data`] = card;
         idData[`${data[0]}_site`] = $(`#${data[0]}_site`).val() !== '' ? $(`#${data[0]}_site`).val() : $(`#${data[0]}_site`).html();
@@ -658,20 +682,19 @@ let getCommentsInfo = (function() {
                             comment_creator: user.second_name,
                             comment_creator_id: user.id
                         };
-                        if (list.comment_role == null) {
-                            addComment();
+                        data = data.split('_');
+                        if (list.comment_role == null || list.comment_content == '') {
+                            getComments();
                             return;
                         }
-                        data = data.split('_');
                         let count = 0, array = Object.keys(list);
-                        for (let i = 0; i < 3; i++) {
+                        for (let i = 1; i < 3; i++) {
                             if (list[array[i]] == '' || list[array[i]] == null) {
                                 count++;
                             } 
                         }
-                        if (count == 3) {
-                            getComments();
-                            return;
+                        if (count == 2) {
+                            return getComments();
                         }
                         $.ajax({
                             url: '/addMessages',

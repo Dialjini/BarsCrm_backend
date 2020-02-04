@@ -491,9 +491,11 @@ let rowFilling = (object, id, table) => {
                 item_amount = 0;
             }
 
+            let shipment = selectTableData[i].account.Shipment;
+
             let payment_list_check = JSON.parse(selectTableData[i].account.Payment_history);
             for (let i = 0; i < payment_list_check.length; i++) {
-                if (payment_list_check[i].sum != 0) {
+                if (payment_list_check[i].sum != 0 || shipment !== 'false') {
                     balance_owed += (item_amount - payment_amount);
                     count_accounts++;
                     break;
@@ -520,7 +522,7 @@ let rowFilling = (object, id, table) => {
                     delivery_data[j].postponement_date = 'Не указано';
                 }
             }
-            if (payment_amount == 0) continue;
+            if (payment_amount == 0 && shipment == 'false') continue;
             let element = $('<tbody>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
             for (let j = 0; j < delivery_data.length; j++) {
                 if (j == 0) {

@@ -589,7 +589,7 @@ function invoicingContentCard(elem, data) {
         return `<tr>
                     <th width="15" rowspan="2"></th>
                     <th width="150" rowspan="2">Товар</th>
-                    <th colspan="2">Упаковка</th>
+                    <th colspan="2">Фасовка</th>
                     <th colspan="2">Количество</th>
                     <th colspan="5">Цена, руб.</th>
                     <th style="width: 90px;" rowspan="2">Сумма</th>
@@ -613,7 +613,7 @@ function invoicingContentCard(elem, data) {
                     <th>Товар</th>
                     <th>Юр. лицо</th>
                     <th>Объем, кг.</th>
-                    <th>Упаковка</th>
+                    <th>Фасовка</th>
                     <th>НДС</th>
                     <th>Цена прайса, руб.</th>
                     <th>Склад</th>
@@ -756,7 +756,7 @@ function searchItemsInTable() {
                             <th>Товар</th>
                             <th>Юр. лицо</th>
                             <th>Объем, кг.</th>
-                            <th>Упаковка</th>
+                            <th>Фасовка</th>
                             <th>НДС</th>
                             <th>Цена прайса, руб.</th>
                             <th>Склад</th>
@@ -1732,7 +1732,33 @@ function addRow(id, selectedLine = '') {
                 }
             })
         }
-
+        function fillPacking(id) {
+            $.ajax({
+                url: '/getAllItems',
+                type: 'GET',
+                dataType: 'html',
+                success: function() {
+                    let options = '<option value="disabled" selected disabled>Выбрать</option>';
+                    let list_items = ['Насыпь', 'Мешки', 'ББ'];
+                    for (let i = 0; i < list_items.length; i++) 
+                        options += `<option value="${list_items[i]}">${list_items[i]}</option>`
+                    $(`#${id}`).empty();
+                    $(`#${id}`).append(options);
+                    $('.hmax #group [name="item_packing"]').each(function() {
+                        if (selectedLine.Packing == '') {
+                            $(`#${id} option:contains('Выбрать')`).attr('selected', true)
+                        } else {
+                            $(`#${id} option`).each(function(i, element) {
+                                if ($(element).html() == selectedLine.Packing) {
+                                    $(element).attr('selected', true);
+                                }
+                            });
+                            $(`#${id} :selected`).val($(`#${id} :selected`).html());       
+                        }
+                    })
+                }
+            })
+        }
         for (let i = 0; i < table.count; i++) {
             if (table.widthInput[i].id == 'item_product') {
                 let count = 0;
@@ -1762,6 +1788,19 @@ function addRow(id, selectedLine = '') {
                         onblur: 'hiddenSearch(this)',
                         onkeyup: 'searchWord(this.value)',
                         autocomplete: 'off'
+                    })
+                }));  
+            } else if (table.widthInput[i].id == 'item_packing') {
+                let count = 0;
+                $('.hmax #group [name="item_packing"]').each(function() {
+                    count++;
+                })
+                tr.append($('<td>', {
+                    append: $('<select>', {
+                        css: { width: table.widthInput[i].width + 'px', padding: '0' },
+                        id: 'item_packing_' + count,
+                        name: 'item_packing',
+                        append: fillPacking('item_packing_' + count)
                     })
                 }));  
             } else if (table.widthInput[i].id  == 'item_fraction') {
