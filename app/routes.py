@@ -1108,15 +1108,16 @@ def addProvider():
             Provider = models.Provider.query.filter_by(id=data['provider_data']).first()
             Stock = models.Stock.query.filter_by(Name=Provider.Adress).first()
             if not Stock:
-                if data['provider_address'] != '':
+                if data['provider_address']:
                     Stock = models.Stock()
                     newStock = True
                     Stock.Name = data['provider_address']
-            Stock.Name = data['provider_address']
+            if data['provider_address']:
+                Stock.Name = data['provider_address']
 
         else:
             Provider = models.Provider()
-            if data['provider_address'] != '':
+            if data['provider_address']:
                 Stock = models.Stock()
                 newStock = True
                 Stock.Name = data['provider_address']
