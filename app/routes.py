@@ -1137,6 +1137,10 @@ def addProvider():
         Provider.Item_list = data['provider_item_list']
 
         if new:
+            if data['manager_id'] != 'admin':
+                Provider.Manager_id = data['manager_id']
+                Provider.Manager_active = True
+                Provider.Manager_date = data['manager_date']
             db.session.add(Provider)
         if newStock:
             db.session.add(Stock)
@@ -1278,6 +1282,10 @@ def addClient():
         Client.rc = data['client_rc']
 
         if new:
+            if data['manager_id'] != 'admin':
+                Client.Manager_id = data['manager_id']
+                Client.Manager_active = True
+                Client.Manager_date = data['manager_date']
             db.session.add(Client)
 
         db.session.commit()
