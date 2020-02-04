@@ -859,8 +859,8 @@ function invoiceInTable(element) {
                                 } else if (list[k].id.includes('calc')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
-                                            type: 'number', id: list[k].id,
-                                            onkeyup: 'recountPrice(this.id)'
+                                            type: 'number', id: list[k].id, name: 'create',
+                                            onkeyup: 'recountPrice(this)'
                                         })
                                     }))
                                 } else {
@@ -969,9 +969,16 @@ function tarCalculation(id) {
     $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : returnSpaces(unit));
     calculationIndicators();
 }
-function recountPrice(id) {
-    let dataProduct = id.split('_');
-    let product = $(`#exposed_list #invoiled_${dataProduct[1]}_product`);
+function recountPrice(element) {
+    let dataProduct = element.id.split('_');
+    let dataProductName = $(element).attr('name');
+
+    let product;
+    if (dataProductName == 'create') {
+        product = $(`#exposed_list #invoiled_${dataProduct[1]}_product`);
+    } else {
+        product = $(`#exposed_list #product_${dataProduct[1]}`);
+    }
 
     product.children().last().html(
         (+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
@@ -1002,12 +1009,18 @@ function recountPrice(id) {
     $('#exposed_list .invoiled').each(function(i, element) {
         sum += +deleteSpaces($(element).children()[11].innerHTML);
     });
-    
-    $('#total').html(Math.round(sum));
-    let vat = sum > 0 ? sum - ((sum * currentVatValue) / 100) : 0;
-    $('#total').html(Math.round(sum));
-    $('#vat').html(Math.round(sum - vat));
-    $('#without-vat').html(Math.round(vat));
+    let data_account = categoryInFinanceAccount[1][1];
+    for (let i = 0; i < data_account.length; i++) {
+        for (let j = 0; j < data_account[i].items.length; j++) {
+            if (data_account[i].items[j].Item_id == dataProduct[1]) {
+                let vat = sum > 0 ? sum - ((sum * +data_account[i].items[j].NDS) / 100) : 0;
+                $('#total').html(returnSpaces(Math.round(sum)));
+                $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                $('#without-vat').html(returnSpaces(Math.round(vat)));
+                break;
+            }
+        }
+    }
 }
 function all_costs() {
     let amount = 3, disableValue = 0;
@@ -1641,19 +1654,19 @@ function addRow(id, selectedLine = '') {
     const tableInfo = [
         { id: 'client-group', tbody: 'group', count: 4, widthInput: [
                 {id: 'item_product', width: 210, type: 'text'},
-                {id: 'item_volume', width: 60, type: 'text'},
+                {id: 'item_volume', width: 65, type: 'text'},
                 {id: 'item_creator', width: 225, type: 'text'},
-                {id: 'item_price', width: 80, type: 'text'}
+                {id: 'item_price', width: 90, type: 'text'}
             ],
             html: ['Name', 'Volume', 'Creator', 'Cost']
         },
         { id: 'provider-group', tbody: 'group', count: 7, widthInput: [
                 {id: 'item_product', width: 210, type: 'text'},
-                {id: 'item_price', width: 80, type: 'text'},
-                {id: 'item_date', width: 60, type: 'text'},
+                {id: 'item_price', width: 90, type: 'text'},
+                {id: 'item_date', width: 70, type: 'text'},
                 {id: 'item_vat', width: 30, type: 'number'},
-                {id: 'item_packing', width: 60, type: 'text'},
-                {id: 'item_weight', width: 50, type: 'text'},
+                {id: 'item_packing', width: 100, type: 'text'},
+                {id: 'item_weight', width: 65, type: 'text'},
                 {id: 'item_fraction', width: 90, type: 'text'}
             ],
             html: ['Name', 'Cost', 'Date', 'NDS', 'Packing', 'Weight', 'Fraction']
@@ -1667,20 +1680,20 @@ function addRow(id, selectedLine = '') {
                 html: []
         }, { id: 'account-group', tbody: 'group', count: 2, widthInput: [
                     {id: 'account_date', width: 70, type: 'text'},
-                    {id: 'account_price', width: 80, type: 'text'}
+                    {id: 'account_price', width: 90, type: 'text'}
                 ],
                 html: ['date', 'sum']
         }, { id: 'delivery-group', tbody: 'group', count: 2, widthInput: [
-                    {id: 'delivery_date', width: 60, type: 'text'},
-                    {id: 'delivery_price', width: 80, type: 'text'}
+                    {id: 'delivery_date', width: 70, type: 'text'},
+                    {id: 'delivery_price', width: 90, type: 'text'}
                 ],
                 html: ['date', 'price']
         }, { id: 'flight-group', tbody: 'flight', count: 6, widthInput: [
                     {id: 'delivery_flight_product', width: 100, type: 'text'},
                     {id: 'delivery_flight_stock', width: 160, type: 'text'},
-                    {id: 'delivery_flight_weight', width: 50, type: 'text'},
+                    {id: 'delivery_flight_weight', width: 65, type: 'text'},
                     {id: 'delivery_flight_type', width: 160, type: 'text'},
-                    {id: 'delivery_flight_sum', width: 80, type: 'text'}
+                    {id: 'delivery_flight_sum', width: 90, type: 'text'}
                 ],
                 html: []
         }
@@ -1804,7 +1817,7 @@ function addRow(id, selectedLine = '') {
                 $('#carrier_price').mask('# ##0.00', { reverse: true });
             }
             if (id === 'account-group') {
-                $('#account_price').mask('# ##0.00', { reverse: true });
+                $('#group #account_price').mask('# ##0.00', { reverse: true });
                 $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true})
             }
             if (id === 'flight-group') {

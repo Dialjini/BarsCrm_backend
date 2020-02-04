@@ -344,7 +344,7 @@ let rowFilling = (object, id, table) => {
             let customer = selectTableData[i].delivery.Customer;
             let payment_date = selectTableData[i].delivery.Payment_date;
             if (selectTableData[i].delivery.Name == 'Транзит') {
-                full_name = `${selectTableData[i].delivery.Name} из ${selectTableData[i].delivery.Stock} в ${selectTableData[i].delivery.Contact_Number}`;
+                full_name = `Транзит с ${selectTableData[i].delivery.Stock} на ${selectTableData[i].delivery.Contact_Number}`;
             } else {
                 full_name = selectTableData[i].delivery.Name;
             }
@@ -496,6 +496,7 @@ let rowFilling = (object, id, table) => {
                 if (payment_list_check[i].sum != 0) {
                     balance_owed += (item_amount - payment_amount);
                     count_accounts++;
+                    break;
                 }
             }
 

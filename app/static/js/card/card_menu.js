@@ -666,7 +666,7 @@ function createCardMenu(element, index = 0) {
                                     <th>Дата</th>
                                     <th>НДС</th>
                                     <th>Упаковка</th>
-                                    <th>Вес</th>
+                                    <th>Вес, кг.</th>
                                     <th>Фракция</th>
                                 </tr>
                                 <tbody id="group"></tbody>
@@ -903,7 +903,6 @@ function createCardMenu(element, index = 0) {
             let table = '';
             let list_stock_id = [], list_items_id = [];
 
-            
             for (let i = 0; i < list_items.length; i++) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
@@ -923,13 +922,13 @@ function createCardMenu(element, index = 0) {
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>
-                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(sale[i])}" id="calcSale_${list_items[i].Item_id}">
+                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}">
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(privet[i])}" id="calcPrivet_${list_items[i].Item_id}">
+                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}">
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(delivery[i])}" id="calcDelivery_${list_items[i].Item_id}">
+                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}">
                             </td>
                             <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
                             <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
@@ -950,13 +949,13 @@ function createCardMenu(element, index = 0) {
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>
-                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(sale[i])}" id="calcSale_${list_items[i].Item_id}" disabled>
+                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}" disabled>
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(privet[i])}" id="calcPrivet_${list_items[i].Item_id}" disabled>
+                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}" disabled>
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this.id)" type="text" value="${returnSpaces(delivery[i])}" id="calcDelivery_${list_items[i].Item_id}" disabled>
+                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}" disabled>
                             </td>
                             <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
                             <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
@@ -1201,7 +1200,7 @@ function createCardMenu(element, index = 0) {
                     <div class="info_block">
                         <span class="lightgray">Отгрузки</span>
                         <div class="hmax">
-                            <table>
+                            <table style="width: 625px">
                                 ${tableShipments()}
                             </table>
                         </div>
@@ -1558,9 +1557,9 @@ function createCardMenu(element, index = 0) {
                                     <td></td>
                                     <td>${listAllItems[i].Name}</td>
                                     <td>${listStocks[j].Name}</td>
-                                    <td id="item_volume">${returnSpaces(array_info[0])}</td>
+                                    <td name="item_volume" id="item_volume_${id}">${returnSpaces(array_info[0])}</td>
                                     <td>${listAllItems[i].Packing}</td>
-                                    <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
+                                    <td><input onkeyup="maskNumber(this.id)" name="item_sum" id="item_sum_${listAllItems[i].Item_id}" type="text"></td>
                                 </tr>
                                 `
                             } else {
@@ -1569,9 +1568,9 @@ function createCardMenu(element, index = 0) {
                                         <td></td>
                                         <td>${listAllItems[i].Name}</td>
                                         <td>${listStocks[j].Name}</td>
-                                        <td id="item_volume">${amounts[0].volume}</td>
+                                        <td name="item_volume" id="item_volume_${id}">${amounts[0].volume}</td>
                                         <td>${listAllItems[i].Packing}</td>
-                                        <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[0].sum}" type="text"></td>
+                                        <td><input onkeyup="maskNumber(this.id)" name="item_sum" id="item_sum_${listAllItems[i].Item_id}" value="${amounts[0].sum}" type="text"></td>
                                     </tr>
                                 `
                             }
@@ -1604,9 +1603,9 @@ function createCardMenu(element, index = 0) {
                                                 <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
                                                 <td>${listAllItems[i].Name}</td>
                                                 <td>${listStocks[k].Name}</td>
-                                                <td><input onkeyup="maskNumber(this.id)" id="item_volume" type="text"></td>
+                                                <td><input onkeyup="maskNumber(this.id)" name="item_volume" id="item_volume_${listAllItems[i].Item_id}" type="text"></td>
                                                 <td>${listAllItems[i].Packing}</td>
-                                                <td><input onkeyup="maskNumber(this.id)" id="item_sum" type="text"></td>
+                                                <td><input onkeyup="maskNumber(this.id)" name="item_sum" id="item_sum_${listAllItems[i].Item_id}" type="text"></td>
                                             </tr>
                                             `
                                         } else {
@@ -1617,9 +1616,9 @@ function createCardMenu(element, index = 0) {
                                                             <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
                                                             <td>${listAllItems[i].Name}</td>
                                                             <td>${listStocks[k].Name}</td>
-                                                            <td><input onkeyup="maskNumber(this.id)" id="item_volume" value="${amounts[am].volume}" type="text"></td>
+                                                            <td><input onkeyup="maskNumber(this.id)" name="item_volume" id="item_volume_${listAllItems[i].Item_id}" value="${amounts[am].volume}" type="text"></td>
                                                             <td>${listAllItems[i].Packing}</td>
-                                                            <td><input onkeyup="maskNumber(this.id)" id="item_sum" value="${amounts[am].sum}" type="text"></td>
+                                                            <td><input onkeyup="maskNumber(this.id)" name="item_sum" id="item_sum_${listAllItems[i].Item_id}" value="${amounts[am].sum}" type="text"></td>
                                                         </tr>
                                                     `
                                                 }
@@ -2056,6 +2055,52 @@ function makeRequest(element) {
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
 
+    let amounts = [], items_ids = [];
+    for (let element of $('#flight [name="item_flight"]')) {
+        items_ids.push($(element).attr('id').split('_')[2]);
+    }
+    for (let element of $('#flight [name="item_sum"]')) {
+        if (element.value == '') {
+            return $('.page').append($('<div>', { class: 'background' }).add(`
+                <div class="modal_select">
+                    <div class="title">
+                        <span>Ошибка</span>
+                        <img onclick="closeModal()" src="static/images/cancel.png">
+                    </div>
+                    <div class="content">
+                        <div class="message">
+                            <p style="font-size: 14px; color: #595959;">Введите сумму для каждого товара!</p>
+                        </div>
+                    </div>
+                </div>
+            `)); 
+        }
+        amounts.push({sum: element.value});
+    }
+    for (let i = 0; i < $('#flight [name="item_volume"]').length; i++){
+        if (infoAccount == 'Транзит') {
+            amounts[i].volume = $('#flight [name="item_volume"]')[0].innerHTML;
+        } else {
+            if ($('#flight [name="item_volume"]')[i].value == '' || $('#flight [name="item_volume"]')[i].value == 0) {
+                return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px; color: #595959;">Заполните поле "Объем" у всех товаров!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `)); 
+            } 
+            amounts[i].volume = $('#flight [name="item_volume"]')[i].value;
+        }
+        amounts[i].id = $('#flight [name="item_flight"]')[i].id.split('_')[2];
+    }
+
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
 
     if ($(element).attr('data-name') == 'document') {
@@ -2100,21 +2145,6 @@ function makeRequest(element) {
     data['delivery_passport'] = $('#delivery_passport').val();
     data['delivery_postponement_date'] = $('#delivery_postponement_date').val();
 
-    let amounts = [], items_ids = [];
-    for (let element of $('#flight [name="item_flight"]')) {
-        items_ids.push($(element).attr('id').split('_')[2]);
-    }
-    for (let element of $('#flight #item_sum')) {
-        amounts.push({sum: element.value});
-    }
-    for (let i = 0; i < $('#flight #item_volume').length; i++){
-        if (infoAccount == 'Транзит') {
-            amounts[i].volume = $('#flight #item_volume')[0].innerHTML;
-        } else {
-            amounts[i].volume = $('#flight #item_volume')[i].value;
-        }
-        amounts[i].id = $('#flight [name="item_flight"]')[i].id.split('_')[2];
-    }
     if ($('#delivery_account')[0].value !== 'Транзит') {
         let amounts_sum = [];
         for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
@@ -2173,6 +2203,7 @@ function makeRequest(element) {
     }
 
     data['delivery_amounts'] = JSON.stringify(amounts);
+    data['delivery_item_ids'] = JSON.stringify(items_ids);
 
     let payment_list = [];
     for (let element of $('#group #delivery_date')) {
@@ -2197,7 +2228,6 @@ function makeRequest(element) {
         data['delivery_payment_date'] = '';
     }
 
-    data['delivery_item_ids'] = JSON.stringify(items_ids);
     if (infoAccount !== 'Транзит') {
         data['delivery_prefix'] = infoAccount.items[0].Prefix;
         data['delivery_price']  = infoAccount.account.Sum;
