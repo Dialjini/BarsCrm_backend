@@ -232,11 +232,14 @@ def getManagerStat():
                         manager_info['id'] = j.id
                         manager_info['name'] = j.name + ' ' + j.second_name
                         if i.Client_id:
-                            manager_info['orgs'][clients[i.Client_id - 1].Name] = i.Date
+                            manager_info['orgs'][clients[i.Client_id - 1].Name + '$$'
+                                                 + str(i.Client_id) + '$$client'] = i.Date
                         elif i.Provider_id:
-                            manager_info['orgs'][providers[i.Provider_id - 1].Name] = i.Date
+                            manager_info['orgs'][providers[i.Provider_id - 1].Name + '$$'
+                                                 + str(i.Provider_id) + '$$provider'] = i.Date
                         elif i.Carrier_id:
-                            manager_info['orgs'][carriers[i.Carrier_id - 1].Name] = i.Date
+                            manager_info['orgs'][carriers[i.Carrier_id - 1].Name + '$$'
+                                                 + str(i.Carrier_id) + '$$Carrier_id'] = i.Date
                         else:
                             continue
                 result.append(manager_info)
@@ -1150,6 +1153,15 @@ def addProvider():
         return 'OK'
     else:
         return redirect('/', code=302)
+
+
+@app.route('editItemDelivery', methods=['GET'])
+def editItemDelivery():
+    carrier = models.Carrier.query.filter_by(id=request.args['id']).first()
+    carrier.Items_delivery = request.args['data']
+    db.session.commit()
+    return 'OK'
+
 
 @app.route('/deleteDoc', methods=['GET'])
 def deleteDoc():
