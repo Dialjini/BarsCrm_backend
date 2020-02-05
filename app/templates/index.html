@@ -37,8 +37,12 @@
                     <input type="search" id="search" name="search" placeholder="Введите фамилию, телефон или email" maxlength="50">
                 </div>
                 <div class="search_comment">
-                    <input type="checkbox" id="active_comment_seach" onclick="changeSearchMode()">
+                    <input type="checkbox" id="active_comment_seach" onclick="changeSearchMode(this.id)">
                     <label for="active_comment_seach">Поиск по комментарию</label>
+                </div>
+                <div class="search_comment_name">
+                    <input type="checkbox" id="active_comment_seach_name" onclick="changeSearchMode(this.id)">
+                    <label for="active_comment_seach_name">Поиск по наименованию</label>
                 </div>
             </header>
             <div class="container">

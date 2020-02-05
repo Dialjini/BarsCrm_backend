@@ -808,6 +808,7 @@ function cancelSearch() {
         category: {status: false, filter: null, last: null},
         manager: {status: false, filter: null, last: null},
         customer: {status: false, filter: null, last: null},
+        status: {status: false, filter: null, last: null},
         date: {status: false, filter: null, last: null},
     }
 }
@@ -990,6 +991,37 @@ function searchCategoryInfo() {
                 $('.info').append(createModalMenu());
             }
         })
+    } else if ($('#active_comment_seach_name').prop('checked')) {
+        $('.modal_search').remove();
+        $('.overflow').remove();
+        let list = [
+            {id: 'client', filter_table: filterClient},
+            {id: 'prodiver', filter_table: filterProvider},
+            {id: 'carrier', filter_table: filterCarrier},
+        ]
+
+        for (let i = 0; i < list.length; i++) {
+            if (saveTableAndCard[0].id == list[i].id) {
+                let data = saveTableAndCard[1][1];
+                let table = [];
+                for (let j = 0; j < data.length; j++) {
+                    if (data[j].Name.includes(searchInfo)) {
+                        table.push(data[j]);
+                    }
+                }
+                list[i].filter_table[1][1] = table;
+                $('.table').remove();
+                $('.info').append(fillingTables(list[i].filter_table));
+                break;
+            }
+        }
+
+        $('.centerBlock .header .cancel').remove();
+        $('.centerBlock .header').append(`
+            <div class="cancel">
+                <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+            </div>
+        `)
     } else {
         $.ajax({
             url: '/findContacts',

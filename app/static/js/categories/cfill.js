@@ -12,6 +12,7 @@ function linkField() {
             category: {status: false, filter: null, last: null},
             manager: {status: false, filter: null, last: null},
             customer: {status: false, filter: null, last: null},
+            status: {status: false, filter: null, last: null},
             date: {status: false, filter: null, last: null},
         }
         $('.table').remove();
@@ -268,6 +269,7 @@ function linkCategory(element) {
         category: {status: false, filter: null, last: null},
         manager: {status: false, filter: null, last: null},
         customer: {status: false, filter: null, last: null},
+        status: {status: false, filter: null, last: null},
         date: {status: false, filter: null, last: null},
     }
     categoryInFilterStock[1][1] = [];
@@ -1930,6 +1932,7 @@ function getValidationDate(date) {
                 },
                 success: function(data) {
                     result = JSON.parse(data);
+                    console.log(result);
                     let total_count = 0;
                     let unload_info = [];
                     for (let i = 0; i < result.data.length; i++) {
@@ -1945,18 +1948,19 @@ function getValidationDate(date) {
                             let current_date = getValidationDate(result.data[i].orgs[key]);
                             if (current_date >= date_period[0] && current_date <= date_period[1] && (filter_manager == result.data[i].name || filter_manager == '')) {
                                 if (!unload_status) {
+                                    let data_one = key.split('$$');
                                     if (count == 0) {
                                         table += `
                                             <tr>
                                                 <td name="username_analytics" rowspan="${length}">${result.data[i].name}</td>
-                                                <td>${key}</td>
+                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
                                                 <td>${result.data[i].orgs[key]}</td>
                                             </tr>
                                         `
                                     } else {
                                         table += `
                                             <tr>
-                                                <td>${key}</td>
+                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
                                                 <td>${result.data[i].orgs[key]}</td>
                                             </tr>
                                         `
@@ -2012,6 +2016,29 @@ function getValidationDate(date) {
                     ${fillTable()}
                 </table>
             `
+        }
+    }
+    function openThisCardMenu(element) {
+        let list = [
+            {id: 'carrier', request: '/getCarriers', table: categoryInListCarrier},
+            {id: 'client', request: '/getClients', table: categoryInListClient},
+            {id: 'provider', request: '/getProviders', table: categoryInListProvider},
+        ]
+
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id == element.id.split('_')[0]) {
+                $.ajax({
+                    url: list[i].request,
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(result) {
+                        result = JSON.parse(result);
+                        if (list[i].table[1][1] == undefined) list[i].table[1].push(result);
+                        openCardMenu(element);
+                    }
+                });
+                break;
+            }
         }
     }
     function selectManagerAnalytics(element) {

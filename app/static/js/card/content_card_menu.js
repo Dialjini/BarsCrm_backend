@@ -1458,13 +1458,25 @@ function returnSpaces(string) {
     }
     return array.reverse().join('').trim();
 }
-function changeSearchMode() {
-    if ($('#active_comment_seach').prop('checked')) {
-        $('#search').attr('placeholder', 'Введите текст комментария');
-    } else {
-        $('#search').attr('placeholder', 'Введите фамилию, телефон или email');
+function changeSearchMode(id) {
+    let list = [
+        {id: 'active_comment_seach', txt: 'Введите текст комментария'},
+        {id: 'active_comment_seach_name', txt: 'Введите наименование организации'},
+    ]
+
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].id == id) {
+            if (!$(`#${id}`).prop('checked')) {
+                $(`#${id}`).prop('checked', false);
+                $('#search').attr('placeholder', 'Введите фамилию, телефон или email');
+            } else {
+                $('input:checked').prop('checked', false);
+                $(`#${id}`).prop('checked', true);
+                $('#search').attr('placeholder', list[i].txt);
+            }
+            break;
+        }
     }
-    
 }
 // Период для информации по счетам (Дебеторка)
 function visibleSelectPeriod(type = 'account') {

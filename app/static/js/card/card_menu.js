@@ -52,6 +52,7 @@ function createCardMenu(element, index = 0) {
         category: {status: false, filter: null, last: null},
         manager: {status: false, filter: null, last: null},
         customer: {status: false, filter: null, last: null},
+        status: {status: false, filter: null, last: null},
         date: {status: false, filter: null, last: null},
     }
     // Вывод обычной карточки или карточки-окна
@@ -730,6 +731,32 @@ function createCardMenu(element, index = 0) {
                 }
             }
         }
+        function fillFlightsCarrier() {
+            let data = JSON.parse(selectedLine.Items_delivery);
+            let table = '';
+
+            for (let i = 0; i < data.length; i++) {
+                let amount = 0;
+                for (let j = i + 1; j < data.length; j++) {
+                    if (data[i].delivery_id == data[j].delivery_id) {
+                        amount += +deleteSpaces(data[i].sum);
+                        data.splice(1, j);
+                        j--;
+                    }
+                }
+                if (amount == 0) amount = data[i].sum;
+                table += `
+                    <tr>
+                        <td>${data[i].date}</td>
+                        <td>${data[i].client}</td>
+                        <td>${data[i].stock}</td>
+                        <td>${data[i].contact}</td>
+                        <td>${returnSpaces(amount)}</td>
+                    </tr>
+                `
+            }
+            return table;
+        }
         let content = $('<div>', {
             class: 'row_card',
             css: { 'justify-content': 'flex-start' },
@@ -822,12 +849,8 @@ function createCardMenu(element, index = 0) {
                                     <th>Водитель</th>
                                     <th>Цена, руб.</th>
                                 </tr>
-                                <tbody id="group"></tbody>
+                                ${fillFlightsCarrier()}
                             </table>
-                        </div>
-                        <div class="events">
-                            <img class="add_something" id="carrier-group" src="static/images/add.png" onclick="addRow(this.id)">
-                            <img class="add_something" name="remove_last_group" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
                     </div>
                 </div>
@@ -2131,10 +2154,11 @@ function makeRequest(element) {
 
     let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
     let delivery_id = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1]
-    let date = getCurrentDateNotComparison('year');
+    let date = getCurrentDateNotComparison('year'), carrier_id = 0;
     for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
         if (categoryInDelivery[1][1][i].delivery.id == delivery_id) {
             date = categoryInDelivery[1][1][i].delivery.Date;
+            carrier_id = categoryInDelivery[1][1][i].carrier.id;
         }
     }
 
@@ -2143,7 +2167,7 @@ function makeRequest(element) {
     data['delivery_contact_end'] = +$('#delivery_contact_name').val();
     data['delivery_contact_name'] = $('#delivery_driver').val();
     data['delivery_account_id'] = +$('#delivery_account')[0].value;
-    data['delivery_client'] = $('#delivery_client')[0].value;
+    data['delivery_client'] = $('#delivery_client')[0].children[0].innerHTML;
     data['delivery_car'] = $('#delivery_car').val();
     data['delivery_passport'] = $('#delivery_passport').val();
     data['delivery_postponement_date'] = $('#delivery_postponement_date').val();
@@ -2246,9 +2270,11 @@ function makeRequest(element) {
         data['delivery_name']   = 'Транзит';
         $('#transit_info').remove()
     }
-    if (categoryInFinanceAccount[1][1] != undefined) {
+    if (categoryInFinanceAccount[1][1] != undefined)
         categoryInFinanceAccount[1].pop();
-    }
+    if (categoryInListCarrier[1][1] != undefined)
+        categoryInListCarrier[1].pop();
+    
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -2260,6 +2286,29 @@ function makeRequest(element) {
             if ($(element).attr('data-name') == 'document') {
                 createDocument(element);
             }
+
+            let all_amounts = [];
+            for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
+                if (categoryInDelivery[1][1][i].carrier.id == carrier_id) {
+                    let amount = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
+                    for (let j = 0; j < amount.length; j++) {
+                        amount[j].date = categoryInDelivery[1][1][i].delivery.Date;
+                        amount[j].client = categoryInDelivery[1][1][i].delivery.Client;
+                        amount[j].stock = categoryInDelivery[1][1][i].delivery.Stock;
+                        amount[j].contact = categoryInDelivery[1][1][i].delivery.Contact_Name;
+                        amount[j].delivery_id = categoryInDelivery[1][1][i].delivery.id;
+                        all_amounts.push(amount[j]);
+                    }
+                }
+            }
+            $.ajax({
+                url: '/editItemDelivery',
+                type: 'GET',
+                dataType: 'html',
+                data: {id: carrier_id, data: JSON.stringify(all_amounts)},
+                success: function() {}
+            });
+
             closeCardMenu(element.id);
         }
     });
@@ -2592,10 +2641,10 @@ function selectDrivers(value, select = {Contact_Name: ''}) {
             }
 
             for (let i = 0; i < result.length; i++) {
-                if (select.Contact_Name != '' && select.Contact_Name == result[i].Position){
-                    $('#delivery_driver').append(`<option value="${result[i].Position}" selected>${result[i].Position} | ${result[i].Last_name}</option>`)
+                if (select.Contact_Name != '' && select.Contact_Name == `${result[i].Position} | ${result[i].Last_name}`){
+                    $('#delivery_driver').append(`<option value="${result[i].Position} | ${result[i].Last_name}" selected>${result[i].Position} | ${result[i].Last_name}</option>`)
                 } else {
-                    $('#delivery_driver').append(`<option value="${result[i].Position}">${result[i].Position} | ${result[i].Last_name}</option>`)
+                    $('#delivery_driver').append(`<option value="${result[i].Position} | ${result[i].Last_name}">${result[i].Position} | ${result[i].Last_name}</option>`)
                 }
             }
             
