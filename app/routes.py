@@ -1155,7 +1155,7 @@ def addProvider():
         return redirect('/', code=302)
 
 
-@app.route('editItemDelivery', methods=['GET'])
+@app.route('/editItemDelivery', methods=['GET'])
 def editItemDelivery():
     carrier = models.Carrier.query.filter_by(id=request.args['id']).first()
     carrier.Items_delivery = request.args['data']
