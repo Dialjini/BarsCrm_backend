@@ -38,7 +38,7 @@ def replace_doc(words, replacements, doc):
     return doc
 
 
-def Generate_Transit(dir_u, date, delivery, adress, adress2):
+def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
     document.MonthNum = models.getMonthNum()

@@ -105,12 +105,13 @@ def table_to_json(query):
     return json.dumps(result)
 
 
-def to_PDF(name, owner, address, delivery):
+def to_PDF(name, owner, address, delivery, address2):
     info = {}
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
     if name == 'Transit':
-        return DocCreator.Generate_Transit(dir_u=dir_u, date=date, delivery=delivery, adress=address)
+        return DocCreator.Generate_Transit(dir_u=dir_u, date=date, delivery=delivery,
+                                           adress=address, type=name, adress2=address2)
     for i in reqs.getINNinfo(owner.UHH)['suggestions']:
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
@@ -288,6 +289,7 @@ def editAccount():
         table.Hello_costs = data['hello_costs']
         table.Delivery_costs = data['delivery_costs']
         table.Shipment = data['shipment']
+        table.Shipment_hello = data['shipment_hello']
 
         db.session.commit()
         return 'OK'
@@ -313,8 +315,12 @@ def downloadDoc():
             owner = models.Carrier.query.filter_by(id=request.args['card_id']).first()
         else:
             return 'Error 400'
+        if request.args['name'] == 'transit':
+            address2 = request.args['address2']
+        else:
+            address2 = None
         return to_PDF(owner=owner, name=request.args['name'],
-                    address=request.args['address'], delivery=request.args['delivery'])
+                    address=request.args['address'], delivery=request.args['delivery'], address2=address2)
     else:
         return redirect('/', code=302)
 
@@ -762,6 +768,7 @@ def addAccount():
         table.Hello_costs = data['hello_costs']
         table.Delivery_costs = data['delivery_costs']
         table.Shipment = data['shipment']
+        table.Shipment_hello = data['shipment_hello']
 
         db.session.add(table)
         db.session.commit()
