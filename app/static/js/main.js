@@ -362,7 +362,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
                                                 hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
-                                                shipment: shipment},
+                                                shipment: shipment, shipment_hello: $('#shipment_date').val()},
                                             dataType: 'html',
                                             success: function() {
                                                 getTableData(categoryInFinanceAccount);
@@ -810,6 +810,7 @@ function cancelSearch() {
         customer: {status: false, filter: null, last: null},
         status: {status: false, filter: null, last: null},
         date: {status: false, filter: null, last: null},
+        search_on_regions: {status: false, filter: null, last: null}
     }
 }
 function searchRegionFill(element) {
@@ -842,7 +843,8 @@ function searchRegionFill(element) {
             for (let j = 0; j < clientCards.length; j++) {
                 searchCards.push(clientCards[j]);
             }
-            listData[i].filter[1][1] = searchCards.reverse();
+            sortStatus.search_on_regions.status = true;
+            listData[i].filter[1][1] = searchCards;
             $('.table').remove();
             $('.info').append(fillingTables(listData[i].filter, true));
             break;
@@ -899,9 +901,9 @@ function searchFill(element) {
     `)
 }
 function openCardMenu(element) {
-    let id = element.id.split('_');
     $('.modal_select').remove();
     $('.overflow').remove();
+    $('.background').remove();
 
     createCardMenu(element);
 }
@@ -998,6 +1000,9 @@ function searchCategoryInfo() {
             {id: 'client', filter_table: filterClient},
             {id: 'prodiver', filter_table: filterProvider},
             {id: 'carrier', filter_table: filterCarrier},
+            {id: 'debit', filter_table: filterAccount},
+            {id: 'account', filter_table: filterAccount},
+            {id: 'delivery', filter_table: filterDelivery},
         ]
 
         for (let i = 0; i < list.length; i++) {
@@ -1005,7 +1010,13 @@ function searchCategoryInfo() {
                 let data = saveTableAndCard[1][1];
                 let table = [];
                 for (let j = 0; j < data.length; j++) {
-                    if (data[j].Name.includes(searchInfo)) {
+                    let current_name = return_current_name();
+                    function return_current_name() {
+                        if (saveTableAndCard[0].id == 'account') return data[j].account.Name.toLowerCase()
+                        else if (saveTableAndCard[0].id == 'delivery') return data[j].delivery.Name.toLowerCase()
+                        else return data[j].Name.toLowerCase()
+                    }
+                    if (current_name.includes(searchInfo.toLowerCase())) {
                         table.push(data[j]);
                     }
                 }

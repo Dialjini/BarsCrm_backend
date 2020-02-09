@@ -105,10 +105,10 @@ const categoryInStock = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
-            { name: 'Вес, кг.', width: 5 },
-            { name: 'Фасовка', width: 10 },
-            { name: 'Объем, кг.', width: 5 },
-            { name: 'Цена прайса, руб.', width: 5 },
+            { name: 'Вес, кг.', width: 7 },
+            { name: 'Фасовка', width: 7 },
+            { name: 'Объем, кг.', width: 7 },
+            { name: 'Цена прайса, руб.', width: 7 },
             { name: 'НДС', width: 5 },
             { name: 'Склад', width: 15 },
         ],
@@ -122,10 +122,10 @@ const categoryInFilterStock = [
             { name: 'Юр. лицо', width: 5 },
             { name: 'Группа товаров', width: 15 },
             { name: 'Товар', width: 15 },
-            { name: 'Вес, кг.', width: 5 },
-            { name: 'Фасовка', width: 10 },
-            { name: 'Объем, кг.', width: 5 },
-            { name: 'Цена прайса, руб.', width: 5 },
+            { name: 'Вес, кг.', width: 7 },
+            { name: 'Фасовка', width: 7 },
+            { name: 'Объем, кг.', width: 7 },
+            { name: 'Цена прайса, руб.', width: 7 },
             { name: 'НДС', width: 5 },
             { name: 'Склад', width: 15 },
         ],
@@ -291,7 +291,7 @@ const idCardFields = [
     {   
         name: 'client', ids:
         ['client_site', 'client_holding', 'client_name', 'client_area', 'client_region', 'client_address', 'client_factual_address', 'client_inn',
-        'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc', 'client_rc'],
+        'client_category', 'client_station', 'client_price', 'client_distance', 'client_industry', 'client_bik', 'client_kc', 'client_rc', 'client_kpp', 'client_director'],
         request: '/addClient'
     },
     {   
@@ -303,7 +303,7 @@ const idCardFields = [
     {   
         name: 'carrier', ids:
         ['carrier_name', 'carrier_area', 'carrier_region', 'carrier_address', 'carrier_inn', 'carrier_capacity', 'carrier_view',
-        'carrier_bik', 'carrier_kc', 'carrier_rc'],
+        'carrier_bik', 'carrier_kc', 'carrier_rc', 'carrier_kpp', 'carrier_director'],
         request: '/addCarrier'
     },
     {   

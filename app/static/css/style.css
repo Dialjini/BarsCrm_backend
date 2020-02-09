@@ -167,9 +167,58 @@ body {
   color: #595959;
 }
 
+.page .modal_search .content .table_search .cl_com_filters {
+  position: relative;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+}
+
+.page .modal_search .content .table_search .cl_com_filters .drop_arrow {
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  margin-right: 10px;
+}
+
+.page .modal_search .content .table_search .cl_com_filters .filter_list {
+  display: none;
+  position: absolute;
+  width: 101%;
+  left: -1px;
+  background: #fff;
+  border: 1px solid #cecece;
+  border-radius: 0 0 5px 5px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  color: #26282f;
+}
+
+.page .modal_search .content .table_search .cl_com_filters .filter_list .list li {
+  font-weight: 500;
+  padding: 5px;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  font-size: 12px;
+}
+
+.page .modal_search .content .table_search .cl_com_filters .filter_list .list li:hover {
+  cursor: pointer;
+  -webkit-transition: 0.3s all;
+  transition: 0.3s all;
+  background-color: whitesmoke;
+}
+
+.page .modal_search .content .table_search .cl_com_filters:hover {
+  cursor: pointer;
+  -webkit-transition: 0.2s all;
+  transition: 0.2s all;
+  background-color: #614FAD;
+}
+
 .page .modal_search .content .table_search tr:not(:first-child) {
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
+  background: white;
 }
 
 .page .modal_search .content .table_search tr:not(:first-child):hover {
@@ -182,14 +231,27 @@ body {
 .page .modal_search .content .table_search td,
 .page .modal_search .content .table_search th {
   text-align: left;
-  border: 1px solid #e9e9e9;
-  padding: 10px 5px 10px 15px;
+  padding: 15px 5px 15px 15px;
   vertical-align: middle;
-  font-size: 12px;
+  font-size: 13px;
+  color: #26282f;
+  border: 1px solid #e9e9e9;
+}
+
+.page .modal_search .content .table_search tr:nth-child(2n - 1) {
+  background: #F4F6FE;
 }
 
 .page .modal_search .content .table_search th {
   font-weight: 700;
+  font-size: 13px;
+  background: #7764CA;
+  color: white;
+  border: none;
+}
+
+.page .search_by_competitor--client {
+  width: 1200px;
 }
 
 .page .leftBlock {
@@ -426,7 +488,6 @@ body {
   width: auto;
   height: 100%;
   overflow-x: auto;
-  overflow-y: scroll;
   position: relative;
 }
 
@@ -756,20 +817,20 @@ body {
   cursor: pointer;
 }
 
-.page .centerBlock .container .info .table #all_area, .page .centerBlock .container .info .table #cl_category, .page .centerBlock .container .info .table #pd_group, .page .centerBlock .container .info .table #pd_price, .page .centerBlock .container .info .table #pd_manager, .page .centerBlock .container .info .table #dl_customer, .page .centerBlock .container .info .table #dl_date, .page .centerBlock .container .info .table #dl_status {
+.page .centerBlock .container .info .table #all_area, .page .centerBlock .container .info .table #cl_category, .page .centerBlock .container .info .table #pd_group, .page .centerBlock .container .info .table #pd_price, .page .centerBlock .container .info .table #pd_manager, .page .centerBlock .container .info .table #dl_customer, .page .centerBlock .container .info .table #dl_date, .page .centerBlock .container .info .table #dl_status, .page .centerBlock .container .info .table #an_status {
   position: relative;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }
 
-.page .centerBlock .container .info .table #all_area .drop_arrow, .page .centerBlock .container .info .table #cl_category .drop_arrow, .page .centerBlock .container .info .table #pd_group .drop_arrow, .page .centerBlock .container .info .table #pd_price .drop_arrow, .page .centerBlock .container .info .table #pd_manager .drop_arrow, .page .centerBlock .container .info .table #dl_customer .drop_arrow, .page .centerBlock .container .info .table #dl_date .drop_arrow, .page .centerBlock .container .info .table #dl_status .drop_arrow {
+.page .centerBlock .container .info .table #all_area .drop_arrow, .page .centerBlock .container .info .table #cl_category .drop_arrow, .page .centerBlock .container .info .table #pd_group .drop_arrow, .page .centerBlock .container .info .table #pd_price .drop_arrow, .page .centerBlock .container .info .table #pd_manager .drop_arrow, .page .centerBlock .container .info .table #dl_customer .drop_arrow, .page .centerBlock .container .info .table #dl_date .drop_arrow, .page .centerBlock .container .info .table #dl_status .drop_arrow, .page .centerBlock .container .info .table #an_status .drop_arrow {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
   margin-right: 10px;
 }
 
-.page .centerBlock .container .info .table #all_area .filter_list, .page .centerBlock .container .info .table #cl_category .filter_list, .page .centerBlock .container .info .table #pd_group .filter_list, .page .centerBlock .container .info .table #pd_price .filter_list, .page .centerBlock .container .info .table #pd_manager .filter_list, .page .centerBlock .container .info .table #dl_customer .filter_list, .page .centerBlock .container .info .table #dl_date .filter_list, .page .centerBlock .container .info .table #dl_status .filter_list {
+.page .centerBlock .container .info .table #all_area .filter_list, .page .centerBlock .container .info .table #cl_category .filter_list, .page .centerBlock .container .info .table #pd_group .filter_list, .page .centerBlock .container .info .table #pd_price .filter_list, .page .centerBlock .container .info .table #pd_manager .filter_list, .page .centerBlock .container .info .table #dl_customer .filter_list, .page .centerBlock .container .info .table #dl_date .filter_list, .page .centerBlock .container .info .table #dl_status .filter_list, .page .centerBlock .container .info .table #an_status .filter_list {
   display: none;
   position: absolute;
   width: 101%;
@@ -782,7 +843,7 @@ body {
   color: #26282f;
 }
 
-.page .centerBlock .container .info .table #all_area .filter_list .list li, .page .centerBlock .container .info .table #cl_category .filter_list .list li, .page .centerBlock .container .info .table #pd_group .filter_list .list li, .page .centerBlock .container .info .table #pd_price .filter_list .list li, .page .centerBlock .container .info .table #pd_manager .filter_list .list li, .page .centerBlock .container .info .table #dl_customer .filter_list .list li, .page .centerBlock .container .info .table #dl_date .filter_list .list li, .page .centerBlock .container .info .table #dl_status .filter_list .list li {
+.page .centerBlock .container .info .table #all_area .filter_list .list li, .page .centerBlock .container .info .table #cl_category .filter_list .list li, .page .centerBlock .container .info .table #pd_group .filter_list .list li, .page .centerBlock .container .info .table #pd_price .filter_list .list li, .page .centerBlock .container .info .table #pd_manager .filter_list .list li, .page .centerBlock .container .info .table #dl_customer .filter_list .list li, .page .centerBlock .container .info .table #dl_date .filter_list .list li, .page .centerBlock .container .info .table #dl_status .filter_list .list li, .page .centerBlock .container .info .table #an_status .filter_list .list li {
   font-weight: 500;
   padding: 5px;
   -webkit-transition: 0.3s all;
@@ -790,14 +851,14 @@ body {
   font-size: 12px;
 }
 
-.page .centerBlock .container .info .table #all_area .filter_list .list li:hover, .page .centerBlock .container .info .table #cl_category .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_group .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_price .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_manager .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_customer .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_date .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_status .filter_list .list li:hover {
+.page .centerBlock .container .info .table #all_area .filter_list .list li:hover, .page .centerBlock .container .info .table #cl_category .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_group .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_price .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_manager .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_customer .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_date .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_status .filter_list .list li:hover, .page .centerBlock .container .info .table #an_status .filter_list .list li:hover {
   cursor: pointer;
   -webkit-transition: 0.3s all;
   transition: 0.3s all;
   background-color: whitesmoke;
 }
 
-.page .centerBlock .container .info .table #all_area:hover, .page .centerBlock .container .info .table #cl_category:hover, .page .centerBlock .container .info .table #pd_group:hover, .page .centerBlock .container .info .table #pd_price:hover, .page .centerBlock .container .info .table #pd_manager:hover, .page .centerBlock .container .info .table #dl_customer:hover, .page .centerBlock .container .info .table #dl_date:hover, .page .centerBlock .container .info .table #dl_status:hover {
+.page .centerBlock .container .info .table #all_area:hover, .page .centerBlock .container .info .table #cl_category:hover, .page .centerBlock .container .info .table #pd_group:hover, .page .centerBlock .container .info .table #pd_price:hover, .page .centerBlock .container .info .table #pd_manager:hover, .page .centerBlock .container .info .table #dl_customer:hover, .page .centerBlock .container .info .table #dl_date:hover, .page .centerBlock .container .info .table #dl_status:hover, .page .centerBlock .container .info .table #an_status:hover {
   cursor: pointer;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;

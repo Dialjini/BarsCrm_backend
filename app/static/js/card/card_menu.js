@@ -54,6 +54,7 @@ function createCardMenu(element, index = 0) {
         customer: {status: false, filter: null, last: null},
         status: {status: false, filter: null, last: null},
         date: {status: false, filter: null, last: null},
+        search_on_regions: {status: false, filter: null, last: null}
     }
     // Вывод обычной карточки или карточки-окна
     if (index == 0) {
@@ -182,13 +183,13 @@ function createCardMenu(element, index = 0) {
                     } 
                 }
                 if (getInfo[0] === 'account') {
-                    titleObject[i].list.push(`Счёт от ${selectedLine.items[0].Prefix}`)
+                    titleObject[i].list.push(`Счёт от ${selectedLine.items[0].Prefix} (${selectedLine.items[0].NDS}%)`)
                 }
             } else {
                 const emptyData = [
-                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Fact_address', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc', 'rc'] },
+                    { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Fact_address', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc', 'rc', 'kpp', 'Director'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
-                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View', 'Bik', 'kc', 'rc'] },
+                    { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View', 'Bik', 'kc', 'rc', 'kpp', 'Director'] },
                     { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
@@ -455,6 +456,14 @@ function createCardMenu(element, index = 0) {
                                 <tr>
                                     <td>Расч. счёт</td>
                                     <td><input type="text" class="string" maxlength="20" id="client_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
+                                </tr>
+                                <tr>
+                                    <td>КПП</td>
+                                    <td><input type="text" class="string" maxlength="20" id="client_kpp" onchange="saveCard()" value="${selectedLine.kpp}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Директор</td>
+                                    <td><input type="text" class="string" maxlength="20" id="client_director" onchange="saveCard()" value="${selectedLine.Director}"></td>
                                 </tr>
                             </table>
                         </div>
@@ -732,29 +741,33 @@ function createCardMenu(element, index = 0) {
             }
         }
         function fillFlightsCarrier() {
-            let data = JSON.parse(selectedLine.Items_delivery);
+            console.log(selectedLine);
+            let data = selectedLine.Items_delivery == undefined ? null : JSON.parse(selectedLine.Items_delivery);
             let table = '';
 
-            for (let i = 0; i < data.length; i++) {
-                let amount = 0;
-                for (let j = i + 1; j < data.length; j++) {
-                    if (data[i].delivery_id == data[j].delivery_id) {
-                        amount += +deleteSpaces(data[i].sum);
-                        data.splice(1, j);
-                        j--;
+            if (data !== null) {
+                for (let i = 0; i < data.length; i++) {
+                    let amount = 0;
+                    for (let j = i + 1; j < data.length; j++) {
+                        if (data[i].delivery_id == data[j].delivery_id) {
+                            amount += +deleteSpaces(data[i].sum);
+                            data.splice(1, j);
+                            j--;
+                        }
                     }
+                    if (amount == 0) amount = data[i].sum;
+                    table += `
+                        <tr>
+                            <td>${data[i].date}</td>
+                            <td>${data[i].client}</td>
+                            <td>${data[i].stock}</td>
+                            <td>${data[i].contact}</td>
+                            <td>${returnSpaces(amount)}</td>
+                        </tr>
+                    `
                 }
-                if (amount == 0) amount = data[i].sum;
-                table += `
-                    <tr>
-                        <td>${data[i].date}</td>
-                        <td>${data[i].client}</td>
-                        <td>${data[i].stock}</td>
-                        <td>${data[i].contact}</td>
-                        <td>${returnSpaces(amount)}</td>
-                    </tr>
-                `
             }
+
             return table;
         }
         let content = $('<div>', {
@@ -812,6 +825,14 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Расч. счёт</td>
                             <td><input type="text" class="string" maxlength="20" id="carrier_rc" onchange="saveCard()" value="${selectedLine.rc}"></td>
+                        </tr>
+                        <tr>
+                            <td>КПП</td>
+                            <td><input type="text" class="string" maxlength="20" id="carrier_kpp" onchange="saveCard()" value="${selectedLine.kpp}"></td>
+                        </tr>
+                        <tr>
+                            <td>Директор</td>
+                            <td><input type="text" class="string" maxlength="20" id="carrier_director" onchange="saveCard()" value="${selectedLine.Director}"></td>
                         </tr>
                     </table>`).add(`
                     <table class="table_block">
@@ -921,6 +942,10 @@ function createCardMenu(element, index = 0) {
             }
         }
 
+        if (selectedLine.account.Payment_history.length > 22) {
+            edit = true;
+        }
+
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
@@ -930,6 +955,12 @@ function createCardMenu(element, index = 0) {
                 list_stock_id.push(list_items[i].Stock_id);
                 list_items_id.push(list_items[i].Item_id);
                 sum += +deleteSpaces(items_amount[i].amount);
+
+                let totalSale       = deleteSpaces(sale[i]);
+                let totalPrivet     = deleteSpaces(privet[i]);
+                let totalDelivery   = deleteSpaces(delivery[i]);
+                let price_unit      = (+totalSale + +totalPrivet + +totalDelivery + +deleteSpaces(list_items[i].Cost));
+
                 if (!edit) {
                     table = table.concat(`
                         <tr class="product invoiled" id="product_${list_items[i].Item_id}">
@@ -945,43 +976,41 @@ function createCardMenu(element, index = 0) {
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>
-                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}">
+                                <input onkeyup="maskNumber(this.id); recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}">
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}">
+                                <input onkeyup="maskNumber(this.id); recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}">
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}">
+                                <input onkeyup="maskNumber(this.id); recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}">
                             </td>
-                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
-                            <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
+                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(price_unit)}</td>
+                            <td id="amountC_${list_items[i].Item_id}">${returnSpaces(items_amount[i].amount)}</td>
                         </tr>
                     `)
                 } else {
                     table = table.concat(`
                         <tr class="product invoiled" id="product_${list_items[i].Item_id}">
-                            <td id="invoiled_${list_items[i].Item_id}" onclick="deleteProduct(this.id)">
-                                <img src="../static/images/returnBack.png" style="width: 12px;">
-                            </td>
+                            <td></td>
                             <td>${list_items[i].Name}</td>
                             <td>${list_items[i].Packing}</td>
                             <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
                             <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
                             <td>
-                                <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" disabled id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
+                                <input type="text" disabled id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>
-                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}" disabled>
+                                <input type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}" disabled>
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}" disabled>
+                                <input type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}" disabled>
                             </td>
                             <td>
-                                <input onkeyup="recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}" disabled>
+                                <input type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}" disabled>
                             </td>
-                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Cost) / +deleteSpaces(list_items[i].Transferred_volume)))}</td>
-                            <td id="amountC_${list_items[i].Item_id}">${items_amount[i].amount}</td>
+                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(price_unit)}</td>
+                            <td id="amountC_${list_items[i].Item_id}">${returnSpaces(items_amount[i].amount)}</td>
                         </tr>
                     `)
                 }
@@ -1085,7 +1114,7 @@ function createCardMenu(element, index = 0) {
                                                 <td>${returnSpaces(amounts[l].volume)}</td>
                                                 <td>${data_items[j].items[k].Packing}</td>
                                                 <td>${returnSpaces(amounts[l].sum)}</td>
-                                                ${data_user.role == 'admin' ? `<td>${data_items[j].items[k].Purchase_price}</td>` : ''}
+                                                ${data_user.role == 'admin' ? `<td>${returnSpaces(data_items[j].items[k].Purchase_price)}</td>` : ''}
                                             </tr>
                                         `
                                     }
@@ -1102,6 +1131,20 @@ function createCardMenu(element, index = 0) {
                     ${fillFlights()}
                 </tbody>
             `
+        }
+        let status_payment = false;
+        checkPayment();
+        function checkPayment() {
+            let payment_list = JSON.parse(selectedLine.account.Payment_history);
+            let amount = deleteSpaces(selectedLine.account.Sum);
+            let payment_amount = 0;
+
+            for (let i = 0; i < payment_list.length; i++) {
+                payment_amount += +deleteSpaces(payment_list[i].sum);
+            }
+            if (+amount <= +payment_amount) status_payment = true
+            else if (+payment_amount == 0) status_payment = false
+            else status_payment = true
         }
         function checkEdit() {
             if (!edit) {
@@ -1129,6 +1172,12 @@ function createCardMenu(element, index = 0) {
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>
                     </div>
+                    ${selectedLine.account.Shipment != 'true' && !status_payment ? 
+                    `<div class="info_block">
+                        <span class="lightgray">Актуальность счета</span>
+                        ${selectedLine.account.Status == 'true' ? `<input checked type="checkbox" id="account_status">` : `<input type="checkbox" id="account_status">`}
+                        <label for="account_status">Этот счет не актуален</label>
+                    </div>` : ''}
                 </div>
             `
             } else {
@@ -1152,9 +1201,87 @@ function createCardMenu(element, index = 0) {
                                 <input type="text" value="${selectedLine.account.Delivery_costs}" disabled id="total_delivery_inv" class="total_count bold mrl">
                             </div>
                         </div>
+                        ${selectedLine.account.Shipment != 'true' && !status_payment ? 
+                        `<div class="info_block">
+                            <span class="lightgray">Актуальность счета</span>
+                            ${selectedLine.account.Status == 'true' ? `<input checked type="checkbox" id="account_status">` : `<input type="checkbox" id="account_status">`}
+                            <label for="account_status">Этот счет не актуален</label>
+                        </div>` : ''}
                     </div>
                 `
             }   
+        }
+        function fillOutputTable() {
+            if (!edit) {
+                let content;
+                $.ajax({
+                    url: '/getStockTable',
+                    type: 'GET',
+                    dataType: 'html',
+                    async: false,
+                    success: function(data) { 
+                        data = JSON.parse(data);
+                        function getTitleFilterList() {
+                            return `<tr>
+                                        <th>Группа товаров</th>
+                                        <th>Товар</th>
+                                        <th>Юр. лицо</th>
+                                        <th>Объем, кг.</th>
+                                        <th>Фасовка</th>
+                                        <th>НДС</th>
+                                        <th>Цена прайса, руб.</th>
+                                        <th>Склад</th>
+                                    </tr>`
+                        }
+                        function getFilterList() {
+                            let tbody = '<tbody id="filter_list">'
+                            let items = [];
+                            for (let i = 0; i < selectedLine.items.length; i++) {
+                                items.push(selectedLine.items[i].Item_id);
+                            }
+                            for (let i = 0; i < data.length; i++) {
+                                if (data[i].stock_address !== null) {
+                                    for (let j = 0; j < data[i].items.length; j++) {
+                                        function checkStatus() {
+                                            for (let item = 0; item < items.length; item++) {
+                                                if (items[item] == data[i].items[j].Item_id) {
+                                                    return false;
+                                                }
+                                            }
+                                            return true;
+                                        }
+                                        if (checkStatus()) {
+                                            tbody += `
+                                                    <tr id="add_${data[i].items[j].Item_id}" onclick="addItemToAccount(this)">
+                                                        <td>${data[i].items[j].Group_name}</td>
+                                                        <td>${data[i].items[j].Name}</td>
+                                                        <td>${data[i].items[j].Prefix}</td>
+                                                        <td>${data[i].items[j].Volume}</td>
+                                                        <td>${data[i].items[j].Packing}</td>
+                                                        <td>${data[i].items[j].NDS}</td>
+                                                        <td>${data[i].items[j].Cost}</td>
+                                                        <td>${data[i].stock_address}</td>
+                                                    </tr>
+                                                `;
+                                        }
+                                    }
+                                }
+                            }
+                            return tbody + '</tbody>';
+                        }
+                        content = `
+                            <div class="info_block full hmax">
+                                <table class="account_table new_table" id="output_table">
+                                    ${getTitleFilterList()}
+                                    ${getFilterList()}
+                                </table>
+                            </div>`
+                    }
+                });
+                return content;
+            } else {
+                return '';
+            }
         }
         return `${checkEdit()}
                 <div class="row_card">
@@ -1203,6 +1330,14 @@ function createCardMenu(element, index = 0) {
                         </table>
                     </div>
                 </div>
+                ${!edit ? 
+                    `<div class="search_items">
+                        <input type="text" id="invoice_search_items" name="${selectedLine.account.id}">
+                        <button onclick="searchItemsInAccount()" class="btn btn-main btn-srch btn-srch-left">Поиск</button>
+                    </div>` : ''}
+                <div class="row_card" id="row_output_table">
+                    ${fillOutputTable()}
+                </div>
                 <div class="row_card">
                     <div class="info_block">
                         <span class="lightgray">Оплата</span>
@@ -1221,17 +1356,25 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="info_block">
+                        <span class="lightgray">Оплата Привета</span>
+                        <table>
+                            <tr>
+                                <th>Дата</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" style="width: 70px" id="shipment_date" value="${selectedLine.account.Shipment_hello}">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="info_block">
                         <span class="lightgray">Отгрузки</span>
                         <div class="hmax">
                             <table style="width: 625px">
                                 ${tableShipments()}
                             </table>
                         </div>
-                    </div>
-                    <div class="info_block">
-                        <span class="lightgray">Актуальность счета</span>
-                        ${selectedLine.account.Status == 'true' ? `<input checked type="checkbox" id="account_status">` : `<input type="checkbox" id="account_status">`}
-                        <label for="account_status">Этот счет не актуален</label>
                     </div>
                 </div>
                 <div class="next">
@@ -1799,7 +1942,7 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="next">
-                        <button class="btn" style="margin-right: 10px" id="delivery_new" onclick="closeCardMenu(this.id)">Забирает сам</button>
+                        <button class="btn" style="margin-right: 10px" id="delivery_new" data-name="not-document" onclick="makeRequest(this)">Забирает сам</button>
                         <button class="btn btn-main" data-name="document" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
@@ -1955,21 +2098,101 @@ function deleteItemInFlight(element) {
         }
     }
 }
-function deleteProduct(id) {
-    let check = confirm('Вы уверены, что хотите удалить этот товар из счета? После этого действия товар вернуть будет невозможно!')
-    if (!check) return;
-    $(`#product_${id.split('_')[1]}`).remove();
+function searchItemsInAccount() {
+    let search_item = $('#invoice_search_items').val();
+    let id = $('#invoice_search_items').attr('name');
+
     $.ajax({
         url: '/getStockTable',
         type: 'GET',
         dataType: 'html',
         success: function(data) { 
             data = JSON.parse(data);
-            // Возвращаем столбец из верхней таблицы обратно
+            for (let i = 0; i < categoryInFinanceAccount[1][1].length; i++) {
+                if (categoryInFinanceAccount[1][1][i].account.id == id) {
+                    selectedLine = categoryInFinanceAccount[1][1][i];
+                    break;
+                }
+            }
+            let items = [];
+            for (let i = 0; i < selectedLine.items.length; i++) {
+                items.push(selectedLine.items[i].Item_id);
+            }
+            function getTitleFilterList() {
+                return `<tr>
+                            <th>Группа товаров</th>
+                            <th>Товар</th>
+                            <th>Юр. лицо</th>
+                            <th>Объем, кг.</th>
+                            <th>Фасовка</th>
+                            <th>НДС</th>
+                            <th>Цена прайса, руб.</th>
+                            <th>Склад</th>
+                        </tr>`
+            }
+
+            function getFilterList() {
+                let tbody = $('<tbody>', {id: 'filter_list'});
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].stock_address !== null) {
+                        for (let j = 0; j < data[i].items.length; j++) {
+                            if (data[i].items[j].Name.includes(search_item)) {
+                                function checkStatus() {
+                                    for (let item = 0; item < items.length; item++) {
+                                        if (items[item] == data[i].items[j].Item_id) {
+                                            return false;
+                                        }
+                                    }
+                                    return true;
+                                }
+                                if (checkStatus()) {
+                                    let tr = $('<tr>', { onclick: 'addItemToAccount(this)', id: `add_${data[i].items[j].Item_id}`});
+                                    const name = [data[i].items[j].Group_name, data[i].items[j].Name, data[i].items[j].Prefix, data[i].items[j].Volume, data[i].items[j].Packing, data[i].items[j].NDS, data[i].items[j].Cost, data[i].stock_address];
+                                    for (let k = 0; k < name.length; k++) {
+                                        tr.append($('<td>', {
+                                            html: name[k]
+                                        }))
+                                    }
+                                    tbody.append(tr);
+                                }
+                            }
+                        }
+                    }
+                }
+                return tbody;
+            }
+
+            let content = $('<div>', {
+                    class: 'info_block full hmax',
+                    append: $('<table>', {
+                        class: 'account_table new_table',
+                        id: 'output_table',
+                        html: getTitleFilterList(),
+                        append: getFilterList()
+                    })
+            })
+            $('#row_output_table').empty();
+            $('#row_output_table').append(content);
+        }
+    });
+}
+function deleteProduct(id) {
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            $(`#product_${id.split('_')[1]}`).remove();
+            let tr = $('<tr>', { onclick: 'addItemToAccount(this)', id: id.replace(/product_/g, 'add_')});
             for (let i = 0; i < data.length; i++) {
                 for (let j = 0; j < data[i].items.length; j++) {
                     let account = data[i].items[j];
                     if (account.Item_id == id.split('_')[1]) {
+                        let list = [account.Group_name, account.Name, account.Prefix, account.Volume, account.Packing, account.NDS, account.Cost, data[i].stock_address]
+                        for (let k = 0; k < list.length; k++) {
+                            tr.append($('<td>', { html: list[k] }));
+                        }
                         let sum = 0;
                         $('#exposed_list .invoiled').each(function(i, element) {
                             sum += +deleteSpaces($(element).children()[11].innerHTML);
@@ -1983,6 +2206,7 @@ function deleteProduct(id) {
                     }
                 }
             }
+            $('#filter_list').append(tr);
 
             // Возвращаем пустой столбец в верхнюю таблицу
             let returnEmptyRow = $('<tr>', {class: 'product', id: 'empty'});
@@ -2059,6 +2283,9 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
+                    if ($('#delivery_account').val() == 'Транзит') {
+
+                    }
                     link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
                     if (select_cusmoter == 'ООО') {
                         link.download = 'Заявка ООО.docx';
@@ -2072,6 +2299,7 @@ function createDocument(element) {
     }); 
 }
 function makeRequest(element) {
+    let this_element = element;
     let infoAccount;
     if ($('#delivery_account')[0].value == 'Транзит') {
         infoAccount = 'Транзит'
@@ -2089,22 +2317,26 @@ function makeRequest(element) {
         items_ids.push($(element).attr('id').split('_')[2]);
     }
     for (let element of $('#flight [name="item_sum"]')) {
-        if (element.value == '') {
-            return $('.page').append($('<div>', { class: 'background' }).add(`
-                <div class="modal_select">
-                    <div class="title">
-                        <span>Ошибка</span>
-                        <img onclick="closeModal()" src="static/images/cancel.png">
-                    </div>
-                    <div class="content">
-                        <div class="message">
-                            <p style="font-size: 14px; color: #595959;">Введите сумму доставки!</p>
+        if ($(this_element).attr('data-name') == 'not-document') {
+            amounts.push({sum: 0});
+        } else {
+            if (element.value == '') {
+                return $('.page').append($('<div>', { class: 'background' }).add(`
+                    <div class="modal_select">
+                        <div class="title">
+                            <span>Ошибка</span>
+                            <img onclick="closeModal()" src="static/images/cancel.png">
+                        </div>
+                        <div class="content">
+                            <div class="message">
+                                <p style="font-size: 14px; color: #595959;">Введите сумму доставки!</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `)); 
+                `)); 
+            }
+            amounts.push({sum: element.value});
         }
-        amounts.push({sum: element.value});
     }
     for (let i = 0; i < $('#flight [name="item_volume"]').length; i++){
         if (infoAccount == 'Транзит') {
@@ -2131,6 +2363,7 @@ function makeRequest(element) {
     }
 
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
+    let carrier_id = +$('#delivery_carrier_id').val();
 
     if ($(element).attr('data-name') == 'document') {
         if (infoAccount == undefined) {
@@ -2139,6 +2372,14 @@ function makeRequest(element) {
         if (data['delivery_carrier_id'] == 0) {
             return 'Оформить заявку невозможно, т.к вы не выбрали перевозчика!';
         }
+    } else if ($(element).attr('data-name') == 'not-document') {
+        if (infoAccount == undefined) {
+            return 'Выставить договор невозможно, т.к вы не выбрали счет!';
+        }
+        if (data['delivery_carrier_id'] == 0) {
+            return 'Выставить договор невозможно, т.к вы не выбрали перевозчика!';
+        }
+        data['delivery_type'] = 'not-document';
     } else {
         if (infoAccount == undefined) {
             var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
@@ -2154,11 +2395,10 @@ function makeRequest(element) {
 
     let idDelivery = element.name != undefined ? element.name.split('_') : element.id.split('_');
     let delivery_id = idDelivery[idDelivery.length - 1] == 'new' ? 'new' : +idDelivery[idDelivery.length - 1]
-    let date = getCurrentDateNotComparison('year'), carrier_id = 0;
+    let date = getCurrentDateNotComparison('year');
     for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
         if (categoryInDelivery[1][1][i].delivery.id == delivery_id) {
             date = categoryInDelivery[1][1][i].delivery.Date;
-            carrier_id = categoryInDelivery[1][1][i].carrier.id;
         }
     }
 
@@ -2229,8 +2469,13 @@ function makeRequest(element) {
         }
     }
 
-    data['delivery_amounts'] = JSON.stringify(amounts);
-    data['delivery_item_ids'] = JSON.stringify(items_ids);
+    if ($(element).attr('data-name') == 'not-document') {
+        data['delivery_amounts'] = JSON.stringify([]);
+        data['delivery_item_ids'] = JSON.stringify([]);
+    } else {
+        data['delivery_amounts'] = JSON.stringify(amounts);
+        data['delivery_item_ids'] = JSON.stringify(items_ids);
+    }
 
     let payment_list = [];
     for (let element of $('#group #delivery_date')) {
@@ -2274,7 +2519,7 @@ function makeRequest(element) {
         categoryInFinanceAccount[1].pop();
     if (categoryInListCarrier[1][1] != undefined)
         categoryInListCarrier[1].pop();
-    
+    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -2301,6 +2546,7 @@ function makeRequest(element) {
                     }
                 }
             }
+            console.log({id: carrier_id, data: JSON.stringify(all_amounts)});
             $.ajax({
                 url: '/editItemDelivery',
                 type: 'GET',
@@ -2573,7 +2819,22 @@ function createNewItem() {
     let data = {};
 
     for (let i = 0; i < list.length; i++) {
-        if (list[i].type == 2) data[list[i].value] = deleteSpaces($(`#${list[i].value}`).val());
+        if ($(`#${list[i].value}`).val() == '') {
+            return $('.page').append($('<div>', { class: 'background' }).add(`
+                            <div class="modal_select">
+                                <div class="title">
+                                    <span>Ошибка</span>
+                                    <img onclick="closeModal()" src="static/images/cancel.png">
+                                </div>
+                                <div class="content">
+                                    <div class="message">
+                                        <p style="font-size: 13px; color: #595959;">Все поля обязательно для заполнения!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `)); 
+        }
+        if (list[i].type == 2) data[list[i].value] = $(`#${list[i].value}`).val();
         else data[list[i].value] = $(`#${list[i].value}`).val();
         
     }
@@ -2776,7 +3037,7 @@ function completionCard(elem) {
                 let status = 'false';
                 let date = getCurrentDateNotComparison('year');
                 let name;
-                let sum = $('#total').html();
+                let sum = deleteSpaces($('#total').html());
                 let shipment = 'false';
 
                 // Передать данные на сервер и создать карточку счета
@@ -2802,9 +3063,9 @@ function completionCard(elem) {
                             data: {manager_id: this_user.id, name: name, status: status, date: date,
                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
-                                total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
-                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
-                                shipment: shipment},
+                                total_costs: deleteSpaces($('#total_costs_inv').val()), sale_costs: deleteSpaces($('#total_discount_inv').val()),
+                                hello_costs: deleteSpaces($('#total_privet_inv').val()), delivery_costs: deleteSpaces($('#total_delivery_inv').val()),
+                                shipment: shipment, shipment_hello: ''},
                             dataType: 'html',
                             success: function() {
                                 closeCardMenu('account_new');

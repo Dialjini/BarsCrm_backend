@@ -72,7 +72,7 @@ function editAccount(elem) {
                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
                                 hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
-                                shipment: shipment},
+                                shipment: shipment, shipment_hello: $('#shipment_date').val()},
                             dataType: 'html',
                             success: function() {
                                 checkStocks(elem);
@@ -787,7 +787,7 @@ function searchItemsInTable() {
             let content = $('<div>', {
                     class: 'info_block full hmax',
                     append: $('<table>', {
-                        class: 'account_table',
+                        class: 'account_table new_table',
                         id: 'output_table',
                         html: getTitleFilterList(),
                         append: getFilterList()
@@ -796,6 +796,96 @@ function searchItemsInTable() {
             $('#row_output_table').empty();
             $('#row_output_table').append(content);
         }
+    });
+}
+function addItemToAccount(element) {
+    $.ajax({
+        url: '/getStockTable',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) { 
+            data = JSON.parse(data);
+            let prefixAccount = null;
+            let accountInUpperTable = $('#exposed_list .invoiled').attr('id');
+
+            if (accountInUpperTable != undefined) {
+                accountInUpperTable = accountInUpperTable.split('_')[1]
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].items.length; j++) {
+                        let account = data[i].items[j];
+                        if (account.Item_id == accountInUpperTable) {
+                            prefixAccount = account.Prefix;
+                        }
+                    }
+                }
+            } else {
+                for (let i = 0; i < data.length; i++) {
+                    for (let j = 0; j < data[i].items.length; j++) {
+                        let account = data[i].items[j];
+                        if (account.Item_id == element.id.split('_')[1]) {
+                            prefixAccount = account.Prefix;
+                        }
+                    }
+                }
+            }
+            
+            let tr = $('<tr>', { class: 'product invoiled', id: `product_${element.id.split('_')[1]}` });
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].items.length; j++) {
+                    let account = data[i].items[j];
+                    if (account.Prefix == prefixAccount) {
+                        if (account.Item_id == element.id.split('_')[1]) {
+                            tr.append($('<td>', { id: `invoiled_${element.id.split('_')[1]}`, onclick: 'deleteProduct(this.id)', append:
+                            $('<img>', { src: '../static/images/returnBack.png', width: 12 })
+                        }))
+                            let idProduct = element.id.split('_')[1];
+                            let list = [
+                                {id: ``, html: account.Name}, {id: ``, html: account.Packing},
+                                {id: `product_weight_${idProduct}`, html: returnSpaces(account.Weight)},
+                                {id: `product_containers_${idProduct}`, html: ''},
+                                {id: `invoiled_volume_${idProduct}`, html: ''},
+                                {id: `product_cost_${idProduct}`, html: returnSpaces(account.Cost)},
+                                {id: `calcSale_${idProduct}`, html: ''}, {id: `calcPrivet_${idProduct}`, html: ''},
+                                {id: `calcDelivery_${idProduct}`, html: ''}, {id: `product_unit_${idProduct}`, html: ''}, {id: `amountC_${idProduct}`, html: ''},
+                            ]
+                            for (let k = 0; k < list.length; k++) {
+                                if (list[k].id.includes('invoiled_volume')) {
+                                    tr.append($('<td>', {
+                                        append: $('<input>', {
+                                            type: 'text', onkeyup: 'maskNumberWithout(this.id); tarCalculation(this.id)', id: list[k].id, max: account.Volume
+                                        })
+                                    }))
+                                } else if (list[k].id.includes('calc')) {
+                                    tr.append($('<td>', {
+                                        append: $('<input>', {
+                                            type: 'text', id: list[k].id, name: 'edit',
+                                            onkeyup: 'maskNumber(this.id); recountPrice(this)'
+                                        })
+                                    }))
+                                } else {
+                                    tr.append($('<td>', { id: list[k].id, html: list[k].html }));
+                                }
+                            }
+                            $(`#${element.id}`).remove();
+                            $(`#empty`).last().remove();
+                            $('#exposed_list').prepend(tr);
+
+                            let sum = 0;
+                            $('#exposed_list .invoiled #amount_product').each(function(i, element) {
+                                sum += +deleteSpaces($(element).html())
+                            });
+                            account.NDS = account.NDS[0] + account.NDS[1];
+                            let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
+                            $('#total').html(returnSpaces(Math.round(sum)));
+                            $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                            $('#without-vat').html(returnSpaces(Math.round(vat)));
+                            break;
+                        }
+                    }
+                }
+            }
+            calculationIndicators();
+        },
     });
 }
 // Выставление счета
@@ -842,10 +932,10 @@ function invoiceInTable(element) {
                             let idProduct = element.id.split('_')[1];
                             let list = [
                                 {id: ``, html: account.Name}, {id: ``, html: account.Packing},
-                                {id: `product_weight_${idProduct}`, html: account.Weight},
+                                {id: `product_weight_${idProduct}`, html: returnSpaces(account.Weight)},
                                 {id: `product_containers_${idProduct}`, html: ''},
                                 {id: `invoiled_volume_${idProduct}`, html: ''},
-                                {id: `product_cost_${idProduct}`, html: account.Cost},
+                                {id: `product_cost_${idProduct}`, html: returnSpaces(account.Cost)},
                                 {id: `calcSale_${idProduct}`, html: ''}, {id: `calcPrivet_${idProduct}`, html: ''},
                                 {id: `calcDelivery_${idProduct}`, html: ''}, {id: `product_unit_${idProduct}`, html: ''}, {id: `amountC_${idProduct}`, html: ''},
                             ]
@@ -859,7 +949,7 @@ function invoiceInTable(element) {
                                 } else if (list[k].id.includes('calc')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
-                                            type: 'number', id: list[k].id, name: 'create',
+                                            type: 'text', id: list[k].id, name: 'create',
                                             onkeyup: 'recountPrice(this)'
                                         })
                                     }))
@@ -877,9 +967,9 @@ function invoiceInTable(element) {
                             });
                             account.NDS = account.NDS[0] + account.NDS[1];
                             let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
-                            $('#total').html(Math.round(sum));
-                            $('#vat').html(Math.round(sum - vat));
-                            $('#without-vat').html(Math.round(vat));
+                            $('#total').html(returnSpaces(Math.round(sum)));
+                            $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                            $('#without-vat').html(returnSpaces(Math.round(vat)));
                             break;
                         }
                     }
@@ -895,12 +985,11 @@ function dataСalculation(element) {
             list_inv[i].value = $(element).val();
         }
     }
-    let total = deleteSpaces($('#total_costs_inv').val());
     let sale = Math.abs(deleteSpaces($('#total_discount_inv').val()));
     let privet = deleteSpaces($('#total_privet_inv').val());
     let delivery = deleteSpaces($('#total_delivery_inv').val());
     let sum = +sale + +privet + +delivery;
-    $('#total_costs_inv').val(sum);
+    $('#total_costs_inv').val(returnSpaces(sum));
 
     let total_costs = deleteSpaces($('#total_costs_inv').val());
 
@@ -909,7 +998,7 @@ function dataСalculation(element) {
         count++;
     }
     for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (+deleteSpaces($(element).children()[5].children[0].value) * +deleteSpaces($(element).children()[6].innerHTML)) + Math.ceil(+total_costs / +count);
+        $(element).children()[11].innerHTML = returnSpaces((+deleteSpaces($(element).children()[5].children[0].value) * +deleteSpaces($(element).children()[6].innerHTML)) + Math.ceil(+total_costs / +count));
     }
     calculationIndicators();
 }
@@ -935,13 +1024,13 @@ function calculationIndicators() {
                         let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html())).toFixed(2);
 
-                        $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : (+totalSale * -1).toFixed(2));
-                        $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : totalPrivet);
-                        $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : totalDelivery);
-                        $(`#product_unit_${data[j].items[k].Item_id}`).html(isNaN(price_unit) || price_unit == Infinity || price_unit == -Infinity ? '' : price_unit)
+                        $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : returnSpaces((+totalSale * -1).toFixed(2)));
+                        $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : returnSpaces(totalPrivet));
+                        $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : returnSpaces(totalDelivery));
+                        $(`#product_unit_${data[j].items[k].Item_id}`).html(isNaN(price_unit) || price_unit == Infinity || price_unit == -Infinity ? '' : returnSpaces(price_unit))
                         let total = deleteSpaces((+deleteSpaces($(`#calcDelivery_${data[j].items[k].Item_id}`).val()) + +deleteSpaces($(`#calcPrivet_${data[j].items[k].Item_id}`).val()) + +deleteSpaces($(`#calcSale_${data[j].items[k].Item_id}`).val())) * +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()));
                         let amount = deleteSpaces(Math.round(+deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html()) * +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val())).toFixed(2));
-                        $(`#amountC_${data[j].items[k].Item_id}`).html(+amount + total);
+                        $(`#amountC_${data[j].items[k].Item_id}`).html(returnSpaces(+amount + total));
 
                         let sum = 0;
                         for (let element of $('#exposed_list .invoiled')) {
@@ -950,9 +1039,9 @@ function calculationIndicators() {
                         data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
                         let vat = sum > 0 ? deleteSpaces(sum - ((sum * +data[j].items[k].NDS) / 100)) : 0;
                         currentVatValue = +data[j].items[k].NDS;
-                        $('#total').html(Math.round(sum));
-                        $('#vat').html(Math.round(sum - vat));
-                        $('#without-vat').html(Math.round(vat));
+                        $('#total').html(returnSpaces(Math.round(sum)));
+                        $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                        $('#without-vat').html(returnSpaces(Math.round(vat)));
                     }
                 });
             }
@@ -981,8 +1070,8 @@ function recountPrice(element) {
     }
 
     product.children().last().html(
-        (+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
-        + (+deleteSpaces(product.children()[7].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[8].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[9].children[0].value) * +deleteSpaces(product.children()[5].children[0].value))
+        returnSpaces((+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
+        + (+deleteSpaces(product.children()[7].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[8].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[9].children[0].value) * +deleteSpaces(product.children()[5].children[0].value)))
     );
 
     let list = [
@@ -995,15 +1084,16 @@ function recountPrice(element) {
         if (dataProduct[0].includes(list[i].type)) {
             let other_total_sale = 0;
             $('#exposed_list .invoiled').each(function(i, element) {
-                let first = +deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${i + 1}`).val());
-                let second = +deleteSpaces($(`#invoiled_volume__${i + 1}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${i + 1}`).val());
+                let first = +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val());
+                let second = +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val());
                 other_total_sale += (first * second);
+                console.log(other_total_sale, first , second);
             });
             if (list[i].id == 'total_discount_inv') {
                 other_total_sale *= -1;
             }
-            $(`#${list[i].id}`).val(other_total_sale);
-            $(`#product_unit_${dataProduct[1]}`).html(+deleteSpaces(product.children()[6].innerHTML) + (+deleteSpaces(product.children()[7].children[0].value)) + (+deleteSpaces(product.children()[8].children[0].value)) + (+deleteSpaces(product.children()[9].children[0].value)));
+            $(`#${list[i].id}`).val(returnSpaces(other_total_sale));
+            $(`#product_unit_${dataProduct[1]}`).html(returnSpaces(+deleteSpaces(product.children()[6].innerHTML) + (+deleteSpaces(product.children()[7].children[0].value)) + (+deleteSpaces(product.children()[8].children[0].value)) + (+deleteSpaces(product.children()[9].children[0].value))));
 
         }
     } 
@@ -1024,6 +1114,12 @@ function recountPrice(element) {
             }
         }
     }
+
+    let sale = Math.abs(deleteSpaces($('#total_discount_inv').val()));
+    let privet = deleteSpaces($('#total_privet_inv').val());
+    let delivery = deleteSpaces($('#total_delivery_inv').val());
+    let total_sum = +sale + +privet + +delivery;
+    $('#total_costs_inv').val(returnSpaces(total_sum));
 }
 function all_costs() {
     let amount = 3, disableValue = 0;
@@ -1042,8 +1138,8 @@ function all_costs() {
         }
     }
     for (let element of $('#exposed_list .invoiled')) {
-        $(element).children()[11].innerHTML = (+deleteSpaces($(element).children()[5].children[0].value) * +deleteSpaces($(element).children()[6].innerHTML))
-        + (+deleteSpaces($(element).children()[7].children[0].value) * +deleteSpaces($(element).children()[5].children[0].value) + +deleteSpaces($(element).children()[8].innerHTML) * +deleteSpaces($(element).children()[5].children[0].value) + +deleteSpaces($(element).children()[9].innerHTML) * +deleteSpaces($(element).children()[5].children[0].value));
+        $(element).children()[11].innerHTML = returnSpaces((+deleteSpaces($(element).children()[5].children[0].value) * +deleteSpaces($(element).children()[6].innerHTML))
+        + (+deleteSpaces($(element).children()[7].children[0].value) * +deleteSpaces($(element).children()[5].children[0].value) + +deleteSpaces($(element).children()[8].innerHTML) * +deleteSpaces($(element).children()[5].children[0].value) + +deleteSpaces($(element).children()[9].innerHTML) * +deleteSpaces($(element).children()[5].children[0].value)));
     }
     calculationIndicators();
 }
@@ -1072,9 +1168,9 @@ function returnBack(element) {
                         });
                         account.NDS = account.NDS[0] + account.NDS[1];
                         let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
-                        $('#total').html(Math.round(sum));
-                        $('#vat').html(Math.round(sum - vat));
-                        $('#without-vat').html(Math.round(vat));
+                        $('#total').html(returnSpaces(Math.round(sum)));
+                        $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                        $('#without-vat').html(returnSpaces(Math.round(vat)));
                         break;
                     }
                 }
@@ -1117,7 +1213,7 @@ function switchMode(element) {
         if ($('#total_costs_inv').val() == '') {
             let value = 0;
             for (let i = 0; i < list_inv.length; i++) {
-                value += +$(`#${list_inv[i].id}`).val();
+                value += +deleteSpaces($(`#${list_inv[i].id}`).val());
             }
             $('#total_costs_inv').val(value);
         } else {
@@ -1131,10 +1227,10 @@ function switchMode(element) {
             for (let i = 0; i < list_inv.length; i++) {
                 if (list_inv[i].disable) {
                     amount--;
-                    disableValue += +$(`#${list_inv[i].id}`).val();
+                    disableValue += +deleteSpaces($(`#${list_inv[i].id}`).val());
                 }
             }
-            let value = $('#total_costs_inv').val() - disableValue;
+            let value = +deleteSpaces($('#total_costs_inv').val()) - disableValue;
             if (typeof value == typeof '') return;
             let averageValue = Math.round(value / amount);
             for (let i = 0; i < list_inv.length; i++) {
@@ -1145,7 +1241,7 @@ function switchMode(element) {
         }
     }
     for (let i = 0; i < list_inv.length; i++) {
-        list_inv[i].value = $(`#${list_inv[i].id}`).val();
+        list_inv[i].value = deleteSpaces($(`#${list_inv[i].id}`).val());
     }
     calculationIndicators();
 }
@@ -1872,7 +1968,8 @@ function addRow(id, selectedLine = '') {
             }
             if (id === 'account-group') {
                 $('#group #account_price').mask('# ##0.00', { reverse: true });
-                $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true})
+                $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true});
+                $('#shipment_date').datepicker({position: 'right bottom', autoClose: true});
             }
             if (id === 'flight-group') {
                 $('#delivery_flight_sum').mask('# ##0.00', { reverse: true });
@@ -1979,37 +2076,68 @@ function unfastenCard() {
     $('.drop_menu').fadeIn(200);
 }
 function detachmentCard(element) {
-    let idName = element.id.split('_');
-    // Добавить карточку в список Карточки клиентов
-    closeCardMenu(element.id);
     $.ajax({
-        url: '/deleteManagerFromCard',
+        url: '/getThisUser',
         type: 'GET',
-        data: {category: idName[0], card_id: idName[1], date: getCurrentDateNotComparison('year')},
         dataType: 'html',
-        success: function() {}
-    });
+        success: function(result) {
+            result = JSON.parse(result);
+            let idName = element.id.split('_');
+            let current_card;
 
-    $('#empty_customer_cards').append($('<div>', {
-        class: 'fieldInfo padd',
-        id: `${idName[0]}_${idName[1]}`,
-        onclick: 'createCardMenu(this)',
-        append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
-        .add($('<div>', {
-            class: 'row',
-            append: $('<div>', {
-                class: 'descr',
-                html: `Снято с ${username}`
-            }).add($('<div>', {
-                class: 'time',
-                html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDateNotComparison()}</span>`
-            }))
-        }))
-    }));
-    // Делать запрос на удаление менеджера из карточки
-    for (let i = 0; i < dataName.length; i++) {
-        if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
-    }
+            for (let i = 0; i < categoryInListClient[1][1].length; i++) {
+                if (categoryInListClient[1][1][i].id == idName[1]) {
+                    current_card = categoryInListClient[1][1][i];
+                    break;
+                }
+            }
+
+            if (result.role == 'manager' && current_card.Manager_id != result.id) {
+                return $('.page').append($('<div>', { class: 'background' }).add(`
+                            <div class="modal_select">
+                                <div class="title">
+                                    <span>Ошибка</span>
+                                    <img onclick="closeModal()" src="static/images/cancel.png">
+                                </div>
+                                <div class="content">
+                                    <div class="message">
+                                        <p style="font-size: 13px; color: #595959;">Вы не можете это сделать!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `)); 
+            }
+
+            closeCardMenu(element.id);
+            $.ajax({
+                url: '/deleteManagerFromCard',
+                type: 'GET',
+                data: {category: idName[0], card_id: idName[1], date: getCurrentDateNotComparison('year')},
+                dataType: 'html',
+                success: function() {}
+            });
+    
+            $('#empty_customer_cards').append($('<div>', {
+                class: 'fieldInfo padd',
+                id: `${idName[0]}_${idName[1]}`,
+                onclick: 'createCardMenu(this)',
+                append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
+                .add($('<div>', {
+                    class: 'row',
+                    append: $('<div>', {
+                        class: 'descr',
+                        html: `Снято с ${username}`
+                    }).add($('<div>', {
+                        class: 'time',
+                        html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDateNotComparison()}</span>`
+                    }))
+                }))
+            }));
+            for (let i = 0; i < dataName.length; i++) {
+                if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
+            }
+        }
+    });  
 }
 // Сохранение изменений в карточке
 function saveCard() {

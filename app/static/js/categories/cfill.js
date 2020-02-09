@@ -14,6 +14,7 @@ function linkField() {
             customer: {status: false, filter: null, last: null},
             status: {status: false, filter: null, last: null},
             date: {status: false, filter: null, last: null},
+            search_on_regions: {status: false, filter: null, last: null}
         }
         $('.table').remove();
 
@@ -248,7 +249,7 @@ function linkField() {
                 `)
             }
             if ($('#active_field').html() == 'Сводный по объёмам' || $('#active_field').html() == 'Отгрузки менеджеров') {
-                $('.table').width('fit-content');
+                $('.table').width('max-content');
             }
         });
     });
@@ -271,6 +272,7 @@ function linkCategory(element) {
         customer: {status: false, filter: null, last: null},
         status: {status: false, filter: null, last: null},
         date: {status: false, filter: null, last: null},
+        search_on_regions: {status: false, filter: null, last: null}
     }
     categoryInFilterStock[1][1] = [];
     for (let i = 0; i < linkCategoryInfo.length; i++) {
@@ -1085,8 +1087,8 @@ function getValidationDate(date) {
                                                 <td>${returnSpaces(hello[v])}</td>
                                                 <td>${returnSpaces(items_list[i].item.Cost)}</td>
                                                 <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
-                                                <td>${returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
-                                                <td>${returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume))}</td>`
+                                                <td>${returnSpaces(+deleteSpaces(items_list[i].item.Cost) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
+                                                <td>${returnSpaces((+deleteSpaces(items_list[i].item.Cost) - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume))}</td>`
                                     return trContent;
                                 }
                                 let tr;
@@ -1174,7 +1176,7 @@ function getValidationDate(date) {
         function outputAllItems() {
             let th = '';
             for (let i = 0; i < all_items.length; i++) {
-                th += `<th width="70">${all_items[i].Name}</th>`
+                th += `<th width="120">${all_items[i].Name}</th>`
             }
             return th;
         }
@@ -1344,13 +1346,15 @@ function getValidationDate(date) {
             return fillTable();
         } else {
             return `
-                <table class="table analytics">
-                    <tr>
-                        <th width="270">Клиент</th>
-                        ${outputAllItems()}
-                    </tr>
-                    ${fillTable()}
-                </table>
+                <div style="overflow-x: auto; overflow-y: scroll; position: relative;">
+                    <table class="table analytics" style="width: max-content; margin-bottom: 0px">
+                        <tr>
+                            <th width="270">Клиент</th>
+                            ${outputAllItems()}
+                        </tr>
+                        ${fillTable()}
+                    </table>
+                </div>
             `
         }
     }
@@ -1496,7 +1500,7 @@ function getValidationDate(date) {
         }
     }
     // По приветам
-    function analyticsFilterTable_3(date_period, unload_status = false) {
+    function analyticsFilterTable_3(date_period, unload_status = false, filter_status = '') {
         function fillTable() {
             let accounts;
             $.ajax({
@@ -1524,7 +1528,8 @@ function getValidationDate(date) {
             let total_count = 0;
             for (let i = 0; i < accounts.length; i++) {
                 let date_create_account = getValidationDate(accounts[i].account.Date);
-                if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                let status = accounts[i].account.Shipment_hello == '' ? 'Не оплачено' : 'Оплачено';
+                if (date_create_account >= date_period[0] && date_create_account <= date_period[1] && (filter_status == status || filter_status == '')) {
                     let items_volume = JSON.parse(accounts[i].account.Item_ids);
                     let items_hello = JSON.parse(accounts[i].account.Hello);
                     let sum_volume = items_volume.reduce((a, b) => ({volume: +deleteSpaces(a.volume) + +deleteSpaces(b.volume)}));
@@ -1541,12 +1546,14 @@ function getValidationDate(date) {
                     for (let sum = 0; sum < items_volume.length; sum++) {
                         sum_hello_volume += +deleteSpaces(items_volume[sum].volume) * +deleteSpaces(items_hello[sum]);
                     }
+                    let status_html = accounts[i].account.Shipment_hello == '' ? '<span class="red">Не оплачено</span>' : '<span class="green">Оплачено</span>'
                     all_data.push({
                         client_id: id_client,
                         name: accounts[i].account.Name,
-                        volume: +sum_volume.volume,
-                        average_volume: Math.ceil(+sum_hello_volume / +sum_volume.volume),
-                        amount_hello: Math.ceil(+sum_hello_volume),
+                        shipment_hello: status_html,
+                        volume: +deleteSpaces(sum_volume.volume),
+                        average_volume: Math.ceil(+deleteSpaces(sum_hello_volume) / +deleteSpaces(sum_volume.volume)),
+                        amount_hello: Math.ceil(+deleteSpaces(sum_hello_volume)),
                         amount: Math.round(+deleteSpaces(accounts[i].account.Sum) * 0.9)
                     });
                     total_count++;
@@ -1583,6 +1590,7 @@ function getValidationDate(date) {
                     table += `
                         <tr id="client_${all_data[i].client_id}_search" onclick="openCardMenu(this)">
                             <td>${all_data[i].name}</td>
+                            <td>${all_data[i].shipment_hello}</td>
                             <td>${returnSpaces(all_data[i].volume)}</td>
                             <td>${returnSpaces(all_data[i].average_volume)}</td>
                             <td>${returnSpaces(all_data[i].amount_hello)}</td>
@@ -1606,6 +1614,12 @@ function getValidationDate(date) {
                 <table class="table analytics">
                     <tr>
                         <th width="350">Клиент</th>
+                        <th id="an_status" onclick="selectFilterStatusAn(this)">
+                            <div class="flex jc-sb">
+                                <span>Статус</span>
+                                <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                            </div>
+                        </th>
                         <th>Объём</th>
                         <th>Сколько</th>
                         <th>Сумма, руб.</th>
@@ -1723,7 +1737,7 @@ function getValidationDate(date) {
         function outputAllItems() {
             let th = '';
             for (let i = 0; i < all_items.length; i++) {
-                th += `<th width="150">${all_items[i].Name}</th>`
+                th += `<th width="120">${all_items[i].Name}</th>`
             }
             return th;
         }
@@ -1846,8 +1860,8 @@ function getValidationDate(date) {
                         return fillItemsInfo(manager);
                     }
                 }
-                if (!unload_status) 
-                    return `<td>0</td>`;
+                if (!unload_status)
+                    return `<td>0</td>`.repeat(all_items.length + 1);
                 else 
                     return {total: 0};
             }
@@ -1899,14 +1913,16 @@ function getValidationDate(date) {
             return fillTable();
         } else {
             return `
-                <table class="table analytics">
-                    <tr>
-                        <th width="170">Менеджер</th>
-                        <th width="130">Итого</th>
-                        ${outputAllItems()}
-                    </tr>
-                    ${fillTable()}
-                </table>
+                <div style="overflow-x: auto; overflow-y: scroll; position: relative;">
+                    <table class="table analytics" style="width: max-content; margin-bottom: 0px">
+                        <tr>
+                            <th width="170">Менеджер</th>
+                            <th width="130">Итого</th>
+                            ${outputAllItems()}
+                        </tr>
+                        ${fillTable()}
+                    </table>
+                </div>
             `
         }
     }
@@ -1932,7 +1948,6 @@ function getValidationDate(date) {
                 },
                 success: function(data) {
                     result = JSON.parse(data);
-                    console.log(result);
                     let total_count = 0;
                     let unload_info = [];
                     for (let i = 0; i < result.data.length; i++) {
@@ -2045,7 +2060,7 @@ function getValidationDate(date) {
         let id = element.id;
         function listManager() {
             let ul = $('<ul>', { class: 'list'});
-            let filter_tabledata;
+            let filter_table = [], data;
     
             $.ajax({
                 url: '/getUsers',
@@ -2056,7 +2071,6 @@ function getValidationDate(date) {
                     data = JSON.parse(result);
                 }
             });
-            let filter_table = [];
             for (let i = 0; i < data.length; i++) {
                 for (let name of $('[name="username_analytics"]')) {
                     if (data[i].second_name == $(name).html().split(' ')[1] && data[i].name == $(name).html().split(' ')[0]) {
@@ -2202,4 +2216,59 @@ function getValidationDate(date) {
                 link.click();
             }
         }
+    }
+    function selectFilterStatusAn(element) {
+        let id = element.id;
+        function listCustomer() {
+            let ul = $('<ul>', { class: 'list'});
+            let filter_table = ['Оплачено', 'Не оплачено'];
+            for (let i = 0; i < filter_table.length; i++) {
+                ul.append(`
+                    <li id="${i + 1}" onclick="sortTableByStatusAn(this)">${filter_table[i]}</li>
+                `)
+            }
+            return ul;
+        }
+        $('.filter_list').fadeOut(200);
+        setTimeout(function() {
+            $('.filter_list').remove();
+        }, 200);
+    
+        if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+            return $(`#${id} .drop_arrow`).removeClass('drop_active');
+        }
+    
+        $(`.drop_arrow`).removeClass('drop_active');
+        $(`#${id} .drop_arrow`).addClass('drop_active');
+        setTimeout(function() {
+            $(element).append($('<div>', { 
+                class: 'filter_list',
+                css: {'top': `${$(element).height() + 30}px`},
+                append: listCustomer()
+            }))
+            $('.filter_list').fadeIn(100);
+        }, 250);
+    }
+    function sortTableByStatusAn(element) {
+        let searchWord = element.innerHTML;
+        $('.centerBlock .header .cancel').remove();
+
+        let date = $('#period_accounts').html();
+        let date_filter = [
+            {id: 'day', text: 'за последний день'},
+            {id: 'weak', text: 'за последнюю неделю'},
+            {id: 'month', text: 'за последний месяц'},
+            {id: 'year', text: 'за последний год'},
+            {id: 'all', text: 'за все время'},
+        ]
+        for (let i = 0; i < date_filter.length; i++) {
+            if (date_filter[i].text == date) {
+                $('.table').remove();
+                $('.info').append(analyticsFilterTable_3(datePeriod(date_filter[i].id), false, searchWord));
+                break;
+            }
+        }
+        setTimeout(function() {
+            $('#an_status .drop_arrow').removeClass('drop_active');
+        }, 150)
     }
