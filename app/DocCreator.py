@@ -105,7 +105,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
                                    filename=document.Path)
 
-def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
+def Generate_DogovorNaDostavkuOOO(dir_u, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
@@ -118,7 +118,7 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
         document.Bik = owner.Bik
     else:
         document.Bik = ''
-    document.KPP = info['data']['kpp']
+    document.KPP = owner.kpp
     if owner.rc:
         document.rc = owner.rc
     else:
@@ -128,18 +128,17 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
     else:
         document.kc = ''
 
-    document.Client_contact_name = info['data']['management']['name']
+    document.Client_contact_name = owner.Director
     document.Owner_id = owner.id
     try:
         document.Client_prefix_address = owner.Adress
     except Exception:
         document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
-    document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + \
-                                   info['data']['address']['data']['region_with_type']
-    if info['data']['address']['data']['postal_box'] != None:
-        document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data'][
-            'postal_box']
+    try:
+        document.Client_mail_address = owner.Adress
+    except Exception:
+        document.Client_mail_address = owner.Address
 
     db.session.add(document)
     db.session.commit()
@@ -163,7 +162,7 @@ def Generate_DogovorNaDostavkuOOO(dir_u, info, owner, date):
 
 
 
-def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
+def Generate_DogovorNaDostavkuIP(dir_u, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
@@ -176,7 +175,7 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
         document.Bik = owner.Bik
     else:
         document.Bik = ''
-    document.KPP = info['data']['kpp']
+    document.KPP = owner.kpp
     if owner.rc:
         document.rc = owner.rc
     else:
@@ -186,18 +185,17 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
     else:
         document.kc = ''
 
-    document.Client_contact_name = info['data']['management']['name']
+    document.Client_contact_name = owner.Director
     document.Owner_id = owner.id
     try:
         document.Client_prefix_address = owner.Adress
     except Exception:
         document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
-    document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + \
-                                   info['data']['address']['data']['region_with_type']
-    if info['data']['address']['data']['postal_box'] != None:
-        document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data'][
-            'postal_box']
+    try:
+        document.Client_mail_address = owner.Adress
+    except Exception:
+        document.Client_mail_address = owner.Address
 
     db.session.add(document)
     db.session.commit()
@@ -220,7 +218,7 @@ def Generate_DogovorNaDostavkuIP(dir_u, info, owner, date):
     return 'OK'
 
 
-def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
+def Generate_Dogovor_na_tovari_ooo(dir_u, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
@@ -233,7 +231,7 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
         document.Bik = owner.Bik
     else:
         document.Bik = ''
-    document.KPP = info['data']['kpp']
+    document.KPP = owner.kpp
     if owner.rc:
         document.rc = owner.rc
     else:
@@ -243,16 +241,17 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
     else:
         document.kc = ''
 
-    document.Client_contact_name = info['data']['management']['name']
+    document.Client_contact_name = owner.Director
     document.Owner_id = owner.id
     try:
         document.Client_prefix_address = owner.Adress
     except Exception:
         document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
-    document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
-    if info['data']['address']['data']['postal_box'] != None:
-        document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data']['postal_box']
+    try:
+        document.Client_mail_address = owner.Adress
+    except Exception:
+        document.Client_mail_address = owner.Address
 
     db.session.add(document)
     db.session.commit()
@@ -274,7 +273,7 @@ def Generate_Dogovor_na_tovari_ooo(dir_u, info, owner, date):
     return 'OK'
 
 
-def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
+def Generate_Dogovor_na_tovari_ip(dir_u, owner, date):
     document = models.Document()
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
@@ -287,7 +286,7 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
         document.Bik = owner.Bik
     else:
         document.Bik = ''
-    document.KPP = info['data']['kpp']
+    document.KPP = owner.kpp
     if owner.rc:
         document.rc = owner.rc
     else:
@@ -297,16 +296,17 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
     else:
         document.kc = ''
 
-    document.Client_contact_name = info['data']['management']['name']
+    document.Client_contact_name = owner.Director
     document.Owner_id = owner.id
     try:
         document.Client_prefix_address = owner.Adress
     except Exception:
         document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
-    document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
-    if info['data']['address']['data']['postal_box'] != None:
-        document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data']['postal_box']
+    try:
+        document.Client_mail_address = owner.Adress
+    except Exception:
+        document.Client_mail_address = owner.Address
 
     db.session.add(document)
     db.session.commit()
@@ -327,7 +327,7 @@ def Generate_Dogovor_na_tovari_ip(dir_u, info, owner, date):
     return 'OK'
 
 
-def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
+def Generate_Zayavka_OOO(dir_u, owner, date, delivery):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
     Client = models.Client.query.filter_by(Name=delivery.Name).first()
@@ -349,22 +349,22 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
         Sum = int(Sum)
     else:
         Sum = round(Sum, 2)
-    document.Bik = ''
-    document.KPP = info['data']['kpp']
-    document.rc = ''
-    document.kc = ''
+    document.Bik = owner.Bik
+    document.KPP = owner.kpp
+    document.rc = owner.rc
+    document.kc = owner.kc
 
-    document.Client_contact_name = info['data']['management']['name']
+    document.Client_contact_name = owner.Director
     document.Owner_id = owner.id
     try:
         document.Client_prefix_address = owner.Adress
     except Exception:
         document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
-    document.KPP = info['data']['kpp']
-    document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
-    if info['data']['address']['data']['postal_box'] != None:
-        document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data']['postal_box']
+    try:
+        document.Client_mail_address = owner.Adress
+    except Exception:
+        document.Client_mail_address = owner.Address
     Items = models.Item.query.all()
     item_info = {'mass': 0}
     item_info['packing'] = ''
@@ -372,7 +372,6 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
         if str(i.Item_id) in json.loads(delivery.Item_ids):
             item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
             item_info['packing'] = i.Packing
-
 
     db.session.add(document)
     db.session.commit()
@@ -413,7 +412,7 @@ def Generate_Zayavka_OOO(dir_u, info, owner, date, delivery):
 
 
 
-def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
+def Generate_Zayavka_IP(dir_u, owner, date, delivery):
     document = models.Document()
     delivery = models.Delivery.query.filter_by(id=delivery).first()
     Client = models.Client.query.filter_by(Name=delivery.Name).first()
@@ -435,22 +434,22 @@ def Generate_Zayavka_IP(dir_u, info, owner, date, delivery):
     document.UHH = owner.UHH
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ИП'
-    document.Bik = ''
-    document.KPP = info['data']['kpp']
-    document.rc = ''
-    document.kc = ''
+    document.Bik = owner.Bik
+    document.KPP = owner.kpp
+    document.rc = owner.rc
+    document.kc = owner.kc
 
-    document.Client_contact_name = info['data']['management']['name']
+    document.Client_contact_name = owner.Director
     document.Owner_id = owner.id
     try:
         document.Client_prefix_address = owner.Adress
     except Exception:
         document.Client_prefix_address = owner.Address
     document.Client_name = owner.Name
-    document.KPP = info['data']['kpp']
-    document.Client_mail_address = info['data']['address']['data']['postal_code'] + ', ' + info['data']['address']['data']['region_with_type']
-    if info['data']['address']['data']['postal_box'] != None:
-        document.Client_mail_address = document.Client_mail_address + ', ' + info['data']['address']['data']['postal_box']
+    try:
+        document.Client_mail_address = owner.Adress
+    except Exception:
+        document.Client_mail_address = owner.Address
 
     Items = models.Item.query.all()
     item_info = {'mass': 0}

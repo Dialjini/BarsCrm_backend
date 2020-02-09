@@ -115,23 +115,25 @@ def to_PDF(name, owner, address, delivery, address2):
     for i in reqs.getINNinfo(owner.UHH)['suggestions']:
         if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
             info = i
-    if str(info) == '{}':
-        print('Bad INN')
-        return 'BAD ADDRESS or INN'
-    owner.UTC = int(info['data']['address']['data']['timezone'][3:])
+
+    try:
+        owner.UTC = int(info['data']['address']['data']['timezone'][3:])
+    except Exception:
+        owner.UTC = None
+
     db.session.commit()
     if name == 'DogovorNaDostavkuIP':
-        return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, info=info, owner=owner, date=date)
+        return DocCreator.Generate_DogovorNaDostavkuIP(dir_u=dir_u, owner=owner, date=date)
     elif name == 'DogovorNaDostavkuOOO':
-        return DocCreator.Generate_DogovorNaDostavkuOOO(dir_u=dir_u, info=info, owner=owner, date=date)
+        return DocCreator.Generate_DogovorNaDostavkuOOO(dir_u=dir_u, owner=owner, date=date)
     elif name == 'Dogovor_na_tovari_ooo':
-        return DocCreator.Generate_Dogovor_na_tovari_ooo(dir_u=dir_u, info=info, owner=owner, date=date)
+        return DocCreator.Generate_Dogovor_na_tovari_ooo(dir_u=dir_u, owner=owner, date=date)
     elif name == 'Dogovor_na_tovari_ip':
-        return DocCreator.Generate_Dogovor_na_tovari_ip(dir_u=dir_u, info=info, owner=owner, date=date)
+        return DocCreator.Generate_Dogovor_na_tovari_ip(dir_u=dir_u, owner=owner, date=date)
     elif name == 'ZayavkaOOO':
-        return DocCreator.Generate_Zayavka_OOO(dir_u=dir_u, info=info, owner=owner, date=date, delivery=delivery)
+        return DocCreator.Generate_Zayavka_OOO(dir_u=dir_u, owner=owner, date=date, delivery=delivery)
     elif name == 'ZayavkaIP':
-        return DocCreator.Generate_Zayavka_IP(dir_u=dir_u, info=info, owner=owner, date=date, delivery=delivery)
+        return DocCreator.Generate_Zayavka_IP(dir_u=dir_u, owner=owner, date=date, delivery=delivery)
     else:
         return '400 Bad Request'
 
@@ -1255,6 +1257,8 @@ def addCarier():
         Carrier.kc = data['carrier_kc']
         Carrier.rc = data['carrier_rc']
         Carrier.Items_delivery = data['items_delivery']
+        Carrier.kpp = data['carrier_kpp']
+        Carrier.Director = data['carrier_director']
 
         if new:
             db.session.add(Carrier)
@@ -1299,6 +1303,8 @@ def addClient():
         Client.Bik = data['client_bik']
         Client.kc = data['client_kc']
         Client.rc = data['client_rc']
+        Client.kpp = data['client_kpp']
+        Client.Director = data['client_director']
 
         if new:
             if data['manager_id'] != 'admin':

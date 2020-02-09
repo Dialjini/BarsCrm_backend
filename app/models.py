@@ -125,6 +125,8 @@ class Client(db.Model):
     Bik = db.Column(db.String)
     kc = db.Column(db.String)
     rc = db.Column(db.String)
+    kpp = db.Column(db.String)
+    Director = db.Column(db.String)
 
 
 class Document(db.Model):
@@ -349,7 +351,8 @@ class Carrier(db.Model):
     Bik = db.Column(db.String)
     rc = db.Column(db.String)
     kc = db.Column(db.String)
-
+    kpp = db.Column(db.String)
+    Director = db.Column(db.String)
 
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
