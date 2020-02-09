@@ -118,6 +118,8 @@ def fifthScenario(data):
         sheet[getLetter(counter) + str(column_counter)].value = i['manager']
         for item in i['list']:
             counter += 1
+            print('------------------------test_5-th_scenario-----------------------')
+            print(item)
             sheet[getLetter(counter) + str(column_counter)].value = item['volume']
             sum_count[counter - 2] += int(item['volume'])
         counter = 1
