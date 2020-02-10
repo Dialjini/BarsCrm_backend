@@ -105,14 +105,6 @@ function taskCreate(tasks = 'new') {
         url: '/getThisUser',
         type: 'GET',
         dataType: 'html',
-        beforeSend: function() {
-            $('body').prepend(`
-                <div id="preloader">
-                    <div id="preloader_preload"></div>
-                </div>
-            `)
-            preloader = document.getElementById("preloader_preload");
-        },
         success: function(data) {
             data = JSON.parse(data);
             if (tasks != 'new') {
@@ -340,8 +332,6 @@ function taskCreate(tasks = 'new') {
                 $('#tasks_list_e .empty').remove();
                 $('#tasks_list_e').append(`<div class="empty">Нет просроченных задач</div>`);
             }
-            
-            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
         }
     });
 }

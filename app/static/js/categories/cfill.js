@@ -2426,7 +2426,6 @@ function getValidationDate(date) {
         for (let i = 0; i < list.length; i++) {
             if (list[i].id == number) {
                 let current_data = list[i].function(datePeriod('all'), true);
-                console.log({id: +number, data: current_data})
                 const link = document.createElement('a');
                 link.href = `/excelStat?id=${number}&data=${JSON.stringify(current_data)}`;
                 link.download = 'Аналитика.xlsx';

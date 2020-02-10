@@ -149,17 +149,22 @@ function checkStocks(element) {
 
             function fillListStock() {
                 let buttons = '';
+                let all_stocks = [], all_items = [];
                 for (let i = 0; i < dataStock.length; i++) {
                     for (let j = 0; j < sortItemsStock.length; j++) {
                         if (dataStock[i].id == sortItemsStock[j].stock) {
-                            buttons += `<button class="selectStock" name="${element.name}" id="${element.id}" onclick="arrangeDelivery(this)" data-items="${sortItemsStock[j].items}" data-stock="${dataStock[i].Name}">${dataStock[i].Name}</button>`
+                            for (let it = 0; it < sortItemsStock[j].items.length; it++) {
+                                all_items.push(sortItemsStock[j].items[it]);
+                            }
+                            all_stocks.push(dataStock[i].Name);
+                            let iter_items = sortItemsStock[j].items.join('-s!s-')
+                            buttons += `<button class="selectStock" onclick="selectThisStock(this)" name="delivery_stock_select" id="delivery_stock_${dataStock[i].id}" data-items="${iter_items}" data-stock="${dataStock[i].Name}">${dataStock[i].Name}</button>`
                             break;
                         }
                     }
                 }
-                return buttons;
+                return buttons + `<button class="selectStock" onclick="selectThisStock(this)" name="delivery_stock_select" id="delivery_stock_all" data-items="${all_items.join('-s!s-')}" data-stock="${all_stocks.join('-s!s-')}">Все склады в счете</button>`;
             }
-
             if (list_stock_acc.length > 1) {
                 $('.page').prepend($('<div>', { class: 'background' }));
                 $('.page').prepend(
@@ -172,11 +177,14 @@ function checkStocks(element) {
                             </div>
                             <div class="content">
                                 <div class="message">
-                                    <p>В счёте присутствуют несколько складов. <br> Выберите склад, чтобы создать доставку товаров выбранного склада <br>
-                                    (Доставка будет только на те товары, которые находятся в выбранном складе)</p>
+                                    <p>В счёте присутствуют несколько складов. Выберите один или несколько для выгрузки из них товаров, относящемся к этим складам<br>
+                                    (Доставка будет только на те товары, которые находятся в выбранных складах)</p>
                                 </div>
                                 <div class="list_stock">
                                     ${fillListStock()}
+                                </div>
+                                <div style="text-align: right;margin-top: 30px;">
+                                    <button class="btn btn-main" onclick="arrangeDelivery(this)" name="${element.name}" id="${element.id}">Отгрузить</button>
                                 </div>
                             </div>
                         `
@@ -201,10 +209,46 @@ function closeModal() {
     $('.background').remove();
     $('.modal_select').remove();
 }
+function selectThisStock(element) {
+    if ($(element).hasClass('active_button_stock')) {
+        $(element).removeClass('active_button_stock');
+    } else {
+        if (element.id == 'delivery_stock_all') {
+            for (let element of $('.active_button_stock')) {
+                $(element).removeClass('active_button_stock');
+            }
+        }
+        if ($('#delivery_stock_all').hasClass('active_button_stock')) {
+            $('#delivery_stock_all').removeClass('active_button_stock');
+        }
+        $(element).addClass('active_button_stock');
+    }
+}
 // Оформление доставки из карточки Счета
 function arrangeDelivery(element) {
-    list_stock_acc = $(element).attr('data-stock');
-    list_items_acc = $(element).attr('data-items').split(',');
+    list_stock_acc = [];
+    list_items_acc = [];
+    for (let element of $('.active_button_stock')) {
+        let stocks = $(element).attr('data-stock').split('-s!s-');
+        let items = $(element).attr('data-items').split('-s!s-');
+        for (let i = 0; i < stocks.length; i++) {
+            list_stock_acc.push(stocks[i]);
+        }
+        for (let i = 0; i < items.length; i++) {
+            list_items_acc.push(items[i]);
+        }
+    }
+    if (list_stock_acc.length == 0 && list_items_acc.length == 0) {
+        let stocks = $(element).attr('data-stock').split('-s!s-');
+        let items = $(element).attr('data-items').split('-s!s-');
+        for (let i = 0; i < stocks.length; i++) {
+            list_stock_acc.push(stocks[i]);
+        }
+        for (let i = 0; i < items.length; i++) {
+            list_items_acc.push(items[i]);
+        }
+    }
+    console.log(list_items_acc, list_stock_acc)
     closeModal();
     categoryInFinanceAccount[0].lastCard[0] = null;
     $.ajax({
@@ -219,6 +263,7 @@ function arrangeDelivery(element) {
             } 
         }
     });            
+    element.id = 'delivery_new';
     createDelCardMenu(element);
 }
 // Заполнение объема в карточке категории Склад для переноса груза из одного склада в другой
@@ -1087,7 +1132,6 @@ function recountPrice(element) {
                 let first = +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val());
                 let second = +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val());
                 other_total_sale += (first * second);
-                console.log(other_total_sale, first , second);
             });
             if (list[i].id == 'total_discount_inv') {
                 other_total_sale *= -1;
@@ -2074,7 +2118,7 @@ function selectManagerInCard(element) {
         success: function() {
             let date = getCurrentDateNotComparison('year').split('.');
             date[2] = +date[2] + 1;
-            date.join('.');
+            date = date.join('.');
 
             let list = [
                 {name: 'client', text: 'клиента'},
@@ -2088,10 +2132,9 @@ function selectManagerInCard(element) {
                     name = saveTableAndCard[1][1][i].Name;
                 }
             }
-
             for (let i = 0; i < list.length; i++) {
                 if (list[i].name == idCard[0]) {
-                    taskInfo = {
+                    let taskInfo = {
                         task_type: 'other',
                         task_whom: [idManager],
                         task_who: 1,

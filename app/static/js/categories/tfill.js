@@ -362,7 +362,11 @@ let rowFilling = (object, id, table) => {
             } else {
                 full_name = selectTableData[i].delivery.Name;
             }
-            const name = [selectTableData[i].delivery.Date, full_name, selectTableData[i].delivery.Stock, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? returnSpaces(amount) : price_without_vat, customer == 'ООО' ? '' : returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
+            let stock_names = selectTableData[i].delivery.Stock
+            if (stock_names.indexOf('-s!s-') != -1) {
+                stock_names = stock_names.replace(/-s!s-/g, ' | ');
+            }
+            const name = [selectTableData[i].delivery.Date, full_name, stock_names, carrier_name, selectTableData[i].delivery.Customer, customer == 'ООО' ? returnSpaces(amount) : price_without_vat, customer == 'ООО' ? '' : returnSpaces(amount), status, payment_date == '' ? 'Не указано' : payment_date];
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);

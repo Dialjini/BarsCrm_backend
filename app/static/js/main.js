@@ -501,7 +501,6 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     }
                 }
             }
-            console.log(idData);
             createOrSaveCard.getRequest(idData, request);
             break;
         }
