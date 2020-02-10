@@ -741,7 +741,6 @@ function createCardMenu(element, index = 0) {
             }
         }
         function fillFlightsCarrier() {
-            console.log(selectedLine);
             let data = selectedLine.Items_delivery == undefined ? null : JSON.parse(selectedLine.Items_delivery);
             let table = '';
 
@@ -2247,8 +2246,9 @@ function getListAreas(element, area = '') {
     });
 }
 function createDocument(element) {
-    let info = $('#transit_info').attr('data-info').split('ç');
-    console.log(info);
+    if ($('#delivery_account')[0].value == 'Транзит') {
+        info = $('#transit_info').attr('data-info').split('ç');
+    }
     let data = $(element).attr('name').split('_');
     if (data[1].includes('new')) {
         data[1] = data[1].replace(/new/g, saveTableAndCard[1][1].length + 1)
@@ -2286,10 +2286,8 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    console.log($('#delivery_account')[0].value);
                     if ($('#delivery_account')[0].value == 'Транзит') {
                         let customers = `${select_cusmoter} ${select_client}`
-                        console.log(`/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`);
                         link.href = `/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`;
                         link.download = 'Транзит.docx';
                     } else {
@@ -2534,7 +2532,6 @@ function makeRequest(element) {
         success: function() {
             list_items_acc = null;
             list_stock_acc = null;
-            console.log($(element).attr('data-name'));
             if ($(element).attr('data-name') == 'document') {
                 createDocument(element);
             }
@@ -2718,7 +2715,6 @@ function transitProduct(element) {
             }
 
             let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume)};
-            console.log({stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume)})
             $.ajax({
                 url: '/stockTransit',
                 type: 'GET',

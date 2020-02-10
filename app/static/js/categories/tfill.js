@@ -632,6 +632,25 @@ let rowFilling = (object, id, table) => {
         return table;
     }
 
+    let rowFillingStockAdmin = (id) => {
+        table.append(getTitleTable());
+        for (let i = selectTableData.length - 1; i >= 0; i--) {
+            for (let k = selectTableData[i].items.length - 1; k >= 0; k--) {
+                if (selectTableData[i].stock_address != null) {
+                    let element = $('<tr>', {id: `stock_${selectTableData[i].items[k].Item_id}`, onclick: 'editItem(this.id)'});
+                    const name = [selectTableData[i].items[k].Prefix, selectTableData[i].items[k].Group_name, selectTableData[i].items[k].Name, returnSpaces(selectTableData[i].items[k].Weight), selectTableData[i].items[k].Packing, returnSpaces(selectTableData[i].items[k].Volume), returnSpaces(selectTableData[i].items[k].Cost), selectTableData[i].items[k].NDS, selectTableData[i].stock_address];
+    
+                    for (let j = 0; j < name.length; j++) {
+                        let elementTr = $('<td>', { html: name[j] });
+                        element.append(elementTr);
+                    }
+                    table.append(element);
+                }
+            }
+        }
+        return table;
+    }
+
     const tableFunctiouns = [
         { id: 'client', function: rowFillingDefault },
         { id: 'provider', function: rowFillingProvider },
@@ -645,6 +664,7 @@ let rowFilling = (object, id, table) => {
         { id: 'filter_delivery', function: rowFillingDelivery },
         { id: 'stock', function: rowFillingStock },
         { id: 'filter_stock', function: rowFillingStock },
+        { id: 'filter_stock_admin', function: rowFillingStockAdmin },
     ]
 
     for (let element of tableFunctiouns) {

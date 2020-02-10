@@ -608,11 +608,11 @@ body {
   transition: 0.3s all;
 }
 
-.page .centerBlock .container .info .row .fields .list {
+.page .centerBlock .container .info .row .fields .list, .page .centerBlock .container .info .row .fields .list_admin {
   position: relative;
 }
 
-.page .centerBlock .container .info .row .fields .list .field_with_modal {
+.page .centerBlock .container .info .row .fields .list .field_with_modal, .page .centerBlock .container .info .row .fields .list_admin .field_with_modal {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -630,31 +630,31 @@ body {
   padding: 5px 10px 5px 15px;
 }
 
-.page .centerBlock .container .info .row .fields .list .field_with_modal:hover {
+.page .centerBlock .container .info .row .fields .list .field_with_modal:hover, .page .centerBlock .container .info .row .fields .list_admin .field_with_modal:hover {
   cursor: pointer;
 }
 
-.page .centerBlock .container .info .row .fields .list .field_with_modal span {
+.page .centerBlock .container .info .row .fields .list .field_with_modal span, .page .centerBlock .container .info .row .fields .list_admin .field_with_modal span {
   margin-right: 10px;
 }
 
-.page .centerBlock .container .info .row .fields .list .field_with_modal img {
+.page .centerBlock .container .info .row .fields .list .field_with_modal img, .page .centerBlock .container .info .row .fields .list_admin .field_with_modal img {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
 }
 
-.page .centerBlock .container .info .row .fields .list .active {
+.page .centerBlock .container .info .row .fields .list .active, .page .centerBlock .container .info .row .fields .list_admin .active {
   opacity: 1;
   -webkit-transition: 0.3s all;
   transition: 0.3s all;
 }
 
-.page .centerBlock .container .info .row .fields .list:not(:last-child) {
+.page .centerBlock .container .info .row .fields .list:not(:last-child), .page .centerBlock .container .info .row .fields .list_admin:not(:last-child) {
   margin-right: 20px;
 }
 
-.page .centerBlock .container .info .row .fields .list .report_list {
+.page .centerBlock .container .info .row .fields .list .report_list, .page .centerBlock .container .info .row .fields .list_admin .report_list {
   position: absolute;
   top: 33px;
   left: 0;
@@ -666,11 +666,11 @@ body {
   z-index: 1;
 }
 
-.page .centerBlock .container .info .row .fields .list .report_list ul {
+.page .centerBlock .container .info .row .fields .list .report_list ul, .page .centerBlock .container .info .row .fields .list_admin .report_list ul {
   margin: 5px 0;
 }
 
-.page .centerBlock .container .info .row .fields .list .report_list ul li {
+.page .centerBlock .container .info .row .fields .list .report_list ul li, .page .centerBlock .container .info .row .fields .list_admin .report_list ul li {
   color: #595959;
   width: -webkit-max-content;
   width: -moz-max-content;
@@ -685,14 +685,14 @@ body {
   transition: 0.2s all;
 }
 
-.page .centerBlock .container .info .row .fields .list .report_list ul li:hover {
+.page .centerBlock .container .info .row .fields .list .report_list ul li:hover, .page .centerBlock .container .info .row .fields .list_admin .report_list ul li:hover {
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
   cursor: pointer;
   background-color: #f7f7f7;
 }
 
-.page .centerBlock .container .info .row .fields .list .report_list ul .active {
+.page .centerBlock .container .info .row .fields .list .report_list ul .active, .page .centerBlock .container .info .row .fields .list_admin .report_list ul .active {
   background-color: #f7f7f7;
 }
 
