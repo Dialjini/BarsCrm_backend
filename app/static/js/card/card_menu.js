@@ -2247,7 +2247,6 @@ function getListAreas(element, area = '') {
     });
 }
 function createDocument(element) {
-    console.log($('#transit_info'));
     let info = $('#transit_info').attr('data-info').split('ç');
     console.log(info);
     let data = $(element).attr('name').split('_');
@@ -2255,7 +2254,8 @@ function createDocument(element) {
         data[1] = data[1].replace(/new/g, saveTableAndCard[1][1].length + 1)
     }
     let carrier = ['carrier', +$('#delivery_carrier_id').val()];
-    let select_cusmoter = $('#delivery_customer').val()
+    let select_cusmoter = $('#delivery_customer').val();
+    let select_client = $('#delivery_client').val();
     if ($('#delivery_carrier_id').val() == null) {
         return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
@@ -2286,9 +2286,11 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
+                    console.log($('#delivery_account')[0].value);
                     if ($('#delivery_account')[0].value == 'Транзит') {
-                        console.log(`/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${data_carrier[i].Address}&address2=${info[1]}&delivery=${data[1]}`);
-                        link.href = `/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${data_carrier[i].Address}&address2=${info[1]}&delivery=${data[1]}`;
+                        let customers = `${stock_cusmoter} ${select_client}`
+                        console.log(`/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`);
+                        link.href = `/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`;
                         link.download = 'Транзит.docx';
                     } else {
                         link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
@@ -2524,7 +2526,6 @@ function makeRequest(element) {
         categoryInFinanceAccount[1].pop();
     if (categoryInListCarrier[1][1] != undefined)
         categoryInListCarrier[1].pop();
-    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
@@ -2533,6 +2534,7 @@ function makeRequest(element) {
         success: function() {
             list_items_acc = null;
             list_stock_acc = null;
+            console.log($(element).attr('data-name'));
             if ($(element).attr('data-name') == 'document') {
                 createDocument(element);
             }
@@ -2551,7 +2553,6 @@ function makeRequest(element) {
                     }
                 }
             }
-            console.log({id: carrier_id, data: JSON.stringify(all_amounts)});
             $.ajax({
                 url: '/editItemDelivery',
                 type: 'GET',
