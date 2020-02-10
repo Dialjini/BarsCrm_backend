@@ -351,7 +351,8 @@ def stockTransit():
 
     for i in Stock.Items:
         if i.Name == Item.Name:
-            Item.Volume = str(float(Item.Volume.replace(' ', '')) - float(request.args['product_volume']))
+            Item.Volume = str(float(Item.Volume.replace(' ', '')) -
+                              float(str(request.args['product_volume']).replace(' ', '')))
             i.Volume = str(float(i.Volume) + float(request.args['product_volume']))
 
             db.session.commit()
