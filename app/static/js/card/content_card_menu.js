@@ -1593,6 +1593,9 @@ function visibleSelectPeriod(type = 'account') {
     }
 }
 function selectPeriod(period = 'month', table) {
+    if ($('div').is('.card_menu')) {
+        return;
+    }
     let filter = [
         {id: 'account', request: '/getAccounts'},
         {id: 'delivery', request: '/getDeliveries'},

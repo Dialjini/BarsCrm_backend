@@ -2442,7 +2442,7 @@ function makeRequest(element) {
         for (let i = 0; i < infoAccount.items.length; i++) {
             for (let j = 0; j < amounts_sum.length; j++) {
                 if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) < +deleteSpaces(amounts_sum[j].volume)) {
-                    return alert(`Товар "${infoAccount.items[i].Name}" отгрузается на больший объем, чем есть в счете!`)
+                    return alert(`Товар "${infoAccount.items[i].Name}" отгружается на больший объем, чем есть в счете!`)
                 }
                 if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) == +deleteSpaces(amounts_sum[j].volume)) {
                     count++;
@@ -3014,6 +3014,22 @@ function completionCard(elem) {
             let idsItems = [];
             for (let element of $('#exposed_list .invoiled')) {
                 let idProduct = $(element).attr('id').split('_')[1];
+                if ($(`#invoiled_volume_${idProduct}`).val() == '' || $(`#invoiled_volume_${idProduct}`).val() == 0) {
+                    return $('.page').append($('<div>', { class: 'background' }).add(`
+                        <div class="modal_select">
+                            <div class="title">
+                                <span>Ошибка</span>
+                                <img onclick="closeModal()" src="static/images/cancel.png">
+                            </div>
+                            <div class="content">
+                                <div class="message">
+                                    <p style="font-size: 13px; color: #595959;">Введите объём для всех товаров!</p>
+                                </div>
+                            </div>
+                        </div>
+                    `)); 
+                }
+
                 for (let i = 0; i < data.length; i++) {
                     for (let j = 0; j < data[i].items.length; j++) {
                         let account = data[i].items[j];
