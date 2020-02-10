@@ -80,7 +80,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                               replacements=[carrier.Name, carrier.UHH, carrier.Bik,
                                             carrier.Address, delivery.Auto,
                                             delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                            adress2, delivery.Contact_End, 'ООО "Барс"', adress,
+                                            adress, delivery.Contact_End, 'ООО "Барс"', adress2,
                                             delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                             str(account.Sum), num2text(float(account.Sum))], doc=doc)
@@ -97,7 +97,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                               replacements=[carrier.Name, carrier.UHH, carrier.Bik,
                                             carrier.Address, delivery.Auto,
                                             delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                            adress2, delivery.Contact_End, 'ООО "Барс"', adress,
+                                            adress, delivery.Contact_End, 'ООО "Барс"', adress2,
                                             delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                             str(account.Sum), num2text(float(account.Sum))], doc=doc)

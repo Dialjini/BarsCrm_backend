@@ -109,7 +109,7 @@ def to_PDF(name, owner, address, delivery, address2):
     info = {}
     date = Inside_date(d=str(datetime.now().day), m=int(datetime.now().month), y=str(datetime.now().year))
     dir_u = os.path.abspath(os.path.dirname(__file__) + '/upload')
-    if name == 'Transit':
+    if name == 'transit':
         return DocCreator.Generate_Transit(dir_u=dir_u, date=date, delivery=delivery,
                                            adress=address, type=name, adress2=address2)
     for i in reqs.getINNinfo(owner.UHH)['suggestions']:
