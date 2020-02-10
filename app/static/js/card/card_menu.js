@@ -2288,7 +2288,7 @@ function createDocument(element) {
                     const link = document.createElement('a');
                     console.log($('#delivery_account')[0].value);
                     if ($('#delivery_account')[0].value == 'Транзит') {
-                        let customers = `${stock_cusmoter} ${select_client}`
+                        let customers = `${stock_customer} ${select_client}`
                         console.log(`/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`);
                         link.href = `/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`;
                         link.download = 'Транзит.docx';
