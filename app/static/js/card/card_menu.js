@@ -2254,8 +2254,8 @@ function createDocument(element) {
         data[1] = data[1].replace(/new/g, saveTableAndCard[1][1].length + 1)
     }
     let carrier = ['carrier', +$('#delivery_carrier_id').val()];
-    let select_cusmoter = $('#delivery_customer').val();
-    let select_client = $('#delivery_client').val();
+    let select_cusmoter = $('#delivery_customer')[0].value;
+    let select_client = $('#delivery_client')[0].value;
     if ($('#delivery_carrier_id').val() == null) {
         return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
@@ -2288,7 +2288,7 @@ function createDocument(element) {
                     const link = document.createElement('a');
                     console.log($('#delivery_account')[0].value);
                     if ($('#delivery_account')[0].value == 'Транзит') {
-                        let customers = `${stock_customer} ${select_client}`
+                        let customers = `${select_cusmoter} ${select_client}`
                         console.log(`/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`);
                         link.href = `/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${customers}&address2=${info[1]}&delivery=${data[1]}`;
                         link.download = 'Транзит.docx';
