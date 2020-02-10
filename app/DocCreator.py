@@ -45,7 +45,6 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
     document.MonthNum = models.getMonthNum()
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
-    account = models.Account.query.filter_by(id=delivery.Account_id).first()
     transit_type = adress.split(' ')
 
     document.Client_name = 'transit'
@@ -83,7 +82,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                                             adress, delivery.Contact_End, 'ООО "Барс"', adress2,
                                             delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                            str(account.Sum), num2text(float(account.Sum))], doc=doc)
+                                            ' ', ' '], doc=doc)
     else:
         doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                     'document.Client_contact_name', 'document.Client_name'],
@@ -100,7 +99,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                                             adress, delivery.Contact_End, 'ООО "Барс"', adress2,
                                             delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                            str(account.Sum), num2text(float(account.Sum))], doc=doc)
+                                            ' ', ' '], doc=doc)
 
     doc.save(dir_u + '/{}.docx'.format('Transit N' + str(document.id)))
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
