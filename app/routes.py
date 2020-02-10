@@ -365,7 +365,7 @@ def stockTransit():
     item.Creator = Item.Creator
     item.Name = Item.Name
     item.Cost = Item.Cost
-    Item.Volume = str(float(Item.Volume) - float(request.args['product_volume']))
+    Item.Volume = str(float(Item.Volume.replace(' ', '')) - float(str(request.args['product_volume']).replace(' ', '')))
     item.Volume = str(request.args['product_volume'])
     item.NDS = Item.NDS
     item.Group_id = Item.Group_id
