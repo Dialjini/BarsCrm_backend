@@ -2247,6 +2247,9 @@ function getListAreas(element, area = '') {
     });
 }
 function createDocument(element) {
+    console.log($('#transit_info'));
+    let info = $('#transit_info').attr('data-info').split('ç');
+    console.log(info);
     let data = $(element).attr('name').split('_');
     if (data[1].includes('new')) {
         data[1] = data[1].replace(/new/g, saveTableAndCard[1][1].length + 1)
@@ -2283,14 +2286,17 @@ function createDocument(element) {
                         document_name = 'ZayavkaIP';
                     }
                     const link = document.createElement('a');
-                    if ($('#delivery_account').val() == 'Транзит') {
-
-                    }
-                    link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
-                    if (select_cusmoter == 'ООО') {
-                        link.download = 'Заявка ООО.docx';
+                    if ($('#delivery_account')[0].value == 'Транзит') {
+                        console.log(`/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${data_carrier[i].Address}&address2=${info[1]}&delivery=${data[1]}`);
+                        link.href = `/downloadDoc?category=${carrier[0]}&name=transit&card_id=${carrier[1]}&address=${data_carrier[i].Address}&address2=${info[1]}&delivery=${data[1]}`;
+                        link.download = 'Транзит.docx';
                     } else {
-                        link.download = 'Заявка ИП.docx';
+                        link.href = `/downloadDoc?category=${carrier[0]}&name=${document_name}&card_id=${carrier[1]}&address=${data_carrier[i].Address}&delivery=${data[1]}`;
+                        if (select_cusmoter == 'ООО') {
+                            link.download = 'Заявка ООО.docx';
+                        } else {
+                            link.download = 'Заявка ИП.docx';
+                        }
                     }
                     link.click();
                 }
@@ -2513,7 +2519,6 @@ function makeRequest(element) {
         data['delivery_vat']    = '';
         data['delivery_contact_number'] = info[1];
         data['delivery_name']   = 'Транзит';
-        $('#transit_info').remove()
     }
     if (categoryInFinanceAccount[1][1] != undefined)
         categoryInFinanceAccount[1].pop();
@@ -2554,7 +2559,7 @@ function makeRequest(element) {
                 data: {id: carrier_id, data: JSON.stringify(all_amounts)},
                 success: function() {}
             });
-
+            $('#transit_info').remove()
             closeCardMenu(element.id);
         }
     });
@@ -2712,7 +2717,7 @@ function transitProduct(element) {
             }
 
             let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume)};
-
+            console.log({stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume)})
             $.ajax({
                 url: '/stockTransit',
                 type: 'GET',
