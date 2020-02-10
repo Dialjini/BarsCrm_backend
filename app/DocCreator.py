@@ -46,7 +46,18 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
     transit_type = adress.split(' ')
+    print('ok')
+    Sum = 0
+    for i in json.loads(delivery.Amounts):
+        Sum += Sum + float(str(i['sum']).replace(' ', ''))
+    if int(Sum) == Sum:
+        Sum = int(Sum)
+    else:
+        Sum = round(Sum, 2)
 
+
+    print(Sum)
+    print('| sum')
     document.Client_name = 'transit'
 
     Items = models.Item.query.all()
@@ -58,13 +69,16 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
 
     db.session.add(document)
     db.session.commit()
-    document.Path = '{}.docx'.format('Transit N' + str(document.id))
+    document.Path = '{}.docx'.format('TransitN' + str(document.id))
     db.session.commit()
 
     if transit_type[0] == 'OOO':
         doc = Document(os.path.dirname(__file__) + '/files/Zayavka_OOO.docx')
     else:
         doc = Document(os.path.dirname(__file__) + '/files/Zayavka_IP.docx')
+
+    if not delivery.Load_type:
+        delivery.Load_type = ' '
 
     if transit_type[1] == 'OOO':
         doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
@@ -78,11 +92,11 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                                      '{{Разгрузка}}', '{{Сумма}}', '{{Сумма_словами}}'],
                               replacements=[carrier.Name, carrier.UHH, carrier.Bik,
                                             carrier.Address, delivery.Auto,
-                                            delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                            adress, delivery.Contact_End, 'ООО "Барс"', adress2,
+                                            delivery.Contact_Name, delivery.Passport_data,
+                                            delivery.Contact_Number, delivery.Contact_End, 'ООО "Барс"', adress2,
                                             delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                            ' ', ' '], doc=doc)
+                                            str(Sum), num2text(Sum)], doc=doc)
     else:
         doc = replace_doc(doc=doc, words=['document.Date', 'date.d', 'date.m', 'date.y',
                                     'document.Client_contact_name', 'document.Client_name'],
@@ -95,13 +109,13 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                                      '{{Разгрузка}}', '{{Сумма}}', '{{Сумма_словами}}'],
                               replacements=[carrier.Name, carrier.UHH, carrier.Bik,
                                             carrier.Address, delivery.Auto,
-                                            delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                            adress, delivery.Contact_End, 'ООО "Барс"', adress2,
+                                            delivery.Contact_Name, delivery.Passport_data,
+                                            delivery.Contact_Number, delivery.Contact_End, 'ИП Балкина Ирина Николаевна', adress2,
                                             delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
-                                            ' ', ' '], doc=doc)
+                                            str(Sum), num2text(Sum)], doc=doc)
 
-    doc.save(dir_u + '/{}.docx'.format('Transit N' + str(document.id)))
+    doc.save(dir_u + '/{}.docx'.format('TransitN' + str(document.id)))
     return send_from_directory(directory=os.path.abspath(os.path.dirname(__file__) + '/upload'),
                                    filename=document.Path)
 
