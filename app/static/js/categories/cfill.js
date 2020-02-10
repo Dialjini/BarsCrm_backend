@@ -479,6 +479,7 @@ function editMember(idMember) {
     });
 }
 function persons() {
+    $('#filter_admin').remove();
     adminPanel();
 }
 function items() {
@@ -524,10 +525,35 @@ function items() {
                 }
                 return table;
             }
+            function sortFields() {
+                let fields = `
+                    <div class="row" id="filter_admin" style="margin-bottom: 20px;">
+                        <div class="fields">${fill()}</div>
+                    </div>
+                `;
+                function fill() {
+                    return `
+                        <div class="list_admin" id="stock_group">
+                            <div class="field_with_modal">
+                                <span id="active_field">Группа товаров</span>
+                                <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                            </div>
+                        </div>
+                        <div class="list_admin" id="stock_product">
+                            <div class="field_with_modal">
+                                <span id="active_field">Товар</span>
+                                <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                            </div>
+                        </div>
+                    `
+                }
+                return fields;
+            }
             $('.table').remove();
             $('#addNewPerson').remove();
             activeThisField('items');
-            $('.info').append(getTable())
+            $('.info').append(sortFields()).append(getTable());
+            activeAdmin();
         },
         complete: function() {
             $('#loading').remove();
@@ -535,8 +561,199 @@ function items() {
         }
     });
 }
+function activeAdmin() {
+    $('.list_admin').click(function() {
+        let this_user;
+        $.ajax({
+            url: '/getThisUser',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(user) {
+                this_user = JSON.parse(user);
+            }
+        })
+        const list = [
+            { width: 161.125, id: 'stock_group', list: [] },
+            { width: 90.656, id: 'stock_product', list: [] },
+        ]
+
+        $.ajax({
+            url: '/getStockTable',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                filter_table = JSON.parse(data);
+            }
+        })
+
+        let idList = this.id, element;
+        let info = ['Group_name', 'Name'];
+
+        if (!idList.includes('analytics')) {
+            if (!$('.report_list').is(`#${idList}`)) {
+                for (let k = 0; k < info.length; k++) {
+                    for (let i = 0; i < filter_table.length; i++) {
+                        for (let j = 0; j < filter_table[i].items.length; j++) {
+                            list[k].list.push(filter_table[i].items[j][info[k]])
+                        }
+                    }
+                }
+            }
+        }
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id === idList) {
+                element = i;
+            }
+        }
+        let array = list[element].list;
+        for (let i = 0; i < array.length - 1; i++) {
+            for (let j = i + 1; j < array.length; j++) {
+                if (array[i].toLowerCase() === array[j].toLowerCase()) {
+                    array.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        if ($(`#${idList} .drop_down_img`).hasClass('drop_active')) {
+            $(`#${idList} .drop_down_img`).removeClass('drop_active');
+            $(`#${idList} .report_list`).fadeOut(200);
+            setTimeout(() => {
+                $(`#${idList} .report_list`).remove();
+            }, 300);
+            return;
+        }
+
+        for (let i = 0; i < list.length; i++) {
+            $(`#${list[i].id}`).width('auto');
+        }
+
+        let namesList;
+        function fillingList() {
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id == idList) {
+                    namesList = list[i].list;
+                    let ul = $('<ul>');
+                    if (this_user.role == 'admin') {
+                        for (let j = 0; j < list[i].list.length; j++) {
+                            ul.append(
+                                `<li id="${idList}_${j}">${list[i].list[j]}</li>`
+                            )
+                        }
+                    } else {
+                        for (let j = 0; j < list[i].list.length; j++) {
+                            ul.append(
+                                `<li id="${idList}_${j}">${list[i].list[j]}</li>`
+                            )
+                        }
+                    }
+                    return ul;
+                } 
+            }
+        }
+
+        $('.report_list').remove();
+        $('.drop_down_img').removeClass('drop_active');
+        $('.field_with_modal').removeClass('active');
+        $(this).append($('<div>', {
+            class: 'report_list',
+            id: idList,
+        }));
+
+        $('.report_list').append(fillingList());
+        checkWidth();
+        function checkWidth() {
+            let width = $(`#${idList} .report_list`).width();
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id == idList) {
+                    if (width > list[i].width) {
+                        $(`#${idList}`).width(+width + 20);
+                        for (let j = 0; j < $(`#${idList} .report_list`).children()[0].children.length; j++) {
+                            $(`#${idList} .report_list`).children()[0].children[j].style.width = +width + 20 + 'px';
+                        }
+                    } else {
+                        $(`#${idList}`).width(list[i].width);
+                        $(`#${idList} .report_list`).width(list[i].width);
+                        for (let j = 0; j < $(`#${idList} .report_list`).children()[0].children.length; j++) {
+                            $(`#${idList} .report_list`).children()[0].children[j].style.width = list[i].width + 'px';
+                        }
+                    }
+                }
+            }
+        }
+
+        $('.report_list').fadeIn(400);
+        $(`#${idList} .field_with_modal`).addClass('active');
+        $(`#${idList} .drop_down_img`).addClass('drop_active');
+
+        $('li').click(function() {
+            $('#not_found').remove();
+            let this_id = this.id;
+
+            $('table').remove();
+            $(`#${idList}`).width('auto');
+            $(`#${idList} #active_field`).html(identify());
+            function identify() {
+                if (this_user.role == 'admin') return namesList[this_id.split('_')[2]]
+                if (this_user.role == 'manager') return namesList[+this_id.split('_')[2] - 1]
+            }
+            $(`#${idList} .field_with_modal`).addClass('active');
+
+            let createFilterTable = () => {
+                    const filter_ids = [
+                        { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
+                        { id: 'stock_product', filterName: 'Name', name: 'Товар'},
+                    ]
+
+                    for (let i = 0; i < filter_ids.length; i++) {
+                        if ($(`#${filter_ids[i].id}`).children().children()[0].innerHTML != filter_ids[i].name) {
+                            for (let j = 0; j < filter_parameters.length; j++) {
+                                if (filter_parameters[j].name == filter_ids[i].filterName) {
+                                    filter_parameters[j].filter = $(`#${filter_ids[i].id}`).children().children()[0].innerHTML;
+                                }
+                            }
+                        }
+                    }
+                    categoryInStockAdmin[1][1] = [];
+                    let items = []
+                    for (let i = 0; i < filter_table.length; i++) {
+                        for (let k = 0; k < filter_table[i].items.length; k++) {
+                            if ((filter_table[i].items[k][filter_parameters[0].name] == filter_parameters[0].filter || filter_parameters[0].filter == '')
+                                && (filter_table[i].items[k][filter_parameters[1].name] == filter_parameters[1].filter || filter_parameters[1].filter == '')) {
+                                items.push({ stock_address: filter_table[i].stock_address, items: [filter_table[i].items[k]]});
+                            }
+                        }
+                    }
+                    for (let i = 0; i < items.length - 1; i++) {
+                        for (let j = i + 1; j < items.length; j++) {
+                            if (items[i].stock_address === items[j].stock_address) {
+                                for (let k = 0; k < items[j].items.length; k++) {
+                                    items[i].items.push(items[j].items[k]);
+                                }
+                                items.splice(j, 1);
+                                j--;
+                            }
+                        }
+                    }
+                    categoryInStockAdmin[1][1] = items;
+                    return fillingTables(categoryInStockAdmin);
+            };
+
+            $('.info').append(createFilterTable());
+            if (categoryInStockAdmin[1][1].length == 0) {
+                $('.info').append(`
+                    <div id="not_found" class="row">
+                        <span style="margin-left: 10px; margin-top: -20px;">Ничего не найдено</span>
+                    </div>
+                `)
+            }
+        });
+    });
+}
 function positions() {
     $('._block').remove();
+    $('#filter_admin').remove();
     $.ajax({
         url: '/getRoles',
         type: 'GET',

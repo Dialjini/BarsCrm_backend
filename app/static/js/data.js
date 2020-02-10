@@ -133,6 +133,24 @@ const categoryInFilterStock = [
     ]
 ]
 
+const categoryInStockAdmin = [
+    { id: 'filter_stock_admin', name: 'Склад', active: true, lastCard: [null, null] },
+    [
+        [
+            { name: 'Юр. лицо', width: 5 },
+            { name: 'Группа товаров', width: 15 },
+            { name: 'Товар', width: 15 },
+            { name: 'Вес, кг.', width: 7 },
+            { name: 'Фасовка', width: 7 },
+            { name: 'Объем, кг.', width: 7 },
+            { name: 'Цена прайса, руб.', width: 7 },
+            { name: 'НДС', width: 5 },
+            { name: 'Склад', width: 15 },
+        ],
+        []
+    ]
+]
+
 const filterClient = [
     { id: 'client', name: 'Список', active: true, lastCard: [null, null] },
     [

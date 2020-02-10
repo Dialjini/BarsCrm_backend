@@ -2071,7 +2071,39 @@ function selectManagerInCard(element) {
         type: 'GET',
         data: {category: idCard[0], card_id: +idCard[1], manager_id: idManager},
         dataType: 'html',
-        success: function() {}
+        success: function() {
+            let date = getCurrentDateNotComparison('year').split('.');
+            date[2] = +date[2] + 1;
+            date.join('.');
+
+            let list = [
+                {name: 'client', text: 'клиента'},
+                {name: 'provider', text: 'поставщика'},
+                {name: 'carrier', text: 'перевозчика'},
+            ]
+
+            let name;
+            for (let i = 0; i < saveTableAndCard[1][1].length; i++) {
+                if (saveTableAndCard[1][1][i].id == idCard[1]) {
+                    name = saveTableAndCard[1][1][i].Name;
+                }
+            }
+
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].name == idCard[0]) {
+                    taskInfo = {
+                        task_type: 'other',
+                        task_whom: [idManager],
+                        task_who: 1,
+                        task_date: date,
+                        task_time: '00:00',
+                        task_comment: `У Вас новая карточка ${list[i].text} ${name}`,
+                    }
+                    socket.emit('addTask', {data: taskInfo});
+                    break;
+                }
+            }
+        }
     });
 } 
 // Открепление карточки от менеджера
