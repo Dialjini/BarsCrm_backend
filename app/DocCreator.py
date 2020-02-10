@@ -415,7 +415,7 @@ def Generate_Zayavka_OOO(dir_u, owner, date, delivery):
                           replacements=[document.Client_name, document.UHH, document.KPP,
                                         document.Client_prefix_address, delivery.Auto,
                                         delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                        delivery.Stock, delivery.Contact_End, Client.Name, Adress,
+                                        delivery.Stock, delivery.Contact_End, Client.Name, Adress.replace('-s!s-', ','),
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(Sum), num2text(Sum)], doc=doc)
@@ -501,7 +501,7 @@ def Generate_Zayavka_IP(dir_u, owner, date, delivery):
                           replacements=[document.Client_name, document.UHH, document.KPP,
                                         document.Client_prefix_address, delivery.Auto,
                                         delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
-                                        delivery.Stock, delivery.Contact_End, Client.Name, Adress,
+                                        delivery.Stock, delivery.Contact_End, Client.Name, Adress.replace('-s!s-', ','),
                                         delivery.End_date, delivery.Contact_End, str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(Sum), num2text(Sum)], doc=doc)
