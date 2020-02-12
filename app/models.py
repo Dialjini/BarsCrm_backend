@@ -63,6 +63,7 @@ class Item(db.Model):
     Group_name = db.Column(db.String)
     Prefix = db.Column(db.String)
     Purchase_price = db.Column(db.String)
+    Date = db.Column(db.String)
 
 
 class Junk_item(db.Model):

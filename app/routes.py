@@ -358,6 +358,7 @@ def stockTransit():
             db.session.commit()
             return 'OK'
     item = models.Item()
+    item.Date = request.args['item_date']
 
     item.Weight = Item.Weight
     item.Packing = Item.Packing
@@ -838,6 +839,7 @@ def addItemToStock():
             Stock = Stocks[0]
         else:
             item = models.Item()
+            item.Date = data['item_date']
             item.Weight = data['item_weight']
             item.Packing = data['item_packing']
             item.Fraction = data['item_fraction']
@@ -857,6 +859,7 @@ def addItemToStock():
             return 'OK no stock'
 
         item = models.Item()
+        item.Date = data['item_date']
         item.Weight = data['item_weight']
         item.Packing = data['item_packing']
         item.Fraction = data['item_fraction']
