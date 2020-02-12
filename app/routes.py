@@ -585,6 +585,7 @@ def addDelivery():
         table.Auto = data['delivery_car']
         table.Passport_data = data['delivery_passport']
         table.Postponement_date = data['delivery_postponement_date']
+        table.Contact_Start = data['delivery_contact_start']
 
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']

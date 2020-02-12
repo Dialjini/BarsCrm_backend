@@ -333,6 +333,7 @@ class Delivery(db.Model):
     Auto = db.Column(db.String)
     Passport_data = db.Column(db.String)
     Postponement_date = db.Column(db.String)
+    Contact_Start = db.Column(db.String)
 
 
 class Carrier(db.Model):
