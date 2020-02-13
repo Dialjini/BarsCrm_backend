@@ -759,34 +759,43 @@ function searchByCompetitor() {
                     data = JSON.parse(data);
                     $('.page').append($('<div>', { class: 'background' }).add(`
                         <div class="modal_select modal_search search_by_competitor--client">
-                            <div class="title">
-                                <span>Поиск по конкурентам</span>
+                            <div class="title" style="justify-content: flex-end;">
                                 <img onclick="closeModal()" src="static/images/cancel.png">
                             </div>
                             <div class="content">
-                                <table class="table_search" id ="table_search_comp">
+                                <table class="table_search" id="table_search_comp">
                                     <tr>
-                                        <th width="200">Клиент</th>
-                                        <th class="cl_com_filters" id="cl_com_product" onclick="clientCompFilter(this)" width="140">
+                                        <th class="cl_com_filters" id="cl_com_client" onclick="clientCompFilter(this)" width="210">
+                                            <div class="flex jc-sb">
+                                                <span>Клиент</span>
+                                                <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                                            </div>
+                                        </th>
+                                        <th class="cl_com_filters" id="cl_com_product" onclick="clientCompFilter(this)" width="180">
                                             <div class="flex jc-sb">
                                                 <span>Товар</span>
                                                 <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                                             </div>
                                         </th>
-                                        <th class="cl_com_filters" id="cl_com_volume" onclick="clientCompFilter(this)" width="100">
+                                        <th class="cl_com_filters" id="cl_com_volume" onclick="clientCompFilter(this)" width="105">
                                             <div class="flex jc-sb">
                                                 <span>Объем</span>
                                                 <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                                             </div>
                                         </th>
-                                        <th>У кого</th>
-                                        <th class="cl_com_filters" id="cl_com_price" onclick="clientCompFilter(this)" width="100">
+                                        <th class="cl_com_filters" id="cl_com_provider" onclick="clientCompFilter(this)" width="360">
+                                            <div class="flex jc-sb">
+                                                <span>У кого</span>
+                                                <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                                            </div>
+                                        </th>
+                                        <th class="cl_com_filters" id="cl_com_price" onclick="clientCompFilter(this)" width="105">
                                             <div class="flex jc-sb">
                                                 <span>Цена</span>
                                                 <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                                             </div>
                                         </th>
-                                        <th class="cl_com_filters" id="cl_com_manager" onclick="clientCompFilter(this)" width="110">
+                                        <th class="cl_com_filters" id="cl_com_manager" onclick="clientCompFilter(this)" width="120">
                                             <div class="flex jc-sb">
                                                 <span>Менеджер</span>
                                                 <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
@@ -804,6 +813,29 @@ function searchByCompetitor() {
             });
         }
     });
+}
+function sortCompTableByProviders(element) {
+    $('#content_table_comp').empty();
+    let tbody = '';
+    for (let i = 0; i < competitor_data.length; i++) {
+        if ((element.innerHTML == competitor_data[i].creator && element.id == 'provider') || (element.innerHTML == competitor_data[i].name && element.id == 'client')) {
+            tbody += `
+            <tr id="client_${competitor_data[i].id}_search" onclick="openCardMenu(this)">
+                <td>${competitor_data[i].name}</td>
+                <td>${competitor_data[i].item}</td>
+                <td>${competitor_data[i].volume}</td>
+                <td>${competitor_data[i].creator}</td>
+                <td>${competitor_data[i].cost}</td>
+                <td>${competitor_data[i].manager != null ? competitor_data[i].manager : 'Ни к кому не прикреплена'}</td>
+            </tr>
+        `
+        }
+    }
+    $('#content_table_comp').append(tbody);
+
+    setTimeout(function() {
+        $('#cl_com_provider .drop_arrow').removeClass('drop_active');
+    }, 150)
 }
 function sortCompTableByPrice(element) {
     competitor_data.sort(function(a, b) {
@@ -824,7 +856,7 @@ function sortCompTableByPrice(element) {
                 <td>${competitor_data[i].volume}</td>
                 <td>${competitor_data[i].creator}</td>
                 <td>${competitor_data[i].cost}</td>
-                <td>${competitor_data[i].manager}</td>
+                <td>${competitor_data[i].manager != null ? competitor_data[i].manager : 'Ни к кому не прикреплена'}</td>
             </tr>
         `
     }
@@ -849,7 +881,7 @@ function sortCompTableByProduct(element) {
                     <td>${competitor_data_copy[i].volume}</td>
                     <td>${competitor_data_copy[i].creator}</td>
                     <td>${competitor_data_copy[i].cost}</td>
-                    <td>${competitor_data_copy[i].manager}</td>
+                    <td>${competitor_data_copy[i].manager != null ? competitor_data[i].manager : 'Ни к кому не прикреплена'}</td>
                 </tr>
             `
         }
@@ -875,7 +907,7 @@ function sortCompTableByManagers(element) {
                     <td>${competitor_data_copy[i].volume}</td>
                     <td>${competitor_data_copy[i].creator}</td>
                     <td>${competitor_data_copy[i].cost}</td>
-                    <td>${competitor_data_copy[i].manager}</td>
+                    <td>${competitor_data_copy[i].manager != null ? competitor_data[i].manager : 'Ни к кому не прикреплена'}</td>
                 </tr>
             `
         }
@@ -905,7 +937,7 @@ function sortCompTableByVolume(element) {
                 <td>${competitor_data[i].volume}</td>
                 <td>${competitor_data[i].creator}</td>
                 <td>${competitor_data[i].cost}</td>
-                <td>${competitor_data[i].manager}</td>
+                <td>${competitor_data[i].manager != null ? competitor_data[i].manager : 'Ни к кому не прикреплена'}</td>
             </tr>
         `
     }
@@ -922,6 +954,8 @@ function clientCompFilter(element) {
         {id: 'cl_com_volume', func: listVolume},
         {id: 'cl_com_price', func: listPrice},
         {id: 'cl_com_manager', func: listManager},
+        {id: 'cl_com_client', func: contextualSearchComp},
+        {id: 'cl_com_provider', func: contextualSearchComp},
     ]
     function listVolume() {
         let ul = $('<ul>', { class: 'list'});
@@ -952,6 +986,12 @@ function clientCompFilter(element) {
                 for (let i = 0; i < data.length; i++) { 
                     for (let j = 0; j < data[i].data.length; j++) {
                         list.push(data[i].data[j]);
+                    }
+                }
+                for (let i = 0; i < list.length; i++) {
+                    if (list[i].Name == 'Выбрать') {
+                        list.splice(i, 1);
+                        i == 0 ? i : i--;
                     }
                 }
                 for (let i = 0; i < list.length - 1; i++) {
@@ -1031,9 +1071,71 @@ function clientCompFilter(element) {
             }
         }
     }
+    function contextualSearchComp(element) {
+        $.ajax({
+            url: '/getAllClientItems',
+            type: 'GET',
+            dataType: 'html',
+            async: false,
+            success: function(data) {
+                all_items = JSON.parse(data);
+            }
+        });
+            let parent = $(element).parent();
+            let positions = $(element).position();
+            let width = $(element).width() - 40;
+            parent.append(`
+                <div class="input_search_word" style="left: ${positions.left}px; top: ${positions.top}px; width: ${width}px">
+                    <input id="${element.id == 'cl_com_provider' ? 'provider' : 'client'}" onkeyup="searchWordComp(this)">
+                </div>
+            `)
+            let id = element.id.split('_')[2];
+            function fillList() {
+                let list = '';
+                let client_array = [];
+                for (let i = 0; i < all_items.length; i++) {
+                    for (let j = 0; j < all_items[i].data.length; j++) {
+                        if (element.id == 'cl_com_provider' && all_items[i].data[j].Creator !== '')
+                            list += `<li class="select_this_provider" id="provider" onclick="sortCompTableByProviders(this)">${all_items[i].data[j].Creator}</li>`
+                        if (element.id == 'cl_com_client' && all_items[i].data[j].Client_id != null && all_items[i].data[j].Name != 'Выбрать') {
+                            for (let k = 0; k < categoryInListClient[1][1].length; k++) {
+                                if (categoryInListClient[1][1][k].id == all_items[i].data[j].Client_id) {
+                                    client_array.push(categoryInListClient[1][1][k].Name);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (element.id == 'cl_com_client') {
+                    for (let i = 0; i < client_array.length - 1; i++) {
+                        for (let j = i + 1; j < client_array.length; j++) {
+                            if (client_array[i] == client_array[j]) {
+                                client_array.splice(j, 1);
+                                j--;
+                            }
+                        }
+                    }
+
+                    for (let i = 0; i < client_array.length; i++) {
+                        list += `<li class="select_this_provider" id="client" onclick="sortCompTableByProviders(this)">${client_array[i]}</li>`
+                    }
+                }
+                return list;
+            }
+            console.log(all_items);
+            return `
+                <div class="context_search hmax" id="search_${id}">
+                    <ul id="list_providers_for_search">
+                        ${fillList()}
+                    </ul>
+                </div>
+            `
+    }
     $('.filter_list').fadeOut(200);
+    $('.input_search_word').fadeOut(200);
     setTimeout(function() {
         $('.filter_list').remove();
+        $('.input_search_word').remove();
     }, 200);
 
     if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
@@ -1061,6 +1163,60 @@ let sortStatus = {
     status: {status: false, filter: null, last: null},
     date: {status: false, filter: null, last: null},
     search_on_regions: {status: false, filter: null, last: null}
+}
+function searchWordComp(element) {
+    $.ajax({
+        url: '/getAllClientItems',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            all_items = JSON.parse(data).reverse();
+            $('#list_providers_for_search').empty();
+            let client_array = [];
+            for (let i = 0; i < all_items.length; i++) {
+                for (let j = 0; j < all_items[i].data.length; j++) {
+                    if (element.id == 'provider') {
+                        let current_name = all_items[i].data[j].Creator.toLowerCase();
+                        let search_name = element.value.toLowerCase();
+                        if (current_name.includes(search_name) && current_name != '')
+                            $('#list_providers_for_search').append(`
+                                <li class="select_this_provider" id="${element.id}" onclick="sortCompTableByProviders(this)">${all_items[i].data[j].Creator}</li>
+                            `)
+                    } else {
+                        for (let k = 0; k < categoryInListClient[1][1].length; k++) {
+                            if (categoryInListClient[1][1][k].id == all_items[i].data[j].Client_id && all_items[i].data[j].Name != 'Выбрать') {
+                                client_array.push(categoryInListClient[1][1][k].Name);
+                            }
+                        }
+                    }
+                }
+            }
+            if (element.id == 'client') {
+                for (let i = 0; i < client_array.length - 1; i++) {
+                    for (let j = i + 1; j < client_array.length; j++) {
+                        if (client_array[i] == client_array[j]) {
+                            client_array.splice(j, 1);
+                            j--;
+                        }
+                    }
+                }
+            
+                for (let i = 0; i < client_array.length; i++) {
+                    let current_name = client_array[i].toLowerCase();
+                    let search_name = element.value.toLowerCase();
+                    if (current_name.includes(search_name) && current_name != '')
+                        $('#list_providers_for_search').append(`
+                            <li class="select_this_provider" id="${element.id}" onclick="sortCompTableByProviders(this)">${client_array[i]}</li>
+                        `)
+                }
+            }
+            if ($('#list_providers_for_search').html() == '') {
+                $('#list_providers_for_search').append(`
+                    <span class="select_this_provider">Ничего не найдено</span>
+                `)
+            }
+        }
+    });
 }
 // Фильтры таблиц Start
 function sortTableByCategory(filter) {
@@ -1869,10 +2025,12 @@ function fillingTables(object, filter = false) {
             return object[0].lastCard[i];
         }
     }
+
     if (object[0].id === 'analytics') {
         let current_period_month = datePeriod('month');
-        if (user.role == 'admin') return analyticsFilterTable_0(current_period_month);
-        if (user.role == 'manager') return analyticsFilterTable_1(current_period_month);
+        $('#analytics_block_hidden').remove();
+        if (user.role == 'admin') return analyticsFilterTable_0(current_period_month, false, true);
+        if (user.role == 'manager') return analyticsFilterTable_1(current_period_month, false, true);
     }
 
     let table = $('<table />', {

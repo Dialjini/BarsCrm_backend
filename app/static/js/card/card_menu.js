@@ -190,7 +190,7 @@ function createCardMenu(element, index = 0) {
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Fact_address', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc', 'rc', 'kpp', 'Director'] },
                     { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View', 'Bik', 'kc', 'rc', 'kpp', 'Director'] },
-                    { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data']}
+                    { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data', 'Contact_Start']}
                 ]
                 if (dataName[i].link[1][1] === undefined) getTableData(dataName[i].link, false, true);
                 titleObject[i].list.unshift(`Код: 0`);
@@ -314,7 +314,7 @@ function createCardMenu(element, index = 0) {
                     data: {category: category, id: idElement},
                     dataType: 'html',
                     success: function(result) {
-                        inputItems(JSON.parse(result));
+                        inputItems(JSON.parse(result), category);
                     }
                 });
             } else {
@@ -334,10 +334,29 @@ function createCardMenu(element, index = 0) {
                 }
             });
         }
-        function inputItems(items) {
+        function inputItems(items, category) {
             if (items.length == 0) 
                 addRow(`${category}-group`);
             else {
+                if (category == 'provider') {
+                    console.log(items);
+                    for (let i = 0; i < items.length - 1; i++) {
+                        for (let j = i + 1; j < items.length; j++) {
+                            if (items.Name == items.Name) {
+                                let first_date = items[i].Date == '' ? getValidationDate('01.01.1970') : getValidationDate(items[i].Date);
+                                let second_date = items[j].Date == '' ? getValidationDate('01.01.1970') : getValidationDate(items[j].Date);
+                                if (first_date > second_date) {
+                                    items.splice(j, 1);
+                                    j--;
+                                } else {
+                                    items.splice(i, 1);
+                                    i == 0 ? i : i--;
+                                }
+                            }
+                        }
+                    }
+                }
+                items = items.reverse();
                 for (let i = 0; i < items.length; i++) {
                     addRow(`${category}-group`, items[i]);
                 }
@@ -459,11 +478,11 @@ function createCardMenu(element, index = 0) {
                                 </tr>
                                 <tr>
                                     <td>КПП</td>
-                                    <td><input type="text" class="string" maxlength="20" id="client_kpp" onchange="saveCard()" value="${selectedLine.kpp}"></td>
+                                    <td><input type="text" class="string" maxlength="9" id="client_kpp" onchange="saveCard()" value="${selectedLine.kpp}"></td>
                                 </tr>
                                 <tr>
                                     <td>Директор</td>
-                                    <td><input type="text" class="string" maxlength="20" id="client_director" onchange="saveCard()" value="${selectedLine.Director}"></td>
+                                    <td><input type="text" class="string" id="client_director" onchange="saveCard()" value="${selectedLine.Director}"></td>
                                 </tr>
                             </table>
                         </div>
@@ -827,11 +846,11 @@ function createCardMenu(element, index = 0) {
                         </tr>
                         <tr>
                             <td>КПП</td>
-                            <td><input type="text" class="string" maxlength="20" id="carrier_kpp" onchange="saveCard()" value="${selectedLine.kpp}"></td>
+                            <td><input type="text" class="string" maxlength="9" id="carrier_kpp" onchange="saveCard()" value="${selectedLine.kpp}"></td>
                         </tr>
                         <tr>
                             <td>Директор</td>
-                            <td><input type="text" class="string" maxlength="20" id="carrier_director" onchange="saveCard()" value="${selectedLine.Director}"></td>
+                            <td><input type="text" class="string" id="carrier_director" onchange="saveCard()" value="${selectedLine.Director}"></td>
                         </tr>
                     </table>`).add(`
                     <table class="table_block">
@@ -975,13 +994,13 @@ function createCardMenu(element, index = 0) {
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>
-                                <input onkeyup="maskNumber(this.id); recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}">
+                                <input onkeyup="maskNumberCalc(this.id); recountPrice(this)" type="text" value="${returnSpaces(sale[i])}" name="edit" id="calcSale_${list_items[i].Item_id}">
                             </td>
                             <td>
-                                <input onkeyup="maskNumber(this.id); recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}">
+                                <input onkeyup="maskNumberCalc(this.id); recountPrice(this)" type="text" value="${returnSpaces(privet[i])}" name="edit" id="calcPrivet_${list_items[i].Item_id}">
                             </td>
                             <td>
-                                <input onkeyup="maskNumber(this.id); recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}">
+                                <input onkeyup="maskNumberCalc(this.id); recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}">
                             </td>
                             <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(price_unit)}</td>
                             <td id="amountC_${list_items[i].Item_id}">${returnSpaces(items_amount[i].amount)}</td>
@@ -1576,6 +1595,61 @@ function createCardMenu(element, index = 0) {
             }
             return options;
         }
+        function fillContactsStart() {
+            $.ajax({
+                url: '/getProviders',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    dataProvider = JSON.parse(data);
+                }
+            });
+
+            let data = null;
+            if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
+                if (array_info[4] === 'null') {
+                    return `<option selected value="Нет данных">Нет контактов</option>`
+                }
+                if (array_info[4] != undefined) {
+                    list_stock_acc[0] = array_info[4];
+                } 
+            }
+
+                let listContacts;
+                for (let i = 0; i < dataProvider.length; i++) {
+                    if (list_stock_acc[0] == dataProvider[i].Adress) {
+                        data = {id: dataProvider[i].id, category: 'provider'};
+                        break;
+                    }
+                }
+                
+                let options = '';
+
+                $.ajax({
+                    url: '/getContacts',
+                    type: 'GET',
+                    async: false,
+                    data: data,
+                    dataType: 'html',
+                    success: function(data) {
+                        listContacts = JSON.parse(data);
+                    }
+                });
+                if (listContacts.length == 0) {
+                    options += '<option selected value="Нет данных">Контакты не указаны</option>'
+                } else {
+                    for (let i = 0; i < listContacts.length; i++) {
+                        let val = `${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number} | ${listContacts[i].Phone_two}`;
+                        if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
+                            options += `<option selected value="${val}">${val}</option>`
+                        } else {
+                            options += `<option value="${val}">${val}</option>`
+                        }
+                    }
+                }
+                return options;
+        }
         function fillContacts() {
             if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
                 if (array_info[1] === 'null') {
@@ -1593,7 +1667,7 @@ function createCardMenu(element, index = 0) {
                     let options = '';
 
                     if (data == undefined) {
-                        return `<option selected disabled>Выберите счёт</option>`
+                        return `<option selected disabled>Нет контактов</option>`
                     }
 
                     $.ajax({
@@ -1681,18 +1755,103 @@ function createCardMenu(element, index = 0) {
             }
         }
         function fillStocksAndContacts() {
-            if (list_stock_acc.length == 1 && list_stock_acc[0].indexOf('-s!s-'))
-                list_stock_acc = list_stock_acc[0].split('-s!s-');
-
+            $.ajax({
+                url: '/getProviders',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                success: function(data) {
+                    dataProvider = JSON.parse(data);
+                }
+            });
+            let listContacts;
             let tr = '';
-            for (let i = 0; i < list_stock_acc.length; i++) {
-                tr += `
-                    <tr>
-                        <td>
-                            <div name="stock--delivery">${list_stock_acc[i]}</div>
-                        </td>
-                    </tr>
-                `
+            if (selectedLine.Contact_Start == '' || selectedLine.Contact_Start == null) {
+                for (let i = 0; i < dataProvider.length; i++) {
+                    for (let j = 0; j < list_stock_acc.length; j++) {
+                        if (dataProvider[i].Adress == list_stock_acc[j]) {
+                            $.ajax({
+                                url: '/getContacts',
+                                type: 'GET',
+                                async: false,
+                                data: {id: dataProvider[i].id, category: 'provider'},
+                                dataType: 'html',
+                                success: function(data) {
+                                    listContacts = JSON.parse(data);
+                                }
+                            });
+                            function fillContactsThis() {
+                                let options = '';
+                                for (let k = 0; k < listContacts.length; k++) {
+                                    if (listContacts[k].Name != '' && listContacts[k].Name != null) {
+                                        let val = `${listContacts[k].Position} | ${listContacts[k].Name} | ${listContacts[k].Number} | ${listContacts[k].Phone_two}`;
+                                        options += `<option value="${val}">${val}</option>`
+                                    }
+                                }
+                                if (options.length == 0) {
+                                    options = `<option value="Нет данных">Нет контактов</option>`
+                                }
+                                return options;
+                            }
+                            if (list_stock_acc.length == 1 && list_stock_acc[0].indexOf('-s!s-'))
+                                list_stock_acc = list_stock_acc[0].split('-s!s-');
+
+                            tr += `
+                                <tr>
+                                    <td style="padding: 10px;">
+                                        <div name="stock--delivery">${list_stock_acc[j]}</div>
+                                        <select style="margin-top: 0px;" name="stock--contact">${fillContactsThis()}</select>
+                                    </td>
+                                </tr>
+                            `
+                        }
+                    }
+                }
+            } else {
+                for (let i = 0; i < dataProvider.length; i++) {
+                    let contacts = selectedLine.Contact_Start.split('-s!s-');
+                    let stocks = selectedLine.Stock.split('-s!s-');
+                    for (let j = 0; j < contacts.length; j++) {
+                        if (dataProvider[i].Adress == stocks[j]) {
+                            $.ajax({
+                                url: '/getContacts',
+                                type: 'GET',
+                                async: false,
+                                data: {id: dataProvider[i].id, category: 'provider'},
+                                dataType: 'html',
+                                success: function(data) {
+                                    listContacts = JSON.parse(data);
+                                }
+                            });
+                            function fillContactsThis() {
+                                let options = '';
+                                for (let k = 0; k < listContacts.length; k++) {
+                                    if (listContacts[k].Name != '' && listContacts[k].Name != null) {
+                                        let val = `${listContacts[k].Position} | ${listContacts[k].Name} | ${listContacts[k].Number} | ${listContacts[k].Phone_two}`;
+                                        if (val == contacts[j]) {
+                                            options += `<option selected value="${val}">${val}</option>`
+                                        } else {
+                                            options += `<option value="${val}">${val}</option>`
+                                        }
+                                    }
+                                }
+                                if (options.length == 0) {
+                                    options = `<option value="Нет данных">Нет контактов</option>`
+                                }
+                                return options;
+                            }
+
+                            tr += `
+                                <tr>
+                                    <td style="padding: 10px;">
+                                        <div name="stock--delivery">${stocks[j]}</div>
+                                        <select style="margin-top: 0px;" name="stock--contact">${fillContactsThis()}</select>
+                                    </td>
+                                </tr>
+                            `
+                        }
+                    }
+                }
             }
             return tr;
         }
@@ -1819,7 +1978,6 @@ function createCardMenu(element, index = 0) {
         if (list_stock_acc == undefined) {
             list_stock_acc = [selectedLine.Stock];
         }
-
         return `<div class="row_card">
                         <table class="table_block">
                             <tr>
@@ -1887,6 +2045,16 @@ function createCardMenu(element, index = 0) {
                                 <td>
                                     <select id="delivery_stock">
                                         ${fillStock()}
+                                    </select>
+                                </td>
+                            </tr>`}
+                            ${selectedLine.Contact_Start.indexOf('-s!s-') != -1 || list_stock_acc.length > 1 ? 
+                            `` : 
+                            `<tr>
+                                <td>Контакт на отгрузке</td>
+                                <td>
+                                    <select id="delivery_contact_start">
+                                        ${fillContactsStart()}
                                     </select>
                                 </td>
                             </tr>`}
@@ -2360,8 +2528,18 @@ function makeRequest(element) {
             data['delivery_stock'] = stocks.join('-s!s-');
             continue;
         }
+        if ($(`#delivery_contact_start`).val() == undefined && 'delivery_contact_start' == idCardFields[3].ids[i]) {
+            let contacts_start = [];
+            for (let iter_contact of $('[name="stock--contact"')) {
+                contacts_start.push($(iter_contact).val())
+            }
+            data['delivery_contact_start'] = contacts_start.join('-s!s-');
+            continue;
+        }
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
+
+    
 
     let amounts = [], items_ids = [];
     for (let element of $('#flight [name="item_flight"]')) {
@@ -2760,7 +2938,7 @@ function transitProduct(element) {
                 }
             }
 
-            let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume)};
+            let data = {stock_select: stock_select, id_product: +idProduct, product_volume: +deleteSpaces(product_volume), item_date: getCurrentDateNotComparison('year')};
             $.ajax({
                 url: '/stockTransit',
                 type: 'GET',
@@ -2888,6 +3066,7 @@ function createNewItem() {
     }
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
+    data['item_date'] = getCurrentDateNotComparison('year');
     $.ajax({
         url: '/addItemToStock',
         type: 'GET',
