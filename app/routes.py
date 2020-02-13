@@ -147,7 +147,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=3016)
+        return render_template('index.html', last_update=3017)
     else:
         return render_template('login.html', last_update=3014)
 
@@ -354,12 +354,10 @@ def stockTransit():
             Item.Volume = str(float(Item.Volume.replace(' ', '')) -
                               float(str(request.args['product_volume']).replace(' ', '')))
             i.Volume = str(float(i.Volume.replace(' ', '')) + float(str(request.args['product_volume']).replace(' ', '')))
-
             db.session.commit()
             return 'OK'
     item = models.Item()
     item.Date = request.args['item_date']
-
     item.Weight = Item.Weight
     item.Packing = Item.Packing
     item.Fraction = Item.Fraction
