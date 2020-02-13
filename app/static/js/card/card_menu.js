@@ -2528,18 +2528,18 @@ function makeRequest(element) {
             data['delivery_stock'] = stocks.join('-s!s-');
             continue;
         }
-        if ($(`#delivery_contact_start`).val() == undefined && 'delivery_contact_start' == idCardFields[3].ids[i]) {
-            let contacts_start = [];
-            for (let iter_contact of $('[name="stock--contact"')) {
-                contacts_start.push($(iter_contact).val())
-            }
-            data['delivery_contact_start'] = contacts_start.join('-s!s-');
-            continue;
-        }
         data[idCardFields[3].ids[i]] = $(`#${idCardFields[3].ids[i]}`).val();
     }
 
-    
+    if ($(`#delivery_contact_start`).val() == undefined) {
+        let contacts_start = [];
+        for (let iter_contact of $('[name="stock--contact"')) {
+            contacts_start.push($(iter_contact).val())
+        }
+        data['delivery_contact_start'] = contacts_start.join('-s!s-');
+    } else {
+        data['delivery_contact_start'] = $(`#delivery_contact_start`).val();
+    }
 
     let amounts = [], items_ids = [];
     for (let element of $('#flight [name="item_flight"]')) {
@@ -2747,7 +2747,7 @@ function makeRequest(element) {
         categoryInFinanceAccount[1].pop();
     if (categoryInListCarrier[1][1] != undefined)
         categoryInListCarrier[1].pop();
-
+    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
