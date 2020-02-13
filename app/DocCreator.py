@@ -94,7 +94,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                                             carrier.Address, delivery.Auto,
                                             delivery.Contact_Name, delivery.Passport_data,
                                             delivery.Contact_Number, delivery.Contact_End, 'ООО "Барс"', adress2,
-                                            delivery.End_date, delivery.Contact_End, str(item_info['mass']),
+                                            delivery.End_date, delivery.Contact_Start.replace('-s!s-', ','), str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                             str(Sum), num2text(Sum)], doc=doc)
     else:
@@ -111,7 +111,7 @@ def Generate_Transit(dir_u, date, delivery, adress, adress2, type):
                                             carrier.Address, delivery.Auto,
                                             delivery.Contact_Name, delivery.Passport_data,
                                             delivery.Contact_Number, delivery.Contact_End, 'ИП Балкина Ирина Николаевна', adress2,
-                                            delivery.End_date, delivery.Contact_End, str(item_info['mass']),
+                                            delivery.End_date, delivery.Contact_Start.replace('-s!s-', ','), str(item_info['mass']),
                                             item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                             str(Sum), num2text(Sum)], doc=doc)
 
@@ -416,7 +416,7 @@ def Generate_Zayavka_OOO(dir_u, owner, date, delivery):
                                         document.Client_prefix_address, delivery.Auto,
                                         delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
                                         delivery.Stock.replace('-s!s-', ','), delivery.Contact_End, Client.Name, Adress.replace('-s!s-', ','),
-                                        delivery.End_date, delivery.Contact_End, str(item_info['mass']),
+                                        delivery.End_date, delivery.Contact_Start.replace('-s!s-', ','), str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(Sum), num2text(Sum)], doc=doc)
 
@@ -502,7 +502,7 @@ def Generate_Zayavka_IP(dir_u, owner, date, delivery):
                                         document.Client_prefix_address, delivery.Auto,
                                         delivery.Contact_Name + ', ' + delivery.Contact_Number, delivery.Passport_data,
                                         delivery.Stock.replace('-s!s-', ','), delivery.Contact_End, Client.Name, Adress.replace('-s!s-', ','),
-                                        delivery.End_date, delivery.Contact_End, str(item_info['mass']),
+                                        delivery.End_date, delivery.Contact_Start.replace('-s!s-', ','), str(item_info['mass']),
                                         item_info['packing'], delivery.Load_type, delivery.Date, delivery.End_date,
                                         str(Sum), num2text(Sum)], doc=doc)
     doc.save(dir_u + '/{}.docx'.format(owner.__tablename__ + str(owner.id) + 'N' + str(document.id)))
