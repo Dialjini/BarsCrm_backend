@@ -188,8 +188,8 @@ function linkField() {
                         analyticsFilterTable_4,
                         analyticsFilterTable_5,
                     ]
-                    $('#analytics_block_hidden').remove();
                     $('[name="unload_table"]').remove();
+                    $('#analytics_block_hidden').remove()
                     $('#info_in_accounts').remove();
                     return functions[this_id.split('_')[2]](datePeriod('month'));
                 } else {
@@ -1237,7 +1237,7 @@ function getValidationDate(date) {
 }
 // Отчеты
     // Прибыль по клиентам
-    function analyticsFilterTable_0(date_period, unload_status = false) {
+    function analyticsFilterTable_0(date_period, unload_status = false, main = false) {
         let account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1327,7 +1327,7 @@ function getValidationDate(date) {
             if (unload_status) {
                 return unload_table;
             }
-            if (!$('div').is('#analytics_block_hidden')) {
+            if (!$('div').is('#analytics_block_hidden') || main) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
@@ -1366,7 +1366,7 @@ function getValidationDate(date) {
         }
     }
     // Сводный по объёмам
-    function analyticsFilterTable_1(date_period, unload_status = false) {
+    function analyticsFilterTable_1(date_period, unload_status = false, main = false) {
         let account_data, stocks;
         $.ajax({
             url: '/getStockTable',
@@ -1534,7 +1534,7 @@ function getValidationDate(date) {
             if (unload_status) {
                 return unload_table;
             }
-            if (!$('div').is('#analytics_block_hidden')) {
+            if (!$('div').is('#analytics_block_hidden') || main) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 

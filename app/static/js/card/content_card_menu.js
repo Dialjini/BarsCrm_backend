@@ -100,7 +100,7 @@ function checkStocks(element) {
     if (payment_history.length == 0) {
         payment_history.push({date: '', sum: ''})
     }
-
+    console.log({account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)});
     $.ajax({
         url: '/addAccountPaymentHistory',
         data: {account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)},
@@ -260,7 +260,10 @@ function arrangeDelivery(element) {
             data = JSON.parse(data);
             if (categoryInFinanceAccount[1][1] == undefined) {
                 categoryInFinanceAccount[1].push(data);
-            } 
+            } else {
+                categoryInFinanceAccount[1].pop();
+                categoryInFinanceAccount[1].push(data);
+            }
         }
     });            
     element.id = 'delivery_new';
@@ -904,7 +907,7 @@ function addItemToAccount(element) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
                                             type: 'text', id: list[k].id, name: 'edit',
-                                            onkeyup: 'maskNumber(this.id); recountPrice(this)'
+                                            onkeyup: 'maskNumberCalc(this.id); recountPrice(this)'
                                         })
                                     }))
                                 } else {
@@ -995,7 +998,7 @@ function invoiceInTable(element) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
                                             type: 'text', id: list[k].id, name: 'create',
-                                            onkeyup: 'recountPrice(this)'
+                                            onkeyup: 'maskNumberCalc(this.id); recountPrice(this)'
                                         })
                                     }))
                                 } else {
@@ -1572,6 +1575,9 @@ function removeMemberOrRow(id) {
 function maskNumber(id) {
     $(`#${id}`).mask('# ##0.00', { reverse: true });
 }
+function maskNumberCalc(id) {
+    $(`#${id}`).mask('# ##0.00', { reverse: true });
+}
 function maskNumberWithout(id) {
     $(`#${id}`).mask('# ##0', { reverse: true });
 }
@@ -1756,15 +1762,6 @@ function contextualSearch(element) {
                 }
                 return list;
             }
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
-            // КОНТЕКСТНЫЙ ПОИСК. ПОЗИЦИОНИРОВАНИЕ ЭЛЕМЕНТА УЕЗЖАЕТ ВНИЗ
             parent.append(`
                 <div class="context_search hmax" id="search_${id}">
                     <ul id="list_providers_for_search">
@@ -1772,7 +1769,6 @@ function contextualSearch(element) {
                     </ul>
                 </div>
             `)
-            searchWord(element.value);
         }
     });
 }
@@ -1999,7 +1995,7 @@ function addRow(id, selectedLine = '') {
 
     for (let i = 0; i < tableInfo.length; i++) {
         if (id == tableInfo[i].id) {
-            $(`#${tableInfo[i].tbody}`).append(trFill(tableInfo[i]));
+            $(`#${tableInfo[i].tbody}`).prepend(trFill(tableInfo[i]));
             $(`[name="remove_last_group"]`).fadeIn(0);
             if (id === 'client-group') {
                 $('#group #item_price').mask('# ##0.00', { reverse: true });
@@ -2008,14 +2004,14 @@ function addRow(id, selectedLine = '') {
             if (id === 'provider-group') {
                 $('#group #item_price').mask('# ##0.00', { reverse: true });
                 $('#group #item_weight').mask('# ##0.00', { reverse: true });
-                $('#group #item_date').last().datepicker({position: 'right bottom', autoClose: true})
+                $('#group #item_date').first().datepicker({position: 'right bottom', autoClose: true})
             }
             if (id === 'carrier-group') {
                 $('#carrier_price').mask('# ##0.00', { reverse: true });
             }
             if (id === 'account-group') {
                 $('#group #account_price').mask('# ##0.00', { reverse: true });
-                $('#group #account_date').last().datepicker({position: 'right bottom', autoClose: true});
+                $('#group #account_date').first().datepicker({position: 'right bottom', autoClose: true});
                 $('#shipment_date').datepicker({position: 'right bottom', autoClose: true});
             }
             if (id === 'flight-group') {
@@ -2025,7 +2021,7 @@ function addRow(id, selectedLine = '') {
             if (id === 'delivery-group') {
                 $('#delivery_start_date').datepicker({position: 'right top', autoClose: true})
                 $('#delivery_end_date').datepicker({position: 'right top', autoClose: true})
-                $('#group #delivery_date').last().datepicker({position: 'right bottom', autoClose: true})
+                $('#group #delivery_date').first().datepicker({position: 'right bottom', autoClose: true})
                 $('#delivery_price').mask('# ##0.00', { reverse: true });
             }
         }
