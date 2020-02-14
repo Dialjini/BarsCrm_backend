@@ -259,6 +259,7 @@ class Provider(db.Model):
     rc = db.Column(db.String)
     Item_list = db.Column(db.String)
     Create_date = db.Column(db.String)
+    Additional_address = db.Column(db.String)
 
 
 

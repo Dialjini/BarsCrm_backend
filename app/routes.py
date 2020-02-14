@@ -147,7 +147,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=3024)
+        return render_template('index.html', last_update=3025)
     else:
         return render_template('login.html', last_update=3014)
 
@@ -1150,6 +1150,7 @@ def addProvider():
         Provider.Volume = data['provider_volume']
         Provider.Holding = data['provider_holding']
         Provider.Item_list = data['provider_item_list']
+        Provider.Additional_address = data['additional_address']
 
         if new:
             if data['manager_id'] != 'admin':
