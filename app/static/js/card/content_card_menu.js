@@ -1576,7 +1576,19 @@ function maskNumber(id) {
     $(`#${id}`).mask('# ##0.00', { reverse: true });
 }
 function maskNumberCalc(id) {
-    $(`#${id}`).mask('# ##0.00', { reverse: true });
+    let value = $(`#${id}`).val().replace('.', '').split('');
+    if (value[value.length - 1] == '-') {
+        if (value.indexOf('-') != value.length - 1) {
+            value.splice(0, 1);
+        } else {
+                value.splice(0, 0, '-');
+        }
+        value.splice(value.length - 1, 1);
+    }
+    if (value.length >= 2 && value.indexOf('.') == -1) {
+        value.splice(value.length - 1, 0, '.');	
+    }
+    $(`#${id}`).val(value.join(''));
 }
 function maskNumberWithout(id) {
     $(`#${id}`).mask('# ##0', { reverse: true });

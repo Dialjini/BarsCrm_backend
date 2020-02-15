@@ -188,7 +188,7 @@ function createCardMenu(element, index = 0) {
             } else {
                 const emptyData = [
                     { id: 'client', list: ['Name', 'Rayon', 'Category', 'Distance', 'Segment', 'UHH', 'Price', 'Oblast', 'Station', 'Tag', 'Adress', 'Fact_address', 'Site', 'Holding', 'Demand_item', 'Demand_volume', 'Livestock_all', 'Livestock_milking', 'Livestock_milkyield', 'Bik', 'kc', 'rc', 'kpp', 'Director'] },
-                    { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding'] },
+                    { id: 'provider', list: ['Name', 'Rayon', 'Category', 'Distance', 'UHH', 'Price', 'Oblast', 'Train', 'Tag', 'Adress', 'NDS', 'Merc', 'Volume', 'Holding', 'Additional_address'] },
                     { id: 'carrier', list: ['Name', 'Address', 'Area', 'Capacity', 'UHH', 'Region', 'View', 'Bik', 'kc', 'rc', 'kpp', 'Director'] },
                     { id: 'delivery', list: ['Customer', 'Start_date', 'Postponement_date','End_date', 'Load_type', 'Type', 'Comment', 'Client', 'Contact_Number', 'Account_id', 'Stock', 'Item_ids', 'Payment_list', 'Auto', 'Passport_data', 'Contact_Start']}
                 ]
@@ -634,6 +634,12 @@ function createCardMenu(element, index = 0) {
                         </tr>
                         <tr>
                             <td>Адрес</td>
+                            <td>
+                                <input type="text" class="string" autocomplete="off" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" id="additional_address" onchange="saveCard()" value="${selectedLine.Additional_address}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Адрес погрузки</td>
                             <td>
                                 <input type="text" class="string" autocomplete="off" onblur="hiddenFullField(this.id)" onfocus="viewFullField(this.id)" id="provider_address" onchange="saveCard()" value="${selectedLine.Adress}">
                             </td>

@@ -314,7 +314,7 @@ const idCardFields = [
     },
     {   
         name: 'provider', ids:
-        ['provider_holding', 'provider_name', 'provider_area', 'provider_region', 'provider_address', 'provider_inn',
+        ['provider_holding', 'provider_name', 'provider_area', 'provider_region', 'additional_address', 'provider_address', 'provider_inn',
         'provider_station', 'provider_price', 'provider_distance', 'provider_volume', 'provider_merc'],
         request: '/addProvider'
     },
