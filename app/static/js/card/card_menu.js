@@ -1622,6 +1622,8 @@ function createCardMenu(element, index = 0) {
                 } 
             }
 
+            console.log(list_stock_acc[0]);
+
                 let listContacts;
                 for (let i = 0; i < dataProvider.length; i++) {
                     if (list_stock_acc[0] == dataProvider[i].Adress) {
@@ -1632,16 +1634,21 @@ function createCardMenu(element, index = 0) {
                 
                 let options = '';
 
-                $.ajax({
-                    url: '/getContacts',
-                    type: 'GET',
-                    async: false,
-                    data: data,
-                    dataType: 'html',
-                    success: function(data) {
-                        listContacts = JSON.parse(data);
-                    }
-                });
+                if (data != null) {
+                    $.ajax({
+                        url: '/getContacts',
+                        type: 'GET',
+                        async: false,
+                        data: data,
+                        dataType: 'html',
+                        success: function(data) {
+                            listContacts = JSON.parse(data);
+                        }
+                    });
+                } else {
+                    listContacts = [];
+                }
+
                 if (listContacts.length == 0) {
                     options += '<option selected value="Нет данных">Контакты не указаны</option>'
                 } else {
