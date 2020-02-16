@@ -100,7 +100,7 @@ function checkStocks(element) {
     if (payment_history.length == 0) {
         payment_history.push({date: '', sum: ''})
     }
-    console.log({account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)});
+    
     $.ajax({
         url: '/addAccountPaymentHistory',
         data: {account_id: +idAccount, account_payment_history: JSON.stringify(payment_history)},
