@@ -1008,8 +1008,8 @@ function createCardMenu(element, index = 0) {
                             <td>
                                 <input onkeyup="maskNumberCalc(this.id); recountPrice(this)" type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}">
                             </td>
-                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(price_unit)}</td>
-                            <td id="amountC_${list_items[i].Item_id}">${returnSpaces(items_amount[i].amount)}</td>
+                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Number(deleteSpaces(price_unit)).toFixed(2))}</td>
+                            <td id="amountC_${list_items[i].Item_id}">${returnSpaces(Number(deleteSpaces(items_amount[i].amount)).toFixed(2))}</td>
                         </tr>
                     `)
                 } else {
@@ -1033,8 +1033,8 @@ function createCardMenu(element, index = 0) {
                             <td>
                                 <input type="text" value="${returnSpaces(delivery[i])}" name="edit" id="calcDelivery_${list_items[i].Item_id}" disabled>
                             </td>
-                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(price_unit)}</td>
-                            <td id="amountC_${list_items[i].Item_id}">${returnSpaces(items_amount[i].amount)}</td>
+                            <td id="product_unit_${list_items[i].Item_id}">${returnSpaces(Number(deleteSpaces(price_unit)).toFixed(2))}</td>
+                            <td id="amountC_${list_items[i].Item_id}">${returnSpaces(Number(deleteSpaces(items_amount[i].amount)).toFixed(2))}</td>
                         </tr>
                     `)
                 }
@@ -1934,21 +1934,28 @@ function createCardMenu(element, index = 0) {
                 }
             } else {
                 let dataAccount = categoryInFinanceAccount[1][1];
+                let list_items = list_items_acc;
+                if (list_items_acc[0].indexOf(',') != -1) {
+                    list_items = list_items_acc[0].split(',');
+                }
                 for (let i = 0; i < listAllItems.length; i++) {
-                    if (list_items_acc == undefined) {
+                    if (list_items == undefined) {
                         if (selectedLine.Item_ids != '') {
-                            list_items_acc = JSON.parse(selectedLine.Item_ids);
+                            list_items = JSON.parse(selectedLine.Item_ids);
                         } else {
                             return '';
                         }
                     }
                     
-                    for (let j = 0; j < list_items_acc.length; j++) {
+                    for (let j = 0; j < list_items.length; j++) {
                         for (let k = 0; k < listStocks.length; k++) {
                             for (let l = 0; l < dataAccount.length; l++) {
                                 let inputVolume = JSON.parse(dataAccount[l].account.Item_ids);
                                 for (let m = 0; m < inputVolume.length; m++) {
-                                    if (+list_items_acc[j] == +listAllItems[i].Item_id 
+                                    console.log(inputVolume);
+                                    console.log(list_items[j], +listAllItems[i].Item_id, ' - ' , +listAllItems[i].Stock_id, listStocks[k].id, ' - ' , dataAccount[l].account.id, selectedLine.Account_id, ' - ' , +listAllItems[i].Item_id, inputVolume[m].id)
+                                    console.log('----------');
+                                    if (+list_items[j] == +listAllItems[i].Item_id 
                                         && +listAllItems[i].Stock_id == listStocks[k].id
                                         && dataAccount[l].account.id == selectedLine.Account_id
                                         && +listAllItems[i].Item_id == inputVolume[m].id) {
@@ -1965,7 +1972,7 @@ function createCardMenu(element, index = 0) {
                                             `
                                         } else {
                                             for (let am = 0; am < amounts.length; am++) {
-                                                if (list_items_acc[j] == amounts[am].id) {
+                                                if (list_items[j] == amounts[am].id) {
                                                     tr += `
                                                         <tr id="item_flight_${listAllItems[i].Item_id}" name="item_flight">
                                                             <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>

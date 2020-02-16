@@ -1075,10 +1075,10 @@ function calculationIndicators() {
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : returnSpaces((+totalSale * -1).toFixed(2)));
                         $(`#calcPrivet_${data[j].items[k].Item_id}`).val(isNaN(totalPrivet) || totalPrivet == Infinity || totalPrivet == -Infinity ? '' : returnSpaces(totalPrivet));
                         $(`#calcDelivery_${data[j].items[k].Item_id}`).val(isNaN(totalDelivery) || totalDelivery == Infinity || totalDelivery == -Infinity ? '' : returnSpaces(totalDelivery));
-                        $(`#product_unit_${data[j].items[k].Item_id}`).html(isNaN(price_unit) || price_unit == Infinity || price_unit == -Infinity ? '' : returnSpaces(price_unit))
+                        $(`#product_unit_${data[j].items[k].Item_id}`).html(isNaN(price_unit) || price_unit == Infinity || price_unit == -Infinity ? '' : returnSpaces(Number(deleteSpaces(price_unit)).toFixed(2)))
                         let total = deleteSpaces((+deleteSpaces($(`#calcDelivery_${data[j].items[k].Item_id}`).val()) + +deleteSpaces($(`#calcPrivet_${data[j].items[k].Item_id}`).val()) + +deleteSpaces($(`#calcSale_${data[j].items[k].Item_id}`).val())) * +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()));
                         let amount = deleteSpaces(Math.round(+deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html()) * +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val())).toFixed(2));
-                        $(`#amountC_${data[j].items[k].Item_id}`).html(returnSpaces(+amount + total));
+                        $(`#amountC_${data[j].items[k].Item_id}`).html(returnSpaces((+amount + +total).toFixed(2)));
 
                         let sum = 0;
                         for (let element of $('#exposed_list .invoiled')) {
@@ -1103,7 +1103,7 @@ function tarCalculation(id) {
     let unit = Math.round(+deleteSpaces($(`#product_cost_${idElement}`).html()) + +deleteSpaces($(`#calcSale_${idElement}`).val()) + +deleteSpaces($(`#calcPrivet_${idElement}`).val()) + +deleteSpaces($(`#calcDelivery_${idElement}`).val())).toFixed(2);
 
     $(`#product_containers_${idElement}`).html(returnSpaces(Math.floor(volume / weight)));
-    $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : returnSpaces(unit));
+    $(`#product_unit_${idElement}`).html(unit == Infinity || isNaN(unit) ? '0' : returnSpaces(Number(deleteSpaces(unit)).toFixed(2)));
     calculationIndicators();
 }
 function recountPrice(element) {
@@ -1118,8 +1118,8 @@ function recountPrice(element) {
     }
 
     product.children().last().html(
-        returnSpaces((+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
-        + (+deleteSpaces(product.children()[7].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[8].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[9].children[0].value) * +deleteSpaces(product.children()[5].children[0].value)))
+        returnSpaces(Number((+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
+        + (+deleteSpaces(product.children()[7].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[8].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[9].children[0].value) * +deleteSpaces(product.children()[5].children[0].value))).toFixed(2))
     );
 
     let list = [
@@ -1140,8 +1140,7 @@ function recountPrice(element) {
                 other_total_sale *= -1;
             }
             $(`#${list[i].id}`).val(returnSpaces(other_total_sale));
-            $(`#product_unit_${dataProduct[1]}`).html(returnSpaces(+deleteSpaces(product.children()[6].innerHTML) + (+deleteSpaces(product.children()[7].children[0].value)) + (+deleteSpaces(product.children()[8].children[0].value)) + (+deleteSpaces(product.children()[9].children[0].value))));
-
+            $(`#product_unit_${dataProduct[1]}`).html(returnSpaces(Number((+deleteSpaces(product.children()[6].innerHTML) + (+deleteSpaces(product.children()[7].children[0].value)) + (+deleteSpaces(product.children()[8].children[0].value)) + (+deleteSpaces(product.children()[9].children[0].value)))).toFixed(2)));
         }
     } 
     
@@ -1165,7 +1164,7 @@ function recountPrice(element) {
     let sale = Math.abs(deleteSpaces($('#total_discount_inv').val()));
     let privet = deleteSpaces($('#total_privet_inv').val());
     let delivery = deleteSpaces($('#total_delivery_inv').val());
-    let total_sum = +sale + +privet + +delivery;
+    let total_sum = (+sale + +privet + +delivery).toFixed(2);
     $('#total_costs_inv').val(returnSpaces(total_sum));
 }
 function all_costs() {
@@ -1586,7 +1585,7 @@ function maskNumberCalc(id) {
         value.splice(value.length - 1, 1);
     }
     if (value.length >= 2 && value.indexOf('.') == -1) {
-        value.splice(value.length - 1, 0, '.');	
+        value.splice(value.length - 2, 0, '.');	
     }
     $(`#${id}`).val(value.join(''));
 }

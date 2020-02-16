@@ -567,7 +567,7 @@ let rowFilling = (object, id, table) => {
             }
             if (payment_amount == 0 && shipment == 'false') continue;
             if (+deleteSpaces(selectTableData[i].account.Sum) <= +deleteSpaces(payment_amount)) continue;
-            let element = $('<tbody>', {id: `account_${i + 1}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
+            let element = $('<tbody>', {id: `account_${selectTableData[i].account.id}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
             for (let j = 0; j < delivery_data.length; j++) {
                 if (j == 0) {
                     element.append(`

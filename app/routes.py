@@ -147,7 +147,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=3042)
+        return render_template('index.html', last_update=3065)
     else:
         return render_template('login.html', last_update=3014)
 
