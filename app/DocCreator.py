@@ -384,7 +384,7 @@ def Generate_Zayavka_OOO(dir_u, owner, date, delivery):
     item_info['packing'] = ''
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
-            item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
+            item_info['mass'] = str(float(str(item_info['mass']).replace(' ', '')) + float(str(i.Weight).replace(' ', '')))
             item_info['packing'] = i.Packing
 
     db.session.add(document)
@@ -470,7 +470,7 @@ def Generate_Zayavka_IP(dir_u, owner, date, delivery):
     item_info['packing'] = ''
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
-            item_info['mass'] = str(float(item_info['mass']) + float(i.Weight))
+            item_info['mass'] = str(float(str(item_info['mass']).replace(' ', '')) + float(str(i.Weight).replace(' ', '')))
             item_info['packing'] = i.Packing
 
     db.session.add(document)
