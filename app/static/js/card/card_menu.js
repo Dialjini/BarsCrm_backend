@@ -1935,8 +1935,11 @@ function createCardMenu(element, index = 0) {
             } else {
                 let dataAccount = categoryInFinanceAccount[1][1];
                 let list_items = list_items_acc;
-                if (list_items_acc[0].indexOf(',') != -1) {
-                    list_items = list_items_acc[0].split(',');
+                console.log(list_items_acc);
+                if (list_items_acc != undefined) {
+                    if (list_items_acc[0].indexOf(',') != -1) {
+                        list_items = list_items_acc[0].split(',');
+                    }
                 }
                 for (let i = 0; i < listAllItems.length; i++) {
                     if (list_items == undefined) {
