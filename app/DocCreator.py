@@ -357,7 +357,9 @@ def Generate_Zayavka_OOO(dir_u, owner, date, delivery):
     document.Owner_type = owner.__tablename__
     document.Prefix = 'ООО'
     Sum = 0
+    item_info = {'mass': 0}
     for i in json.loads(delivery.Amounts):
+        item_info['mass'] += float(str(i['volume']).replace(' ', ''))
         Sum += Sum + float(str(i['sum']).replace(' ', ''))
     if int(Sum) == Sum:
         Sum = int(Sum)
@@ -380,11 +382,9 @@ def Generate_Zayavka_OOO(dir_u, owner, date, delivery):
     except Exception:
         document.Client_mail_address = owner.Address
     Items = models.Item.query.all()
-    item_info = {'mass': 0}
     item_info['packing'] = ''
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
-            item_info['mass'] = str(float(str(item_info['mass']).replace(' ', '')) + float(str(i.Weight).replace(' ', '')))
             item_info['packing'] = i.Packing
 
     db.session.add(document)
@@ -438,7 +438,9 @@ def Generate_Zayavka_IP(dir_u, owner, date, delivery):
     document.Date = str(datetime.now().month) + '/' + str(datetime.now().year)
     document.Creation_date = str(datetime.now().day) + '.' + str(datetime.now().month) + '.' + str(datetime.now().year)
     Sum = 0
+    item_info = {'mass': 0}
     for i in json.loads(delivery.Amounts):
+        item_info['mass'] += float(str(i['volume']).replace(' ', ''))
         Sum += Sum + float(str(i['sum']).replace(' ', ''))
 
     if int(Sum) == Sum:
@@ -466,11 +468,9 @@ def Generate_Zayavka_IP(dir_u, owner, date, delivery):
         document.Client_mail_address = owner.Address
 
     Items = models.Item.query.all()
-    item_info = {'mass': 0}
     item_info['packing'] = ''
     for i in Items:
         if str(i.Item_id) in json.loads(delivery.Item_ids):
-            item_info['mass'] = str(float(str(item_info['mass']).replace(' ', '')) + float(str(i.Weight).replace(' ', '')))
             item_info['packing'] = i.Packing
 
     db.session.add(document)
