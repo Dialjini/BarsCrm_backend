@@ -294,6 +294,22 @@ let rowFilling = (object, id, table) => {
             }
             let item_list = JSON.parse(selectTableData[i].Item_list);
             if (item_list == null) item_list = [{item_product: '', item_price: ''}];
+            
+            for (let i = 0; i < item_list.length - 1; i++) {
+                for (let j = i + 1; j < item_list.length; j++) {
+                    if (item_list[i].item_product == item_list[j].item_product) {
+                        let first_date = item_list[i].item_date == '' ? getValidationDate('01.01.1970') : getValidationDate(item_list[i].item_date);
+                        let second_date = item_list[j].item_date == '' ? getValidationDate('01.01.1970') : getValidationDate(item_list[j].item_date);
+                        if (first_date > second_date) {
+                            item_list.splice(j, 1);
+                            j--;
+                        } else {
+                            item_list.splice(i, 1);
+                            i == 0 ? i : i--;
+                        }
+                    }
+                }
+            }
             let region = selectTableData[i].Oblast == null ? 'Не указано' : selectTableData[i].Oblast;
             let area = selectTableData[i].Rayon == null ? 'Не указано' : selectTableData[i].Rayon;
             let name = selectTableData[i].Name == null ? 'Не указано' : selectTableData[i].Name;
@@ -308,10 +324,9 @@ let rowFilling = (object, id, table) => {
                 </tr>
             `)
 
-            item_list = JSON.parse(selectTableData[i].Item_list);
-
             if (item_list != null) {
                 for (let j = 1; j < item_list.length; j++) {
+                    console.log(j, item_list.length);
                     tbody.append(`
                     <tr>
                         <td>${item_list[j].item_product}</td>
@@ -1591,7 +1606,22 @@ function sortTableByPrice(filter) {
 
     let filter_data = [];
     for (let i = 0; i < data.length; i++) {
-        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : []; 
+        let item_list = typeof data[i].Item_list == 'string' ? JSON.parse(data[i].Item_list) : [];
+        for (let i = 0; i < item_list.length - 1; i++) {
+            for (let j = i + 1; j < item_list.length; j++) {
+                if (item_list[i].item_product == item_list[j].item_product) {
+                    let first_date = item_list[i].item_date == '' ? getValidationDate('01.01.1970') : getValidationDate(item_list[i].item_date);
+                    let second_date = item_list[j].item_date == '' ? getValidationDate('01.01.1970') : getValidationDate(item_list[j].item_date);
+                    if (first_date > second_date) {
+                        item_list.splice(j, 1);
+                        j--;
+                    } else {
+                        item_list.splice(i, 1);
+                        i == 0 ? i : i--;
+                    }
+                }
+            }
+        }
         for (let j = 0; j < item_list.length; j++) {
             filter_data.push({id: data[i].id, product: item_list[j].item_product, price: +deleteSpaces(item_list[j].item_price)});
         }

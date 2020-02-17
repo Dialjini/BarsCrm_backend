@@ -997,7 +997,7 @@ function searchCategoryInfo() {
         $('.overflow').remove();
         let list = [
             {id: 'client', filter_table: filterClient},
-            {id: 'prodiver', filter_table: filterProvider},
+            {id: 'provider', filter_table: filterProvider},
             {id: 'carrier', filter_table: filterCarrier},
             {id: 'debit', filter_table: filterAccount},
             {id: 'account', filter_table: filterAccount},

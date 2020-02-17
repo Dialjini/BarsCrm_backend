@@ -338,24 +338,6 @@ function createCardMenu(element, index = 0) {
             if (items.length == 0) 
                 addRow(`${category}-group`);
             else {
-                if (category == 'provider') {
-                    console.log(items);
-                    for (let i = 0; i < items.length - 1; i++) {
-                        for (let j = i + 1; j < items.length; j++) {
-                            if (items.Name == items.Name) {
-                                let first_date = items[i].Date == '' ? getValidationDate('01.01.1970') : getValidationDate(items[i].Date);
-                                let second_date = items[j].Date == '' ? getValidationDate('01.01.1970') : getValidationDate(items[j].Date);
-                                if (first_date > second_date) {
-                                    items.splice(j, 1);
-                                    j--;
-                                } else {
-                                    items.splice(i, 1);
-                                    i == 0 ? i : i--;
-                                }
-                            }
-                        }
-                    }
-                }
                 items = items.reverse();
                 for (let i = 0; i < items.length; i++) {
                     addRow(`${category}-group`, items[i]);
@@ -1622,46 +1604,43 @@ function createCardMenu(element, index = 0) {
                 } 
             }
 
-            console.log(list_stock_acc[0]);
-
-                let listContacts;
-                for (let i = 0; i < dataProvider.length; i++) {
-                    if (list_stock_acc[0] == dataProvider[i].Adress) {
-                        data = {id: dataProvider[i].id, category: 'provider'};
-                        break;
-                    }
+            let listContacts;
+            for (let i = 0; i < dataProvider.length; i++) {
+                if (list_stock_acc[0] == dataProvider[i].Adress) {
+                    data = {id: dataProvider[i].id, category: 'provider'};
+                    break;
                 }
+            }
                 
-                let options = '';
+            let options = '';
+            if (data != null) {
+                $.ajax({
+                    url: '/getContacts',
+                    type: 'GET',
+                    async: false,
+                    data: data,
+                    dataType: 'html',
+                    success: function(data) {
+                        listContacts = JSON.parse(data);
+                    }
+                });
+            } else {
+                listContacts = [];
+            }
 
-                if (data != null) {
-                    $.ajax({
-                        url: '/getContacts',
-                        type: 'GET',
-                        async: false,
-                        data: data,
-                        dataType: 'html',
-                        success: function(data) {
-                            listContacts = JSON.parse(data);
-                        }
-                    });
-                } else {
-                    listContacts = [];
-                }
-
-                if (listContacts.length == 0) {
-                    options += '<option selected value="Нет данных">Контакты не указаны</option>'
-                } else {
-                    for (let i = 0; i < listContacts.length; i++) {
-                        let val = `${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number} | ${listContacts[i].Phone_two}`;
-                        if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
-                            options += `<option selected value="${val}">${val}</option>`
-                        } else {
-                            options += `<option value="${val}">${val}</option>`
-                        }
+            if (listContacts.length == 0) {
+                options += '<option selected value="Нет данных">Контакты не указаны</option>'
+            } else {
+                for (let i = 0; i < listContacts.length; i++) {
+                    let val = `${listContacts[i].Position} | ${listContacts[i].Name} | ${listContacts[i].Number} | ${listContacts[i].Phone_two}`;
+                    if (+selectedLine.Contact_End == +listContacts[i].Contact_id) {
+                        options += `<option selected value="${val}">${val}</option>`
+                    } else {
+                        options += `<option value="${val}">${val}</option>`
                     }
                 }
-                return options;
+            }
+            return options;
         }
         function fillContacts() {
             if ($(category).attr('data-name') != undefined || selectedLine.Name == 'Транзит') {
@@ -1779,9 +1758,12 @@ function createCardMenu(element, index = 0) {
             });
             let listContacts;
             let tr = '';
+            console.log(selectedLine);
             if (selectedLine.Contact_Start == '' || selectedLine.Contact_Start == null) {
-                for (let i = 0; i < dataProvider.length; i++) {
-                    for (let j = 0; j < list_stock_acc.length; j++) {
+                let length_providers = 0;
+                for (let j = 0; j < list_stock_acc.length; j++) {
+                    for (let i = 0; i < dataProvider.length; i++) {
+                        length_providers++;
                         if (dataProvider[i].Adress == list_stock_acc[j]) {
                             $.ajax({
                                 url: '/getContacts',
@@ -1808,7 +1790,7 @@ function createCardMenu(element, index = 0) {
                             }
                             if (list_stock_acc.length == 1 && list_stock_acc[0].indexOf('-s!s-'))
                                 list_stock_acc = list_stock_acc[0].split('-s!s-');
-
+                            console.log(list_stock_acc);
                             tr += `
                                 <tr>
                                     <td style="padding: 10px;">
@@ -1817,14 +1799,32 @@ function createCardMenu(element, index = 0) {
                                     </td>
                                 </tr>
                             `
+                            length_providers = 0;
                         }
+                        if (length_providers == dataProvider.length) {
+                            if (list_stock_acc.length == 1 && list_stock_acc[0].indexOf('-s!s-'))
+                                list_stock_acc = list_stock_acc[0].split('-s!s-');
+                            console.log(list_stock_acc);
+                            tr += `
+                                <tr>
+                                    <td style="padding: 10px;">
+                                        <div name="stock--delivery">${list_stock_acc[j]}</div>
+                                        <select style="margin-top: 0px;" name="stock--contact">
+                                            <option value="Нет данных">Нет контактов</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            `
+                        } 
                     }
                 }
             } else {
-                for (let i = 0; i < dataProvider.length; i++) {
-                    let contacts = selectedLine.Contact_Start.split('-s!s-');
-                    let stocks = selectedLine.Stock.split('-s!s-');
-                    for (let j = 0; j < contacts.length; j++) {
+                let length_providers = 0;
+                let contacts = selectedLine.Contact_Start.split('-s!s-');
+                let stocks = selectedLine.Stock.split('-s!s-');
+                for (let j = 0; j < contacts.length; j++) {
+                    for (let i = 0; i < dataProvider.length; i++) {
+                        length_providers++;
                         if (dataProvider[i].Adress == stocks[j]) {
                             $.ajax({
                                 url: '/getContacts',
@@ -1862,7 +1862,20 @@ function createCardMenu(element, index = 0) {
                                     </td>
                                 </tr>
                             `
+                            length_providers = 0;
                         }
+                        if (length_providers == dataProvider.length) {
+                            tr += `
+                                <tr>
+                                    <td style="padding: 10px;">
+                                        <div name="stock--delivery">${stocks[j]}</div>
+                                        <select style="margin-top: 0px;" name="stock--contact">
+                                            <option value="Нет данных">Нет контактов</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            `
+                        } 
                     }
                 }
             }
@@ -1935,7 +1948,6 @@ function createCardMenu(element, index = 0) {
             } else {
                 let dataAccount = categoryInFinanceAccount[1][1];
                 let list_items = list_items_acc;
-                console.log(list_items_acc);
                 if (list_items_acc != undefined) {
                     if (list_items_acc[0].indexOf(',') != -1) {
                         list_items = list_items_acc[0].split(',');
@@ -1955,9 +1967,6 @@ function createCardMenu(element, index = 0) {
                             for (let l = 0; l < dataAccount.length; l++) {
                                 let inputVolume = JSON.parse(dataAccount[l].account.Item_ids);
                                 for (let m = 0; m < inputVolume.length; m++) {
-                                    console.log(inputVolume);
-                                    console.log(list_items[j], +listAllItems[i].Item_id, ' - ' , +listAllItems[i].Stock_id, listStocks[k].id, ' - ' , dataAccount[l].account.id, selectedLine.Account_id, ' - ' , +listAllItems[i].Item_id, inputVolume[m].id)
-                                    console.log('----------');
                                     if (+list_items[j] == +listAllItems[i].Item_id 
                                         && +listAllItems[i].Stock_id == listStocks[k].id
                                         && dataAccount[l].account.id == selectedLine.Account_id
@@ -2770,7 +2779,6 @@ function makeRequest(element) {
         categoryInFinanceAccount[1].pop();
     if (categoryInListCarrier[1][1] != undefined)
         categoryInListCarrier[1].pop();
-    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
