@@ -609,6 +609,27 @@ def addShipment():
     else:
         return redirect('/', code=302)
 
+@app.route('/deleteAccount', methods=['GET'])
+def deleteAccount():
+    if 'username' in session:
+        table = models.Account.query.filter_by(id=request.args['account_id']).first()
+        db.session.delete(table)
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
+@app.route('/deleteDelivery', methods=['GET'])
+def deleteDelivery():
+    if 'username' in session:
+        table = models.Delivery.query.filter_by(id=request.args['delivery_id']).first()
+        db.session.delete(table)
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
 @app.route('/fixDelivery', methods=['GET'])
 def fixDelivery():
     if 'username' in session:
