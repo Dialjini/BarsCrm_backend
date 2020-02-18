@@ -578,8 +578,6 @@ def addDelivery():
         table.Start_date = data['delivery_start_date']
         table.Stock = data['delivery_stock']
         table.Type = data['delivery_type']
-        table.Item_ids = data['delivery_item_ids']
-        table.Amounts = data['delivery_amounts']
         table.Auto = data['delivery_car']
         table.Passport_data = data['delivery_passport']
         table.Postponement_date = data['delivery_postponement_date']
@@ -598,15 +596,30 @@ def addDelivery():
     else:
         return redirect('/', code=302)
 
+@app.route('/addShipment', methods=['GET'])
+def addShipment():
+    if 'username' in session:
+        data = request.args
+        table = models.Delivery.query.filter_by(id=data['delivery_id']).first()
+        table.Item_ids = data['delivery_item_ids']
+        table.Amounts = data['delivery_amounts']
+
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 @app.route('/fixDelivery', methods=['GET'])
 def fixDelivery():
-    Delivery = models.Delivery.query.filter_by(id=request.args['id']).first()
-    Delivery.Item_ids = request.args['items_ids']
-    Delivery.Amounts = request.args['amounts']
+    if 'username' in session:
+        Delivery = models.Delivery.query.filter_by(id=request.args['id']).first()
+        Delivery.Item_ids = request.args['items_ids']
+        Delivery.Amounts = request.args['amounts']
 
-    db.session.commit()
-    return 'OK'
+        db.session.commit()
+        return 'OK'
+    else:
+        return redirect('/', code=302)
 
 @app.route('/getContacts', methods=['GET'])
 def getContacts():
