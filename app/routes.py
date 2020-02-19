@@ -381,7 +381,8 @@ def stockTransit():
 @app.route('/removeVolume', methods=['GET'])
 def removeVolume():
     Item = models.Item.query.filter_by(Item_id=request.args['item_id']).first()
-    Item.Volume = Item.Volume - request.args['item_volume']
+    Item.Volume = str(float(str(Item.Volume).replace(' ', ''))
+                      - float(str(request.args['item_volume']).replace(' ', '')))
 
     db.session.commit()
     return 'OK'
