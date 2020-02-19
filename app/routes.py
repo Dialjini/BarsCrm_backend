@@ -370,6 +370,7 @@ def stockTransit():
     item.Group_id = Item.Group_id
     item.Prefix = Item.Prefix
     item.Group_name = Item.Group_name
+    item.Category = Item.Category
 
     Stock.Items.append(item)
     db.session.commit()
@@ -856,6 +857,7 @@ def editItem():
         item.Prefix = data['item_prefix']
         item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
         item.Purchase_price = data['item_purchase_price']
+        item.Category = data['item_category']
 
         db.session.commit()
         return 'OK'
@@ -885,6 +887,7 @@ def addItemToStock():
             item.Prefix = data['item_prefix']
             item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
             item.Purchase_price = data['item_purchase_price']
+            item.Category = data['item_category']
 
             db.session.add(item)
             db.session.commit()
@@ -905,6 +908,7 @@ def addItemToStock():
         item.Prefix = data['item_prefix']
         item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
         item.Purchase_price = data['item_purchase_price']
+        item.Category = data['item_category']
 
         Stock.Items.append(item)
         db.session.commit()

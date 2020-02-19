@@ -64,6 +64,7 @@ class Item(db.Model):
     Prefix = db.Column(db.String)
     Purchase_price = db.Column(db.String)
     Date = db.Column(db.String)
+    Category = db.Column(db.String)
 
 
 class Junk_item(db.Model):
