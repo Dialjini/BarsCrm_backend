@@ -377,6 +377,14 @@ def stockTransit():
 
     return 'OK'
 
+@app.route('/editShipmentList', methods=['GET'])
+def editShipmentList():
+    account = models.Account.filter_by(id=request.args['account_id']).first()
+    account.Shipment_list = request.args['shipment_list']
+
+    db.session.commit()
+    return 0
+
 
 @app.route('/removeVolume', methods=['GET'])
 def removeVolume():

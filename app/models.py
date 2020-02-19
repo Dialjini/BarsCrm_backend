@@ -297,6 +297,7 @@ class Account(db.Model):
     Delivery_costs = db.Column(db.String)
     Shipment = db.Column(db.String)
     Shipment_hello = db.Column(db.String)
+    Shipment_list = db.Column(db.String)
 
 
 class Role(db.Model):
