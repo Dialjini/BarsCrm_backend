@@ -377,6 +377,15 @@ def stockTransit():
 
     return 'OK'
 
+
+@app.route('/removeVolume', methods=['GET'])
+def removeVolume():
+    Item = models.Item.query.filter_by(Item_id=request.args['item_id']).first()
+    Item.Volume = Item.Volume - request.args['item_volume']
+
+    db.session.commit()
+    return 'OK'
+
 @app.route('/addRole', methods=['GET'])
 def addRole():
     if 'username' in session:
