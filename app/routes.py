@@ -147,7 +147,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=3086)
+        return render_template('index.html', last_update=3470)
     else:
         return render_template('login.html', last_update=3014)
 
@@ -379,11 +379,11 @@ def stockTransit():
 
 @app.route('/editShipmentList', methods=['GET'])
 def editShipmentList():
-    account = models.Account.filter_by(id=request.args['account_id']).first()
+    account = models.Account.query.filter_by(id=request.args['account_id']).first()
     account.Shipment_list = request.args['shipment_list']
 
     db.session.commit()
-    return 0
+    return 'OK'
 
 
 @app.route('/removeVolume', methods=['GET'])

@@ -104,7 +104,7 @@ function createCardMenu(element, index = 0) {
         },
         {
             id: 'delivery',
-            list: [`Оформить заявку на Доставку`],
+            list: [],
             link: deliveryContentCard,
             status: getInfo[1]
         },
@@ -149,7 +149,7 @@ function createCardMenu(element, index = 0) {
                     }
                 } else if (getInfo[0] === 'delivery') {
                     for (let j = 0; j < data_list.length; j++) {
-                        if (data_list[j].delivery.id == getInfo[1]) {
+                        if (+data_list[j].delivery.id == +getInfo[1]) {
                             selectedLine = data_list[j].delivery;
                         }
                     }
@@ -171,7 +171,9 @@ function createCardMenu(element, index = 0) {
                     }
                 }
                 let date = new Date();
-                titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id || selectedLine.account.id}`);
+                if (getInfo[0] != 'account') {
+                    titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id}`);
+                }
                 if (getInfo[0] === 'client' || getInfo[0] === 'provider' || getInfo[0] === 'carrier') {
                     titleObject[i].list.push(selectedLine.UTC == '' || selectedLine.UTC == undefined ? 'Местное время неопределенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours() < 10 ? '0' + (+selectedLine.UTC + +date.getUTCHours()) : selectedLine.UTC + date.getUTCHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}`)
                     if (getInfo[0] === 'client') {
@@ -183,7 +185,18 @@ function createCardMenu(element, index = 0) {
                     } 
                 }
                 if (getInfo[0] === 'account') {
+                    titleObject[i].list.unshift(`Код: ${selectedLine.account.id}`);
                     titleObject[i].list.push(`Счёт от ${selectedLine.items[0].Prefix} (${selectedLine.items[0].NDS}%)`)
+
+                    if (selectedLine.account.Status == 'false' && selectedLine.account.Shipment == 'false') {
+                        titleObject[i].list.push(`<span id="account_${selectedLine.account.id}" onclick="deleteAccountCard(this.id)" class="red">Удалить карточку</span>`)
+                    }
+                }
+                if (getInfo[0] === 'delivery') {
+                    titleObject[i].list.push(`Оформить заявку на Доставку`);
+                    if (selectedLine.Payment_list == null || selectedLine.Payment_list == '') {
+                        titleObject[i].list.push(`<span id="delivery_${selectedLine.id}" onclick="deleteDeliveryCard(this.id)" class="red">Удалить карточку</span>`)
+                    }
                 }
             } else {
                 const emptyData = [
@@ -372,7 +385,7 @@ function createCardMenu(element, index = 0) {
     }
     function getListRegions(select, category) {
         $.ajax({
-            url: 'static/js/regions/regions.json',
+            url: 'static/js/json/regions.json',
             async: false,
             success: function(json) {
                 let dbRegion = select.Oblast != undefined ? select.Oblast : select.Region;
@@ -656,7 +669,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Объем про-ва, кг.</td>
                             <td>
-                                <input onkeyup="maskNumber(this.id)" type="text" id="provider_volume" class="string" onchange="saveCard()" value="${selectedLine.Volume}">
+                                <input onkeyup="maskNumberWithout(this.id)" type="text" id="provider_volume" class="string" onchange="saveCard()" value="${selectedLine.Volume}">
                             </td>
                         </tr>
                         <tr>
@@ -845,7 +858,7 @@ function createCardMenu(element, index = 0) {
                         <tr>
                             <td>Грузоподъемность, кг.</td>
                             <td>
-                                <input onkeyup="maskNumber(this.id)" type="text" id="carrier_capacity" onchange="saveCard()" value="${selectedLine.Capacity}" class="string">
+                                <input onkeyup="maskNumberWithout(this.id)" type="text" id="carrier_capacity" onchange="saveCard()" value="${selectedLine.Capacity}" class="string">
                             </td>
                         </tr>
                         <tr>
@@ -941,6 +954,7 @@ function createCardMenu(element, index = 0) {
         let delivery = JSON.parse(selectedLine.account.Shipping);
         let items_amount = JSON.parse(selectedLine.account.Items_amount);
         let account_id = selectedLine.account.id;
+        let price_units = [];
 
         for (let i = 0; i < data_del.length; i++) {
             if (data_del[i].delivery.Account_id == account_id) {
@@ -966,6 +980,7 @@ function createCardMenu(element, index = 0) {
                 let totalPrivet     = deleteSpaces(privet[i]);
                 let totalDelivery   = deleteSpaces(delivery[i]);
                 let price_unit      = (+totalSale + +totalPrivet + +totalDelivery + +deleteSpaces(list_items[i].Cost));
+                price_units.push({unit: price_unit, id: list_items[i].Item_id, purchase_price: list_items[i].Purchase_price});
 
                 if (!edit) {
                     table = table.concat(`
@@ -1062,7 +1077,8 @@ function createCardMenu(element, index = 0) {
         }
         function tableShipments() {
             function fillFlights() {
-                let data_del, data_items, data_user;
+                let data_role = $('[name="offtop__load"').attr('id').split('::');
+                let data_user = {role: data_role[0], id: data_role[1]};
                 $.ajax({
                     url: '/getDeliveries',
                     type: 'GET',
@@ -1077,15 +1093,6 @@ function createCardMenu(element, index = 0) {
                             dataType: 'html',
                             success: function(data) {
                                 data_items = JSON.parse(data);
-                                $.ajax({
-                                    url: '/getThisUser',
-                                    type: 'GET',
-                                    async: false,
-                                    dataType: 'html',
-                                    success: function(data) {
-                                        data_user = JSON.parse(data);
-                                    }
-                                })
                             }
                         })
                     }
@@ -1093,43 +1100,39 @@ function createCardMenu(element, index = 0) {
 
                 let table = `
                     <tr>
+                        <th width="12"></th>
                         <th>Дата</th>
-                        <th>Товар</th>
-                        <th>Склад</th>
+                        <th width="200">Товар</th>
+                        <th width="280">Склад</th>
                         <th>Объем, кг.</th>
                         <th>Вид упаковки</th>
                         <th>Сумма, руб.</th>
                         ${data_user.role == 'admin' ? `<th>Закупочная цена</th>` : ''}
                     </tr>
                 `;
-
-                for (let i = 0; i < data_del.length; i++) {
-                    if (+data_del[i].delivery.Account_id == +selectedLine.account.id) {
-                        let amounts = JSON.parse(data_del[i].delivery.Amounts);
-                        let item_ids = JSON.parse(data_del[i].delivery.Item_ids);
-                        let date = data_del[i].delivery.Date;
-                        for (let j = 0; j < data_items.length; j++) {
-                            for (let k = 0; k < data_items[j].items.length; k++) {
-                                for (let l = 0; l < item_ids.length; l++) {
-                                    if (data_items[j].items[k].Item_id == item_ids[l]) {
-                                        table += `
-                                            <tr id="item_flight_${data_items[j].items[k].Item_id}" name="item_flight">
-                                                <td>${date}</td>
-                                                <td>${data_items[j].items[k].Name}</td>
-                                                <td>${data_items[j].stock_address}</td>
-                                                <td>${returnSpaces(amounts[l].volume)}</td>
-                                                <td>${data_items[j].items[k].Packing}</td>
-                                                <td>${returnSpaces(amounts[l].sum)}</td>
-                                                ${data_user.role == 'admin' ? `<td>${returnSpaces(data_items[j].items[k].Purchase_price)}</td>` : ''}
-                                            </tr>
-                                        `
-                                    }
-                                }
-                            }
+                let shipment_list = [];
+                if (selectedLine.account.Shipment_list != null) {
+                    shipment_list = JSON.parse(selectedLine.account.Shipment_list);
+                }
+                for (let i = 0; i < shipment_list.length; i++) {
+                    for (let j = 0; j < price_units.length; j++) {
+                        if (shipment_list[i].id == price_units[j].id) {
+                            table += `
+                                <tr id="item_flight_${shipment_list[i].id}" name="item_flight">
+                                    <td id="shipment_${selectedLine.account.id}_${shipment_list[i].id}" onclick="deleteThisShipment(this.id)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
+                                    <td>${shipment_list[i].date}</td>
+                                    <td>${shipment_list[i].name}</td>
+                                    <td>${shipment_list[i].stock}</td>
+                                    <td>${returnSpaces(shipment_list[i].volume)}</td>
+                                    <td>${shipment_list[i].packing}</td>
+                                    <td>${returnSpaces(+deleteSpaces(shipment_list[i].volume) * +deleteSpaces(price_units[j].unit))}</td>
+                                    ${data_user.role == 'admin' ? `<td>${returnSpaces(price_units[j].purchase_price)}</td>` : ''}
+                                </tr>
+                            `
                         }
                     }
                 }
-
+                
                 return table;
             }
             return `
@@ -1374,10 +1377,12 @@ function createCardMenu(element, index = 0) {
                             </tr>
                         </table>
                     </div>
+                </div>
+                <div class="row_card">
                     <div class="info_block">
                         <span class="lightgray">Отгрузки</span>
                         <div class="hmax">
-                            <table style="width: 625px">
+                            <table>
                                 ${tableShipments()}
                             </table>
                         </div>
@@ -1385,7 +1390,8 @@ function createCardMenu(element, index = 0) {
                 </div>
                 <div class="next">
                     <div style="display:none" id="list_stock" data-stock=""></div>
-                    <button class="btn btn-main" id="delivery_new" onclick="editAccount(this)">Отгрузить</button>
+                    <button class="btn" id="account_shipment" onclick="editAccount(this)">Отгрузить</button>
+                    <button class="btn btn-main" id="delivery_new" onclick="editAccount(this)" style="margin-left: 20px;">Оформить заявку</button>
                 </div>`
     }
     // Контентная часть Дебеторки
@@ -1977,7 +1983,7 @@ function createCardMenu(element, index = 0) {
                                                 <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
                                                 <td>${listAllItems[i].Name}</td>
                                                 <td>${listStocks[k].Name}</td>
-                                                <td><input onkeyup="maskNumber(this.id)" name="item_volume" id="item_volume_${listAllItems[i].Item_id}" type="text"></td>
+                                                <td><input onkeyup="maskNumberWithout(this.id)" name="item_volume" id="item_volume_${listAllItems[i].Item_id}" type="text"></td>
                                                 <td>${listAllItems[i].Packing}</td>
                                                 <td><input onkeyup="maskNumber(this.id)" name="item_sum" id="item_sum_${listAllItems[i].Item_id}" type="text"></td>
                                             </tr>
@@ -1990,7 +1996,7 @@ function createCardMenu(element, index = 0) {
                                                             <td name="account_${dataAccount[l].account.id}_${selectedLine.id}" id="flight_${listAllItems[i].Item_id}" onclick="deleteItemInFlight(this)"><img src="../static/images/returnBack.png" style="width: 12px;"></td>
                                                             <td>${listAllItems[i].Name}</td>
                                                             <td>${listStocks[k].Name}</td>
-                                                            <td><input onkeyup="maskNumber(this.id)" name="item_volume" id="item_volume_${listAllItems[i].Item_id}" value="${amounts[am].volume}" type="text"></td>
+                                                            <td><input onkeyup="maskNumberWithout(this.id)" name="item_volume" id="item_volume_${listAllItems[i].Item_id}" value="${amounts[am].volume}" type="text"></td>
                                                             <td>${listAllItems[i].Packing}</td>
                                                             <td><input onkeyup="maskNumber(this.id)" name="item_sum" id="item_sum_${listAllItems[i].Item_id}" value="${amounts[am].sum}" type="text"></td>
                                                         </tr>
@@ -2010,6 +2016,7 @@ function createCardMenu(element, index = 0) {
         if (list_stock_acc == undefined) {
             list_stock_acc = [selectedLine.Stock];
         }
+        console.log(selectedLine);
         return `<div class="row_card">
                         <table class="table_block">
                             <tr>
@@ -2182,7 +2189,6 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                     <div class="next">
-                        <button class="btn" style="margin-right: 10px" id="delivery_new" data-name="not-document" onclick="makeRequest(this)">Забирает сам</button>
                         <button class="btn btn-main" data-name="document" id="delivery_new" onclick="makeRequest(this)">Оформить Заявку</button>
                     </div>`
     }
@@ -2247,7 +2253,7 @@ function createCardMenu(element, index = 0) {
                 <table class="table_block">
                     <tr>
                         <td>Объем, кг.</td>
-                        <td><input onkeyup="maskNumber(this.id)" type="text" id="item_volume" onchange="saveCard()" class="string"></td>
+                        <td><input onkeyup="maskNumberWithout(this.id)" type="text" id="item_volume" onchange="saveCard()" class="string"></td>
                     </tr>
                     <tr>
                         <td>Фасовка</td>
@@ -2260,8 +2266,17 @@ function createCardMenu(element, index = 0) {
                         </td>
                     </tr>
                     <tr>
+                        <td>Категория</td>
+                        <td>
+                            <select id="item_category" type="text">
+                                <option selected value="Насыпь">Насыпь</option>
+                                <option value="Жир/ЗЦМ">Жир/ЗЦМ</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>Вес, кг.</td>
-                        <td><input onkeyup="maskNumber(this.id)" type="text" id="item_weight" onchange="saveCard()" class="string"></td>
+                        <td><input onkeyup="maskNumberWithout(this.id)" type="text" id="item_weight" onchange="saveCard()" class="string"></td>
                     </tr>
                 </table>
                 <table class="table_block">
@@ -2465,7 +2480,7 @@ function getListAreas(element, area = '') {
         category = element.id.split('_')[0];
     } catch {}
     $.ajax({
-        url: 'static/js/regions/regions.json',
+        url: 'static/js/json/regions.json',
         async: false,
         success: function(json) {
             let options = '<option value="">Не выбран</option>';
@@ -2578,26 +2593,22 @@ function makeRequest(element) {
         items_ids.push($(element).attr('id').split('_')[2]);
     }
     for (let element of $('#flight [name="item_sum"]')) {
-        if ($(this_element).attr('data-name') == 'not-document') {
-            amounts.push({sum: 0});
-        } else {
-            if (element.value == '') {
-                return $('.page').append($('<div>', { class: 'background' }).add(`
-                    <div class="modal_select">
-                        <div class="title">
-                            <span>Ошибка</span>
-                            <img onclick="closeModal()" src="static/images/cancel.png">
-                        </div>
-                        <div class="content">
-                            <div class="message">
-                                <p style="font-size: 14px; color: #595959;">Введите сумму доставки!</p>
-                            </div>
+        if (element.value == '') {
+            return $('.page').append($('<div>', { class: 'background' }).add(`
+                <div class="modal_select">
+                    <div class="title">
+                        <span>Ошибка</span>
+                        <img onclick="closeModal()" src="static/images/cancel.png">
+                    </div>
+                    <div class="content">
+                        <div class="message">
+                            <p style="font-size: 14px; color: #595959;">Введите сумму доставки!</p>
                         </div>
                     </div>
-                `)); 
-            }
-            amounts.push({sum: element.value});
+                </div>
+            `)); 
         }
+        amounts.push({sum: element.value});
     }
     for (let i = 0; i < $('#flight [name="item_volume"]').length; i++){
         if (infoAccount == 'Транзит') {
@@ -2624,23 +2635,40 @@ function makeRequest(element) {
     }
 
     data['delivery_carrier_id'] = +$('#delivery_carrier_id').val();
+    console.log(data['delivery_carrier_id']);
     let carrier_id = +$('#delivery_carrier_id').val();
 
     if ($(element).attr('data-name') == 'document') {
         if (infoAccount == undefined) {
-            return 'Оформить заявку невозможно, т.к вы не выбрали счет!';
+            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 13px; color: #595959;">Оформить заявку невозможно, т.к вы не выбрали счет!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
         }
         if (data['delivery_carrier_id'] == 0) {
-            return 'Оформить заявку невозможно, т.к вы не выбрали перевозчика!';
+            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 13px; color: #595959;">Оформить заявку невозможно, т.к вы не выбрали перевозчика!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
         }
-    } else if ($(element).attr('data-name') == 'not-document') {
-        if (infoAccount == undefined) {
-            return 'Выставить договор невозможно, т.к вы не выбрали счет!';
-        }
-        if (data['delivery_carrier_id'] == 0) {
-            return 'Выставить договор невозможно, т.к вы не выбрали перевозчика!';
-        }
-        data['delivery_type'] = 'not-document';
     } else {
         if (infoAccount == undefined) {
             var result = confirm('При закрытии карточки данные не сохранятся, т.к вы не выбрали счет!');
@@ -2699,44 +2727,17 @@ function makeRequest(element) {
             }
         }
 
-        let count = 0;
         for (let i = 0; i < infoAccount.items.length; i++) {
             for (let j = 0; j < amounts_sum.length; j++) {
                 if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) < +deleteSpaces(amounts_sum[j].volume)) {
                     return alert(`Товар "${infoAccount.items[i].Name}" отгружается на больший объем, чем есть в счете!`)
                 }
-                if (infoAccount.items[i].Item_id == amounts_sum[j].id && +deleteSpaces(infoAccount.items[i].Transferred_volume) == +deleteSpaces(amounts_sum[j].volume)) {
-                    count++;
-                }
             }
         }
-
-        if (amounts_sum.length == count) {
-            $.ajax({
-                url: '/editAccountShipment',
-                type: 'GET',
-                data: {id: infoAccount.account.id, shipment: 'true'},
-                dataType: 'html',
-                success: function() {}
-            });
-        } else {
-            $.ajax({
-                url: '/editAccountShipment',
-                type: 'GET',
-                data: {id: infoAccount.account.id, shipment: 'polutrue'},
-                dataType: 'html',
-                success: function() {}
-            });
-        }
     }
 
-    if ($(element).attr('data-name') == 'not-document') {
-        data['delivery_amounts'] = JSON.stringify([]);
-        data['delivery_item_ids'] = JSON.stringify([]);
-    } else {
-        data['delivery_amounts'] = JSON.stringify(amounts);
-        data['delivery_item_ids'] = JSON.stringify(items_ids);
-    }
+    data['delivery_amounts'] = JSON.stringify(amounts);
+    data['delivery_item_ids'] = JSON.stringify(items_ids);
 
     let payment_list = [];
     for (let element of $('#group #delivery_date')) {
@@ -2761,6 +2762,22 @@ function makeRequest(element) {
         data['delivery_payment_date'] = '';
     }
 
+    if (data['delivery_payment_date'] == undefined) {
+        return $('.page').append($('<div>', { class: 'background' }).add(`
+            <div class="modal_select">
+                <div class="title">
+                    <span>Ошибка</span>
+                    <img onclick="closeModal()" src="static/images/cancel.png">
+                </div>
+                <div class="content">
+                    <div class="message">
+                        <p style="font-size: 13px; color: #595959;">Выберите дату оплаты доставки</p>
+                    </div>
+                </div>
+            </div>
+        `));
+    }
+
     if (infoAccount !== 'Транзит') {
         data['delivery_prefix'] = infoAccount.items[0].Prefix;
         data['delivery_price']  = infoAccount.account.Sum;
@@ -2779,41 +2796,56 @@ function makeRequest(element) {
         categoryInFinanceAccount[1].pop();
     if (categoryInListCarrier[1][1] != undefined)
         categoryInListCarrier[1].pop();
+    console.log(data);
     $.ajax({
         url: '/addDelivery',
         type: 'GET',
         data: data,
         dataType: 'html',
         success: function() {
-            list_items_acc = null;
-            list_stock_acc = null;
-            if ($(element).attr('data-name') == 'document') {
-                createDocument(element);
-            }
-
-            let all_amounts = [];
-            for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
-                if (categoryInDelivery[1][1][i].carrier.id == carrier_id) {
-                    let amount = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
-                    for (let j = 0; j < amount.length; j++) {
-                        amount[j].date = categoryInDelivery[1][1][i].delivery.Date;
-                        amount[j].client = categoryInDelivery[1][1][i].delivery.Client;
-                        amount[j].stock = categoryInDelivery[1][1][i].delivery.Stock;
-                        amount[j].contact = categoryInDelivery[1][1][i].delivery.Contact_Name;
-                        amount[j].delivery_id = categoryInDelivery[1][1][i].delivery.id;
-                        all_amounts.push(amount[j]);
-                    }
-                }
-            }
             $.ajax({
-                url: '/editItemDelivery',
+                url: '/getDeliveries',
                 type: 'GET',
+                data: data,
                 dataType: 'html',
-                data: {id: carrier_id, data: JSON.stringify(all_amounts)},
-                success: function() {}
+                success: function(data) {
+                    data = JSON.parse(data);
+                    categoryInDelivery[1].pop();
+                    categoryInDelivery[1].push(data);
+
+                    list_items_acc = null;
+                    list_stock_acc = null;
+                    if ($(element).attr('data-name') == 'document') {
+                        createDocument(element);
+                    }
+        
+                    let all_amounts = [];
+                    for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
+                        if (categoryInDelivery[1][1][i].carrier.id == carrier_id) {
+                            let amount = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
+                            console.log(categoryInDelivery[1][1][i].delivery)
+
+                            for (let j = 0; j < amount.length; j++) {
+                                amount[j].date = categoryInDelivery[1][1][i].delivery.Date;
+                                amount[j].client = categoryInDelivery[1][1][i].delivery.Client;
+                                amount[j].stock = categoryInDelivery[1][1][i].delivery.Stock;
+                                amount[j].contact = categoryInDelivery[1][1][i].delivery.Contact_Name;
+                                amount[j].delivery_id = categoryInDelivery[1][1][i].delivery.id;
+                                all_amounts.push(amount[j]);
+                            }
+                        }
+                    }
+                    $.ajax({
+                        url: '/editItemDelivery',
+                        type: 'GET',
+                        dataType: 'html',
+                        data: {id: carrier_id, data: JSON.stringify(all_amounts)},
+                        success: function() {}
+                    });
+                    $('#transit_info').remove()
+                    closeCardMenu(element.id);
+                }
             });
-            $('#transit_info').remove()
-            closeCardMenu(element.id);
         }
     });
     
@@ -3071,7 +3103,7 @@ function createNewItem() {
     let list = [{type: 1, value: 'stock_id'}, {type: 1, value: 'group_id'}, {type: 1, value: 'item_product'},
                 {type: 1, value: 'item_prefix'}, {type: 2, value: 'item_volume'}, {type: 1, value: 'item_packing'},
                 {type: 2, value: 'item_weight'}, {type: 2, value: 'item_vat'}, {type: 2, value: 'item_price'},
-                {type: 2, value: 'item_purchase_price'}];
+                {type: 2, value: 'item_purchase_price'}, {type: 1, value: 'item_category'}];
 
     let data = {};
 
@@ -3264,73 +3296,77 @@ function invoiceCard(elem) {
 // Завершение выставления счета и закрытие карточки 
 function completionCard(elem) {
     $.ajax({
-        url: '/getStockTable',
+        url: '/getClients',
         type: 'GET',
         dataType: 'html',
         success: function(data) {
             data = JSON.parse(data);
-            let idsItems = [];
-            for (let element of $('#exposed_list .invoiled')) {
-                let idProduct = $(element).attr('id').split('_')[1];
-                if ($(`#invoiled_volume_${idProduct}`).val() == '' || $(`#invoiled_volume_${idProduct}`).val() == 0) {
-                    return $('.page').append($('<div>', { class: 'background' }).add(`
-                        <div class="modal_select">
-                            <div class="title">
-                                <span>Ошибка</span>
-                                <img onclick="closeModal()" src="static/images/cancel.png">
-                            </div>
-                            <div class="content">
-                                <div class="message">
-                                    <p style="font-size: 13px; color: #595959;">Введите объём для всех товаров!</p>
+            categoryInListClient[1].pop();
+            categoryInListClient[1].push(data);
+            $.ajax({
+                url: '/getStockTable',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data) {
+                    data = JSON.parse(data);
+                    let idsItems = [];
+                    for (let element of $('#exposed_list .invoiled')) {
+                        let idProduct = $(element).attr('id').split('_')[1];
+                        if ($(`#invoiled_volume_${idProduct}`).val() == '' || $(`#invoiled_volume_${idProduct}`).val() == 0) {
+                            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 13px; color: #595959;">Введите объём для всех товаров!</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    `)); 
-                }
-
-                for (let i = 0; i < data.length; i++) {
-                    for (let j = 0; j < data[i].items.length; j++) {
-                        let account = data[i].items[j];
-                        if (account.Item_id == idProduct) {
-                            idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
+                            `)); 
                         }
-                    }
-                }
-            }
-            
-            if (idsItems.length > 0) {
-                let sale = [], privet = [], delivery = [], items_amount = [];
-                for (let element of $('#exposed_list .invoiled')) {
-                    let idProduct = $(element).attr('id').split('_')[1];
-                    sale.push($(element).children()[7].children[0].value);
-                    privet.push($(element).children()[8].children[0].value);
-                    delivery.push($(element).children()[9].children[0].value);
-                    items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
-                }
-
-                let status = 'false';
-                let date = getCurrentDateNotComparison('year');
-                let name;
-                let sum = deleteSpaces($('#total').html());
-                let shipment = 'false';
-
-                // Передать данные на сервер и создать карточку счета
-                for (let i = 0; i < dataName.length; i++) {
-                    if ('client' == dataName[i].name) {
-                        for (let j = 0; j < categoryInListClient[1][1].length; j++) {
-                            if (categoryInListClient[1][1][j].id == $(elem).attr('data_name').split('_')[1]) {
-                                name = categoryInListClient[1][1][j].Name
+        
+                        for (let i = 0; i < data.length; i++) {
+                            for (let j = 0; j < data[i].items.length; j++) {
+                                let account = data[i].items[j];
+                                if (account.Item_id == idProduct) {
+                                    idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
+                                }
                             }
                         }
-                        dataName[i].link[0].lastCard = [null, null];
                     }
-                }
-                $.ajax({
-                    url: '/getThisUser',
-                    type: 'GET',
-                    dataType: 'html',
-                    success: function(user) {
-                        let this_user = JSON.parse(user);
+                    
+                    if (idsItems.length > 0) {
+                        let sale = [], privet = [], delivery = [], items_amount = [];
+                        for (let element of $('#exposed_list .invoiled')) {
+                            let idProduct = $(element).attr('id').split('_')[1];
+                            sale.push($(element).children()[7].children[0].value);
+                            privet.push($(element).children()[8].children[0].value);
+                            delivery.push($(element).children()[9].children[0].value);
+                            items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
+                        }
+        
+                        let status = 'false';
+                        let date = getCurrentDateNotComparison('year');
+                        let name;
+                        let sum = deleteSpaces($('#total').html());
+                        let shipment = 'false';
+        
+                        // Передать данные на сервер и создать карточку счета
+                        for (let i = 0; i < dataName.length; i++) {
+                            if ('client' == dataName[i].name) {
+                                for (let j = 0; j < categoryInListClient[1][1].length; j++) {
+                                    if (categoryInListClient[1][1][j].id == $(elem).attr('data_name').split('_')[1]) {
+                                        name = categoryInListClient[1][1][j].Name
+                                    }
+                                }
+                                dataName[i].link[0].lastCard = [null, null];
+                            }
+                        }
+                        let data_role = $('[name="offtop__load"').attr('id').split('::');
+                        let this_user = {role: data_role[0], id: data_role[1]};
                         $.ajax({
                             url: '/addAccount',
                             type: 'GET',
@@ -3345,17 +3381,26 @@ function completionCard(elem) {
                                 closeCardMenu('account_new');
                             }
                         })
+                    } else if (idsItems.length == 0) {
+                        alert('Невозможно создать счет, ни один товар не выбран!');
+                        return;
                     }
-                })
-            } else if (idsItems.length == 0) {
-                alert('Невозможно создать счет, ни один товар не выбран!');
-                return;
-            }
+                }
+            })
         }
     })
 }
 // Закрытие карточки
 function closeCardMenu(id = '') {
+    if (!$('div').is('#preloader')) {
+        $('body').append(`
+            <div id="preloader">
+                <div id="preloader_preload"></div>
+            </div>
+        `)
+        preloader = document.getElementById("preloader_preload");
+    }
+
     // Сохраняет данные на сервер
     if (id[1] == 'user') {
         getTableData(saveTableAndCard);
@@ -3380,29 +3425,148 @@ function closeModalMenu() {
     $('.overflow').remove();
     $('.search #search').val('');
 }
+function deleteAccountCard(id) {
+    let check = confirm('Удалить карточку?');
+    if (!check) return;
+    let data = id.split('_');
+    let data_role = $('[name="offtop__load"').attr('id').split('::');
+    let this_user = {role: data_role[0], id: data_role[1]};
+    if (this_user.role == 'admin') {
+        $.ajax({
+            url: '/deleteAccount',
+            type: 'GET',
+            data: { account_id: data[1] },
+            dataType: 'html',
+            success: function() {
+                $.ajax({
+                    url: '/getAccounts',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        categoryInFinanceAccount[1].pop();
+                        categoryInFinanceAccount[1].push(data);
+                        getTableData(categoryInFinanceAccount);
+                    }
+                });
+            }
+        });
+    }
+}
+function deleteThisShipment(id) {
+    let check = confirm('Удалить товар?');
+    if (!check) return;
+    let data_id = id.split('_');
+    $.ajax({
+        url: '/getAccounts',
+        type: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            data = JSON.parse(data);
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].account.id == data_id[1]) {
+                    let shipment_list = JSON.parse(data[i].account.Shipment_list);
+                    for (let j = 0; j < shipment_list.length; j++) {
+                        if (shipment_list[j].id == data_id[2]) {
+                            $.ajax({
+                                url: '/removeVolume',
+                                type: 'GET',
+                                data: {item_id: data_id[2], item_volume: +deleteSpaces(shipment_list[j].volume) * -1},
+                                dataType: 'html',
+                                success: function() {
+                                    shipment_list.splice(j, 1);
+                                    $.ajax({
+                                        url: '/editShipmentList',
+                                        type: 'GET',
+                                        data: {account_id: data_id[1], shipment_list: JSON.stringify(shipment_list)},
+                                        dataType: 'html',
+                                        success: function() {
+                                            let shipment_volume = 0;
+                                            for (let i = 0; i < shipment_list.length; i++) {
+                                                shipment_volume += +deleteSpaces(shipment_list[j].volume);
+                                            }
+                                            console.log(shipment_volume)
+                                            if (shipment_volume == 0) {
+                                                console.log({id: data_id[1], shipment: 'false'});
+                                                $.ajax({
+                                                    url: '/editAccountShipment',
+                                                    type: 'GET',
+                                                    data: {id: data_id[1], shipment: 'false'},
+                                                    dataType: 'html',
+                                                    success: function() {}
+                                                });
+                                            } else {
+                                                console.log({id: data_id[1], shipment: 'polutrue'});
+                                                $.ajax({
+                                                    url: '/editAccountShipment',
+                                                    type: 'GET',
+                                                    data: {id: data_id[1], shipment: 'polutrue'},
+                                                    dataType: 'html',
+                                                    success: function() {}
+                                                });
+                                            }
+                                            if (categoryInStock[1].length == 2) {
+                                                categoryInStock[1].pop();
+                                            }
+                                            $(`#${id}`).parent().remove();
+                                        }
+                                    });
+                                }
+                            });
+                            
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+function deleteDeliveryCard(id) {
+    let check = confirm('Удалить карточку?');
+    if (!check) return;
+    let data = id.split('_');
+    let data_role = $('[name="offtop__load"').attr('id').split('::');
+    let this_user = {role: data_role[0], id: data_role[1]};
+    if (this_user.role == 'admin') {
+        $.ajax({
+            url: '/deleteDelivery',
+            type: 'GET',
+            data: { delivery_id: data[1] },
+            dataType: 'html',
+            success: function() {
+                $.ajax({
+                    url: '/getDeliveries',
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        categoryInDelivery[1].pop();
+                        categoryInDelivery[1].push(data);
+                        getTableData(categoryInDelivery);
+                    }
+                });
+            }
+        });
+    }
+}
 function deleteCard(id) {
     let check = confirm('Удалить карточку?');
     if (!check) return;
     let data = id.split('_');
-    $.ajax({
-        url: '/getThisUser',
-        type: 'GET',
-        dataType: 'html',
-        success: function(result) {
-            this_user = JSON.parse(result);
-            if (this_user.role == 'admin') {
-                $.ajax({
-                    url: '/deleteCard',
-                    type: 'GET',
-                    data: { category: data[0], id: data[1] },
-                    dataType: 'html',
-                    success: function() {
-                        getTableData(saveTableAndCard);
-                    }
-                });
+    let data_role = $('[name="offtop__load"').attr('id').split('::');
+    let this_user = {role: data_role[0], id: data_role[1]};
+    if (this_user.role == 'admin') {
+        $.ajax({
+            url: '/deleteCard',
+            type: 'GET',
+            data: { category: data[0], id: data[1] },
+            dataType: 'html',
+            success: function() {
+                getTableData(saveTableAndCard);
             }
-        }
-    });
+        });
+    }
 }
 // Заполняем Заголовок карточки
 function getTitleInfo(element, selectedLine) {
@@ -3427,8 +3591,9 @@ function getTitleInfo(element, selectedLine) {
         }
 
         function getUserInfo() {
-            let data, this_user;
-            
+            let data;
+            let data_role = $('[name="offtop__load"').attr('id').split('::');
+            let this_user = {role: data_role[0], id: data_role[1]};
             $.ajax({
                 url: '/getUsers',
                 type: 'GET',
@@ -3436,15 +3601,6 @@ function getTitleInfo(element, selectedLine) {
                 dataType: 'html',
                 success: function(result) {
                     data = JSON.parse(result);
-                }
-            });
-            $.ajax({
-                url: '/getThisUser',
-                type: 'GET',
-                async: false,
-                dataType: 'html',
-                success: function(result) {
-                    this_user = JSON.parse(result);
                 }
             });
             if (!selectedLine.Manager_active) {

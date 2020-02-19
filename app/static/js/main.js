@@ -2,12 +2,12 @@ let socket = io();
 let preloader = document.getElementById("preloader_preload");
 
 $(document).ready(function() {
+    getUserInfo()
     addButtonsSubcategory(0);
     getTableData(categoryInListClient);
     createCategoryMenu();
     createCTButtons();
     linkField();
-    getUserInfo()
     $('#clientButton, #category-0').addClass('active');
     socket.emit('connection')
     socket.emit('showTasks');
@@ -47,6 +47,9 @@ function getUserInfo() {
             let role = data.role;
             let surname = data.second_name;
             user = data;
+            $('.page').append(`
+                <div name="offtop__load" id="${data.role}::${data.id}"></div>
+            `)
             if (role == 'admin') 
                  role = 'Администратор'
             else role = 'Менеджер'
@@ -92,12 +95,14 @@ function getTableData(table, input = false, close = false) {
                                 }
                                 $('.info').append(fillTable());
                                 $('#loading').fadeIn(100);
-                                $('body').append(`
-                                    <div id="preloader">
-                                        <div id="preloader_preload"></div>
-                                    </div>
-                                `)
-                                preloader = document.getElementById("preloader_preload");
+                                if (!$('div').is('#preloader')) {
+                                    $('body').append(`
+                                        <div id="preloader">
+                                            <div id="preloader_preload"></div>
+                                        </div>
+                                    `)
+                                    preloader = document.getElementById("preloader_preload");
+                                }
                             },
                             success: function(data) { gettingData(JSON.parse(data)); },
                             complete: function() {
@@ -127,7 +132,8 @@ function getTableData(table, input = false, close = false) {
                         }
                         table[1].push(data);
                     }
-                    if (table[0].id !== 'analytics' && table[1][1] === undefined) {
+                    if (table[0].id !== 'analytics') {
+                        if (table[1][1] != undefined) table[1].pop();
                         table[1].push(data);
                     }
                     if (!input) $('.info').append(fillingTables(table));
@@ -313,51 +319,50 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                         dataType: 'html',
                         success: function(data) {
                             data = JSON.parse(data);
-                            let name, date;
-                            let idsItems = [];
-                            for (let element of $('#exposed_list .invoiled')) {
-                                let idProduct = $(element).attr('id').split('_')[1];
-                                for (let i = 0; i < data.length; i++) {
-                                    for (let j = 0; j < data[i].items.length; j++) {
-                                        let account = data[i].items[j];
-                                        if (account.Item_id == idProduct) {
-                                            idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
+                            $.ajax({
+                                url: '/getAccounts',
+                                type: 'GET',
+                                dataType: 'html',
+                                success: function(account_data) {
+                                    account_data = JSON.parse(account_data);
+                                    let name, date;
+                                    let idsItems = [];
+                                    for (let element of $('#exposed_list .invoiled')) {
+                                        let idProduct = $(element).attr('id').split('_')[1];
+                                        for (let i = 0; i < data.length; i++) {
+                                            for (let j = 0; j < data[i].items.length; j++) {
+                                                let account = data[i].items[j];
+                                                if (account.Item_id == idProduct) {
+                                                    idsItems.push({ id: +idProduct, volume: $(`#invoiled_volume_${idProduct}`).val() });
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                            }
-                
-                            for (let i = 0; i < categoryInFinanceAccount[1][1].length; i++) {
-                                if (categoryInFinanceAccount[1][1][i].account.id == idAccount) {
-                                    name = categoryInFinanceAccount[1][1][i].account.Name;
-                                    date = categoryInFinanceAccount[1][1][i].account.Date;
-                                    shipment = categoryInFinanceAccount[1][1][i].account.Shipment;
-                                }
-                            }
-                            
-                            if (idsItems.length > 0) {
-                                let sale = [], privet = [], delivery = [], items_amount = [];
-                                for (let element of $('#exposed_list .invoiled')) {
-                                    let idProduct = $(element).attr('id').split('_')[1];
-                                    sale.push($(element).children()[7].children[0].value);
-                                    privet.push($(element).children()[8].children[0].value);
-                                    delivery.push($(element).children()[9].children[0].value);
-                                    items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
-                                }
+                                    console.log(account_data);
+                                    for (let i = 0; i < account_data.length; i++) {
+                                        if (account_data[i].account.id == idAccount) {
+                                            name = account_data[i].account.Name;
+                                            date = account_data[i].account.Date;
+                                            shipment = account_data[i].account.Shipment;
+                                        }
+                                    }
+                                    
+                                    if (idsItems.length > 0) {
+                                        let sale = [], privet = [], delivery = [], items_amount = [];
+                                        for (let element of $('#exposed_list .invoiled')) {
+                                            let idProduct = $(element).attr('id').split('_')[1];
+                                            sale.push($(element).children()[7].children[0].value);
+                                            privet.push($(element).children()[8].children[0].value);
+                                            delivery.push($(element).children()[9].children[0].value);
+                                            items_amount.push({ id: +idProduct, amount: $(element).children()[11].innerHTML });
+                                        }
 
-                                let sum = $('#total').html();
-                
-                                $.ajax({
-                                    url: '/getThisUser',
-                                    type: 'GET',
-                                    dataType: 'html',
-                                    success: function(user) {
-                                        let this_user = JSON.parse(user);
+                                        let sum = $('#total').html();
                                         $.ajax({
                                             url: '/editAccount',
                                             type: 'GET',
                                             data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
-                                                manager_id: this_user.id, name: name, date: date,
+                                                manager_id: $('[name="offtop__load"]').attr('id').split('::')[1], name: name, date: date,
                                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
@@ -365,15 +370,17 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                                 shipment: shipment, shipment_hello: $('#shipment_date').val()},
                                             dataType: 'html',
                                             success: function() {
+                                                categoryInFinanceAccount[1].pop();
+                                                categoryInFinanceAccount[1].push(account_data);
                                                 getTableData(categoryInFinanceAccount);
                                             }
                                         })
+                                    } else if (idsItems.length == 0) {
+                                        alert('Невозможно отредактировать счет, ни один товара нет в счете!');
+                                        return;
                                     }
-                                })
-                            } else if (idsItems.length == 0) {
-                                alert('Невозможно отредактировать счет, ни один товара нет в счете!');
-                                return;
-                            }
+                                }
+                            });
                         }
                     })
                 }
@@ -507,16 +514,9 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     }
 
     function additionalData(i) {
-        let this_user;
-        $.ajax({
-            url: '/getThisUser',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(user) {
-                this_user = JSON.parse(user);
-            }
-        })
+        let data_role = $('[name="offtop__load"').attr('id').split('::');
+        let this_user = {role: data_role[0], id: data_role[1]};
+
         if (data[0] == 'client') {
             idData[`livestock_general`] = $('#livestock_general').val();
             idData[`livestock_milking`] = $('#livestock_milking').val();
@@ -668,42 +668,36 @@ let getCommentsInfo = (function() {
         getRequest: function (data) {
             if (typeof data === typeof '') {
                 // Сохраняем комментарий
+                let data_role = $('[name="offtop__load"').attr('id').split('::');
+                let user = {role: data_role[0], id: data_role[1]};
+                let list = {
+                    comment_date: $('#comment_date').val(),
+                    comment_role: $('#comment_role').val(),
+                    comment_content: $('#comment_content').val(),
+                    comment_creator: user.second_name,
+                    comment_creator_id: user.id
+                };
+                data = data.split('_');
+                if (list.comment_role == null || list.comment_content == '') {
+                    getComments();
+                    return;
+                }
+                let count = 0, array = Object.keys(list);
+                for (let i = 1; i < 3; i++) {
+                    if (list[array[i]] == '' || list[array[i]] == null) {
+                        count++;
+                    } 
+                }
+                if (count == 2) {
+                    return getComments();
+                }
                 $.ajax({
-                    url: '/getThisUser',
+                    url: '/addMessages',
                     type: 'GET',
+                    data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
                     dataType: 'html',
                     success: function(result) {
-                        let user = JSON.parse(result);
-                        let list = {
-                            comment_date: $('#comment_date').val(),
-                            comment_role: $('#comment_role').val(),
-                            comment_content: $('#comment_content').val(),
-                            comment_creator: user.second_name,
-                            comment_creator_id: user.id
-                        };
-                        data = data.split('_');
-                        if (list.comment_role == null || list.comment_content == '') {
-                            getComments();
-                            return;
-                        }
-                        let count = 0, array = Object.keys(list);
-                        for (let i = 1; i < 3; i++) {
-                            if (list[array[i]] == '' || list[array[i]] == null) {
-                                count++;
-                            } 
-                        }
-                        if (count == 2) {
-                            return getComments();
-                        }
-                        $.ajax({
-                            url: '/addMessages',
-                            type: 'GET',
-                            data: {category: data[0], id: data[1], comments: JSON.stringify(list)},
-                            dataType: 'html',
-                            success: function(result) {
-                                getComments()
-                            }
-                        });
+                        getComments()
                     }
                 });
             } else { getComments() }
@@ -798,7 +792,7 @@ function cancelSearch() {
         last_id: '',
         last_table: '',
     }
-    filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''} ];
+    filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''}, {name: 'stock_address', filter: ''} ];
     categoryInFilterStock[1][1] = [];
     sortStatus = {
         product: {status: false, filter: null, last: null},

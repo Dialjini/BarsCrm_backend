@@ -56,28 +56,20 @@ function editAccount(elem) {
                 }
 
                 let sum = $('#total').html();
-
+                let data_role = $('[name="offtop__load"').attr('id').split('::');
                 $.ajax({
-                    url: '/getThisUser',
+                    url: '/editAccount',
                     type: 'GET',
+                    data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
+                        manager_id: data_role[1], name: name, date: date,
+                        hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
+                        items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
+                        total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
+                        hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
+                        shipment: shipment, shipment_hello: $('#shipment_date').val()},
                     dataType: 'html',
-                    success: function(user) {
-                        let this_user = JSON.parse(user);
-                        $.ajax({
-                            url: '/editAccount',
-                            type: 'GET',
-                            data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
-                                manager_id: this_user.id, name: name, date: date,
-                                hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
-                                items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
-                                total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
-                                hello_costs: $('#total_privet_inv').val(), delivery_costs: $('#total_delivery_inv').val(),
-                                shipment: shipment, shipment_hello: $('#shipment_date').val()},
-                            dataType: 'html',
-                            success: function() {
-                                checkStocks(elem);
-                            }
-                        })
+                    success: function() {
+                        checkStocks(elem);
                     }
                 })
             } else if (idsItems.length == 0) {
@@ -184,7 +176,7 @@ function checkStocks(element) {
                                     ${fillListStock()}
                                 </div>
                                 <div style="text-align: right;margin-top: 30px;">
-                                    <button class="btn btn-main" onclick="arrangeDelivery(this)" name="${element.name}" id="${element.id}">Отгрузить</button>
+                                    <button class="btn btn-main" onclick="arrangeDelivery(this)" name="${element.name}" id="${element.id}">Выбрать</button>
                                 </div>
                             </div>
                         `
@@ -204,6 +196,246 @@ function checkStocks(element) {
             }
         }
     })
+}
+function accountShipment(element) {
+    let account_id = $(element).attr('name').split('_')[1];
+    console.log(element, account_id);
+    $.ajax({
+        url: '/getAccounts',
+        type: 'GET',
+        dataType: 'html',
+        beforeSend: function() {
+            if (!$('div').is('#preloader')) {
+                $('body').append(`
+                    <div id="preloader">
+                        <div id="preloader_preload"></div>
+                    </div>
+                `)
+                preloader = document.getElementById("preloader_preload");
+            }
+        },
+        success: function(account_data) {
+            account_data = JSON.parse(account_data);
+            categoryInFinanceAccount[1].pop();
+            categoryInFinanceAccount[1].push(account_data);
+
+            $.ajax({
+                url: '/getStockTable',
+                type: 'GET',
+                dataType: 'html',
+                success: function(items_data) {
+                    items_data = JSON.parse(items_data);
+                    $('.card_menu').remove();
+                
+                    function fillShipmentTable() {
+                        let tbody = '';
+                            for (let i = 0; i < account_data.length; i++) {
+                                for (let j = 0; j < items_data.length; j++) {
+                                    for (let jj = 0; jj < items_data[j].items.length; jj++) {
+                                        for (let k = 0; k < list_items_acc.length; k++) {
+                                            if (account_data[i].account.id == account_id && items_data[j].items[jj].Item_id == list_items_acc[k]) {
+                                                tbody += `
+                                                    <tr>
+                                                        <td><input type="text" name="shipment_date" id="shipment_date_${items_data[j].items[jj].Item_id}"></td>
+                                                        <td id="item_name_${items_data[j].items[jj].Item_id}">${items_data[j].items[jj].Name}</td>
+                                                        <td id="item_stock_${items_data[j].items[jj].Item_id}">${items_data[j].stock_address}</td>
+                                                        <td id="item_packing_${items_data[j].items[jj].Item_id}">${items_data[j].items[jj].Packing}</td>
+                                                        <td><input type="text" onkeyup="maskNumberWithout(this.id)" name="shipment_volume" id="shipment_volume_${items_data[j].items[jj].Item_id}"></td>
+                                                    </tr>
+                                                `
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        return tbody;
+                    }
+                
+                    console.log(list_items_acc, list_stock_acc);
+                
+                    $('.info').append(`
+                        <div class="card_menu">
+                            <div class="title">
+                                <div class="left_side">
+                                    <span>Код: ${account_id}</span>
+                                    <span>Отгрузка товаров</span>
+                                </div>
+                                <div class="right_side">
+                                    <div class="close" id="account_${account_id}" onclick="closeShipment(this)">
+                                        <img src="static/images/cancel.png">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <div class="row_card">
+                                    <table class="table">
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Товар</th>
+                                            <th>Склад</th>
+                                            <th>Вид упаковки</th>
+                                            <th>Объем, кг.</th>
+                                        </tr>
+                                        ${fillShipmentTable()}
+                                    </table>
+                                </div>
+                                <div class="next">
+                                    <button class="btn btn-main" id="account_${account_id}" onclick="getShipment(this)">Отгрузить</button>
+                                </div>
+                            </div>
+                        </div>
+                    `)
+                    
+                    for (let date of $('[name="shipment_date"')) {
+                        $(date).datepicker({position: 'right bottom', autoClose: true})
+                    }
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                        }
+                    });
+        }
+    });
+}
+function getShipment(element) {
+    $.ajax({
+        url: '/getAccounts',
+        type: 'GET',
+        dataType: 'html',
+        success: function(account_data) {
+            let info = [];
+            let account_id = element.id.split('_')[1];
+            account_data = JSON.parse(account_data);
+
+            for (let i = 0; i < $('[name="shipment_date"').length; i++) {
+                let id = $('[name="shipment_date"')[i].id.split('_')[2];
+                info.push({
+                    date: $(`#shipment_date_${id}`).val(),
+                    name: $(`#item_name_${id}`).html(),
+                    stock: $(`#item_stock_${id}`).html(),
+                    packing: $(`#item_packing_${id}`).html(),
+                    volume: $(`#shipment_volume_${id}`).val(),
+                    id: id
+                })
+            }
+
+            $.ajax({
+                url: '/getStockTable',
+                type: 'GET',
+                dataType: 'html',
+                success: function(data) {
+                    data = JSON.parse(data);
+                    for (let i = 0; i < data.length; i++) {
+                        for (let j = 0; j < data[i].items.length; j++) {
+                            for (let k = 0; k < info.length; k++) {
+                                if (data[i].items[j].Item_id == info[k].id) {
+                                    let stock_volume = +deleteSpaces(data[i].items[j].Volume);
+                                    let shipment_volume = +deleteSpaces(info[k].volume);
+                                    if (stock_volume < shipment_volume) {
+                                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                            <div class="modal_select">
+                                                <div class="title">
+                                                    <span>Ошибка</span>
+                                                    <img onclick="closeModal()" src="static/images/cancel.png">
+                                                </div>
+                                                <div class="content">
+                                                    <div class="message">
+                                                        <p style="font-size: 13px; color: #595959;">Столько объема "${info[k].name}" нет на складе</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `));
+                                    } else {
+                                        $.ajax({
+                                            url: '/removeVolume',
+                                            type: 'GET',
+                                            async: false,
+                                            data: {item_id: info[k].id, item_volume: +deleteSpaces(info[k].volume)},
+                                            dataType: 'html',
+                                            success: function() {}
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for (let i = 0; i < account_data.length; i++) {
+                        if (account_data[i].account.id == account_id) {
+                            let all_volume = 0;
+                            let shipment_volume = 0;
+                            let volume = JSON.parse(account_data[i].account.Item_ids);
+                            for (let i = 0; i < volume.length; i++) {
+                                all_volume += +deleteSpaces(volume[i].volume);
+                            }
+
+                            if (account_data[i].account.Shipment_list != null) {
+                                let shipment_list_db = JSON.parse(account_data[i].account.Shipment_list);
+                                for (let j = 0; j < shipment_list_db.length; j++) {
+                                    info.push(shipment_list_db[j]);
+                                }
+                            }
+
+                            for (let j = 0; j < info.length; j++) {
+                                shipment_volume += +deleteSpaces(info[j].volume);
+                            }
+                            console.log(account_id);
+                            console.log(info);
+                            console.log(all_volume, shipment_volume)
+                            if (all_volume < shipment_volume) {
+                                return $('.page').append($('<div>', { class: 'background' }).add(`
+                                    <div class="modal_select">
+                                        <div class="title">
+                                            <span>Ошибка</span>
+                                            <img onclick="closeModal()" src="static/images/cancel.png">
+                                        </div>
+                                        <div class="content">
+                                            <div class="message">
+                                                <p style="font-size: 13px; color: #595959;">Столько объема "${info[k].name}" нет в счете</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `));
+                            }
+                            if (all_volume == shipment_volume) {
+                                $.ajax({
+                                    url: '/editAccountShipment',
+                                    type: 'GET',
+                                    async: false,
+                                    data: {id: account_id, shipment: 'true'},
+                                    dataType: 'html',
+                                    success: function() {
+                                        return;
+                                    }
+                                });
+                            } else {
+                                $.ajax({
+                                    url: '/editAccountShipment',
+                                    type: 'GET',
+                                    async: false,
+                                    data: {id: account_id, shipment: 'polutrue'},
+                                    dataType: 'html',
+                                    success: function() {
+                                        return;
+                                    }
+                                });
+                            } 
+                        }
+                    }
+                    $.ajax({
+                        url: '/editShipmentList',
+                        type: 'GET',
+                        data: {account_id: element.id.split('_')[1], shipment_list: JSON.stringify(info)},
+                        dataType: 'html',
+                        success: function() {
+                            categoryInStock[1].pop();
+                            closeShipment(element);
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+function closeShipment(element) {
+    createCardMenu(element);
 }
 function closeModal() {
     $('.background').remove();
@@ -248,26 +480,29 @@ function arrangeDelivery(element) {
             list_items_acc.push(items[i]);
         }
     }
-    console.log(list_items_acc, list_stock_acc)
     closeModal();
-    categoryInFinanceAccount[0].lastCard[0] = null;
-    $.ajax({
-        url: '/getAccounts',
-        type: 'GET',
-        async: false,
-        dataType: 'html',
-        success: function(data) {
-            data = JSON.parse(data);
-            if (categoryInFinanceAccount[1][1] == undefined) {
-                categoryInFinanceAccount[1].push(data);
-            } else {
-                categoryInFinanceAccount[1].pop();
-                categoryInFinanceAccount[1].push(data);
+    if (element.id == 'account_shipment') {
+        accountShipment(element);
+    } else {
+        categoryInFinanceAccount[0].lastCard[0] = null;
+        $.ajax({
+            url: '/getAccounts',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(data) {
+                data = JSON.parse(data);
+                if (categoryInFinanceAccount[1][1] == undefined) {
+                    categoryInFinanceAccount[1].push(data);
+                } else {
+                    categoryInFinanceAccount[1].pop();
+                    categoryInFinanceAccount[1].push(data);
+                }
             }
-        }
-    });            
-    element.id = 'delivery_new';
-    createDelCardMenu(element);
+        });            
+        element.id = 'delivery_new';
+        createDelCardMenu(element);
+    }
 }
 // Заполнение объема в карточке категории Склад для переноса груза из одного склада в другой
 function fillVolume(element) { 
@@ -1986,7 +2221,7 @@ function addRow(id, selectedLine = '') {
                             id: table.widthInput[i].id, 
                             value: selectedLine[table.html[i]],
                             type: table.widthInput[i].type,
-                            onkeyup: 'maskNumber(this.id)'
+                            onkeyup: table.widthInput[i].id.includes('weight') ? 'maskNumberWithout(this.id)' : 'maskNumber(this.id)'
                         })
                     }));
                 } else {
@@ -2161,68 +2396,60 @@ function unfastenCard() {
     $('.drop_menu').fadeIn(200);
 }
 function detachmentCard(element) {
-    $.ajax({
-        url: '/getThisUser',
-        type: 'GET',
-        dataType: 'html',
-        success: function(result) {
-            result = JSON.parse(result);
-            let idName = element.id.split('_');
-            let current_card;
+    let idName = element.id.split('_');
+    let current_card;
 
-            for (let i = 0; i < categoryInListClient[1][1].length; i++) {
-                if (categoryInListClient[1][1][i].id == idName[1]) {
-                    current_card = categoryInListClient[1][1][i];
-                    break;
-                }
-            }
-
-            if (result.role == 'manager' && current_card.Manager_id != result.id) {
-                return $('.page').append($('<div>', { class: 'background' }).add(`
-                            <div class="modal_select">
-                                <div class="title">
-                                    <span>Ошибка</span>
-                                    <img onclick="closeModal()" src="static/images/cancel.png">
-                                </div>
-                                <div class="content">
-                                    <div class="message">
-                                        <p style="font-size: 13px; color: #595959;">Вы не можете это сделать!</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `)); 
-            }
-
-            closeCardMenu(element.id);
-            $.ajax({
-                url: '/deleteManagerFromCard',
-                type: 'GET',
-                data: {category: idName[0], card_id: idName[1], date: getCurrentDateNotComparison('year')},
-                dataType: 'html',
-                success: function() {}
-            });
-    
-            $('#empty_customer_cards').append($('<div>', {
-                class: 'fieldInfo padd',
-                id: `${idName[0]}_${idName[1]}`,
-                onclick: 'createCardMenu(this)',
-                append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
-                .add($('<div>', {
-                    class: 'row',
-                    append: $('<div>', {
-                        class: 'descr',
-                        html: `Снято с ${username}`
-                    }).add($('<div>', {
-                        class: 'time',
-                        html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDateNotComparison()}</span>`
-                    }))
-                }))
-            }));
-            for (let i = 0; i < dataName.length; i++) {
-                if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
-            }
+    for (let i = 0; i < categoryInListClient[1][1].length; i++) {
+        if (categoryInListClient[1][1][i].id == idName[1]) {
+            current_card = categoryInListClient[1][1][i];
+            break;
         }
-    });  
+    }
+    let data_role = $('[name="offtop__load"').attr('id').split('::');
+    if (data_role[0] == 'manager' && current_card.Manager_id != data_role[1]) {
+        return $('.page').append($('<div>', { class: 'background' }).add(`
+                    <div class="modal_select">
+                        <div class="title">
+                            <span>Ошибка</span>
+                            <img onclick="closeModal()" src="static/images/cancel.png">
+                        </div>
+                        <div class="content">
+                            <div class="message">
+                                <p style="font-size: 13px; color: #595959;">Вы не можете это сделать!</p>
+                            </div>
+                        </div>
+                    </div>
+                `)); 
+    }
+
+    closeCardMenu(element.id);
+    $.ajax({
+        url: '/deleteManagerFromCard',
+        type: 'GET',
+        data: {category: idName[0], card_id: idName[1], date: getCurrentDateNotComparison('year')},
+        dataType: 'html',
+        success: function() {}
+    });
+    
+    $('#empty_customer_cards').append($('<div>', {
+        class: 'fieldInfo padd',
+        id: `${idName[0]}_${idName[1]}`,
+        onclick: 'createCardMenu(this)',
+        append: $('<div>', { class: 'name', html: $(`#${idName[0]}_name`).val() })
+        .add($('<div>', {
+            class: 'row',
+            append: $('<div>', {
+                class: 'descr',
+                html: `Снято с ${username}`
+            }).add($('<div>', {
+                class: 'time',
+                html: `Свободна с <span id="free_card_date" class="bold">${getCurrentDateNotComparison()}</span>`
+            }))
+        }))
+    }));
+    for (let i = 0; i < dataName.length; i++) {
+        if (dataName[i].name === idName[0]) getTableData(dataName[i].link); 
+    }
 }
 // Сохранение изменений в карточке
 function saveCard() {

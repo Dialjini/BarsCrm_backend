@@ -47,16 +47,8 @@ let rowFilling = (object, id, table) => {
         for (let i = 0; i < object[0].length - 1; i++) {
             if (i == 2 && id == 'stock') {
                 function checkRole() {
-                    let data;
-                    $.ajax({
-                        url: '/getThisUser',
-                        type: 'GET',
-                        dataType: 'html',
-                        async: false,
-                        success: function(result) {
-                            data = JSON.parse(result);
-                        }
-                    });
+                    let data_role = $('[name="offtop__load"').attr('id').split('::');
+                    let data = {role: data_role[0], id: data_role[1]};
                     if (data.role == 'admin') {
                         return `<button class="btn btn-add-items" id="item_add" onclick="createCardMenu(this)">Добавить</button>`
                     }
@@ -345,11 +337,6 @@ let rowFilling = (object, id, table) => {
         table.append(getTitleTable());
         let table_length = selectTableData.length;
         for (let i = selectTableData.length - 1; i >= 0; i--) {
-            if (selectTableData[i].delivery.Type == 'not-document') {
-                table_length--;
-                continue;
-            }
-
             let list = selectTableData[i].delivery.Payment_list, sum_list = 0;
             if (list == null) list = '';
             if (list.length > 0) {
@@ -358,7 +345,7 @@ let rowFilling = (object, id, table) => {
                     sum_list += +deleteSpaces(list[i].price);
                 }
             }
-            let element = $('<tr>', {id: `delivery_${i + 1}`, onclick: 'createDelCardMenu(this)'});
+            let element = $('<tr>', {id: `delivery_${selectTableData[i].delivery.id}`, onclick: 'createDelCardMenu(this)'});
             let carrier_name = selectTableData[i].carrier == null ? 'Не выбран' : selectTableData[i].carrier.Name
             selectTableData[i].delivery.NDS = selectTableData[i].delivery.NDS[0] + selectTableData[i].delivery.NDS[1];
             let amount = 0;
@@ -463,14 +450,8 @@ let rowFilling = (object, id, table) => {
                 }
             }
 
-            let hello_sum = 0;
-            let hello_list = JSON.parse(selectTableData[i].account.Hello);
-            for (let i = 0; i < hello_list.length; i++) {
-                hello_sum += +deleteSpaces(hello_list[i]);
-            }
-
-            let element = $('<tr>', {id: `account_${i + 1}`, onclick: 'createCardMenu(this)'});
-            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, returnSpaces(selectTableData[i].account.Sum), status, shipment, returnSpaces(+hello_sum.toFixed(2)), managerSecondName];
+            let element = $('<tr>', {id: `account_${selectTableData[i].account.id}`, onclick: 'createCardMenu(this)'});
+            const name = [selectTableData[i].items[0].Prefix, selectTableData[i].account.Date, selectTableData[i].account.Name, returnSpaces(selectTableData[i].account.Sum), status, shipment, returnSpaces(selectTableData[i].account.Hello_costs), managerSecondName];
 
             for (let j = 0; j < name.length; j++) {
                 let elementTr = status.includes('Не актуальный') ? $('<td>', { html: `<span style="color: #e8e8e8">${name[j]}</span>` }) : $('<td>', { html: name[j] });
@@ -499,7 +480,7 @@ let rowFilling = (object, id, table) => {
     }
 
     let rowFillingDebit = (id) => {
-        let deliveryTable, managers;
+        let managers;
         $.ajax({
             url: '/getUsers',
             type: 'GET',
@@ -507,13 +488,6 @@ let rowFilling = (object, id, table) => {
             dataType: 'html',
             success: function(result) {
                 managers = JSON.parse(result);
-                $.ajax({
-                    url: '/getDeliveries',
-                    type: 'GET',
-                    async: false,
-                    dataType: 'html',
-                    success: function(result) { deliveryTable = JSON.parse(result) },
-                });
             }
         });
         $(table).attr('class', 'table analytics')
@@ -532,8 +506,8 @@ let rowFilling = (object, id, table) => {
             let payment_amount = 0, item_amount = 0, payment_list = [{sum: 0, date: ''}];
             if (selectTableData[i].account.Payment_history != undefined) {
                 payment_list = JSON.parse(selectTableData[i].account.Payment_history);
-                for (let i = 0; i < payment_list.length; i++) {
-                    payment_amount += +deleteSpaces(payment_list[i].sum)
+                for (let k = 0; k < payment_list.length; k++) {
+                    payment_amount += +deleteSpaces(payment_list[k].sum)
                 }
             } else {
                 payment_amount = 0;
@@ -541,17 +515,16 @@ let rowFilling = (object, id, table) => {
 
             if (selectTableData[i].account.Items_amount != undefined) {
                 let amount_all = JSON.parse(selectTableData[i].account.Items_amount);
-                for (let i = 0; i < amount_all.length; i++) {
-                    item_amount += +deleteSpaces(amount_all[i].amount)
+                for (let k = 0; k < amount_all.length; k++) {
+                    item_amount += +deleteSpaces(amount_all[k].amount)
                 }
             } else {
                 item_amount = 0;
             }
 
             let shipment = selectTableData[i].account.Shipment;
-
-            for (let i = 0; i < payment_list.length; i++) {
-                if (payment_list[i].sum != 0 || shipment !== 'false') {
+            for (let k = 0; k < payment_list.length; k++) {
+                if (payment_list[k].sum != 0 || shipment !== 'false') {
                     if (+deleteSpaces(selectTableData[i].account.Sum) > +deleteSpaces(payment_amount)) {
                         balance_owed += (item_amount - payment_amount);
                         count_accounts++;
@@ -560,53 +533,55 @@ let rowFilling = (object, id, table) => {
                 }
             }
 
-            let count_delivery = 0;
-            let delivery_data = [];
+            // let delivery_data = [];
 
-            for (let j = 0; j < deliveryTable.length; j++) {
-                if (deliveryTable[j].delivery.Account_id == i + 1) {
-                    count_delivery++;
-                    delivery_data.push({ first_date: deliveryTable[j].delivery.Start_date,
-                                         id: deliveryTable[j].delivery.Account_id,
-                                         postponement_date: deliveryTable[j].delivery.Postponement_date,
-                                         customer: deliveryTable[j].delivery.Customer});
-                }
-            }
-            for (let j = 0; j < delivery_data.length; j++) {
-                if (delivery_data[j].first_date == '' || delivery_data[j].first_date == null) {
-                    delivery_data[j].first_date = 'Не указано';
-                }
-                if (delivery_data[j].postponement_date == '' || delivery_data[j].postponement_date == null) {
-                    delivery_data[j].postponement_date = 'Не указано';
-                }
-            }
+            // for (let j = 0; j < deliveryTable.length; j++) {
+            //     if (deliveryTable[j].delivery.Account_id == selectTableData[i].account.id) {
+            //         count_delivery++;
+            //         delivery_data.push({ first_date: deliveryTable[j].delivery.Start_date,
+            //                              id: deliveryTable[j].delivery.Account_id,
+            //                              postponement_date: deliveryTable[j].delivery.Postponement_date,
+            //                              customer: deliveryTable[j].delivery.Customer,
+            //                              type: deliveryTable[j].delivery.Type});
+            //     }
+            // }
+            // for (let j = 0; j < delivery_data.length; j++) {
+            //     if (delivery_data[j].first_date == '' || delivery_data[j].first_date == null) {
+            //         delivery_data[j].first_date = 'Не указано';
+            //     }
+            //     if (delivery_data[j].postponement_date == '' || delivery_data[j].postponement_date == null) {
+            //         delivery_data[j].postponement_date = 'Не указано';
+            //     }
+            // }
             if (payment_amount == 0 && shipment == 'false') continue;
             if (+deleteSpaces(selectTableData[i].account.Sum) <= +deleteSpaces(payment_amount)) continue;
             let element = $('<tbody>', {id: `account_${selectTableData[i].account.id}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
-            for (let j = 0; j < delivery_data.length; j++) {
-                if (j == 0) {
-                    element.append(`
-                        <tr>
-                            <td>${delivery_data[j].customer}</td>
-                            <td rowspan="${count_delivery}">${selectTableData[i].account.Name}</td>
-                            <td>${delivery_data[j].first_date}</td>
-                            <td>${delivery_data[j].postponement_date}</td>
-                            <td rowspan="${count_delivery}">${returnSpaces(selectTableData[i].account.Sum)}</td>
-                            <td rowspan="${count_delivery}">${returnSpaces(payment_amount)}</td>
-                            <td rowspan="${count_delivery}">${returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount))}</td>
-                            <td rowspan="${count_delivery}">${managerSecondName}</td>
-                        </tr>
-                    `)
-                } else {
-                    element.append(`
-                        <tr>
-                            <td>${delivery_data[j].customer}</td>
-                            <td>${delivery_data[j].first_date}</td>
-                            <td>${delivery_data[j].postponement_date}</td>
-                        </tr>
-                    `)
-                }
-            }
+            let shipment_list = JSON.parse(selectTableData[i].account.Shipment_list);
+            
+            // for (let j = 0; j < delivery_data.length; j++) {
+            //     if (j == 0) {
+            //         element.append(`
+            //             <tr>
+            //                 <td>${delivery_data[j].customer}</td>
+            //                 <td rowspan="${count_delivery}">${selectTableData[i].account.Name}</td>
+            //                 <td>${delivery_data[j].first_date}</td>
+            //                 <td>${delivery_data[j].postponement_date}</td>
+            //                 <td rowspan="${count_delivery}">${returnSpaces(selectTableData[i].account.Sum)}</td>
+            //                 <td rowspan="${count_delivery}">${returnSpaces(payment_amount)}</td>
+            //                 <td rowspan="${count_delivery}">${returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount))}</td>
+            //                 <td rowspan="${count_delivery}">${managerSecondName}</td>
+            //             </tr>
+            //         `)
+            //     } else {
+            //         element.append(`
+            //             <tr>
+            //                 <td>${delivery_data[j].customer}</td>
+            //                 <td>${delivery_data[j].first_date}</td>
+            //                 <td>${delivery_data[j].postponement_date}</td>
+            //             </tr>
+            //         `)
+            //     }
+            // }
             for (let j = 0; j < name.length; j++) {
                 let elementTr = $('<td>', { html: name[j] });
                 element.append(elementTr);
@@ -634,6 +609,7 @@ let rowFilling = (object, id, table) => {
 
     let rowFillingStock = (id) => {
         table.append(getTitleTable());
+        console.log(selectTableData);
         for (let i = selectTableData.length - 1; i >= 0; i--) {
             for (let k = selectTableData[i].items.length - 1; k >= 0; k--) {
                 if (selectTableData[i].stock_address != null) {

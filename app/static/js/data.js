@@ -282,13 +282,14 @@ const subcategoryButtons = [
         'Склад',
         { id: 'stock_group', objectName: categoryInStock, name: 'Группа товаров', class: 'field_with_modal' },
         { id: 'stock_product', objectName: categoryInStock, name: 'Товар', class: 'field_with_modal' },
+        { id: 'stock_stock', objectName: categoryInStock, name: 'Склад', class: 'field_with_modal' },
     ],
     [
         'Аналитика',
         { id: 'analytics_reports', objectName: categoryInAnalytics, name: 'Прибыль по клиентам', class: 'field_with_modal' },
     ]
 ];
-let filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''} ];
+let filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''}, {name: 'stock_address', filter: ''} ];
 // Данные по кнопкам меню, для перехода на соответствующую категорию
 const linkCategoryInfo = [
     { id: 'category-0', src: 'static/images/list.png', name: 'Рабочий стол', subcategories: [categoryInListClient, categoryInListProvider, categoryInListCarrier], number: 0, subid: ['client', 'provider', 'carrier'] },
