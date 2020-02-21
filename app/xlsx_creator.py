@@ -147,17 +147,38 @@ def sixthScenario(data):
     return '/upload'
 
 def seventhScenario(data):
+    print(data)
     wb = openpyxl.Workbook()
     sheet = wb.active
     sheet['A1'].value = 'Менеджер'
-    sheet['B1'].value = 'Наименование'
-    sheet['C1'].value = 'Дата последнего комментария'
+    sheet['B1'].value = 'Дата'
+    sheet['C1'].value = 'Наименование'
+    sheet['D1'].value = 'Товар'
+    sheet['E1'].value = 'Объем'
+    sheet['F1'].value = 'Бонус'
 
-    column_counter = 1
+    man_prev = data[0]['manager']
+    column_counter = 2
+    bonus = ''
+    item = ''
+    client = ''
     for i in data:
-        column_counter += 1
-        for j in range(3):
+        if i['manager'] == man_prev:
+            bonus = i['amount_bonus']
+            item = i['items_mound']
+            client = i['clients']
+        else:
+            man_prev = i['manager']
+            sheet[alphabet[6] + str(column_counter - 1)].value = 'Кол-во новых клиентов: ' + str(client)
+            sheet[alphabet[7] + str(column_counter - 1)].value = 'Кол-во товара категории "Насыпь": ' + str(item)
+            sheet[alphabet[8] + str(column_counter - 1)].value = 'Итого: ' + str(bonus)
+        for j in range(6):
             sheet[alphabet[j] + str(column_counter)].value = list(i.values())[j]
+        column_counter += 1
+    sheet[alphabet[6] + str(column_counter - 1)].value = 'Новых клиентов: ' + str(client)
+    sheet[alphabet[7] + str(column_counter - 1)].value = 'Насыпь: ' + str(item)
+    sheet[alphabet[8] + str(column_counter - 1)].value = 'Бонус за месяц: ' + str(bonus)
+
 
     wb.save('app/upload/last_stat.xlsx')
     return '/upload'
@@ -176,7 +197,7 @@ def createExel(id, data):
         return fifthScenario(data)
     if int(id) == 5:
         return sixthScenario(data)
-    if int(id) == 5:
+    if int(id) == 6:
         return seventhScenario(data)
 
     return 'ok'
