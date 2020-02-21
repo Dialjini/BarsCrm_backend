@@ -2393,7 +2393,19 @@ function getValidationDate(date) {
                                     }
                                 }
                             });
-                            
+
+                            let items;
+                            $.ajax({
+                                url: '/getStockTable',
+                                type: 'GET',
+                                async: false,
+                                dataType: 'html',
+                                success: function(data) {
+                                    items = JSON.parse(data);
+                                }
+                            });
+                            let items_id = JSON.parse(account_data[i].account.Item_ids);
+
                             for (let account = 0; account < account_data.length; account++) {
                                 if (account_data[account].account.Manager_id == account_data[i].account.Manager_id && current_date >= month_period[0] && current_date <= month_period[1]
                                     && account_data[i].account.id == account_data[account].account.id) {
@@ -2402,27 +2414,23 @@ function getValidationDate(date) {
                                     }
                                     
                                     for (let j = 0; j < account_data[account].items.length; j++) {
-                                        if (account_data[account].items[j].Category == 'Насыпь') {
-                                            amount_items_only_mound++;
-                                        }
+                                        for (let volume = 0; volume < items_id.length; volume++) {
+                                            if (account_data[account].items[j].Category == 'Насыпь' && items_id[volume].id == account_data[account].items[j].Item_id) {
+                                                amount_items_only_mound += +deleteSpaces(items_id[volume].volume)
+                                            }
+                                        } 
                                     }
                                 }
                             }
+                        
                             if (current_date >= date_period[0] && current_date <= date_period[1] && (filter_manager == manager_surname || filter_manager == '')) {
-                                let items_id = JSON.parse(account_data[i].account.Item_ids);
                                 let all_volume = 0;
                                 for (let volume = 0; volume < items_id.length; volume++) {
                                     all_volume += +deleteSpaces(items_id[volume].volume);
                                 }
-                                $.ajax({
-                                    url: '/getStockTable',
-                                    type: 'GET',
-                                    async: false,
-                                    dataType: 'html',
-                                    success: function(data) {
+                                
                                         let count = 0;
-                                        let items = JSON.parse(data);
-
+                                        
                                         if (getValidationDate(payment_date) <= last_shipment_date) {
                                             //amount_clients++;
                                             last_shipment_date = getValidationDate('01.01.10');
@@ -2496,8 +2504,6 @@ function getValidationDate(date) {
                                                 }
                                             }
                                         }
-                                    }
-                                });
                                 total_count++;
                                 if (table != '<tbody class="tr_tr">' && !unload_status) {
                                     tbody += table + `</tbody>`;
@@ -2505,9 +2511,9 @@ function getValidationDate(date) {
                                 if (next_manager_id != current_manager_id || i == account_data.length - 1) {
                                     tbody += `
                                         <tr>
-                                            <td colspan="3">Кол-во новых клиентов: ${amount_clients}</td>
-                                            <td colspan="2">Кол-во товара категории "Насыпь": ${amount_items_only_mound}</td>
-                                            <td colspan="1">Итого: ${returnSpaces(amount_bonus)}</td>
+                                            <td style="font-weight: 500" colspan="3">Новых клиентов: ${amount_clients}</td>
+                                            <td style="font-weight: 500" colspan="2">Насыпь: ${returnSpaces(amount_items_only_mound)}</td>
+                                            <td style="font-weight: 500" colspan="1">Бонус за месяц: ${returnSpaces(amount_bonus)}</td>
                                         </tr>
                                     `
                                     amount_clients = 0;
