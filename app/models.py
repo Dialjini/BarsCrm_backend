@@ -298,6 +298,7 @@ class Account(db.Model):
     Shipment = db.Column(db.String)
     Shipment_hello = db.Column(db.String)
     Shipment_list = db.Column(db.String)
+    Payment_date = db.Column(db.String)
 
 
 class Role(db.Model):
