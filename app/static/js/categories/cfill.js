@@ -41,32 +41,29 @@ function linkField() {
 
     // Подкатегория с вызовом модального окна
     $('.list').click(function() {
-        let this_user;
-        $.ajax({
-            url: '/getThisUser',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(user) {
-                this_user = JSON.parse(user);
-            }
-        })
+        let data_role = $('[name="offtop__load"').attr('id').split('::');
+        let this_user = {role: data_role[0], id: data_role[1]};
         const list = [
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
-            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
+            { width: 90.656, id: 'stock_stock', list: [] },
+            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа', 'Баллы и бонусы'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
         ]
 
         let idList = this.id, element;
         let filter_table = categoryInStock[1][1];
-        let info = ['Group_name', 'Name'];
+        let info = ['Group_name', 'Name', 'stock_address'];
 
         if (!idList.includes('analytics')) {
             if (!$('.report_list').is(`#${idList}`)) {
                 for (let k = 0; k < info.length; k++) {
                     for (let i = 0; i < filter_table.length; i++) {
                         for (let j = 0; j < filter_table[i].items.length; j++) {
-                            list[k].list.push(filter_table[i].items[j][info[k]])
+                            if (info[k] == 'stock_address') {
+                                list[k].list.push(filter_table[i].stock_address)
+                            } else {
+                                list[k].list.push(filter_table[i].items[j][info[k]])
+                            }
                         }
                     }
                 }
@@ -187,6 +184,7 @@ function linkField() {
                         analyticsFilterTable_3,
                         analyticsFilterTable_4,
                         analyticsFilterTable_5,
+                        analyticsFilterTable_6
                     ]
                     $('[name="unload_table"]').remove();
                     $('#analytics_block_hidden').remove()
@@ -203,6 +201,7 @@ function linkField() {
                     const filter_ids = [
                         { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
                         { id: 'stock_product', filterName: 'Name', name: 'Товар'},
+                        { id: 'stock_stock', filterName: 'stock_address', name: 'Склад'},
                     ]
 
                     for (let i = 0; i < filter_ids.length; i++) {
@@ -219,7 +218,8 @@ function linkField() {
                     for (let i = 0; i < filter_table.length; i++) {
                         for (let k = 0; k < filter_table[i].items.length; k++) {
                             if ((filter_table[i].items[k][filter_parameters[0].name] == filter_parameters[0].filter || filter_parameters[0].filter == '')
-                                && (filter_table[i].items[k][filter_parameters[1].name] == filter_parameters[1].filter || filter_parameters[1].filter == '')) {
+                                && (filter_table[i].items[k][filter_parameters[1].name] == filter_parameters[1].filter || filter_parameters[1].filter == '')
+                                && (filter_table[i][filter_parameters[2].name] == filter_parameters[2].filter || filter_parameters[2].filter == '')) {
                                 items.push({ stock_address: filter_table[i].stock_address, items: [filter_table[i].items[k]]});
                             }
                         }
@@ -280,6 +280,7 @@ function linkCategory(element) {
             for (let j = 0; j < linkCategoryInfo[i].subcategories.length; j++) {
                 if (linkCategoryInfo[i].subcategories[j][0].active) {
                     addButtonsSubcategory(i);
+                    console.log(linkCategoryInfo[i].subcategories[j]);
                     getTableData(linkCategoryInfo[i].subcategories[j]);
                     i <= 1 ? $(`#${linkCategoryInfo[i].subcategories[j][0].id}Button`).addClass('active') : '';
                     break;
@@ -545,6 +546,12 @@ function items() {
                                 <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                             </div>
                         </div>
+                        <div class="list_admin" id="stock_stock">
+                            <div class="field_with_modal">
+                                <span id="active_field">Склад</span>
+                                <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                            </div>
+                        </div>
                     `
                 }
                 return fields;
@@ -563,19 +570,13 @@ function items() {
 }
 function activeAdmin() {
     $('.list_admin').click(function() {
-        let this_user;
-        $.ajax({
-            url: '/getThisUser',
-            type: 'GET',
-            async: false,
-            dataType: 'html',
-            success: function(user) {
-                this_user = JSON.parse(user);
-            }
-        })
+        let data_role = $('[name="offtop__load"').attr('id').split('::');
+        let this_user = {role: data_role[0], id: data_role[1]};
+
         const list = [
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
+            { width: 90.656, id: 'stock_stock', list: [] },
         ]
 
         $.ajax({
@@ -589,14 +590,18 @@ function activeAdmin() {
         })
 
         let idList = this.id, element;
-        let info = ['Group_name', 'Name'];
+        let info = ['Group_name', 'Name', 'stock_address'];
 
         if (!idList.includes('analytics')) {
             if (!$('.report_list').is(`#${idList}`)) {
                 for (let k = 0; k < info.length; k++) {
                     for (let i = 0; i < filter_table.length; i++) {
                         for (let j = 0; j < filter_table[i].items.length; j++) {
-                            list[k].list.push(filter_table[i].items[j][info[k]])
+                            if (info[k] == 'stock_address') {
+                                list[k].list.push(filter_table[i].stock_address)
+                            } else {
+                                list[k].list.push(filter_table[i].items[j][info[k]])
+                            }
                         }
                     }
                 }
@@ -704,6 +709,7 @@ function activeAdmin() {
                     const filter_ids = [
                         { id: 'stock_group', filterName: 'Group_name', name: 'Группа товаров'},
                         { id: 'stock_product', filterName: 'Name', name: 'Товар'},
+                        { id: 'stock_stock', filterName: 'stock_address', name: 'Склад'},
                     ]
 
                     for (let i = 0; i < filter_ids.length; i++) {
@@ -720,11 +726,13 @@ function activeAdmin() {
                     for (let i = 0; i < filter_table.length; i++) {
                         for (let k = 0; k < filter_table[i].items.length; k++) {
                             if ((filter_table[i].items[k][filter_parameters[0].name] == filter_parameters[0].filter || filter_parameters[0].filter == '')
-                                && (filter_table[i].items[k][filter_parameters[1].name] == filter_parameters[1].filter || filter_parameters[1].filter == '')) {
+                                && (filter_table[i].items[k][filter_parameters[1].name] == filter_parameters[1].filter || filter_parameters[1].filter == '')
+                                && (filter_table[i][filter_parameters[2].name] == filter_parameters[2].filter || filter_parameters[2].filter == '')) {
                                 items.push({ stock_address: filter_table[i].stock_address, items: [filter_table[i].items[k]]});
                             }
                         }
                     }
+                    console.log(items);
                     for (let i = 0; i < items.length - 1; i++) {
                         for (let j = i + 1; j < items.length; j++) {
                             if (items[i].stock_address === items[j].stock_address) {
@@ -802,93 +810,86 @@ function activeThisField(field) {
     }
 }
 function adminPanel(close = '') {
-    $.ajax({
-        url: '/getThisUser',
-        type: 'GET',
-        dataType: 'html',
-        success: function(data) {
-            data = JSON.parse(data);
-            if (data.role == 'admin') {
-                admin();
-                function admin() {
-                    $('.info').empty();
-                    $('[name="linkCategory"]').removeClass('active');
-                    $('#mini_logo').addClass('active');
-
-                    function fillingTable() {
-                        $.ajax({
-                            url: '/getUsers',
-                            type: 'GET',
-                            dataType: 'html',
-                            beforeSend: function() {
-                                $('body').append(`
-                                    <div id="preloader">
-                                        <div id="preloader_preload"></div>
-                                    </div>
-                                `)
-                                preloader = document.getElementById("preloader_preload");
-                            },
-                            success: function(data) {
-                                data = JSON.parse(data);
-                                for (let i = 0; i < data.length; i++) {
-                                    if (data[i].role == 'admin') data[i].role = 'Администратор';
-                                    if (data[i].role == 'manager') data[i].role = 'Менеджер';
-                                    $('#admin').append(`
-                                        <tr id="${data[i].id}" onclick="userInfo(this)">
-                                            <td>${data[i].second_name}</td>
-                                            <td>${data[i].name}</td>
-                                            <td>${data[i].third_name}</td>
-                                            <td>${data[i].role}</td>
-                                            <td>${data[i].email}</td>
-                                            <td>${data[i].login}</td>
-                                            <td>${data[i].password}</td>
-                                        </tr>
-                                    `)
-                                }
-                                $('.info').append(`
-                                    <div id="addNewPerson" onclick="addNewPerson()" class="add_something_main" style="margin-top: -20px;">
-                                        <img style="width: 15px;" src="static/images/plus.svg">
-                                    <div>
-                                `)
-                                if (close != '') {
-                                    eval(close)();
-                                }
-                            },
-                            complete: function() {
-                                $('#loading').remove();
-                                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
-                            }
-                        });
-                    }
-                    getContent();
-                    function getContent() {
-                        $('.info').append(`
-                            <div class="row">
-                                <div class="fields" style="width: auto">
-                                    <div class="field active" id="persons" onclick="persons()">Сотрудники</div>
-                                    <div class="field" id="positions" onclick="positions()">Должности</div>
-                                    <div class="field" id="items" onclick="items()">Редактирование товаров</div>
-                                </div>
-                                <div class="category">АДМИН ПАНЕЛЬ</div>
+    let data_role = $('[name="offtop__load"').attr('id').split('::');
+    let data = {role: data_role[0], id: data_role[1]};
+    if (data.role == 'admin') {
+        admin();
+        function admin() {
+            $('.info').empty();
+            $('[name="linkCategory"]').removeClass('active');
+            $('#mini_logo').addClass('active');
+            function fillingTable() {
+                $.ajax({
+                    url: '/getUsers',
+                    type: 'GET',
+                    dataType: 'html',
+                    beforeSend: function() {
+                        $('body').append(`
+                            <div id="preloader">
+                                <div id="preloader_preload"></div>
                             </div>
-                            <table class="table" id="admin">
-                                <tr>
-                                    <th width="170">Фамилия</th>
-                                    <th width="170">Имя</th>
-                                    <th width="170">Отчество</th>
-                                    <th width="130">Должность</th>
-                                    <th width="170">Email</th>
-                                    <th width="120">Логин</th>
-                                    <th width="150">Пароль</th>
+                        `)
+                        preloader = document.getElementById("preloader_preload");
+                    },
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        for (let i = 0; i < data.length; i++) {
+                            if (data[i].role == 'admin') data[i].role = 'Администратор';
+                            if (data[i].role == 'manager') data[i].role = 'Менеджер';
+                            $('#admin').append(`
+                                <tr id="${data[i].id}" onclick="userInfo(this)">
+                                    <td>${data[i].second_name}</td>
+                                    <td>${data[i].name}</td>
+                                    <td>${data[i].third_name}</td>
+                                    <td>${data[i].role}</td>
+                                    <td>${data[i].email}</td>
+                                    <td>${data[i].login}</td>
+                                    <td>${data[i].password}</td>
                                 </tr>
-                            </table>`)
-                            fillingTable();
+                            `)
+                        }
+                        $('.info').append(`
+                            <div id="addNewPerson" onclick="addNewPerson()" class="add_something_main" style="margin-top: -20px;">
+                                <img style="width: 15px;" src="static/images/plus.svg">
+                            <div>
+                        `)
+                        if (close != '') {
+                            eval(close)();
+                        }
+                    },
+                    complete: function() {
+                        $('#loading').remove();
+                        setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                     }
-                }
+                });
             }
-            return;
+            getContent();
+            function getContent() {
+                $('.info').append(`
+                    <div class="row">
+                        <div class="fields" style="width: auto">
+                            <div class="field active" id="persons" onclick="persons()">Сотрудники</div>
+                            <div class="field" id="positions" onclick="positions()">Должности</div>
+                            <div class="field" id="items" onclick="items()">Редактирование товаров</div>
+                        </div>
+                        <div class="category">АДМИН ПАНЕЛЬ</div>
+                    </div>
+                    <table class="table" id="admin">
+                        <tr>
+                            <th width="170">Фамилия</th>
+                            <th width="170">Имя</th>
+                            <th width="170">Отчество</th>
+                            <th width="130">Должность</th>
+                            <th width="170">Email</th>
+                            <th width="120">Логин</th>
+                            <th width="150">Пароль</th>
+                        </tr>
+                    </table>`)
+                    fillingTable();
+            }
         }
-    });
+    }
+    return;
 }
 function addNewPerson() {
     $('#addNewPerson').remove();
@@ -1044,7 +1045,7 @@ function editItem(id) {
             }
             function fillPacking() {
                 data.Packing;
-                let list = ['Насыль', 'Мешки', 'ББ'];
+                let list = ['Насыпь', 'Мешки', 'ББ'];
                 let options = '';
                 for (let i = 0; i < list.length; i++) {
                     if (data.Packing == list[i]) {
@@ -1091,7 +1092,7 @@ function editItem(id) {
                             <table class="table_block">
                                 <tr>
                                     <td>Объем, кг.</td>
-                                    <td><input onkeyup="maskNumber(this.id)" type="text" id="item_volume" class="string" value="${data.Volume}"></td>
+                                    <td><input onkeyup="maskNumberWithout(this.id)" type="text" id="item_volume" class="string" value="${data.Volume}"></td>
                                 </tr>
                                 <tr>
                                     <td>Фасовка</td>
@@ -1100,8 +1101,24 @@ function editItem(id) {
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td>Категория</td>
+                                    <td>
+                                        ${data.Category == 'Насыпь' ? `
+                                        <select id="item_category" type="text">
+                                            <option selected value="Насыпь">Насыпь</option>
+                                            <option value="Жир/ЗЦМ">Жир/ЗЦМ</option>
+                                        </select>
+                                        ` : `
+                                        <select id="item_category" type="text">
+                                            <option value="Насыпь">Насыпь</option>
+                                            <option selected value="Жир/ЗЦМ">Жир/ЗЦМ</option>
+                                        </select>
+                                        `}
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td>Вес, кг.</td>
-                                    <td><input onkeyup="maskNumber(this.id)" type="text" id="item_weight" class="string" value="${data.Weight}"></td>
+                                    <td><input onkeyup="maskNumberWithout(this.id)" type="text" id="item_weight" class="string" value="${data.Weight}"></td>
                                 </tr>
                             </table>
                             <table class="table_block">
@@ -1145,7 +1162,7 @@ function saveEditItem(id) {
     let list = [{type: 1, value: 'stock_id'}, {type: 1, value: 'group_id'}, {type: 1, value: 'item_product'},
                 {type: 1, value: 'item_prefix'}, {type: 2, value: 'item_volume'}, {type: 1, value: 'item_packing'},
                 {type: 2, value: 'item_weight'}, {type: 2, value: 'item_vat'}, {type: 2, value: 'item_price'},
-                {type: 2, value: 'item_purchase_price'}];
+                {type: 2, value: 'item_purchase_price'}, {type: 1, value: 'item_category'}];
 
     let data = {};
 
@@ -1157,6 +1174,9 @@ function saveEditItem(id) {
     data['item_fraction'] = 'test';
     data['item_creator'] = 'test';
     data['id'] = item_id;
+    if (categoryInStock[1][1] != undefined) {
+        categoryInStock[1].pop();
+    }
     $.ajax({
         url: '/editItem',
         type: 'GET',
@@ -1238,6 +1258,7 @@ function getValidationDate(date) {
 // Отчеты
     // Прибыль по клиентам
     function analyticsFilterTable_0(date_period, unload_status = false, main = false) {
+        $('#all_amount_hello').remove();
         let account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1288,9 +1309,11 @@ function getValidationDate(date) {
                     let volume = JSON.parse(items_list[i].account[j].Item_ids);
                     let delivery = JSON.parse(items_list[i].account[j].Shipping);
                     let hello = JSON.parse(items_list[i].account[j].Hello);
+                    let sale = JSON.parse(items_list[i].account[j].Sale);
                     for (let v = 0; v < volume.length; v++) {
                         if (+volume[v].id == +items_list[i].item.Item_id) {
-                            let price = +deleteSpaces(delivery[v]) + +deleteSpaces(hello[v]) + (+deleteSpaces(items_list[i].item.Transferred_volume) * +deleteSpaces(items_list[i].item.Cost));
+                            let price = Number((+deleteSpaces(delivery[v]) + +deleteSpaces(sale[v]) + +deleteSpaces(hello[v]) + +deleteSpaces(items_list[i].item.Cost)) * +deleteSpaces(items_list[i].item.Transferred_volume)).toFixed(2);
+                            let cost_price = Number(+deleteSpaces(items_list[i].item.Cost) + +deleteSpaces(hello[v]) + +deleteSpaces(delivery[v]) + +deleteSpaces(sale[v])).toFixed(2)
                             if (!unload_status) {
                                 function fillTr() {
                                     let trContent = '';
@@ -1302,10 +1325,10 @@ function getValidationDate(date) {
                                                 <td>${returnSpaces(price)}</td>
                                                 <td>${returnSpaces(delivery[v])}</td>
                                                 <td>${returnSpaces(hello[v])}</td>
-                                                <td>${returnSpaces(items_list[i].item.Cost)}</td>
+                                                <td>${returnSpaces(cost_price)}</td>
                                                 <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
-                                                <td>${returnSpaces(+deleteSpaces(items_list[i].item.Cost) - +deleteSpaces(items_list[i].item.Purchase_price))}</td>
-                                                <td>${returnSpaces((+deleteSpaces(items_list[i].item.Cost) - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume))}</td>`
+                                                <td>${returnSpaces(Number(cost_price - +deleteSpaces(items_list[i].item.Purchase_price)).toFixed(2))}</td>
+                                                <td>${returnSpaces(Number((cost_price - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume)).toFixed(2))}</td>`
                                     return trContent;
                                 }
                                 let tr;
@@ -1316,9 +1339,10 @@ function getValidationDate(date) {
                                 total_count++;
                             } else {
                                 unload_table.push({product: items_list[i].item.Name, name: items_list[i].account[j].Name, volume: returnSpaces(volume[v].volume),
-                                    price: returnSpaces(price), delivery: returnSpaces(delivery[v]), hello: returnSpaces(hello[v]), cost: returnSpaces(items_list[i].item.Cost),
-                                    purchase_price: returnSpaces(items_list[i].item.Purchase_price), earned: returnSpaces(Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)),
-                                    profit: returnSpaces((Math.round(+deleteSpaces(items_list[i].item.Cost) / +deleteSpaces(items_list[i].item.Volume)) - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume))})
+                                    price: returnSpaces(price), delivery: returnSpaces(delivery[v]), hello: returnSpaces(hello[v]), cost: returnSpaces(cost_price),
+                                    purchase_price: returnSpaces(items_list[i].item.Purchase_price), earned: returnSpaces(Number(cost_price - +deleteSpaces(items_list[i].item.Purchase_price)).toFixed(2)),
+                                    profit: returnSpaces(Number((cost_price - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume)).toFixed(2))
+                                });
                             }
                         }
                     }
@@ -1368,6 +1392,7 @@ function getValidationDate(date) {
     // Сводный по объёмам
     function analyticsFilterTable_1(date_period, unload_status = false, main = false) {
         let account_data, stocks;
+        $('#all_amount_hello').remove();
         $.ajax({
             url: '/getStockTable',
             type: 'GET',
@@ -1607,6 +1632,7 @@ function getValidationDate(date) {
                 delivery_data = JSON.parse(data);
             }
         });
+        $('#all_amount_hello').remove();
         let items_list = [];
         let total_count = 0;
         for (let i = 0; i < account_data.length; i++) {
@@ -1637,44 +1663,39 @@ function getValidationDate(date) {
                 for (let j = 0; j < items_list[i].items.length; j++) {
                     let volume = JSON.parse(items_list[i].account.Item_ids);
                     let amounts = JSON.parse(items_list[i].account.Items_amount);
-                    for (let v = 0; v < volume.length; v++) {
-                        for (let delivery = 0; delivery < delivery_data.length; delivery++) {
-                            let deliveries_ids = JSON.parse(delivery_data[delivery].delivery.Item_ids);
-                            for (let id = 0; id < deliveries_ids.length; id++) {
-                                if (+volume[v].id == +items_list[i].items[j].Item_id
-                                    && +items_list[i].items[j].Item_id == +deliveries_ids[id]
-                                    && +delivery_data[delivery].delivery.Account_id == +items_list[i].account.id) {
-                                    if (delivery_id == null) {
-                                        delivery_id = +delivery_data[delivery].delivery.id
-                                    } else if (delivery_id != +delivery_data[delivery].delivery.id) {
-                                        continue;
-                                    }
-                                    
-                                    if (!unload_status) {
-                                        function fillTr() {
-                                            let trContent = '';
-                                            if (j == 0) {
-                                                trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
-                                            }
-                                            trContent += `<td>${items_list[i].items[j].Name}</td>
-                                                        <td>${returnSpaces(volume[v].volume)}</td>
-                                                        <td>${delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
-                                                        <td>${returnSpaces(amounts[v].amount)}</td>`
-                                            return trContent;
-                                        }
-                                        let tr = `<tr>${fillTr()}</tr>`
-                                        tbody += tr;
-                                        total_count++;
-                                    } else {
-                                        unload_table.push({ name: items_list[i].account.Name, product: items_list[i].items[j].Name, volume: returnSpaces(volume[v].volume),
-                                            start_date: delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана',
-                                            amount: returnSpaces(amounts[v].amount)})
-                                    }
-                                }
-                            }
-                        }  
-                        delivery_id = null;    
+                    if (items_list[i].account.Shipment_list == null) {
+                        continue;
                     }
+                    let shipment_list = JSON.parse(items_list[i].account.Shipment_list);
+                    
+                    for (let i = 0; i < shipment_list.length; i++) {
+                        
+                    }
+                    console.log('--------');
+                    console.log(volume);
+                    console.log(amounts);
+                    console.log('--------');
+
+                    // if (!unload_status) {
+                    //     function fillTr() {
+                    //         let trContent = '';
+                    //         if (j == 0) {
+                    //             trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
+                    //         }
+                    //         trContent += `<td>${items_list[i].items[j].Name}</td>
+                    //                     <td>${returnSpaces(volume[v].volume)}</td>
+                    //                     <td>${delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
+                    //                     <td>${returnSpaces(amounts[v].amount)}</td>`
+                    //         return trContent;
+                    //     }
+                    //     let tr = `<tr>${fillTr()}</tr>`
+                    //     tbody += tr;
+                    //     total_count++;
+                    // } else {
+                    //     unload_table.push({ name: items_list[i].account.Name, product: items_list[i].items[j].Name, volume: returnSpaces(volume[v].volume),
+                    //         start_date: delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана',
+                    //         amount: returnSpaces(amounts[v].amount)})
+                    // }
                 }
                 if (tbody != '<tbody class="tr_tr">') {
                     table += tbody + '</tbody>';
@@ -1707,7 +1728,7 @@ function getValidationDate(date) {
                     <tr>
                         <th width="350">Клиент</th>
                         <th>Товары</th>
-                        <th>Вес</th>
+                        <th>Объем, кг</th>
                         <th>Дата отгрузки</th>
                         <th>Сумма, руб.</th>
                     </tr>
@@ -1796,7 +1817,7 @@ function getValidationDate(date) {
                         all_data[i].volume = +deleteSpaces(all_data[i].volume) + +deleteSpaces(all_data[j].volume);
                         all_data[i].amount_hello = +deleteSpaces(all_data[i].amount_hello) + +deleteSpaces(all_data[j].amount_hello);
                         all_data[i].average_volume = Math.ceil(+deleteSpaces(all_data[i].amount_hello) / +deleteSpaces(all_data[i].volume));
-                        all_data[i].amount = Math.round((+deleteSpaces(all_data[i].amount) + +deleteSpaces(all_data[j].amount)) * 0.9);
+                        all_data[i].amount = Math.round((+deleteSpaces(all_data[i].amount) + +deleteSpaces(all_data[j].amount)));
                         all_data.splice(j, 1);
                         j--;
                     }
@@ -1811,7 +1832,7 @@ function getValidationDate(date) {
                             <td>${returnSpaces(all_data[i].volume)}</td>
                             <td>${returnSpaces(all_data[i].average_volume)}</td>
                             <td>${returnSpaces(all_data[i].amount_hello)}</td>
-                            <td>${returnSpaces(all_data[i].amount)}</td>
+                            <td>${returnSpaces(all_data[i].amount_hello * 0.9)}</td>
                         </tr>
                     `
                 } else {
@@ -1819,6 +1840,12 @@ function getValidationDate(date) {
                         average_volume: returnSpaces(all_data[i].average_volume), hello: returnSpaces(all_data[i].amount_hello), amount: returnSpaces(all_data[i].amount)});
                 }
             }
+            let all_amount_hello = 0;
+            for (let i = 0; i < all_data.length; i++) {
+                all_amount_hello += all_data[i].amount_hello * 0.9;
+            }
+            $('#all_amount_hello').remove();
+            $('#subcategories').after(`<div class="row" id="all_amount_hello"><div style="padding: 0 0 20px; color: #595959;">Сумма по счетам: <span class="red">${all_amount_hello}</span></div></div>`);
             if (unload_status) {
                 return unload_table;
             }
@@ -1849,6 +1876,7 @@ function getValidationDate(date) {
     }
     // Отгрузки менеджеров
     function analyticsFilterTable_4(date_period, unload_status = false) {
+        $('#all_amount_hello').remove();
         let stocks, account_data;
         $.ajax({
             url: '/getAccounts',
@@ -2145,6 +2173,7 @@ function getValidationDate(date) {
     }
     // Проделанная работа
     function analyticsFilterTable_5(date_period, unload_status = false, filter_manager = '') {
+        $('#all_amount_hello').remove();
         function fillTable() {
             let tbody = '';
             $.ajax({
@@ -2179,6 +2208,114 @@ function getValidationDate(date) {
                         for (let key in result.data[i].orgs) {
                             let current_date = getValidationDate(result.data[i].orgs[key]);
                             if (current_date >= date_period[0] && current_date <= date_period[1] && (filter_manager == result.data[i].name || filter_manager == '')) {
+                                if (!unload_status) {
+                                    let data_one = key.split('$$');
+                                    if (count == 0) {
+                                        table += `
+                                            <tr>
+                                                <td name="username_analytics" rowspan="${length}">${result.data[i].name}</td>
+                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
+                                                <td>${result.data[i].orgs[key]}</td>
+                                            </tr>
+                                        `
+                                    } else {
+                                        table += `
+                                            <tr>
+                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
+                                                <td>${result.data[i].orgs[key]}</td>
+                                            </tr>
+                                        `
+                                    }
+                                } else {
+                                    unload_info.push({ manager: result.data[i].name, name: key, last_comment: result.data[i].orgs[key] });
+                                }
+                                count++;
+                            }
+                        }
+                        if (table != '<tbody class="tr_tr">' && !unload_status) {
+                            tbody += table + '</tbody>';
+                        }
+                        total_count += count;
+                    }
+                    if (unload_status) {
+                        tbody = unload_info;
+                        return;
+                    }
+                    if (!$('div').is('#analytics_block_hidden')) {
+                        $('.fields').append(`
+                            <div id="info_in_accounts">
+                                <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'комментари', 3)}</span> 
+                                <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                                    <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                                </div>
+                            </div>
+                            <div id="analytics_5" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+                        `)
+                        $('body').append(`<div id="analytics_block_hidden"></div>`)
+                    } else {
+                        $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'комментари', 3)}`);
+                    }
+                }
+            });
+            return tbody;
+        }
+        if (unload_status) {
+            return fillTable();
+        } else {
+            return `
+                <table class="table analytics">
+                    <tr>
+                        <th id="pd_manager" onclick="selectManagerAnalytics(this)">
+                            <div class="flex jc-sb">
+                                <span>Менеджер</span>
+                                <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                            </div>
+                        </th>
+                        <th>Наименование</th>
+                        <th width="350">Дата последнего комментария</th>
+                    </tr>
+                    ${fillTable()}
+                </table>
+            `
+        }
+    }
+    // Баллы и бонусы
+    function analyticsFilterTable_6(date_period, unload_status = false) {
+        $('#all_amount_hello').remove();
+        function fillTable() {
+            let tbody = '';
+            $.ajax({
+                url: '/getManagerStat',
+                type: 'GET',
+                async: false,
+                dataType: 'html',
+                beforeSend: function() {
+                    $('body').prepend(`
+                        <div id="preloader">
+                            <div id="preloader_preload"></div>
+                        </div>
+                    `)
+                    preloader = document.getElementById("preloader_preload");
+                },
+                complete: function() {
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                },
+                success: function(data) {
+                    result = JSON.parse(data);
+                    let total_count = 0;
+                    let unload_info = [];
+                    for (let i = 0; i < result.data.length; i++) {
+                        let count = 0, length = 0;
+
+                        for (let key in result.data[i].orgs) {
+                            let current_date = getValidationDate(result.data[i].orgs[key]);
+                            if (current_date >= date_period[0] && current_date <= date_period[1]) length++;
+                        }
+
+                        let table = '<tbody class="tr_tr">';
+                        for (let key in result.data[i].orgs) {
+                            let current_date = getValidationDate(result.data[i].orgs[key]);
+                            if (current_date >= date_period[0] && current_date <= date_period[1]) {
                                 if (!unload_status) {
                                     let data_one = key.split('$$');
                                     if (count == 0) {
@@ -2380,7 +2517,8 @@ function getValidationDate(date) {
             {function: analyticsFilterTable_2, name: 'По клиентам'},
             {function: analyticsFilterTable_3, name: 'По приветам'},
             {function: analyticsFilterTable_4, name: 'Отгрузки менеджеров'},
-            {function: analyticsFilterTable_5, name: 'Проделанная работа'}
+            {function: analyticsFilterTable_5, name: 'Проделанная работа'},
+            {function: analyticsFilterTable_6, name: 'Баллы и бонусы'},
         ]
 
         for (let i = 0; i < list.length; i++) {
@@ -2421,7 +2559,8 @@ function getValidationDate(date) {
             {function: analyticsFilterTable_2, id: 2},
             {function: analyticsFilterTable_3, id: 3},
             {function: analyticsFilterTable_4, id: 4},
-            {function: analyticsFilterTable_5, id: 5}
+            {function: analyticsFilterTable_5, id: 5},
+            {function: analyticsFilterTable_6, id: 6}
         ]
         for (let i = 0; i < list.length; i++) {
             if (list[i].id == number) {
