@@ -146,6 +146,23 @@ def sixthScenario(data):
     wb.save('app/upload/last_stat.xlsx')
     return '/upload'
 
+def seventhScenario(data):
+    wb = openpyxl.Workbook()
+    sheet = wb.active
+    sheet['A1'].value = 'Менеджер'
+    sheet['B1'].value = 'Наименование'
+    sheet['C1'].value = 'Дата последнего комментария'
+
+    column_counter = 1
+    for i in data:
+        column_counter += 1
+        for j in range(3):
+            sheet[alphabet[j] + str(column_counter)].value = list(i.values())[j]
+
+    wb.save('app/upload/last_stat.xlsx')
+    return '/upload'
+
+
 def createExel(id, data):
     if int(id) == 0:
         return firstScenario(data)
@@ -159,6 +176,8 @@ def createExel(id, data):
         return fifthScenario(data)
     if int(id) == 5:
         return sixthScenario(data)
+    if int(id) == 5:
+        return seventhScenario(data)
 
     return 'ok'
 

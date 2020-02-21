@@ -292,7 +292,6 @@ def editAccount():
         table.Delivery_costs = data['delivery_costs']
         table.Shipment = data['shipment']
         table.Shipment_hello = data['shipment_hello']
-        table.Payment_date = data['payment_date']
 
         db.session.commit()
         return 'OK'
@@ -826,7 +825,6 @@ def addAccount():
         table.Delivery_costs = data['delivery_costs']
         table.Shipment = data['shipment']
         table.Shipment_hello = data['shipment_hello']
-        table.Payment_date = data['payment_date']
 
         db.session.add(table)
         db.session.commit()
