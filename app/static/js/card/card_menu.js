@@ -177,11 +177,11 @@ function createCardMenu(element, index = 0) {
                 if (getInfo[0] === 'client' || getInfo[0] === 'provider' || getInfo[0] === 'carrier') {
                     titleObject[i].list.push(selectedLine.UTC == '' || selectedLine.UTC == undefined ? 'Местное время неопределенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours() < 10 ? '0' + (+selectedLine.UTC + +date.getUTCHours()) : selectedLine.UTC + date.getUTCHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}`)
                     if (getInfo[0] === 'client') {
-                        titleObject[i].list.push(`<span id="${getInfo[0]}_site">${selectedLine.Site}</span>`);
-                        titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
+                        titleObject[i].list.push(`<input id="${getInfo[0]}_site" value="${selectedLine.Site}" type="text" placeholder="Сайт"> `);
+                        titleObject[i].list.push(`<input id="${getInfo[0]}_holding" value="${selectedLine.Holding}" type="text" placeholder="Холдинг"> `)
                     } 
                     if (getInfo[0] === 'provider') {
-                        titleObject[i].list.push(`<span id="${getInfo[0]}_holding">${selectedLine.Holding}</span>`)
+                        titleObject[i].list.push(`<input type="text" placeholder="Холдинг" id="${getInfo[0]}_holding" value="${selectedLine.Holding}">`)
                     } 
                 }
                 if (getInfo[0] === 'account') {

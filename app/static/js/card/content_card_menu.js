@@ -225,6 +225,7 @@ function accountShipment(element) {
                 dataType: 'html',
                 success: function(items_data) {
                     items_data = JSON.parse(items_data);
+                    let items_id = list_items_acc.splice('');
                     $('.card_menu').remove();
                 
                     function fillShipmentTable() {
@@ -232,8 +233,9 @@ function accountShipment(element) {
                             for (let i = 0; i < account_data.length; i++) {
                                 for (let j = 0; j < items_data.length; j++) {
                                     for (let jj = 0; jj < items_data[j].items.length; jj++) {
-                                        for (let k = 0; k < list_items_acc.length; k++) {
-                                            if (account_data[i].account.id == account_id && items_data[j].items[jj].Item_id == list_items_acc[k]) {
+                                        for (let k = 0; k < items_id.length; k++) {
+                                            console.log(account_data[i].account.id == account_id && items_data[j].items[jj].Item_id == items_id[k])
+                                            if (account_data[i].account.id == account_id && items_data[j].items[jj].Item_id == items_id[k]) {
                                                 tbody += `
                                                     <tr>
                                                         <td><input type="text" name="shipment_date" id="shipment_date_${items_data[j].items[jj].Item_id}"></td>
@@ -250,8 +252,13 @@ function accountShipment(element) {
                             }
                         return tbody;
                     }
+                    console.log(items_id)
+                    if (items_id.length == 1 && items_id[0].indexOf(',') != -1) {
+                        console.log('123');
+                        items_id = items_id[0].split(',');
+                    }
                 
-                    console.log(list_items_acc, list_stock_acc);
+                    console.log(items_id, list_stock_acc);
                 
                     $('.info').append(`
                         <div class="card_menu">
@@ -267,6 +274,12 @@ function accountShipment(element) {
                                 </div>
                             </div>
                             <div class="content">
+                                <div class="row_card">
+                                    <div class="info_block">
+                                        <span>Дней отсрочки</span>
+                                        <input id="days_shipment" type="number">
+                                    </div>
+                                </div>
                                 <div class="row_card">
                                     <table class="table">
                                         <tr>
@@ -310,6 +323,7 @@ function getShipment(element) {
                 info.push({
                     date: $(`#shipment_date_${id}`).val(),
                     name: $(`#item_name_${id}`).html(),
+                    delay: $(`#days_shipment`).val() == '' ? 'Не указано' : $(`#days_shipment`).val(),
                     stock: $(`#item_stock_${id}`).html(),
                     packing: $(`#item_packing_${id}`).html(),
                     volume: $(`#shipment_volume_${id}`).val(),

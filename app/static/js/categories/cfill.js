@@ -1659,43 +1659,50 @@ function getValidationDate(date) {
             let table = '';
             let unload_table = [];
             for (let i = 0; i < items_list.length; i++) {
+                total_count++;
                 let tbody = '<tbody class="tr_tr">';
+                let count = 0;
+
                 for (let j = 0; j < items_list[i].items.length; j++) {
                     let volume = JSON.parse(items_list[i].account.Item_ids);
-                    let amounts = JSON.parse(items_list[i].account.Items_amount);
+
+                    let hello = JSON.parse(items_list[i].account.Hello);
+                    let shipping = JSON.parse(items_list[i].account.Shipping);
+                    let sale = JSON.parse(items_list[i].account.Sale);
+
                     if (items_list[i].account.Shipment_list == null) {
                         continue;
                     }
                     let shipment_list = JSON.parse(items_list[i].account.Shipment_list);
-                    
-                    for (let i = 0; i < shipment_list.length; i++) {
-                        
+                    for (let ii = 0; ii < volume.length; ii++) {
+                        for (let jj = 0; jj < shipment_list.length; jj++) {
+                            if (shipment_list[jj].id == items_list[i].items[j].Item_id && shipment_list[jj].id == volume[ii].id) {
+                                let amount_price = +deleteSpaces(shipment_list[jj].volume) + +(hello[ii]) + +shipping[ii] + +sale[ii];
+                                if (!unload_status) {
+                                    function fillTr() {
+                                        let tr_content = '';
+                                        if (count == 0) {
+                                            tr_content += `<td rowspan="${shipment_list.length}">${items_list[i].account.Name}</td>`
+                                        }
+                                        tr_content += `
+                                            <td>${shipment_list[jj].name}</td>
+                                            <td>${returnSpaces(shipment_list[jj].volume)}</td>
+                                            <td>${shipment_list[jj].date}</td>
+                                            <td>${returnSpaces(amount_price)}</td>
+                                        `
+                                        count++;
+                                        return tr_content;
+                                    }
+                                    let tr = `<tr>${fillTr()}</tr>`
+                                    tbody += tr;
+                                } else {
+                                    unload_table.push({ name: items_list[i].account.Name, product: shipment_list[jj].name, volume: returnSpaces(shipment_list[jj].volume),
+                                                start_date: shipment_list[jj].date != null || shipment_list[jj].date != '' ? shipment_list[jj].date : 'Не указана',
+                                                amount: returnSpaces(amount_price)})
+                                }
+                            }
+                        }
                     }
-                    console.log('--------');
-                    console.log(volume);
-                    console.log(amounts);
-                    console.log('--------');
-
-                    // if (!unload_status) {
-                    //     function fillTr() {
-                    //         let trContent = '';
-                    //         if (j == 0) {
-                    //             trContent += `<td rowspan="${items_list[i].items.length}">${items_list[i].account.Name}</td>`;
-                    //         }
-                    //         trContent += `<td>${items_list[i].items[j].Name}</td>
-                    //                     <td>${returnSpaces(volume[v].volume)}</td>
-                    //                     <td>${delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана'}</td>
-                    //                     <td>${returnSpaces(amounts[v].amount)}</td>`
-                    //         return trContent;
-                    //     }
-                    //     let tr = `<tr>${fillTr()}</tr>`
-                    //     tbody += tr;
-                    //     total_count++;
-                    // } else {
-                    //     unload_table.push({ name: items_list[i].account.Name, product: items_list[i].items[j].Name, volume: returnSpaces(volume[v].volume),
-                    //         start_date: delivery_data[delivery].delivery.Start_date != null || delivery_data[delivery].delivery.Start_date != '' ? delivery_data[delivery].delivery.Start_date : 'Не указана',
-                    //         amount: returnSpaces(amounts[v].amount)})
-                    // }
                 }
                 if (tbody != '<tbody class="tr_tr">') {
                     table += tbody + '</tbody>';
@@ -2280,12 +2287,12 @@ function getValidationDate(date) {
         }
     }
     // Баллы и бонусы
-    function analyticsFilterTable_6(date_period, unload_status = false) {
+    function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
         function fillTable() {
             let tbody = '';
             $.ajax({
-                url: '/getManagerStat',
+                url: '/getAccounts',
                 type: 'GET',
                 async: false,
                 dataType: 'html',
@@ -2301,49 +2308,214 @@ function getValidationDate(date) {
                     setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                 },
                 success: function(data) {
-                    result = JSON.parse(data);
+                    let account_data = JSON.parse(data);
                     let total_count = 0;
                     let unload_info = [];
-                    for (let i = 0; i < result.data.length; i++) {
-                        let count = 0, length = 0;
+                    let current_manager_id, next_manager_id;
 
-                        for (let key in result.data[i].orgs) {
-                            let current_date = getValidationDate(result.data[i].orgs[key]);
-                            if (current_date >= date_period[0] && current_date <= date_period[1]) length++;
+                    account_data.sort(function (a, b) {
+                        if (a.account.Manager_id < b.account.Manager_id) {
+                          return 1;
+                        }
+                        if (a.account.Manager_id > b.account.Manager_id) {
+                          return -1;
+                        }
+                        return 0;
+                    });
+
+                    let amount_clients = 0;
+                    let amount_items_only_mound = 0;
+                    let amount_bonus = 0;
+
+                    for (let i = 0; i < account_data.length; i++) {
+                        if (account_data[i].account.Payment_history == '' || account_data[i].account.Payment_history == null) {
+                            continue;
                         }
 
+                        if (i < account_data.length - 1) {
+                            next_manager_id = account_data[i + 1].account.Manager_id
+                        }
+                        current_manager_id = account_data[i].account.Manager_id
+                        
+                        let payment_list = JSON.parse(account_data[i].account.Payment_history);
+                        let shipment_list;
+                        if (account_data[i].account.Shipment_list != '' && account_data[i].account.Shipment_list != null) {
+                            shipment_list = JSON.parse(account_data[i].account.Shipment_list);
+                        } else {
+                            shipment_list = [];
+                        }
+                        let payment_date;
+                        let payment_amount = 0;
+                        for (let j = 0; j < payment_list.length; j++) {
+                            payment_amount += +deleteSpaces(payment_list[j].sum);
+                            payment_date = payment_list[j].date;
+                        }
                         let table = '<tbody class="tr_tr">';
-                        for (let key in result.data[i].orgs) {
-                            let current_date = getValidationDate(result.data[i].orgs[key]);
-                            if (current_date >= date_period[0] && current_date <= date_period[1]) {
-                                if (!unload_status) {
-                                    let data_one = key.split('$$');
-                                    if (count == 0) {
-                                        table += `
-                                            <tr>
-                                                <td name="username_analytics" rowspan="${length}">${result.data[i].name}</td>
-                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
-                                                <td>${result.data[i].orgs[key]}</td>
-                                            </tr>
-                                        `
+
+                        if (+payment_amount == +deleteSpaces(account_data[i].account.Sum)) {
+                            let current_date = getValidationDate(account_data[i].account.Date);
+                            let month_period = datePeriod('month');
+                            let manager_surname;
+                            let half_year_period = datePeriod('half_year');
+
+                            let last_shipment_date;
+                            
+                            if (shipment_list.length == 1){
+                                last_shipment_date = getValidationDate(shipment_list[0].date);
+                            } else if (shipment_list.length == 0) {
+                                last_shipment_date = getValidationDate('01.01.10');
+                            } else {
+                                for (let shipment_item = 1; shipment_item < shipment_list.length; shipment_item++) {
+                                    let valid_first_date = getValidationDate(shipment_list[0].date)
+                                    let valid_second_date = getValidationDate(shipment_list[shipment_item].date)
+                                    if (valid_first_date < valid_second_date) {
+                                        last_shipment_date = valid_second_date;
+                                        shipment_list.splice(0, 1);
+                                        shipment_item--;
                                     } else {
-                                        table += `
-                                            <tr>
-                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
-                                                <td>${result.data[i].orgs[key]}</td>
-                                            </tr>
-                                        `
+                                        last_shipment_date = valid_first_date;
                                     }
-                                } else {
-                                    unload_info.push({ manager: result.data[i].name, name: key, last_comment: result.data[i].orgs[key] });
                                 }
-                                count++;
+                            }
+
+                            $.ajax({
+                                url: '/getUsers',
+                                type: 'GET',
+                                dataType: 'html',
+                                async: false,
+                                success: function(result) {
+                                    result = JSON.parse(result);
+                                    for (let ii = 0; ii < result.length; ii++) {
+                                        if (result[ii].id == account_data[i].account.Manager_id) {
+                                            manager_surname = result[ii].second_name;
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
+                            
+                            for (let account = 0; account < account_data.length; account++) {
+                                if (account_data[account].account.Manager_id == account_data[i].account.Manager_id && current_date >= month_period[0] && current_date <= month_period[1]
+                                    && account_data[i].account.id == account_data[account].account.id) {
+                                    if (!(last_shipment_date >= half_year_period[0] && last_shipment_date <= half_year_period[1])) {
+                                        amount_clients++;
+                                    }
+                                    
+                                    for (let j = 0; j < account_data[account].items.length; j++) {
+                                        if (account_data[account].items[j].Category == 'Насыпь') {
+                                            amount_items_only_mound++;
+                                        }
+                                    }
+                                }
+                            }
+                            if (current_date >= date_period[0] && current_date <= date_period[1] && (filter_manager == manager_surname || filter_manager == '')) {
+                                let items_id = JSON.parse(account_data[i].account.Item_ids);
+                                let all_volume = 0;
+                                for (let volume = 0; volume < items_id.length; volume++) {
+                                    all_volume += +deleteSpaces(items_id[volume].volume);
+                                }
+                                $.ajax({
+                                    url: '/getStockTable',
+                                    type: 'GET',
+                                    async: false,
+                                    dataType: 'html',
+                                    success: function(data) {
+                                        let count = 0;
+                                        let items = JSON.parse(data);
+
+                                        if (getValidationDate(payment_date) <= last_shipment_date) {
+                                            //amount_clients++;
+                                            last_shipment_date = getValidationDate('01.01.10');
+                                        }
+
+                                        for (let current_item = 0; current_item < items_id.length; current_item++) {
+                                            for (let stock = 0; stock < items.length; stock++) {
+                                                for (let item = 0; item < items[stock].items.length; item++) {
+                                                    if (items_id[current_item].id == items[stock].items[item].Item_id) {
+                                                        let new_client_coefficient_mound = [
+                                                            {plus: 0.05, rate: [1, 40000]},
+                                                            {plus: 0.06, rate: [40001, 80000]},
+                                                            {plus: 0.07, rate: [80001, 120000]},
+                                                            {plus: 0.08, rate: [120001, 160000]},
+                                                            {plus: 0.09, rate: [160001, 200000]},
+                                                            {plus: 0.10, rate: [200001, 10000000]},
+                                                        ]
+                                                        let current_bonus = 0;
+                                                        let new_client_coefficient_not_mound = 0.8
+                                                        let old_client_coefficient_not_mound = 0.6;
+                                                        let additional_bonus_in_new_client_mound = 0;
+                    
+                                                        let current_coefficient = 0;
+                                                        if (items[stock].items[item].Category == 'Насыпь') {
+                                                            for (let coeff = 0; coeff < new_client_coefficient_mound.length; coeff++) {
+                                                                if (new_client_coefficient_mound[coeff].rate[0] <= all_volume && new_client_coefficient_mound[coeff].rate[1] > all_volume) {
+                                                                    current_coefficient = new_client_coefficient_mound[coeff].plus;
+                                                                    break;
+                                                                }
+                                                            }
+                                                            if (!(last_shipment_date >= half_year_period[0] && last_shipment_date <= half_year_period[1])) {
+                                                                additional_bonus_in_new_client_mound = +deleteSpaces(items_id[current_item].volume) * 0.05;
+                                                            }
+                                                        } else {
+                                                            if (last_shipment_date >= half_year_period[0] && last_shipment_date <= half_year_period[1]) {
+                                                                current_coefficient = old_client_coefficient_not_mound;
+                                                            } else {
+                                                                current_coefficient = new_client_coefficient_not_mound;
+                                                            }
+                                                        }
+
+                                                        current_bonus = +deleteSpaces(items_id[current_item].volume) * current_coefficient + additional_bonus_in_new_client_mound;
+                                                        amount_bonus += current_bonus;
+                                                        if (!unload_status) {
+                                                            if (count == 0) {
+                                                                table += `
+                                                                    <tr>
+                                                                        <td name="username_analytics" rowspan="${items_id.length}">${manager_surname}</td>
+                                                                        <td rowspan="${items_id.length}">${payment_date}</td>
+                                                                        <td rowspan="${items_id.length}">${account_data[i].account.Name}</td>
+                                                                        <td name="${items[stock].items[item].Category}" id="item_${items[stock].items[item].Item_id}">${items[stock].items[item].Name}</td>
+                                                                        <td rowspan="${items_id.length}">${returnSpaces(all_volume)}</td>
+                                                                        <td>${returnSpaces(current_bonus)}</td>
+                                                                    </tr>
+                                                                `
+                                                            } else {
+                                                                table += `
+                                                                    <tr>
+                                                                        <td name="${items[stock].items[item].Category}" id="item_${items[stock].items[item].Item_id}">${items[stock].items[item].Name}</td>
+                                                                        <td>${returnSpaces(current_bonus)}</td>
+                                                                    </tr>
+                                                                `
+                                                            }
+                                                        } else {
+                                                            unload_info.push({manager: manager_surname, payment_date: payment_date, name: account_data[i].account.Name,
+                                                                              item_name: items[stock].items[item].Name, volume: all_volume, bonus: current_bonus,
+                                                                              clients: amount_clients, items_mound: amount_items_only_mound, amount_bonus: amount_bonus});
+                                                        }
+                                                        count++;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                                total_count++;
+                                if (table != '<tbody class="tr_tr">' && !unload_status) {
+                                    tbody += table + `</tbody>`;
+                                }
+                                if (next_manager_id != current_manager_id || i == account_data.length - 1) {
+                                    tbody += `
+                                        <tr>
+                                            <td colspan="3">Кол-во новых клиентов: ${amount_clients}</td>
+                                            <td colspan="2">Кол-во товара категории "Насыпь": ${amount_items_only_mound}</td>
+                                            <td colspan="1">Итого: ${returnSpaces(amount_bonus)}</td>
+                                        </tr>
+                                    `
+                                    amount_clients = 0;
+                                    amount_items_only_mound = 0;
+                                    amount_bonus = 0;
+                                }
                             }
                         }
-                        if (table != '<tbody class="tr_tr">' && !unload_status) {
-                            tbody += table + '</tbody>';
-                        }
-                        total_count += count;
                     }
                     if (unload_status) {
                         tbody = unload_info;
@@ -2352,16 +2524,16 @@ function getValidationDate(date) {
                     if (!$('div').is('#analytics_block_hidden')) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
-                                <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'комментари', 3)}</span> 
+                                <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count}</span> 
                                 <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
                                     <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
                                 </div>
                             </div>
-                            <div id="analytics_5" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+                            <div id="analytics_6" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                         `)
                         $('body').append(`<div id="analytics_block_hidden"></div>`)
                     } else {
-                        $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'комментари', 3)}`);
+                        $('#info_in_accounts_count').html(`${total_count}`);
                     }
                 }
             });
@@ -2371,7 +2543,7 @@ function getValidationDate(date) {
             return fillTable();
         } else {
             return `
-                <table class="table analytics">
+                <table class="table analytics" id="bonus_table">
                     <tr>
                         <th id="pd_manager" onclick="selectManagerAnalytics(this)">
                             <div class="flex jc-sb">
@@ -2379,8 +2551,11 @@ function getValidationDate(date) {
                                 <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
                             </div>
                         </th>
+                        <th>Дата</th>
                         <th>Наименование</th>
-                        <th width="350">Дата последнего комментария</th>
+                        <th>Товар</th>
+                        <th>Объем</th>
+                        <th>Бонус</th>
                     </tr>
                     ${fillTable()}
                 </table>
@@ -2427,8 +2602,24 @@ function getValidationDate(date) {
             });
             for (let i = 0; i < data.length; i++) {
                 for (let name of $('[name="username_analytics"]')) {
-                    if (data[i].second_name == $(name).html().split(' ')[1] && data[i].name == $(name).html().split(' ')[0]) {
-                        filter_table.push({ name: $(name).html(), id: data[i].id});
+                    console.log($(name).html(), data[i].second_name);
+                    if ($('table').is('#bonus_table')) {
+                        if (data[i].second_name == $(name).html()) {
+                            filter_table.push({ name: $(name).html(), id: data[i].id});
+                        }
+                    } else {
+                        if (data[i].second_name == $(name).html().split(' ')[1] && data[i].name == $(name).html().split(' ')[0]) {
+                            filter_table.push({ name: $(name).html(), id: data[i].id});
+                        }
+                    }
+                }
+            }
+
+            for (let i = 0; i < filter_table.length - 1; i++) {
+                for (let j = i + 1; j < filter_table.length; j++) {
+                    if (filter_table[i].id == filter_table[j].id) {
+                        filter_table.splice(j, 1);
+                        j--;
                     }
                 }
             }
@@ -2486,11 +2677,19 @@ function getValidationDate(date) {
         ]
         for (let i = 0; i < date_filter.length; i++) {
             if (date_filter[i].text == date) {
-                $('.table').remove();
-                $('.info').append(analyticsFilterTable_5(datePeriod(date_filter[i].id), false, searchWord));
+                if ($('table').is('#bonus_table')) {
+                    $('.table').remove();
+                    $('.info').append(analyticsFilterTable_6(datePeriod(date_filter[i].id), false, searchWord));
+                } else {
+                    $('.table').remove();
+                    $('.info').append(analyticsFilterTable_5(datePeriod(date_filter[i].id), false, searchWord));
+                }
                 break;
             }
         }
+        setTimeout(function() {
+            $('#pd_manager .drop_arrow').removeClass('drop_active');
+        }, 150)
     }
     function visibleSelectPeriodInAnalytics() {
         if ($('div').is('.period_info_accounts')) {
@@ -2534,6 +2733,7 @@ function getValidationDate(date) {
             {id: 'day', period: 0, text: 'за последний день'},
             {id: 'weak', period: 7, text: 'за последнюю неделю'},
             {id: 'month', period: 30, text: 'за последний месяц'},
+            {id: 'half_year', period: 180},
             {id: 'year', period: 365, text: 'за последний год'},
             {id: 'all', period: 5475, text: 'за все время'},
         ]
@@ -2546,7 +2746,7 @@ function getValidationDate(date) {
                 let first_datetime = new Date('20' + +date_arr[3], +date_arr[2], date_arr[1]);
                 let second_datetime = new Date('20' + +date_arr[3], +date_arr[2], date_arr[1]);
                 second_datetime.setDate(second_datetime.getDate() - date_filter[i].period);
-                $('#period_accounts').html(date_filter[i].text);
+                if (period != 'half_year') $('#period_accounts').html(date_filter[i].text);
                 return [second_datetime, first_datetime];
             }
         }

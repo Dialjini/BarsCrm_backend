@@ -533,30 +533,48 @@ let rowFilling = (object, id, table) => {
                 }
             }
 
-            // let delivery_data = [];
-
-            // for (let j = 0; j < deliveryTable.length; j++) {
-            //     if (deliveryTable[j].delivery.Account_id == selectTableData[i].account.id) {
-            //         count_delivery++;
-            //         delivery_data.push({ first_date: deliveryTable[j].delivery.Start_date,
-            //                              id: deliveryTable[j].delivery.Account_id,
-            //                              postponement_date: deliveryTable[j].delivery.Postponement_date,
-            //                              customer: deliveryTable[j].delivery.Customer,
-            //                              type: deliveryTable[j].delivery.Type});
-            //     }
-            // }
-            // for (let j = 0; j < delivery_data.length; j++) {
-            //     if (delivery_data[j].first_date == '' || delivery_data[j].first_date == null) {
-            //         delivery_data[j].first_date = 'Не указано';
-            //     }
-            //     if (delivery_data[j].postponement_date == '' || delivery_data[j].postponement_date == null) {
-            //         delivery_data[j].postponement_date = 'Не указано';
-            //     }
-            // }
             if (payment_amount == 0 && shipment == 'false') continue;
             if (+deleteSpaces(selectTableData[i].account.Sum) <= +deleteSpaces(payment_amount)) continue;
             let element = $('<tbody>', {id: `account_${selectTableData[i].account.id}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
             let shipment_list = JSON.parse(selectTableData[i].account.Shipment_list);
+
+            let volume = JSON.parse(selectTableData[i].account.Item_ids);
+
+            let hello = JSON.parse(selectTableData[i].account.Hello);
+            let shipping = JSON.parse(selectTableData[i].account.Shipping);
+            let sale = JSON.parse(selectTableData[i].account.Sale);
+
+            let count = 0;
+            for (let ii = 0; ii < volume.length; ii++) {
+                for (let j = 0; j < shipment_list.length; j++) {
+                    if (shipment_list[j].id == volume[ii].id) {
+                        count++;
+                        let amount_price = +deleteSpaces(shipment_list[j].volume) + +(hello[ii]) + +shipping[ii] + +sale[ii];
+                        if (count == 1) {
+                            element.append(`
+                                <tr>
+                                    <td rowspan="${shipment_list.length}">${selectTableData[i].items[0].Prefix}</td>
+                                    <td rowspan="${shipment_list.length}">${selectTableData[i].account.Name}</td>
+                                    <td>${shipment_list[j].date}</td>
+                                    <td>${shipment_list[j].delay}</td>
+                                    <td>${amount_price}</td>
+                                    <td rowspan="${shipment_list.length}">${returnSpaces(payment_amount)}</td>
+                                    <td rowspan="${shipment_list.length}">${returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount))}</td>
+                                    <td rowspan="${shipment_list.length}">${managerSecondName}</td>
+                                </tr>
+                            `)
+                        } else {
+                            element.append(`
+                                <tr>
+                                    <td>${shipment_list[j].date}</td>
+                                    <td>${shipment_list[j].delay}</td>
+                                    <td>${amount_price}</td>
+                                </tr>
+                            `)
+                        }
+                    }
+                }
+            }
             
             // for (let j = 0; j < delivery_data.length; j++) {
             //     if (j == 0) {
