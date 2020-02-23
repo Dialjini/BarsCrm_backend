@@ -147,7 +147,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=3610)
+        return render_template('index.html', last_update=3635)
     else:
         return render_template('login.html', last_update=3014)
 
@@ -601,6 +601,8 @@ def addDelivery():
         table.Passport_data = data['delivery_passport']
         table.Postponement_date = data['delivery_postponement_date']
         table.Contact_Start = data['delivery_contact_start']
+        table.Item_ids = data['delivery_item_ids']
+        table.Amounts = data['delivery_amounts']
 
         if 'payment_list' in data:
             table.Payment_list = data['payment_list']
@@ -611,20 +613,7 @@ def addDelivery():
             db.session.add(table)
         db.session.commit()
 
-        return 'OK'
-    else:
-        return redirect('/', code=302)
-
-@app.route('/addShipment', methods=['GET'])
-def addShipment():
-    if 'username' in session:
-        data = request.args
-        table = models.Delivery.query.filter_by(id=data['delivery_id']).first()
-        table.Item_ids = data['delivery_item_ids']
-        table.Amounts = data['delivery_amounts']
-
-        db.session.commit()
-        return 'OK'
+        return data['delivery_amounts']
     else:
         return redirect('/', code=302)
 

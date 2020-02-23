@@ -1839,7 +1839,7 @@ function getValidationDate(date) {
                             <td>${returnSpaces(all_data[i].volume)}</td>
                             <td>${returnSpaces(all_data[i].average_volume)}</td>
                             <td>${returnSpaces(all_data[i].amount_hello)}</td>
-                            <td>${returnSpaces(all_data[i].amount_hello * 0.9)}</td>
+                            <td>${returnSpaces(Number(all_data[i].amount_hello * 0.9).toFixed(1))}</td>
                         </tr>
                     `
                 } else {
@@ -1852,7 +1852,7 @@ function getValidationDate(date) {
                 all_amount_hello += all_data[i].amount_hello * 0.9;
             }
             $('#all_amount_hello').remove();
-            $('#subcategories').after(`<div class="row" id="all_amount_hello"><div style="padding: 0 0 20px; color: #595959;">Сумма по счетам: <span class="red">${all_amount_hello}</span></div></div>`);
+            $('#subcategories').after(`<div class="row" id="all_amount_hello"><div style="padding: 0 0 20px; color: #595959;">Сумма по счетам: <span class="red">${returnSpaces(Number(all_amount_hello).toFixed(1))}</span></div></div>`);
             if (unload_status) {
                 return unload_table;
             }
