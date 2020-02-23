@@ -480,7 +480,7 @@ let rowFilling = (object, id, table) => {
     }
 
     let rowFillingDebit = (id) => {
-        let managers;
+        let managers, items;
         $.ajax({
             url: '/getUsers',
             type: 'GET',
@@ -488,6 +488,15 @@ let rowFilling = (object, id, table) => {
             dataType: 'html',
             success: function(result) {
                 managers = JSON.parse(result);
+            }
+        });
+        $.ajax({
+            url: '/getStockTable',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                items = JSON.parse(result);
             }
         });
         $(table).attr('class', 'table analytics')
@@ -545,37 +554,40 @@ let rowFilling = (object, id, table) => {
             let sale = JSON.parse(selectTableData[i].account.Sale);
 
             let count = 0;
-            for (let ii = 0; ii < volume.length; ii++) {
-                for (let j = 0; j < shipment_list.length; j++) {
-                    if (shipment_list[j].id == volume[ii].id) {
-                        count++;
-                        let amount_price = +deleteSpaces(shipment_list[j].volume) + +(hello[ii]) + +shipping[ii] + +sale[ii];
-                        if (count == 1) {
-                            element.append(`
-                                <tr>
-                                    <td rowspan="${shipment_list.length}">${selectTableData[i].items[0].Prefix}</td>
-                                    <td rowspan="${shipment_list.length}">${selectTableData[i].account.Name}</td>
-                                    <td>${shipment_list[j].date}</td>
-                                    <td>${shipment_list[j].delay}</td>
-                                    <td>${amount_price}</td>
-                                    <td rowspan="${shipment_list.length}">${returnSpaces(payment_amount)}</td>
-                                    <td rowspan="${shipment_list.length}">${returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount))}</td>
-                                    <td rowspan="${shipment_list.length}">${managerSecondName}</td>
-                                </tr>
-                            `)
-                        } else {
-                            element.append(`
-                                <tr>
-                                    <td>${shipment_list[j].date}</td>
-                                    <td>${shipment_list[j].delay}</td>
-                                    <td>${amount_price}</td>
-                                </tr>
-                            `)
+            for (let stock = 0; stock < items.length; stock++) {
+                for (let item = 0; item < items[stock].items.length; item++) {
+                    for (let ii = 0; ii < volume.length; ii++) {
+                        for (let j = 0; j < shipment_list.length; j++) {
+                            if (shipment_list[j].id == volume[ii].id && items[stock].items[item].Item_id == volume[ii].id) {
+                                count++;
+                                let amount_price = +deleteSpaces(shipment_list[j].volume) * (+deleteSpaces(items[stock].items[item].Cost) + (+deleteSpaces(hello[ii]) + +deleteSpaces(shipping[ii]) + +deleteSpaces(sale[ii])));
+                                if (count == 1) {
+                                    element.append(`
+                                        <tr>
+                                            <td rowspan="${shipment_list.length}">${selectTableData[i].items[0].Prefix}</td>
+                                            <td rowspan="${shipment_list.length}">${selectTableData[i].account.Name}</td>
+                                            <td>${shipment_list[j].date}</td>
+                                            <td>${shipment_list[j].delay}</td>
+                                            <td>${returnSpaces(amount_price)}</td>
+                                            <td rowspan="${shipment_list.length}">${returnSpaces(payment_amount)}</td>
+                                            <td rowspan="${shipment_list.length}">${returnSpaces(+deleteSpaces(selectTableData[i].account.Sum) - +deleteSpaces(payment_amount))}</td>
+                                            <td rowspan="${shipment_list.length}">${managerSecondName}</td>
+                                        </tr>
+                                    `)
+                                } else {
+                                    element.append(`
+                                        <tr>
+                                            <td>${shipment_list[j].date}</td>
+                                            <td>${shipment_list[j].delay}</td>
+                                            <td>${returnSpaces(amount_price)}</td>
+                                        </tr>
+                                    `)
+                                }
+                            }
                         }
                     }
                 }
             }
-            
             // for (let j = 0; j < delivery_data.length; j++) {
             //     if (j == 0) {
             //         element.append(`

@@ -966,6 +966,10 @@ function createCardMenu(element, index = 0) {
             edit = true;
         }
 
+        if (selectedLine.account.Shipment == 'true' || selectedLine.account.Shipment == 'polutrue') {
+            edit = true;
+        }
+
         function fillingProducts() {
             let list_items = selectedLine.items;
             let table = '';
@@ -1181,7 +1185,7 @@ function createCardMenu(element, index = 0) {
                             <div name="unlock" class="lock_input" id="mode_delivery" onclick="switchMode(this)"></div>
                         </div>
                     </div>
-                    ${selectedLine.account.Shipment != 'true' && !status_payment ? 
+                    ${selectedLine.account.Shipment != 'true' && selectedLine.account.Shipment != 'polutrue' && !status_payment ? 
                     `<div class="info_block">
                         <span class="lightgray">Актуальность счета</span>
                         ${selectedLine.account.Status == 'true' ? `<input checked type="checkbox" id="account_status">` : `<input type="checkbox" id="account_status">`}
@@ -1210,7 +1214,7 @@ function createCardMenu(element, index = 0) {
                                 <input type="text" value="${returnSpaces(selectedLine.account.Delivery_costs)}" disabled id="total_delivery_inv" class="total_count bold mrl">
                             </div>
                         </div>
-                        ${selectedLine.account.Shipment != 'true' && !status_payment ? 
+                        ${selectedLine.account.Shipment != 'true' && selectedLine.account.Shipment != 'polutrue' && !status_payment ? 
                         `<div class="info_block">
                             <span class="lightgray">Актуальность счета</span>
                             ${selectedLine.account.Status == 'true' ? `<input checked type="checkbox" id="account_status">` : `<input type="checkbox" id="account_status">`}
@@ -2507,8 +2511,9 @@ function createDocument(element) {
     }
     let data = $(element).attr('name').split('_');
     if (data[1].includes('new')) {
-        data[1] = data[1].replace(/new/g, saveTableAndCard[1][1].length + 1)
+        data[1] = data[1].replace(/new/g, categoryInDelivery[1][1].length)
     }
+    console.log(data[1]);
     let carrier = ['carrier', +$('#delivery_carrier_id').val()];
     let select_cusmoter = $('#delivery_customer')[0].value;
     let select_client = $('#delivery_client')[0].value;
@@ -2704,7 +2709,8 @@ function makeRequest(element) {
     if ($('#delivery_account')[0].value !== 'Транзит') {
         let amounts_sum = [];
         for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
-            if (+categoryInDelivery[1][1][i].delivery.Account_id == +$('#delivery_account')[0].value && +delivery_id != +categoryInDelivery[1][1][i].delivery.id) {
+            if (+categoryInDelivery[1][1][i].delivery.Account_id == +$('#delivery_account')[0].value && +delivery_id != +categoryInDelivery[1][1][i].delivery.id && delivery_id != 'new') {
+                console.log(categoryInDelivery[1][1][i].delivery)
                 let data_amounts = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
                 for (let j = 0; j < data_amounts.length; j++) {
                     amounts_sum.push(data_amounts[j]);
@@ -2802,11 +2808,11 @@ function makeRequest(element) {
         type: 'GET',
         data: data,
         dataType: 'html',
-        success: function() {
+        success: function(result) {
+            console.log(result);
             $.ajax({
                 url: '/getDeliveries',
                 type: 'GET',
-                data: data,
                 dataType: 'html',
                 success: function(data) {
                     data = JSON.parse(data);
@@ -2820,17 +2826,17 @@ function makeRequest(element) {
                     }
         
                     let all_amounts = [];
-                    for (let i = 0; i < categoryInDelivery[1][1].length; i++) {
-                        if (categoryInDelivery[1][1][i].carrier.id == carrier_id) {
-                            let amount = JSON.parse(categoryInDelivery[1][1][i].delivery.Amounts);
-                            console.log(categoryInDelivery[1][1][i].delivery)
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].carrier.id == carrier_id) {
+                            let amount = data[i].delivery.Amounts == null ? [] : JSON.parse(data[i].delivery.Amounts);
+                            console.log(data[i].delivery)
 
                             for (let j = 0; j < amount.length; j++) {
-                                amount[j].date = categoryInDelivery[1][1][i].delivery.Date;
-                                amount[j].client = categoryInDelivery[1][1][i].delivery.Client;
-                                amount[j].stock = categoryInDelivery[1][1][i].delivery.Stock;
-                                amount[j].contact = categoryInDelivery[1][1][i].delivery.Contact_Name;
-                                amount[j].delivery_id = categoryInDelivery[1][1][i].delivery.id;
+                                amount[j].date = data[i].delivery.Date;
+                                amount[j].client = data[i].delivery.Client;
+                                amount[j].stock = data[i].delivery.Stock;
+                                amount[j].contact = data[i].delivery.Contact_Name;
+                                amount[j].delivery_id = data[i].delivery.id;
                                 all_amounts.push(amount[j]);
                             }
                         }
@@ -2840,10 +2846,11 @@ function makeRequest(element) {
                         type: 'GET',
                         dataType: 'html',
                         data: {id: carrier_id, data: JSON.stringify(all_amounts)},
-                        success: function() {}
+                        success: function() {
+                            $('#transit_info').remove()
+                            closeCardMenu(element.id);
+                        }
                     });
-                    $('#transit_info').remove()
-                    closeCardMenu(element.id);
                 }
             });
         }
@@ -3410,7 +3417,7 @@ function closeCardMenu(id = '') {
         saveInfoCard(id);
         let idSplit = id.split('_');
         let idComment = `${idSplit[0]}_${idSplit[idSplit.length - 1]}`;
-        if (!id.includes('account')) getCommentsInfo.getRequest(idComment);
+        //if (!id.includes('account')) getCommentsInfo.getRequest(idComment);
     } else getTableData(saveTableAndCard);
 
     // Если открыта карточка Выставления счета в Счете - закрыть ее

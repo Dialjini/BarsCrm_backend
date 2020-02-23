@@ -440,7 +440,19 @@ function getShipment(element) {
                         dataType: 'html',
                         success: function() {
                             categoryInStock[1].pop();
-                            closeShipment(element);
+                            $.ajax({
+                                url: '/getAccounts',
+                                type: 'GET',
+                                dataType: 'html',
+                                success: function(account_data) {
+                                    account_data = JSON.parse(account_data);
+                                    if (categoryInFinanceAccount[1][1] != undefined) {
+                                        categoryInFinanceAccount[1].pop();
+                                        categoryInFinanceAccount[1].push(account_data);
+                                    }
+                                    closeShipment(element);
+                                }
+                            });
                         }
                     });
                 }

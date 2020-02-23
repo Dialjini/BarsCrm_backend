@@ -48,7 +48,7 @@ function getUserInfo() {
             let surname = data.second_name;
             user = data;
             $('.page').append(`
-                <div name="offtop__load" id="${data.role}::${data.id}"></div>
+                <div name="offtop__load" id="${data.role}::${data.id}::${data.second_name}"></div>
             `)
             if (role == 'admin') 
                  role = 'Администратор'
@@ -669,7 +669,8 @@ let getCommentsInfo = (function() {
             if (typeof data === typeof '') {
                 // Сохраняем комментарий
                 let data_role = $('[name="offtop__load"').attr('id').split('::');
-                let user = {role: data_role[0], id: data_role[1]};
+                let user = {role: data_role[0], id: data_role[1], second_name: data_role[2]};
+                console.log(data_role, user)
                 let list = {
                     comment_date: $('#comment_date').val(),
                     comment_role: $('#comment_role').val(),
@@ -691,6 +692,7 @@ let getCommentsInfo = (function() {
                 if (count == 2) {
                     return getComments();
                 }
+                console.log(list);
                 $.ajax({
                     url: '/addMessages',
                     type: 'GET',
