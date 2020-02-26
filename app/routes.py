@@ -751,11 +751,10 @@ def getAllItems():
 def getAccounts():
     if 'username' in session:
         result = []
-        Items = models.Item.query
         for i in models.Account.query.all():
             items = []
             for j in json.loads(i.Item_ids):
-                item = Items.filter_by(item_id=j['id']).first()
+                item = models.Item.query.filter_by(Item_id=j['id']).first()
                 subres = json.loads(table_to_json([item]))[0]
                 subres['Transferred_volume'] = j['volume']
                 items.append(subres)
