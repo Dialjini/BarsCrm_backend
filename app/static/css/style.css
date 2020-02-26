@@ -1453,7 +1453,7 @@ body {
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
   line-height: 20px;
-  padding-left: 10px;
+  padding: 5px 10px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   border-bottom: 1px solid #e9e9e9;
@@ -2447,6 +2447,16 @@ body {
   background-color: #5d4ba3;
   -webkit-transition: 0.3s all;
   transition: 0.3s all;
+}
+
+.btn-danger {
+  background: #ce4a50;
+  -webkit-box-shadow: 0 1px 2px #ce4a50;
+          box-shadow: 0 1px 2px #ce4a50;
+}
+
+.btn-danger:hover {
+  background-color: #a01e24;
 }
 
 .btn-add-items {

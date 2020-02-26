@@ -169,6 +169,13 @@ function getTableData(table, input = false, close = false) {
                         || saveTableAndCard[0].id == 'account') $('#info_in_accounts').remove()
                     if (saveTableAndCard[0].name == 'Список')   $('.fields').append(`<div id="amount_cards"><span>${saveTableAndCard[1][1].length}</span></div>`)
                     if (saveTableAndCard[0].id == 'provider')   $('#amount_cards').remove();
+                    if (saveTableAndCard[0].id == 'account') {
+                        $('#invoice_search_items').keydown(function(e) {
+                            if (e.keyCode === 13) {
+                                searchItemsInAccount();
+                            }
+                        });
+                    }
                 }
             }
         }

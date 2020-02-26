@@ -47,7 +47,7 @@ function linkField() {
             { width: 161.125, id: 'stock_group', list: [] },
             { width: 90.656, id: 'stock_product', list: [] },
             { width: 90.656, id: 'stock_stock', list: [] },
-            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Проделанная работа', 'Баллы и бонусы'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров']},
+            { width: 220, id: 'analytics_reports', list: this_user.role == 'admin' ? ['Прибыль по клиентам', 'Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Баллы и бонусы', 'Проделанная работа'] : ['Сводный по объёмам', 'По клиентам', 'По приветам', 'Отгрузки менеджеров', 'Баллы и бонусы']},
         ]
 
         let idList = this.id, element;
@@ -1145,6 +1145,7 @@ function editItem(id) {
                             </table> 
                         </div>
                         <div class="next">
+                            <button class="btn btn-main btn-danger" id="${data.Item_id}" onclick="deleteItem(this.id)">Удалить товар</button>
                             <button class="btn btn-main" id="item_${data.Item_id}" onclick="saveEditItem(this.id)">Изменить товар</button>
                         </div>
                     </div>
@@ -1156,6 +1157,45 @@ function editItem(id) {
             setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
         }
     })
+}
+function deleteItem(elem_id) {
+    let id = elem_id;
+    $.ajax({
+        url: '/getAccounts',
+        type: 'GET',
+        dataType: 'html',
+        success: function(account_data) {
+            account_data = JSON.parse(account_data).reverse();
+            for (let i = 0; i < account_data.length; i++) {
+                for (let j = 0; j < account_data[i].items.length; j++) {
+                    if (account_data[i].items[j].Item_id == id) {
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px;">Данный товар используется в счете №${account_data[i].account.id} "${account_data[i].account.Name}"!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                    }
+                }
+            }
+            $.ajax({
+                url: '/deleteItem',
+                type: 'GET',
+                data: {id: id},
+                dataType: 'html',
+                success: function() {
+                    closeThisMenu('items');
+                }
+            });
+        }
+    });
 }
 function saveEditItem(id) {
     let item_id = id.split('_')[1];
@@ -1283,7 +1323,7 @@ function getValidationDate(date) {
         let items_list = [];
         for (let i = 0; i < account_data.length; i++) {
             let date_create_account = getValidationDate(account_data[i].account.Date);
-            if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+            if (date_create_account >= date_period[0] && date_create_account <= date_period[1] && account_data[i].account.Shipment != 'false') {
                 for (let j = 0; j < account_data[i].items.length; j++) {
                     items_list.push({ item: account_data[i].items[j], account: [account_data[i].account] })
                 }
@@ -1312,8 +1352,8 @@ function getValidationDate(date) {
                     let sale = JSON.parse(items_list[i].account[j].Sale);
                     for (let v = 0; v < volume.length; v++) {
                         if (+volume[v].id == +items_list[i].item.Item_id) {
-                            let price = Number((+deleteSpaces(delivery[v]) + +deleteSpaces(sale[v]) + +deleteSpaces(hello[v]) + +deleteSpaces(items_list[i].item.Cost)) * +deleteSpaces(items_list[i].item.Transferred_volume)).toFixed(2);
-                            let cost_price = Number(+deleteSpaces(items_list[i].item.Cost) + +deleteSpaces(hello[v]) + +deleteSpaces(delivery[v]) + +deleteSpaces(sale[v])).toFixed(2)
+                            let cost_price = Number(+deleteSpaces(items_list[i].item.Cost) + +deleteSpaces(hello[v]) + +deleteSpaces(delivery[v]) + +deleteSpaces(sale[v])).toFixed(2);
+                            let price = Number(cost_price * +deleteSpaces(items_list[i].item.Transferred_volume)).toFixed(2);
                             if (!unload_status) {
                                 function fillTr() {
                                     let trContent = '';
@@ -1637,7 +1677,7 @@ function getValidationDate(date) {
         let total_count = 0;
         for (let i = 0; i < account_data.length; i++) {
             let date_create_account = getValidationDate(account_data[i].account.Date);
-            if (date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+            if (date_create_account >= date_period[0] && date_create_account <= date_period[1] && account_data[i].account.Shipment_list != null && account_data[i].account.Shipment_list != '') {
                 for (let j = 0; j < account_data[i].items.length; j++) {
                     items_list.push({ items: [account_data[i].items[j]], account: account_data[i].account })
                 }
@@ -1654,6 +1694,19 @@ function getValidationDate(date) {
                 }
             }
         }
+        items_list.sort(function(a, b) {
+            let first_name = a.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
+            let second_name = b.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
+            console.log(first_name, second_name);
+            if (first_name > second_name) {
+                return 1;
+            }
+            if (first_name < second_name) {
+                return -1;
+            }
+            return 0;
+        })
+        console.log(items_list);
         let delivery_id = null;
         function fillTable() {
             let table = '';
@@ -1664,20 +1717,16 @@ function getValidationDate(date) {
                 let count = 0;
 
                 for (let j = 0; j < items_list[i].items.length; j++) {
-                    let volume = JSON.parse(items_list[i].account.Item_ids);
+                    // let volume = JSON.parse(items_list[i].account.Item_ids);
 
-                    let hello = JSON.parse(items_list[i].account.Hello);
-                    let shipping = JSON.parse(items_list[i].account.Shipping);
-                    let sale = JSON.parse(items_list[i].account.Sale);
+                    // let hello = JSON.parse(items_list[i].account.Hello);
+                    // let shipping = JSON.parse(items_list[i].account.Shipping);
+                    // let sale = JSON.parse(items_list[i].account.Sale);
 
-                    if (items_list[i].account.Shipment_list == null) {
-                        continue;
-                    }
                     let shipment_list = JSON.parse(items_list[i].account.Shipment_list);
-                    for (let ii = 0; ii < volume.length; ii++) {
                         for (let jj = 0; jj < shipment_list.length; jj++) {
-                            if (shipment_list[jj].id == items_list[i].items[j].Item_id && shipment_list[jj].id == volume[ii].id) {
-                                let amount_price = +deleteSpaces(shipment_list[jj].volume) + +(hello[ii]) + +shipping[ii] + +sale[ii];
+                            if (shipment_list[jj].id == items_list[i].items[j].Item_id) {
+                                let amount_price = +deleteSpaces(shipment_list[jj].volume);
                                 if (!unload_status) {
                                     function fillTr() {
                                         let tr_content = '';
@@ -1702,7 +1751,6 @@ function getValidationDate(date) {
                                 }
                             }
                         }
-                    }
                 }
                 if (tbody != '<tbody class="tr_tr">') {
                     table += tbody + '</tbody>';
@@ -2179,7 +2227,7 @@ function getValidationDate(date) {
         }
     }
     // Проделанная работа
-    function analyticsFilterTable_5(date_period, unload_status = false, filter_manager = '') {
+    function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
         function fillTable() {
             let tbody = '';
@@ -2287,7 +2335,7 @@ function getValidationDate(date) {
         }
     }
     // Баллы и бонусы
-    function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '') {
+    function analyticsFilterTable_5(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
         function fillTable() {
             let tbody = '';
@@ -2366,8 +2414,9 @@ function getValidationDate(date) {
                                 last_shipment_date = getValidationDate('01.01.10');
                             } else {
                                 for (let shipment_item = 1; shipment_item < shipment_list.length; shipment_item++) {
-                                    let valid_first_date = getValidationDate(shipment_list[0].date)
-                                    let valid_second_date = getValidationDate(shipment_list[shipment_item].date)
+                                    console.log(shipment_list);
+                                    let valid_first_date = shipment_list[0].date != '' ? getValidationDate(shipment_list[0].date) : getValidationDate('01.01.10');
+                                    let valid_second_date = shipment_list[shipment_item].date != '' ? getValidationDate(shipment_list[shipment_item].date) : getValidationDate('01.01.10');
                                     if (valid_first_date < valid_second_date) {
                                         last_shipment_date = valid_second_date;
                                         shipment_list.splice(0, 1);
@@ -2685,10 +2734,10 @@ function getValidationDate(date) {
             if (date_filter[i].text == date) {
                 if ($('table').is('#bonus_table')) {
                     $('.table').remove();
-                    $('.info').append(analyticsFilterTable_6(datePeriod(date_filter[i].id), false, searchWord));
+                    $('.info').append(analyticsFilterTable_5(datePeriod(date_filter[i].id), false, searchWord));
                 } else {
                     $('.table').remove();
-                    $('.info').append(analyticsFilterTable_5(datePeriod(date_filter[i].id), false, searchWord));
+                    $('.info').append(analyticsFilterTable_6(datePeriod(date_filter[i].id), false, searchWord));
                 }
                 break;
             }
@@ -2722,8 +2771,8 @@ function getValidationDate(date) {
             {function: analyticsFilterTable_2, name: 'По клиентам'},
             {function: analyticsFilterTable_3, name: 'По приветам'},
             {function: analyticsFilterTable_4, name: 'Отгрузки менеджеров'},
-            {function: analyticsFilterTable_5, name: 'Проделанная работа'},
-            {function: analyticsFilterTable_6, name: 'Баллы и бонусы'},
+            {function: analyticsFilterTable_5, name: 'Баллы и бонусы'},
+            {function: analyticsFilterTable_6, name: 'Проделанная работа'},
         ]
 
         for (let i = 0; i < list.length; i++) {

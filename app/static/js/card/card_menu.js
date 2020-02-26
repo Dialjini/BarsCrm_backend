@@ -407,6 +407,11 @@ function createCardMenu(element, index = 0) {
             }
         })
     }
+    $('#invoice_search_items').keydown(function(e) {
+        if (e.keyCode === 13) {
+            searchItemsInAccount();
+        }
+    });
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
         let content = $('<div>', { 
@@ -966,7 +971,7 @@ function createCardMenu(element, index = 0) {
             edit = true;
         }
 
-        if (selectedLine.account.Shipment == 'true' || selectedLine.account.Shipment == 'polutrue') {
+        if (!selectedLine.account.Shipment == 'false') {
             edit = true;
         }
 
@@ -2395,7 +2400,8 @@ function searchItemsInAccount() {
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].stock_address !== null) {
                         for (let j = 0; j < data[i].items.length; j++) {
-                            if (data[i].items[j].Name.includes(search_item)) {
+                            let current_name = data[i].items[j].Name.toLowerCase();
+                            if (current_name.includes(search_item.toLowerCase())) {
                                 function checkStatus() {
                                     for (let item = 0; item < items.length; item++) {
                                         if (items[item] == data[i].items[j].Item_id) {
@@ -3489,10 +3495,10 @@ function deleteThisShipment(id) {
                                         dataType: 'html',
                                         success: function() {
                                             let shipment_volume = 0;
-                                            for (let i = 0; i < shipment_list.length; i++) {
-                                                shipment_volume += +deleteSpaces(shipment_list[j].volume);
+                                            console.log(shipment_list)
+                                            for (let shipment_item = 0; shipment_item < shipment_list.length; shipment_item++) {
+                                                shipment_volume += +deleteSpaces(shipment_list[shipment_item].volume);
                                             }
-                                            console.log(shipment_volume)
                                             if (shipment_volume == 0) {
                                                 console.log({id: data_id[1], shipment: 'false'});
                                                 $.ajax({
