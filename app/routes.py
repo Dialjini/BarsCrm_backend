@@ -756,19 +756,15 @@ def getAccounts():
             items = []
             for j in json.loads(i.Item_ids):
                 for i in Items:
-                    print(table_to_json([i]))
                     if i.Item_id == int(j['id']):
-                        print('OK ' + str(j['id']))
                         item = i
-                print('ready chi ne?')
                 subres = json.loads(table_to_json([item]))[0]
                 subres['Transferred_volume'] = j['volume']
                 items.append(subres)
-            print('i tuta')
             account = json.loads(table_to_json([i]))[0]
+            print(items, account)
             subres = {'items': items, 'account': account}
             result.append(subres)
-        print('vishel je ', result)
         return json.dumps(result)
     else:
         return redirect('/', code=302)
