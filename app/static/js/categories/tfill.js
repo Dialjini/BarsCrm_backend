@@ -545,7 +545,7 @@ let rowFilling = (object, id, table) => {
             if (payment_amount == 0 && shipment == 'false') continue;
             if (+deleteSpaces(selectTableData[i].account.Sum) <= +deleteSpaces(payment_amount)) continue;
             let element = $('<tbody>', {id: `account_${selectTableData[i].account.id}`, onclick: 'transferToAccounts(this)', class: 'tr_tr'});
-            let shipment_list = JSON.parse(selectTableData[i].account.Shipment_list);
+            let shipment_list = selectTableData[i].account.Shipment_list == null ? [] : JSON.parse(selectTableData[i].account.Shipment_list);
 
             let volume = JSON.parse(selectTableData[i].account.Item_ids);
 

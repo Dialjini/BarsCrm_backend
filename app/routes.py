@@ -147,7 +147,7 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=3635)
+        return render_template('index.html', last_update=4045)
     else:
         return render_template('login.html', last_update=3014)
 
@@ -470,14 +470,14 @@ def findContacts():
 
         for i in Deliveryies:
             try:
-                if data in i['Contact_End'] or data in i['Contact_Number']:
+                if data.lower() in i['Contact_End'].lower() or data in i['Contact_Number']:
                     result.append(json.loads(table_to_json([i]))[0])
             except Exception:
                 a='nothin'
 
         for i in Contacts:
             try:
-                if data in i.Number or data in i.Phone_two or data in i.Email or data in i.Last_name:
+                if data in i.Number or data in i.Phone_two or data in i.Email or data.lower() in i.Last_name.lower():
                     result.append(json.loads(table_to_json([i]))[0])
             except Exception:
                 a='nothin'
@@ -871,6 +871,13 @@ def editItem():
     else:
         return redirect('/', code=302)
 
+@app.route('/deleteItem', methods=['GET'])
+def deleteItem():
+    item = models.Item.query.filter_by(Item_id=request.args['id']).first()
+
+    db.session.delete(item)
+    db.session.commit()
+    return 'OK'
 
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():

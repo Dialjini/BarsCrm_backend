@@ -29,7 +29,7 @@ function editAccount(elem) {
                 }
             }
 
-            if (shipment === 'true') {
+            if (shipment === 'true' && elem.id == 'account_shipment') {
                 return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
                                     <div class="title">
@@ -101,6 +101,7 @@ function checkStocks(element) {
         success: function() {
             list_stock_acc = $('#stock_items_list').attr('data-stock').split(',');
             list_items_acc = $('#stock_items_list').attr('data-items').split(',');
+            console.log("AYE: "); console.log(list_items_acc);
             let sortItemsStock = [];
 
             let dataStock, dataItem;
@@ -111,18 +112,18 @@ function checkStocks(element) {
                 dataType: 'html',
                 success: function(result) {
                     dataStock = JSON.parse(result);
+                    $.ajax({
+                        url: '/getAllItems',
+                        type: 'GET',
+                        async: false,
+                        dataType: 'html',
+                        success: function(result) {
+                            dataItem = JSON.parse(result);
+                        }
+                    });
                 }
             });
-
-            $.ajax({
-                url: '/getAllItems',
-                type: 'GET',
-                async: false,
-                dataType: 'html',
-                success: function(result) {
-                    dataItem = JSON.parse(result);
-                }
-            });
+            
 
             for (let i = 0; i < dataStock.length; i++) {
                 for (let j = 0; j < list_stock_acc.length; j++) {
@@ -133,8 +134,10 @@ function checkStocks(element) {
             }
             for (let i = 0; i < sortItemsStock.length; i++) {
                 for (let j = 0; j < dataItem.length; j++) {
-                    if (sortItemsStock[i].stock == dataItem[j].Stock_id) {
-                        sortItemsStock[i]['items'].push(dataItem[j].Item_id)
+                    for (let k = 0; k < list_items_acc.length; k++) {
+                        if (sortItemsStock[i].stock == dataItem[j].Stock_id && list_items_acc[k] == dataItem[j].Item_id) {
+                            sortItemsStock[i]['items'].push(dataItem[j].Item_id)
+                        }
                     }
                 }
             }
@@ -234,7 +237,7 @@ function accountShipment(element) {
                                 for (let j = 0; j < items_data.length; j++) {
                                     for (let jj = 0; jj < items_data[j].items.length; jj++) {
                                         for (let k = 0; k < items_id.length; k++) {
-                                            console.log(account_data[i].account.id == account_id && items_data[j].items[jj].Item_id == items_id[k])
+                                            console.log(items_id[k], items_data[j].items[jj].Item_id)
                                             if (account_data[i].account.id == account_id && items_data[j].items[jj].Item_id == items_id[k]) {
                                                 tbody += `
                                                     <tr>
@@ -489,6 +492,7 @@ function arrangeDelivery(element) {
     for (let element of $('.active_button_stock')) {
         let stocks = $(element).attr('data-stock').split('-s!s-');
         let items = $(element).attr('data-items').split('-s!s-');
+        console.log(items);
         for (let i = 0; i < stocks.length; i++) {
             list_stock_acc.push(stocks[i]);
         }
@@ -2063,7 +2067,7 @@ function searchWord(value) {
             }
             if ($('#list_providers_for_search').html() == '') {
                 $('#list_providers_for_search').append(`
-                    <span>Ничего не найдено</span>
+                    <span style="padding: 2px 10px">Ничего не найдено</span>
                 `)
             }
         }
