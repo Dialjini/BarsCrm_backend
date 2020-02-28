@@ -339,18 +339,34 @@ function taskCreate(tasks = 'new') {
 function createContactsForm() {
     function radioBoxs() {
         let content = $('<div>', { class: 'radio_boxs' });
+        let current_user_role = $('[name="offtop__load"]').attr('id').split('::')[0];
         for (let i = 0; i < contactsFormInfo.length; i++) {
-            content.append($('<div>', {
-                class: 'element',
-                append: $('<input>', {
-                    type: 'radio',
-                    id: contactsFormInfo[i].id,
-                    name: 'createEmptyCard'
-                }).add($('<label>', {
-                    for: contactsFormInfo[i].id,
-                    html: contactsFormInfo[i].name
+            if (contactsFormInfo[i].name === 'Поставщик' && current_user_role == 'admin') {
+                content.append($('<div>', {
+                    class: 'element',
+                    append: $('<input>', {
+                        type: 'radio',
+                        id: contactsFormInfo[i].id,
+                        name: 'createEmptyCard'
+                    }).add($('<label>', {
+                        for: contactsFormInfo[i].id,
+                        html: contactsFormInfo[i].name
+                    }))
                 }))
-            }))
+            } 
+            if (contactsFormInfo[i].name !== 'Поставщик') {
+                content.append($('<div>', {
+                    class: 'element',
+                    append: $('<input>', {
+                        type: 'radio',
+                        id: contactsFormInfo[i].id,
+                        name: 'createEmptyCard'
+                    }).add($('<label>', {
+                        for: contactsFormInfo[i].id,
+                        html: contactsFormInfo[i].name
+                    }))
+                }))
+            }
         }
 
         return content;

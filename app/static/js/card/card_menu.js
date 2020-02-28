@@ -1002,7 +1002,7 @@ function createCardMenu(element, index = 0) {
                             <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
                             <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
                             <td>
-                                <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
+                                <input type="text" onkeyup="maskNumberWithout(this.id); tarCalculation(this.id)" name="invoiled_volume_item" id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>
@@ -1027,7 +1027,7 @@ function createCardMenu(element, index = 0) {
                             <td id="product_weight_${list_items[i].Item_id}">${returnSpaces(list_items[i].Weight)}</td>
                             <td id="product_containers_${list_items[i].Item_id}">${returnSpaces(Math.round(+deleteSpaces(list_items[i].Transferred_volume) / +deleteSpaces(list_items[i].Weight)))}</td>
                             <td>
-                                <input type="text" disabled id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
+                                <input type="text" disabled name="invoiled_volume_item" id="invoiled_volume_${list_items[i].Item_id}" value="${returnSpaces(list_items[i].Transferred_volume)}">
                             </td>
                             <td id="product_cost_${list_items[i].Item_id}">${returnSpaces(list_items[i].Cost)}</td>
                             <td>

@@ -7,7 +7,7 @@ function editAccount(elem) {
         dataType: 'html',
         success: function(data) {
             data = JSON.parse(data);
-            let name, date;
+            let name, date, manager_id;
             let idsItems = [];
             for (let element of $('#exposed_list .invoiled')) {
                 let idProduct = $(element).attr('id').split('_')[1];
@@ -26,6 +26,7 @@ function editAccount(elem) {
                     name = categoryInFinanceAccount[1][1][i].account.Name;
                     date = categoryInFinanceAccount[1][1][i].account.Date;
                     shipment = categoryInFinanceAccount[1][1][i].account.Shipment;
+                    manager_id = categoryInFinanceAccount[1][1][i].account.Manager_id;
                 }
             }
 
@@ -61,7 +62,7 @@ function editAccount(elem) {
                     url: '/editAccount',
                     type: 'GET',
                     data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
-                        manager_id: data_role[1], name: name, date: date,
+                        name: name, date: date, manager_id: manager_id,
                         hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                         items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                         total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
@@ -823,6 +824,9 @@ function inputFieldDoc(data, document_name, address, elem) {
                     }
                     $('#list_contract').empty();
                     $('#list_contract').append(documents);
+                },
+                complete: function() {
+                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                 }
             });
         }
@@ -831,6 +835,14 @@ function inputFieldDoc(data, document_name, address, elem) {
 function downloadDocument(elem) {
     let check = confirm("Вы уверены, что Вы хотите создать новый договор?");
     if (!check) return;
+
+    $('body').prepend(`
+        <div id="preloader">
+            <div id="preloader_preload"></div>
+        </div>
+    `)
+    preloader = document.getElementById("preloader_preload");
+
     let data = $(elem).attr('name').split('_');
     if (data[1] == 'new') data[1] = saveTableAndCard[1][1].length + 1;
     let select_cusmoter = $('#select_cusmoter').val()
@@ -1165,7 +1177,7 @@ function addItemToAccount(element) {
                                 if (list[k].id.includes('invoiled_volume')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
-                                            type: 'text', onkeyup: 'maskNumberWithout(this.id); tarCalculation(this.id)', id: list[k].id, max: account.Volume
+                                            type: 'text', onkeyup: 'maskNumberWithout(this.id); tarCalculation(this.id)', id: list[k].id, max: account.Volume, name: 'invoiled_volume_item'
                                         })
                                     }))
                                 } else if (list[k].id.includes('calc')) {
@@ -1256,7 +1268,7 @@ function invoiceInTable(element) {
                                 if (list[k].id.includes('invoiled_volume')) {
                                     tr.append($('<td>', {
                                         append: $('<input>', {
-                                            type: 'text', onkeyup: 'maskNumberWithout(this.id); tarCalculation(this.id)', id: list[k].id, max: account.Volume
+                                            type: 'text', onkeyup: 'maskNumberWithout(this.id); tarCalculation(this.id)', id: list[k].id, max: account.Volume, name: 'invoiled_volume_item'
                                         })
                                     }))
                                 } else if (list[k].id.includes('calc')) {
@@ -1326,6 +1338,10 @@ function calculationIndicators() {
     $('#exposed_list .invoiled').each(function(i, element) {
         count++;
     });
+    let all_volume = 0;
+    for (let item = 0; item < $('#exposed_list [name="invoiled_volume_item"]').length; item++) {
+        all_volume += +deleteSpaces($('#exposed_list [name="invoiled_volume_item"]')[item].value)
+    }
     for (let i = 0; i < list.length; i++) {
         let data = categoryInStock[1][1];
         for (let j = 0; j < data.length; j++) {
@@ -1334,7 +1350,7 @@ function calculationIndicators() {
                     if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
                         let totalSale       = ((+deleteSpaces($('#total_discount_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let totalPrivet     = ((+deleteSpaces($('#total_privet_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
-                        let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
+                        let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / all_volume / count).toFixed(2));
                         let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html())).toFixed(2);
 
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : returnSpaces((+totalSale * -1).toFixed(2)));

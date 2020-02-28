@@ -320,12 +320,34 @@ function addButtonsSubcategory(idCategory) {
                         }))
                     })
                 })
+            } else if (subcategoryButtons[idCategory][i].name == 'Поставщики') {
+                let user;
+                $.ajax({
+                    url: '/getThisUser',
+                    type: 'GET',
+                    async: false,
+                    dataType: 'html',
+                    success: function(data) {
+                        user = JSON.parse(data);
+                        console.log(user);
+
+                    }
+                });
+                console.log(user);
+                if (user.role == 'admin') {
+                    return element = $('<div>', {
+                        class: subcategoryButtons[idCategory][i].class,
+                        html: subcategoryButtons[idCategory][i].name,
+                        id: subcategoryButtons[idCategory][i].id
+                    });
+                }
+            } else {
+                return element = $('<div>', {
+                    class: subcategoryButtons[idCategory][i].class,
+                    html: subcategoryButtons[idCategory][i].name,
+                    id: subcategoryButtons[idCategory][i].id
+                });
             }
-            return element = $('<div>', {
-                class: subcategoryButtons[idCategory][i].class,
-                html: subcategoryButtons[idCategory][i].name,
-                id: subcategoryButtons[idCategory][i].id
-            });
         })
         $('#delivery_new').attr('onclick', 'reloadStockItems(this)');
     }
@@ -1683,80 +1705,143 @@ function getValidationDate(date) {
                 }
             }
         }
-        for (let i = 0; i < items_list.length - 1; i++) {
-            for (let j = i + 1; j < items_list.length; j++) {
-                if (items_list[i].account.Name === items_list[j].account.Name && +items_list[i].account.id === +items_list[j].account.id) {
-                    for (let k = 0; k < items_list[j].items.length; k++) {
-                        items_list[i].items.push(items_list[j].items[k])
-                    }
-                    items_list.splice(j, 1);
-                    j--;
-                }
-            }
-        }
-        items_list.sort(function(a, b) {
-            let first_name = a.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
-            let second_name = b.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
-            console.log(first_name, second_name);
-            if (first_name > second_name) {
-                return 1;
-            }
-            if (first_name < second_name) {
-                return -1;
-            }
-            return 0;
-        })
-        console.log(items_list);
+        // for (let i = 0; i < items_list.length - 1; i++) {
+        //     for (let j = i + 1; j < items_list.length; j++) {
+        //         if (items_list[i].account.Name === items_list[j].account.Name && +items_list[i].account.id === +items_list[j].account.id) {
+        //             for (let k = 0; k < items_list[j].items.length; k++) {
+        //                 items_list[i].items.push(items_list[j].items[k])
+        //             }
+        //             items_list.splice(j, 1);
+        //             j--;
+        //         }
+        //     }
+        // }
+        // for (let i = 0; i < items_list.length - 1; i++) {
+        //     let first_shipment = JSON.parse(items_list[i].account.Shipment_list);
+        //     for (let j = i + 1; j < items_list.length; j++) {
+        //         if (items_list[i].account.Name == items_list[j].account.Name) {
+        //             let second_shipment = JSON.parse(items_list[j].account.Shipment_list);
+        //             console.log(first_shipment, second_shipment);
+        //             for (let shipment = 0; shipment < second_shipment.length; shipment++) {
+        //                 first_shipment.push(second_shipment[shipment]);
+        //             }
+        //             for (let k = 0; k < items_list[j].items.length; k++) {
+        //                 items_list[i].items.push(items_list[j].items[k])
+        //             }
+        //             items_list.splice(j, 1);
+        //             j--;
+        //         }
+        //     }
+        //     items_list[i].account.Shipment_list = JSON.stringify(first_shipment);
+        // }
+        // for (let i = 0; i < items_list.length; i++) {
+        //     for (let j = 0; j < items_list[i].items.length - 1; j++) {
+        //         for (let k = j + 1; k < items_list[i].items.length; k++) {
+        //             if (items_list[i].items[j].Item_id == items_list[i].items[k].Item_id) {
+        //                 items_list[i].items.splice(k, 1);
+        //                 k--;
+        //             }
+        //         }
+        //     }
+        // }
+
+        console.log(items_list)
+        
+        // items_list.sort(function(a, b) {
+        //     let first_name = a.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
+        //     let second_name = b.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
+        //     if (first_name > second_name) {
+        //         return 1;
+        //     }
+        //     if (first_name < second_name) {
+        //         return -1;
+        //     }
+        //     return 0;
+        // })
         let delivery_id = null;
         function fillTable() {
             let table = '';
             let unload_table = [];
+            let main_list = [];
             for (let i = 0; i < items_list.length; i++) {
                 total_count++;
-                let tbody = '<tbody class="tr_tr">';
-                let count = 0;
-
                 for (let j = 0; j < items_list[i].items.length; j++) {
-                    // let volume = JSON.parse(items_list[i].account.Item_ids);
+                    let volume = JSON.parse(items_list[i].account.Item_ids);
 
-                    // let hello = JSON.parse(items_list[i].account.Hello);
-                    // let shipping = JSON.parse(items_list[i].account.Shipping);
-                    // let sale = JSON.parse(items_list[i].account.Sale);
-
+                    let hello = JSON.parse(items_list[i].account.Hello);
+                    let shipping = JSON.parse(items_list[i].account.Shipping);
+                    let sale = JSON.parse(items_list[i].account.Sale);
+                    
                     let shipment_list = JSON.parse(items_list[i].account.Shipment_list);
+                    for (let ii = 0; ii < volume.length; ii++) {
                         for (let jj = 0; jj < shipment_list.length; jj++) {
-                            if (shipment_list[jj].id == items_list[i].items[j].Item_id) {
-                                let amount_price = +deleteSpaces(shipment_list[jj].volume);
-                                if (!unload_status) {
-                                    function fillTr() {
-                                        let tr_content = '';
-                                        if (count == 0) {
-                                            tr_content += `<td rowspan="${shipment_list.length}">${items_list[i].account.Name}</td>`
-                                        }
-                                        tr_content += `
-                                            <td>${shipment_list[jj].name}</td>
-                                            <td>${returnSpaces(shipment_list[jj].volume)}</td>
-                                            <td>${shipment_list[jj].date}</td>
-                                            <td>${returnSpaces(amount_price)}</td>
-                                        `
-                                        count++;
-                                        return tr_content;
-                                    }
-                                    let tr = `<tr>${fillTr()}</tr>`
-                                    tbody += tr;
-                                } else {
-                                    unload_table.push({ name: items_list[i].account.Name, product: shipment_list[jj].name, volume: returnSpaces(shipment_list[jj].volume),
-                                                start_date: shipment_list[jj].date != null || shipment_list[jj].date != '' ? shipment_list[jj].date : 'Не указана',
-                                                amount: returnSpaces(amount_price)})
-                                }
+                            if (shipment_list[jj].id == items_list[i].items[j].Item_id && volume[ii].id == shipment_list[jj].id) {
+                                let amount_price = Number(+deleteSpaces(shipment_list[jj].volume) * (+deleteSpaces(items_list[i].items[j].Cost) + +deleteSpaces(hello[ii]) + +deleteSpaces(shipping[ii]) + +deleteSpaces(sale[ii]))).toFixed(2);
+                                    main_list.push({ name: items_list[i].account.Name, product: shipment_list[jj].name, volume: returnSpaces(shipment_list[jj].volume),
+                                        start_date: shipment_list[jj].date != null || shipment_list[jj].date != '' ? shipment_list[jj].date : 'Не указана',
+                                        amount: returnSpaces(amount_price)})
                             }
                         }
+                    }
+                }
+            }
+            for (let i = 0; i < main_list.length - 1; i++) {
+                for (let j = i + 1; j < main_list.length; j++) {
+                    if (main_list[i].name == main_list[j].name && main_list[i].product == main_list[j].product) {
+                        main_list[i].volume = returnSpaces(+deleteSpaces(main_list[i].volume) + +deleteSpaces(main_list[j].volume))
+                        main_list[i].amount = returnSpaces(+deleteSpaces(main_list[i].amount) + +deleteSpaces(main_list[j].amount))
+                        main_list.splice(j, 1);
+                        j--;
+                    }
+                }
+            }
+            main_list.sort(function(a, b) {
+                if (a.name > b.name) {
+                    return 1;
+                }
+                if (a.name < b.name) {
+                    return -1;
+                }
+                return 0;
+            })
+            for (let i = 0; i < main_list.length; i++) {
+                let tbody = '<tbody class="tr_tr">';
+                let count = 1;
+                for (let j = i + 1; j < main_list.length; j++) {
+                    if (main_list[i].name == main_list[j].name) count++;
+                }
+                for (let j = 0; j < count; j++) {
+                    function fillTr() {
+                        let tr_content = '';
+                        unload_table.push({ name: main_list[i].name, product: main_list[i + j].product, volume: main_list[i + j].volume,
+                            amount: main_list[i + j].amount})
+                        if (j == 0) {
+                            tr_content += `<td rowspan="${count}">${main_list[i].name}</td>`
+                        }
+                        tr_content += `
+                            <td>${main_list[i + j].product}</td>
+                            <td>${main_list[i + j].volume}</td>
+                            <td>${main_list[i + j].amount}</td>
+                        `
+                        return tr_content;
+                    }
+                    let tr = `<tr>${fillTr()}</tr>`
+                    tbody += tr;
+                }
+                for (let j = i + 1; j < main_list.length; j++) {
+                    let name = main_list[i].name;
+                    if (name == main_list[j].name) {
+                        main_list.splice(j, 1);
+                        j--;
+                    }
                 }
                 if (tbody != '<tbody class="tr_tr">') {
                     table += tbody + '</tbody>';
                 }
             }
+
             if (unload_status) {
+                console.log(unload_table);
                 return unload_table;
             }
             if (!$('div').is('#analytics_block_hidden')) {
@@ -1784,7 +1869,6 @@ function getValidationDate(date) {
                         <th width="350">Клиент</th>
                         <th>Товары</th>
                         <th>Объем, кг</th>
-                        <th>Дата отгрузки</th>
                         <th>Сумма, руб.</th>
                     </tr>
                     ${fillTable()}

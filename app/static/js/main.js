@@ -351,6 +351,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                             name = account_data[i].account.Name;
                                             date = account_data[i].account.Date;
                                             shipment = account_data[i].account.Shipment;
+                                            manager_id = account_data[i].account.Manager_id;
                                         }
                                     }
                                     
@@ -369,7 +370,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                             url: '/editAccount',
                                             type: 'GET',
                                             data: {account_id: +idAccount, status: String($('#account_status').prop('checked')),
-                                                manager_id: $('[name="offtop__load"]').attr('id').split('::')[1], name: name, date: date,
+                                                name: name, date: date, manager_id: manager_id,
                                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                                 total_costs: $('#total_costs_inv').val(), sale_costs: $('#total_discount_inv').val(),
