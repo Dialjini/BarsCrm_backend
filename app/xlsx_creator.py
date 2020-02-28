@@ -68,13 +68,12 @@ def thirdScenario(data):
     sheet['A1'].value = 'Клиент'
     sheet['B1'].value = 'Товары'
     sheet['C1'].value = 'Вес'
-    sheet['D1'].value = 'Дата отгрузки'
     sheet['E1'].value = 'Сумма, руб.'
 
     column_counter = 1
     for i in data:
         column_counter += 1
-        for j in range(5):
+        for j in range(4):
             sheet[alphabet[j] + str(column_counter)].value = list(i.values())[j]
 
     wb.save('app/upload/last_stat.xlsx')
