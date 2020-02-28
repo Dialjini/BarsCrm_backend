@@ -112,9 +112,12 @@ def to_PDF(name, owner, address, delivery, address2):
     if name == 'transit':
         return DocCreator.Generate_Transit(dir_u=dir_u, date=date, delivery=delivery,
                                            adress=address, type=name, adress2=address2)
-    for i in reqs.getINNinfo(owner.UHH)['suggestions']:
-        if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
-            info = i
+    try:
+        for i in reqs.getINNinfo(owner.UHH)['suggestions']:
+            if str(i['data']['address']['data']['postal_code']) == str(address[0:6]):
+                info = i
+    except Exception:
+        print('Request limit!')
 
     try:
         owner.UTC = int(info['data']['address']['data']['timezone'][3:])
