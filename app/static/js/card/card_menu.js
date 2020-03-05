@@ -175,7 +175,7 @@ function createCardMenu(element, index = 0) {
                     titleObject[i].list.unshift(`Код: ${selectedLine.id || selectedLine.Item_id}`);
                 }
                 if (getInfo[0] === 'client' || getInfo[0] === 'provider' || getInfo[0] === 'carrier') {
-                    titleObject[i].list.push(selectedLine.UTC == '' || selectedLine.UTC == undefined ? 'Местное время неопределенно' : `Местное время: ${selectedLine.UTC + date.getUTCHours() < 10 ? '0' + (+selectedLine.UTC + +date.getUTCHours()) : selectedLine.UTC + date.getUTCHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}`)
+                    titleObject[i].list.push(selectedLine.UTC == '' || selectedLine.UTC == undefined ? 'Местное время не определено' : `Местное время: ${selectedLine.UTC + date.getUTCHours() < 10 ? '0' + (+selectedLine.UTC + +date.getUTCHours()) : selectedLine.UTC + date.getUTCHours()}:${date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()}`)
                     if (getInfo[0] === 'client') {
                         titleObject[i].list.push(`<input id="${getInfo[0]}_site" value="${selectedLine.Site}" type="text" placeholder="Сайт"> `);
                         titleObject[i].list.push(`<input id="${getInfo[0]}_holding" value="${selectedLine.Holding}" type="text" placeholder="Холдинг"> `)
@@ -1134,7 +1134,7 @@ function createCardMenu(element, index = 0) {
                                     <td>${shipment_list[i].stock}</td>
                                     <td>${returnSpaces(shipment_list[i].volume)}</td>
                                     <td>${shipment_list[i].packing}</td>
-                                    <td>${returnSpaces(+deleteSpaces(shipment_list[i].volume) * +deleteSpaces(price_units[j].unit))}</td>
+                                    <td>${returnSpaces(Number(+deleteSpaces(shipment_list[i].volume) * +deleteSpaces(price_units[j].unit)).toFixed(1))}</td>
                                     ${data_user.role == 'admin' ? `<td>${returnSpaces(price_units[j].purchase_price)}</td>` : ''}
                                 </tr>
                             `
@@ -3366,24 +3366,24 @@ function completionCard(elem) {
                         let name;
                         let sum = deleteSpaces($('#total').html());
                         let shipment = 'false';
+                        let manager_id;
         
                         // Передать данные на сервер и создать карточку счета
                         for (let i = 0; i < dataName.length; i++) {
                             if ('client' == dataName[i].name) {
                                 for (let j = 0; j < categoryInListClient[1][1].length; j++) {
                                     if (categoryInListClient[1][1][j].id == $(elem).attr('data_name').split('_')[1]) {
-                                        name = categoryInListClient[1][1][j].Name
+                                        name = categoryInListClient[1][1][j].Name,
+                                        manager_id = categoryInListClient[1][1][j].Manager_id
                                     }
                                 }
                                 dataName[i].link[0].lastCard = [null, null];
                             }
                         }
-                        let data_role = $('[name="offtop__load"').attr('id').split('::');
-                        let this_user = {role: data_role[0], id: data_role[1]};
                         $.ajax({
                             url: '/addAccount',
                             type: 'GET',
-                            data: {manager_id: this_user.id, name: name, status: status, date: date,
+                            data: {manager_id: manager_id, name: name, status: status, date: date,
                                 hello: JSON.stringify(privet), sale: JSON.stringify(sale), shipping: JSON.stringify(delivery),
                                 items_amount: JSON.stringify(items_amount), sum: sum, item_ids: JSON.stringify(idsItems),
                                 total_costs: deleteSpaces($('#total_costs_inv').val()), sale_costs: deleteSpaces($('#total_discount_inv').val()),

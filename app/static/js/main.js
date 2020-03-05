@@ -424,6 +424,23 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             }
             additionalData(i);
             if (checkINN == 'check') {
+                for (let elem = 0; elem < categoryInListClient[1][1].length; elem++) {
+                    if (categoryInListClient[1][1][elem].id == idData.client_data && (categoryInListClient[1][1][elem].Manager_id == null || categoryInListClient[1][1][elem].Manager_id == '')) {
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                            <div class="modal_select">
+                                <div class="title">
+                                    <span>Ошибка</span>
+                                    <img onclick="closeModal()" src="static/images/cancel.png">
+                                </div>
+                                <div class="content">
+                                    <div class="message">
+                                        <p style="font-size: 13px; color: #595959;">Необходимо прикрепить менеджера к этой карточке</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `));
+                    }
+                }
                 if (data[0] == 'client' || data[0] == 'carrier') {
                     if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
                         return $('.page').append($('<div>', { class: 'background' }).add(`

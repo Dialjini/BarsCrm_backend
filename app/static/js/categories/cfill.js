@@ -1321,6 +1321,8 @@ function getValidationDate(date) {
     // Прибыль по клиентам
     function analyticsFilterTable_0(date_period, unload_status = false, main = false) {
         $('#all_amount_hello').remove();
+        $('#all_amount_profit').remove();
+
         let account_data;
         $.ajax({
             url: '/getAccounts',
@@ -1366,7 +1368,9 @@ function getValidationDate(date) {
             let table = '';
             let total_count = 0;
             let unload_table = [];
+            let all_amount = 0;
             for (let i = 0; i < items_list.length; i++) {
+                let this_client_amount = 0;
                 for (let j = 0; j < items_list[i].account.length; j++) {
                     let volume = JSON.parse(items_list[i].account[j].Item_ids);
                     let delivery = JSON.parse(items_list[i].account[j].Shipping);
@@ -1382,6 +1386,8 @@ function getValidationDate(date) {
                                     if (j == 0) {
                                         trContent += `<td rowspan="${items_list[i].account.length}">${items_list[i].item.Name}</td>`;
                                     }
+                                    let profit = Number((cost_price - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume)).toFixed(2);
+                                    this_client_amount += +deleteSpaces(profit);
                                     trContent += `<td>${items_list[i].account[j].Name}</td>
                                                 <td>${returnSpaces(volume[v].volume)}</td>
                                                 <td>${returnSpaces(price)}</td>
@@ -1390,13 +1396,18 @@ function getValidationDate(date) {
                                                 <td>${returnSpaces(cost_price)}</td>
                                                 <td>${returnSpaces(items_list[i].item.Purchase_price)}</td>
                                                 <td>${returnSpaces(Number(cost_price - +deleteSpaces(items_list[i].item.Purchase_price)).toFixed(2))}</td>
-                                                <td>${returnSpaces(Number((cost_price - +deleteSpaces(items_list[i].item.Purchase_price)) * +deleteSpaces(volume[v].volume)).toFixed(2))}</td>`
+                                                <td>${returnSpaces(profit)}</td>`
                                     return trContent;
                                 }
                                 let tr;
                                 if (j == 0) tr = `<tbody class="tr_tr"><tr>${fillTr()}</tr>`
-                                else if (j == items_list[i].account.length - 1) tr = `<tr>${fillTr()}</tr></tbody>`
-                                else tr = `<tr>${fillTr()}</tr>`
+                                else if (j == items_list[i].account.length - 1)  {
+                                    tr = `<tr>${fillTr()}</tr>
+                                        <tr>
+                                            <td colspan="10" style="text-align: right; font-weight: 600; padding: 15px;">Итого по клиенту: ${returnSpaces(this_client_amount)} руб.</td>
+                                        </tr>
+                                    </tbody>`
+                                } else tr = `<tr>${fillTr()}</tr>`
                                 table += tr;
                                 total_count++;
                             } else {
@@ -1409,7 +1420,10 @@ function getValidationDate(date) {
                         }
                     }
                 }
+                all_amount += this_client_amount;
             }
+            $('#subcategories').after(`<div class="row" id="all_amount_profit"><div style="padding: 0 0 20px; color: #595959;">Итого: <span class="red">${returnSpaces(Number(all_amount).toFixed(1))} руб.</span></div></div>`);
+            console.log(all_amount);
             if (unload_status) {
                 return unload_table;
             }
@@ -1436,15 +1450,15 @@ function getValidationDate(date) {
             <table class="table analytics">
                 <tr>
                     <th>Товар</th>
-                    <th width="230">Клиент</th>
+                    <th width="180">Клиент</th>
                     <th>Объем, кг.</th>
-                    <th>Цена, руб.</th>
+                    <th width="85">Цена, руб.</th>
                     <th>Доставка</th>
                     <th>Привет</th>
-                    <th>Себестоимость</th>
+                    <th>Себес.</th>
                     <th>Закупочная цена</th>
                     <th>Заработали</th>
-                    <th>Прибыль</th>
+                    <th width="85">Прибыль</th>
                 </tr>
                 ${fillTable()}
             </table>
@@ -1455,6 +1469,7 @@ function getValidationDate(date) {
     function analyticsFilterTable_1(date_period, unload_status = false, main = false) {
         let account_data, stocks;
         $('#all_amount_hello').remove();
+        $('#all_amount_profit').remove();
         $.ajax({
             url: '/getStockTable',
             type: 'GET',
@@ -1695,6 +1710,7 @@ function getValidationDate(date) {
             }
         });
         $('#all_amount_hello').remove();
+        $('#all_amount_profit').remove();
         let items_list = [];
         let total_count = 0;
         for (let i = 0; i < account_data.length; i++) {
@@ -1705,59 +1721,7 @@ function getValidationDate(date) {
                 }
             }
         }
-        // for (let i = 0; i < items_list.length - 1; i++) {
-        //     for (let j = i + 1; j < items_list.length; j++) {
-        //         if (items_list[i].account.Name === items_list[j].account.Name && +items_list[i].account.id === +items_list[j].account.id) {
-        //             for (let k = 0; k < items_list[j].items.length; k++) {
-        //                 items_list[i].items.push(items_list[j].items[k])
-        //             }
-        //             items_list.splice(j, 1);
-        //             j--;
-        //         }
-        //     }
-        // }
-        // for (let i = 0; i < items_list.length - 1; i++) {
-        //     let first_shipment = JSON.parse(items_list[i].account.Shipment_list);
-        //     for (let j = i + 1; j < items_list.length; j++) {
-        //         if (items_list[i].account.Name == items_list[j].account.Name) {
-        //             let second_shipment = JSON.parse(items_list[j].account.Shipment_list);
-        //             console.log(first_shipment, second_shipment);
-        //             for (let shipment = 0; shipment < second_shipment.length; shipment++) {
-        //                 first_shipment.push(second_shipment[shipment]);
-        //             }
-        //             for (let k = 0; k < items_list[j].items.length; k++) {
-        //                 items_list[i].items.push(items_list[j].items[k])
-        //             }
-        //             items_list.splice(j, 1);
-        //             j--;
-        //         }
-        //     }
-        //     items_list[i].account.Shipment_list = JSON.stringify(first_shipment);
-        // }
-        // for (let i = 0; i < items_list.length; i++) {
-        //     for (let j = 0; j < items_list[i].items.length - 1; j++) {
-        //         for (let k = j + 1; k < items_list[i].items.length; k++) {
-        //             if (items_list[i].items[j].Item_id == items_list[i].items[k].Item_id) {
-        //                 items_list[i].items.splice(k, 1);
-        //                 k--;
-        //             }
-        //         }
-        //     }
-        // }
 
-        console.log(items_list)
-        
-        // items_list.sort(function(a, b) {
-        //     let first_name = a.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
-        //     let second_name = b.account.Name.replace(/«/g, '\"').replace(/»/g, '\"');
-        //     if (first_name > second_name) {
-        //         return 1;
-        //     }
-        //     if (first_name < second_name) {
-        //         return -1;
-        //     }
-        //     return 0;
-        // })
         let delivery_id = null;
         function fillTable() {
             let table = '';
@@ -1904,6 +1868,7 @@ function getValidationDate(date) {
             let all_data = [], unload_table = [];
             let total_count = 0;
             for (let i = 0; i < accounts.length; i++) {
+                if (accounts[i].account.Hello_costs == 0) continue;
                 let date_create_account = getValidationDate(accounts[i].account.Date);
                 let status = accounts[i].account.Shipment_hello == '' ? 'Не оплачено' : 'Оплачено';
                 if (date_create_account >= date_period[0] && date_create_account <= date_period[1] && (filter_status == status || filter_status == '')) {
@@ -2015,6 +1980,7 @@ function getValidationDate(date) {
     }
     // Отгрузки менеджеров
     function analyticsFilterTable_4(date_period, unload_status = false) {
+        $('#all_amount_profit').remove();
         $('#all_amount_hello').remove();
         let stocks, account_data;
         $.ajax({
@@ -2313,6 +2279,8 @@ function getValidationDate(date) {
     // Проделанная работа
     function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
+        $('#all_amount_profit').remove();
+
         function fillTable() {
             let tbody = '';
             $.ajax({
@@ -2421,6 +2389,8 @@ function getValidationDate(date) {
     // Баллы и бонусы
     function analyticsFilterTable_5(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
+        $('#all_amount_profit').remove();
+
         function fillTable() {
             let tbody = '';
             $.ajax({
@@ -2604,7 +2574,9 @@ function getValidationDate(date) {
                                                                 current_coefficient = new_client_coefficient_not_mound;
                                                             }
                                                         }
-
+                                                        console.log(current_coefficient, additional_bonus_in_new_client_mound);
+                                                        // Неверно считается коэф за нового клиента. Сравнивать еще одинаковые названия и получает коэф тот, кто оплачен раньше и не имеет отгрузки за последние пол года
+                                                        // Если есть отгрузка но до нее нет ни одной - то считать ее как новую
                                                         current_bonus = +deleteSpaces(items_id[current_item].volume) * current_coefficient + additional_bonus_in_new_client_mound;
                                                         amount_bonus += current_bonus;
                                                         if (!unload_status) {

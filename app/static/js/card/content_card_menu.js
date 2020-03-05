@@ -304,7 +304,7 @@ function accountShipment(element) {
                     `)
                     
                     for (let date of $('[name="shipment_date"')) {
-                        $(date).datepicker({position: 'right bottom', autoClose: true})
+                        $(date).datepicker({position: 'right bottom', autoClose: true, maxDate: new Date()})
                     }
                     setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                         }
@@ -627,9 +627,11 @@ function contractContentCard(elem) {
                 }
             });
             let table = `
-                <table class="new_table">
-                    ${fillTable()}
-                </table>
+                <div class="hmax" style="max-height: 400px; width: 100%">
+                    <table class="new_table">
+                        ${fillTable()}
+                    </table>
+                </div>
             `;
 
             function fillTable() {
@@ -638,6 +640,7 @@ function contractContentCard(elem) {
                             <th>Юр. лицо</th>
                             <th>Дата выставления</th>
                             <th>Товары</th>
+                            <th>Объем, кг</th>
                             <th>Цена, руб.</th>
                             <th>Сумма, руб.</th>
                             <th>Статус</th>
@@ -680,7 +683,7 @@ function contractContentCard(elem) {
                             for (let g = 0; g < hello_list.length; g++) {
                                 hello_sum += +deleteSpaces(hello_list[g]);
                             }
-
+                            let items_volume = JSON.parse(account_data.Item_ids);
                             let items = JSON.parse(account_data.Items_amount);
                             let items_name = [];
                             for (let g = 0; g < items.length; g++) {
@@ -690,12 +693,14 @@ function contractContentCard(elem) {
                                     }
                                 }
                             }
+                            console.log(account_data);
                             tr += `
                             <tbody>
                                 <tr>
                                     <td rowspan="${items.length}">${accounts[i].items[0].Prefix}</td>
                                     <td rowspan="${items.length}">${account_data.Date}</td>
                                     <td>${items_name[0]}</td>
+                                    <td>${items_volume[0].volume}</td>
                                     <td>${returnSpaces(items[0].amount)}</td>
                                     <td rowspan="${items.length}">${returnSpaces(account_data.Sum)}</td>
                                     <td rowspan="${items.length}">${status}</td>
@@ -708,6 +713,7 @@ function contractContentCard(elem) {
                                 tr += `
                                     <tr>
                                         <td>${items_name[k]}</td>
+                                        <td>${items_volume[k].volume}</td>
                                         <td>${returnSpaces(items[k].amount)}</td>
                                     </tr>`
                             }
