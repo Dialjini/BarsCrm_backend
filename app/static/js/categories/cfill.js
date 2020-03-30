@@ -888,7 +888,7 @@ function adminPanel(close = '') {
             getContent();
             function getContent() {
                 $('.info').append(`
-                    <div class="row">
+                    <div class="row" id="admin_row">
                         <div class="fields" style="width: auto">
                             <div class="field active" id="persons" onclick="persons()">Сотрудники</div>
                             <div class="field" id="positions" onclick="positions()">Должности</div>
@@ -1320,6 +1320,7 @@ function getValidationDate(date) {
 // Отчеты
     // Прибыль по клиентам
     function analyticsFilterTable_0(date_period, unload_status = false, main = false) {
+        categoryInAnalytics[0].last = 0;
         $('#all_amount_hello').remove();
         $('#all_amount_profit').remove();
 
@@ -1467,6 +1468,7 @@ function getValidationDate(date) {
     }
     // Сводный по объёмам
     function analyticsFilterTable_1(date_period, unload_status = false, main = false) {
+        categoryInAnalytics[0].last = 1;
         let account_data, stocks;
         $('#all_amount_hello').remove();
         $('#all_amount_profit').remove();
@@ -1679,6 +1681,7 @@ function getValidationDate(date) {
     }
     // По клиентам
     function analyticsFilterTable_2(date_period, unload_status = false) {
+        categoryInAnalytics[0].last = 2;
         let account_data, delivery_data;
         $.ajax({
             url: '/getAccounts',
@@ -1842,6 +1845,8 @@ function getValidationDate(date) {
     }
     // По приветам
     function analyticsFilterTable_3(date_period, unload_status = false, filter_status = '') {
+        categoryInAnalytics[0].last = 3;
+        $('#all_amount_profit').remove();
         function fillTable() {
             let accounts;
             $.ajax({
@@ -1982,6 +1987,7 @@ function getValidationDate(date) {
     function analyticsFilterTable_4(date_period, unload_status = false) {
         $('#all_amount_profit').remove();
         $('#all_amount_hello').remove();
+        categoryInAnalytics[0].last = 4;
         let stocks, account_data;
         $.ajax({
             url: '/getAccounts',
@@ -2036,7 +2042,7 @@ function getValidationDate(date) {
                 let amount_two = JSON.parse(account_data_copy[i].account.Items_amount);
                 let date_create_account = getValidationDate(account_data_copy[i].account.Date);
                 if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id
-                    && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                    && date_create_account >= date_period[0] && date_create_account <= date_period[1] && account.shipment_list != null && account_data_copy[i].account != null) {
                     for (let g = 0; g < amount_two.length; g++) {
                         amount.push(amount_two[g]);
                     }
@@ -2063,7 +2069,7 @@ function getValidationDate(date) {
                 let volume_two = JSON.parse(account_data_copy[i].account.Item_ids);
                 let date_create_account = getValidationDate(account_data_copy[i].account.Date);
                 if (account.Manager_id == account_data_copy[i].account.Manager_id && account.id != account_data_copy[i].account.id
-                    && date_create_account >= date_period[0] && date_create_account <= date_period[1]) {
+                    && date_create_account >= date_period[0] && date_create_account <= date_period[1] && account.shipment_list != null && account_data_copy[i].account != null) {
                     for (let g = 0; g < volume_two.length; g++) {
                         volume_one.push(volume_two[g]);
                     }
@@ -2280,7 +2286,7 @@ function getValidationDate(date) {
     function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
         $('#all_amount_profit').remove();
-
+        categoryInAnalytics[0].last = 6;
         function fillTable() {
             let tbody = '';
             $.ajax({
@@ -2390,7 +2396,7 @@ function getValidationDate(date) {
     function analyticsFilterTable_5(date_period, unload_status = false, filter_manager = '') {
         $('#all_amount_hello').remove();
         $('#all_amount_profit').remove();
-
+        categoryInAnalytics[0].last = 5;
         function fillTable() {
             let tbody = '';
             $.ajax({
@@ -2453,7 +2459,6 @@ function getValidationDate(date) {
                             payment_date = payment_list[j].date;
                         }
                         let table = '<tbody class="tr_tr">';
-
                         if (+payment_amount == +deleteSpaces(account_data[i].account.Sum)) {
                             let current_date = getValidationDate(account_data[i].account.Date);
                             let month_period = datePeriod('month');
@@ -2461,7 +2466,6 @@ function getValidationDate(date) {
                             let half_year_period = datePeriod('half_year');
 
                             let last_shipment_date;
-                            
                             if (shipment_list.length == 1){
                                 last_shipment_date = getValidationDate(shipment_list[0].date);
                             } else if (shipment_list.length == 0) {
@@ -2512,9 +2516,6 @@ function getValidationDate(date) {
                             for (let account = 0; account < account_data.length; account++) {
                                 if (account_data[account].account.Manager_id == account_data[i].account.Manager_id && current_date >= month_period[0] && current_date <= month_period[1]
                                     && account_data[i].account.id == account_data[account].account.id) {
-                                    if (!(last_shipment_date >= half_year_period[0] && last_shipment_date <= half_year_period[1])) {
-                                        amount_clients++;
-                                    }
                                     
                                     for (let j = 0; j < account_data[account].items.length; j++) {
                                         for (let volume = 0; volume < items_id.length; volume++) {
@@ -2534,10 +2535,45 @@ function getValidationDate(date) {
                                 
                                         let count = 0;
                                         
-                                        if (getValidationDate(payment_date) <= last_shipment_date) {
-                                            //amount_clients++;
-                                            last_shipment_date = getValidationDate('01.01.10');
+                                        // if (getValidationDate(payment_date) <= last_shipment_date) {
+                                        //     //amount_clients++;
+                                        //     last_shipment_date = getValidationDate('01.01.10');
+                                        // }
+                                        let old_new_account;
+                                        for (let j = 0; j < account_data.length; j++) {
+                                            if (account_data[i].account.Name == account_data[j].account.Name &&
+                                                account_data[i].account.id != account_data[j].account.id) {
+                                                    if (account_data[j].account.Payment_history == '' || account_data[j].account.Payment_history == null) {
+                                                        continue;
+                                                    }
+                                                    let payment_list_second = JSON.parse(account_data[j].account.Payment_history);
+                                                    let payment_date_second;
+                                                    let payment_amount_second = 0;
+                                                    for (let l = 0; l < payment_list_second.length; l++) {
+                                                        payment_amount_second += +deleteSpaces(payment_list_second[l].sum);
+                                                        payment_date_second = payment_list_second[l].date;
+                                                    }
+                                                    if (payment_date == '') {
+                                                        payment_date = '01.01.25'
+                                                    } 
+                                                    if (payment_date_second == '') {
+                                                        payment_date_second = '01.01.25'
+                                                    }
+                                                    console.log(getValidationDate(payment_date), getValidationDate(payment_date_second))
+                                                    if (getValidationDate(payment_date) <= getValidationDate(payment_date_second)) {
+                                                        old_new_account = 'new';
+                                                    } else {
+                                                        old_new_account = 'old';
+                                                        break;
+                                                    }
+                                                }
                                         }
+                                        if (!(payment_date >= half_year_period[0] && payment_date <= half_year_period[1]) && old_new_account == 'new') {
+                                            amount_clients++;
+                                        }
+                                        console.log(account_data[i].account)
+                                        console.log(payment_date)
+                                        console.log(old_new_account)
 
                                         for (let current_item = 0; current_item < items_id.length; current_item++) {
                                             for (let stock = 0; stock < items.length; stock++) {
@@ -2557,6 +2593,7 @@ function getValidationDate(date) {
                                                         let additional_bonus_in_new_client_mound = 0;
                     
                                                         let current_coefficient = 0;
+
                                                         if (items[stock].items[item].Category == 'Насыпь') {
                                                             for (let coeff = 0; coeff < new_client_coefficient_mound.length; coeff++) {
                                                                 if (new_client_coefficient_mound[coeff].rate[0] <= all_volume && new_client_coefficient_mound[coeff].rate[1] > all_volume) {
@@ -2564,11 +2601,15 @@ function getValidationDate(date) {
                                                                     break;
                                                                 }
                                                             }
-                                                            if (!(last_shipment_date >= half_year_period[0] && last_shipment_date <= half_year_period[1])) {
+                                                            
+                                                            if (!(payment_date >= half_year_period[0] && payment_date <= half_year_period[1]) && old_new_account == 'new') {
+                                                                // console.log(+deleteSpaces(items_id[current_item].volume) * 0.05);
+                                                                console.log('AYE, TRUE');
                                                                 additional_bonus_in_new_client_mound = +deleteSpaces(items_id[current_item].volume) * 0.05;
                                                             }
                                                         } else {
-                                                            if (last_shipment_date >= half_year_period[0] && last_shipment_date <= half_year_period[1]) {
+                                                            if ((payment_date >= half_year_period[0] && payment_date <= half_year_period[1]) && old_new_account == 'new') {
+                                                                console.log('AYE, TRUE');
                                                                 current_coefficient = old_client_coefficient_not_mound;
                                                             } else {
                                                                 current_coefficient = new_client_coefficient_not_mound;
@@ -2613,7 +2654,7 @@ function getValidationDate(date) {
                                 if (table != '<tbody class="tr_tr">' && !unload_status) {
                                     tbody += table + `</tbody>`;
                                 }
-                                if (next_manager_id != current_manager_id || i == account_data.length - 1) {
+                                if (next_manager_id != current_manager_id || i + 1 == account_data.length - 1) {
                                     tbody += `
                                         <tr>
                                             <td style="font-weight: 500" colspan="3">Новых клиентов: ${amount_clients}</td>
@@ -2625,6 +2666,19 @@ function getValidationDate(date) {
                                     amount_items_only_mound = 0;
                                     amount_bonus = 0;
                                 }
+                            }
+                        } else {
+                            if (next_manager_id != current_manager_id || i + 1 == account_data.length - 1) {
+                                tbody += `
+                                    <tr>
+                                        <td style="font-weight: 500" colspan="3">Новых клиентов: ${amount_clients}</td>
+                                        <td style="font-weight: 500" colspan="2">Насыпь: ${returnSpaces(amount_items_only_mound)}</td>
+                                        <td style="font-weight: 500" colspan="1">Бонус за месяц: ${returnSpaces(amount_bonus)}</td>
+                                    </tr>
+                                `
+                                amount_clients = 0;
+                                amount_items_only_mound = 0;
+                                amount_bonus = 0;
                             }
                         }
                     }

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import openpyxl
 
 alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',

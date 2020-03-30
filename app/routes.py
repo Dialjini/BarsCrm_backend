@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from app import app
 from flask import render_template, redirect, session, request, send_from_directory
 from app import models, db, reqs, DocCreator, xlsx_creator

@@ -114,7 +114,16 @@ let rowFilling = (object, id, table) => {
             }
             element.append(elementTr);
         }
-        if (id !== 'delivery' && id !== 'stock') {
+        console.log(id);
+        if (id === 'debit' || id === 'account') {
+            element.append(`
+            <th id="pd_manager" onclick="selectManagerInAccount(this)" width="${object[0][object[0].length - 1].width}%">
+                <div class="flex jc-sb">
+                    <span>${object[0][object[0].length - 1].name}</span>
+                    <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                </div>
+            </th>`);
+        } else if (id !== 'delivery' && id !== 'stock') {
             element.append(`
             <th id="pd_manager" onclick="selectManager(this)" width="${object[0][object[0].length - 1].width}%">
                 <div class="flex jc-sb">
@@ -1490,6 +1499,88 @@ function sortTableByManagers(element) {
         }
     }
 }
+function sortTableByManagersInAccount(element) {
+    let searchWord = element.innerHTML;
+    $('.centerBlock .header .cancel').remove();
+
+    let managers;
+    $.ajax({
+        url: '/getUsers',
+        type: 'GET',
+        async: false,
+        dataType: 'html',
+        success: function(result) {
+            managers = JSON.parse(result);
+        }
+    });
+
+    for (let i = 0; i < managers.length; i++) {
+        if (managers[i].role == 'manager' && managers[i].second_name == searchWord) {
+            let search = managers[i].id;
+            let data;
+            if (saveTableAndCard[0].id == 'client') {
+                if (!sortStatus.category.status && !sortStatus.area.status) {
+                    if (filterAccount[1][1] != undefined) filterAccount[1].pop();
+                    data = categoryInListClient[1][1];
+                } else {
+                    if (filterAccount[1][1] == undefined) {
+                        data = categoryInListClient[1][1];
+                    } else {
+                        data = sortStatus.manager.last == null ? filterAccount[1][1] : sortStatus.manager.last;
+                    }
+                }
+                sortStatus.manager.last = categoryInListClient[1][1]
+            } else {
+                data = saveTableAndCard[1][1]
+            }
+            let listData = [
+                { id: 'account', list: 'Manager_id', filter: filterAccount },
+                { id: 'debit', list: 'Manager_id', filter: filterDebit },
+            ]
+            let searchCards = [];
+            for (let i = 0; i < listData.length; i++) {
+                if (listData[i].id == saveTableAndCard[0].id) {
+                    for (let j = 0; j < data.length; j++) {
+                        let string = data[j].account[listData[i].list];
+                        if (string == search) {
+                            searchCards.push(data[j]);
+                        }
+                    }
+                    let clientCards = [];
+                    for (let j = 0; j < searchCards.length; j++) {
+                        if (searchCards[j].Category === 'Клиент') {
+                            clientCards.push(searchCards[j]);
+                            searchCards.splice(j, 1);
+                            j--;
+                        }
+                    }
+                    for (let j = 0; j < clientCards.length; j++) {
+                        searchCards.push(clientCards[j]);
+                    }
+                    listData[i].filter[1][1] = searchCards.reverse();
+                    $('.table').remove();
+                    $('.info').append(fillingTables(listData[i].filter));
+                    break;
+                }
+            }
+            if (saveTableAndCard[0].id == 'client') {
+                sortStatus.manager.status = true;
+                sortStatus.manager.filter = searchWord;
+            }
+            
+            $('.centerBlock .header .cancel').remove();
+            $('.centerBlock .header').append(`
+                <div class="cancel">
+                    <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+                </div>
+            `)
+            setTimeout(function() {
+                $('#pd_manager .drop_arrow').removeClass('drop_active');
+            }, 150)
+            break;
+        }
+    }
+}
 function sortTableByArea(filter, input = true) {
     let newTableData;
     if (saveTableAndCard[0].id == 'client') {
@@ -1991,7 +2082,7 @@ function selectManager(element) {
     let id = element.id;
     function listManager() {
         let ul = $('<ul>', { class: 'list'});
-        let filter_tabledata;
+        let data;
 
         $.ajax({
             url: '/getUsers',
@@ -2002,9 +2093,11 @@ function selectManager(element) {
                 data = JSON.parse(result);
             }
         });
+        console.log(data);
         let filter_table = [];
         for (let j = 0; j < saveTableAndCard[1][1].length; j++) {
             for (let i = 0; i < data.length; i++) {
+                console.log(data[i].role, data[i].id, saveTableAndCard[1][1][j].Manager_id)
                 if (data[i].role == 'manager' && saveTableAndCard[1][1][j].Manager_id == data[i].id) {
                     filter_table.push(data[i]);
                 }
@@ -2018,11 +2111,84 @@ function selectManager(element) {
                 }
             }
         }
+        console.log(filter_table);
         for (let i = 0; i < filter_table.length; i++) {
             ul.append($('<li>', {
                 html: filter_table[i].second_name,
                 id: filter_table[i].id,
                 onclick: 'sortTableByManagers(this)'
+            }))
+        }
+        return ul;
+    }
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
+    }
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listManager()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
+}
+function selectManagerInAccount(element) {
+    let id = element.id;
+    function listManager() {
+        let ul = $('<ul>', { class: 'list'});
+        let data;
+        // let current_managers = [];
+        // $('.table tbody').toArray().forEach(function(element) {
+        //     if ($('.table').attr('id') == 'debit') {
+        //         current_managers.push($($(element).children()[0].children).last().html())
+        //     } else [
+        //         current_managers.push($($(element).children()[0].children).last().html())
+        //     ]
+        //     //console.log($(element).children().children().last().html())
+        // })
+
+        $.ajax({
+            url: '/getUsers',
+            type: 'GET',
+            async: false,
+            dataType: 'html',
+            success: function(result) {
+                data = JSON.parse(result);
+            }
+        });
+        console.log(data);
+        let filter_table = [];
+        for (let j = 0; j < saveTableAndCard[1][1].length; j++) {
+            for (let i = 0; i < data.length; i++) {
+                console.log(data[i].role, data[i].id, saveTableAndCard[1][1][j].account.Manager_id)
+                if (data[i].role == 'manager' && saveTableAndCard[1][1][j].account.Manager_id == data[i].id) {
+                    filter_table.push(data[i]);
+                }
+            }
+        }
+        for (let i = 0; i < filter_table.length - 1; i++) {
+            for (let j = i + 1; j < filter_table.length; j++) {
+                if (filter_table[i].id == filter_table[j].id) {
+                    filter_table.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        console.log(filter_table);
+        for (let i = 0; i < filter_table.length; i++) {
+            ul.append($('<li>', {
+                html: filter_table[i].second_name,
+                id: filter_table[i].id,
+                onclick: 'sortTableByManagersInAccount(this)'
             }))
         }
         return ul;
@@ -2065,7 +2231,22 @@ function fillingTables(object, filter = false) {
     if (object[0].id === 'analytics') {
         let current_period_month = datePeriod('month');
         $('#analytics_block_hidden').remove();
-        if (user.role == 'admin') return analyticsFilterTable_0(current_period_month, false, true);
+        console.log(object[0])
+        if (user.role == 'admin') {
+            let list = [
+                {function: analyticsFilterTable_0, id: 0, name: 'Прибыль по клиентам'},
+                {function: analyticsFilterTable_1, id: 1, name: 'Сводный по объёмам'},
+                {function: analyticsFilterTable_2, id: 2, name: 'По клиентам'},
+                {function: analyticsFilterTable_3, id: 3, name: 'По приветам'},
+                {function: analyticsFilterTable_4, id: 4, name: 'Отгрузки менеджеров'},
+                {function: analyticsFilterTable_5, id: 5, name: 'Баллы и бонусы'},
+                {function: analyticsFilterTable_6, id: 6, name: 'Проделанная работа'},
+            ]
+            
+            let current_block = list.filter((element) => element.id == object[0].last)[0];
+            $('#active_field').html(current_block.name)
+            return current_block.function(current_period_month);
+        } 
         if (user.role == 'manager') return analyticsFilterTable_1(current_period_month, false, true);
     }
 

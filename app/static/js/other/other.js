@@ -407,6 +407,8 @@ function сheckSelectedRadioBox() {
         if ($(`#${contactsFormInfo[i].id}`).prop('checked')) {
             createCardMenu(contactsFormInfo[i]);
             createCTButtons();
+            $('#admin_row, #addNewPerson').remove();
+            $('.mini_logo').removeClass('active');
         }
     }
 }

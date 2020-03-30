@@ -186,7 +186,7 @@ function createCardMenu(element, index = 0) {
                 }
                 if (getInfo[0] === 'account') {
                     titleObject[i].list.unshift(`Код: ${selectedLine.account.id}`);
-                    titleObject[i].list.push(`Счёт от ${selectedLine.items[0].Prefix} (${selectedLine.items[0].NDS}%)`)
+                    titleObject[i].list.push(`Счёт от ${selectedLine.items[0].Prefix}`)
 
                     if (selectedLine.account.Status == 'false' && selectedLine.account.Shipment == 'false') {
                         titleObject[i].list.push(`<span id="account_${selectedLine.account.id}" onclick="deleteAccountCard(this.id)" class="red">Удалить карточку</span>`)
@@ -1327,18 +1327,7 @@ function createCardMenu(element, index = 0) {
                             <tbody id="exposed_list">
                                 ${fillingProducts()}
                             </tbody>
-                            <tr>
-                                <td colspan="10" style="border: none; border-top: 1px solid #e9e9e9"></td>
-                                <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">НДС</span><span id="vat">${returnSpaces(Math.round(sum - vat))}</span></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="10" style="border: none;"></td>
-                                <td colspan="2" class="fz10">
-                                    <div class="flex jc-sb"><span class="gray">Без НДС</span><span id="without-vat">${returnSpaces(Math.round(vat))}</span></div>
-                                </td>
-                            </tr>
+                            
                             <tr>
                                 <td colspan="10" style="border: none;"></td>
                                 <td colspan="2" class="fz10">

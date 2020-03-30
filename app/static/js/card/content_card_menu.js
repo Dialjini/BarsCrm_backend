@@ -963,8 +963,8 @@ function invoicingContentCard(elem, data) {
             tbody.append(tr);
         }
 
-        const string = ['НДС', 'Без НДС', 'Общая'];
-        const stringID = ['vat', 'without-vat', 'total'];
+        const string = ['Общая'];
+        const stringID = ['total'];
 
         for (let i = 0; i < 3; i++) {
             tbody = tbody.add($('<tr>', {
@@ -1230,36 +1230,36 @@ function invoiceInTable(element) {
             let prefixAccount = null;
             let accountInUpperTable = $('#exposed_list .invoiled').attr('id');
 
-            if (accountInUpperTable != undefined) {
-                accountInUpperTable = accountInUpperTable.split('_')[1]
-                for (let i = 0; i < data.length; i++) {
-                    for (let j = 0; j < data[i].items.length; j++) {
-                        let account = data[i].items[j];
-                        if (account.Item_id == accountInUpperTable) {
-                            prefixAccount = account.Prefix;
-                        }
-                    }
-                }
-            } else {
-                for (let i = 0; i < data.length; i++) {
-                    for (let j = 0; j < data[i].items.length; j++) {
-                        let account = data[i].items[j];
-                        if (account.Item_id == element.id.split('_')[1]) {
-                            prefixAccount = account.Prefix;
-                        }
-                    }
-                }
-            }
+            // if (accountInUpperTable != undefined) {
+            //     accountInUpperTable = accountInUpperTable.split('_')[1]
+            //     for (let i = 0; i < data.length; i++) {
+            //         for (let j = 0; j < data[i].items.length; j++) {
+            //             let account = data[i].items[j];
+            //             if (account.Item_id == accountInUpperTable) {
+            //                 prefixAccount = account.Prefix;
+            //             }
+            //         }
+            //     }
+            // } else {
+            //     for (let i = 0; i < data.length; i++) {
+            //         for (let j = 0; j < data[i].items.length; j++) {
+            //             let account = data[i].items[j];
+            //             if (account.Item_id == element.id.split('_')[1]) {
+            //                 prefixAccount = account.Prefix;
+            //             }
+            //         }
+            //     }
+            // }
             
             let tr = $('<tr>', { class: 'product invoiled', id: `invoiled_${element.id.split('_')[1]}_product` });
             for (let i = 0; i < data.length; i++) {
                 for (let j = 0; j < data[i].items.length; j++) {
                     let account = data[i].items[j];
-                    if (account.Prefix == prefixAccount) {
+                    // if (account.Prefix == prefixAccount) {
                         if (account.Item_id == element.id.split('_')[1]) {
                             tr.append($('<td>', { id: `invoiled_${element.id.split('_')[1]}`, onclick: 'returnBack(this)', append:
-                            $('<img>', { src: '../static/images/returnBack.png', width: 12 })
-                        }))
+                                $('<img>', { src: '../static/images/returnBack.png', width: 12 })
+                            }))
                             let idProduct = element.id.split('_')[1];
                             let list = [
                                 {id: ``, html: account.Name}, {id: ``, html: account.Packing},
@@ -1296,13 +1296,13 @@ function invoiceInTable(element) {
                             $('#exposed_list .invoiled #amount_product').each(function(i, element) {
                                 sum += +deleteSpaces($(element).html())
                             });
-                            account.NDS = account.NDS[0] + account.NDS[1];
-                            let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
+                            // account.NDS = account.NDS[0] + account.NDS[1];
+                            // let vat = sum > 0 ? sum - ((sum * +account.NDS) / 100) : 0;
                             $('#total').html(returnSpaces(Math.round(sum)));
-                            $('#vat').html(returnSpaces(Math.round(sum - vat)));
-                            $('#without-vat').html(returnSpaces(Math.round(vat)));
+                            // $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                            // $('#without-vat').html(returnSpaces(Math.round(vat)));
                             break;
-                        }
+                        // }
                     }
                 }
             }
@@ -1371,12 +1371,12 @@ function calculationIndicators() {
                         for (let element of $('#exposed_list .invoiled')) {
                             sum += +deleteSpaces($(element).children()[11].innerHTML);
                         }
-                        data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
-                        let vat = sum > 0 ? deleteSpaces(sum - ((sum * +data[j].items[k].NDS) / 100)) : 0;
-                        currentVatValue = +data[j].items[k].NDS;
+                        // data[j].items[k].NDS = data[j].items[k].NDS[0] + data[j].items[k].NDS[1];
+                        // let vat = sum > 0 ? deleteSpaces(sum - ((sum * +data[j].items[k].NDS) / 100)) : 0;
+                        // currentVatValue = +data[j].items[k].NDS;
                         $('#total').html(returnSpaces(Math.round(sum)));
-                        $('#vat').html(returnSpaces(Math.round(sum - vat)));
-                        $('#without-vat').html(returnSpaces(Math.round(vat)));
+                        // $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                        // $('#without-vat').html(returnSpaces(Math.round(vat)));
                     }
                 });
             }
@@ -1439,10 +1439,10 @@ function recountPrice(element) {
     for (let i = 0; i < data_account.length; i++) {
         for (let j = 0; j < data_account[i].items.length; j++) {
             if (data_account[i].items[j].Item_id == dataProduct[1]) {
-                let vat = sum > 0 ? sum - ((sum * +data_account[i].items[j].NDS) / 100) : 0;
+                // let vat = sum > 0 ? sum - ((sum * +data_account[i].items[j].NDS) / 100) : 0;
                 $('#total').html(returnSpaces(Math.round(sum)));
-                $('#vat').html(returnSpaces(Math.round(sum - vat)));
-                $('#without-vat').html(returnSpaces(Math.round(vat)));
+                // $('#vat').html(returnSpaces(Math.round(sum - vat)));
+                // $('#without-vat').html(returnSpaces(Math.round(vat)));
                 break;
             }
         }

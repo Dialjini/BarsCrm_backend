@@ -1132,6 +1132,10 @@ body {
   font-size: 12px;
 }
 
+.page .centerBlock .container .info .card_menu .content #media {
+  flex-direction: column;
+}
+
 .page .centerBlock .container .info .card_menu .content select {
   margin-top: 15px;
   width: 200px;

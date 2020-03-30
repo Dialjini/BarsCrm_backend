@@ -239,7 +239,7 @@ const filterDelivery = [
 
 // Данные по категории 'Аналитика' (Название, Таблица с данными)
 const categoryInAnalytics = [
-    { id: 'analytics', name: 'Аналитика', active: true, lastCard: [] },
+    { id: 'analytics', name: 'Аналитика', active: true, lastCard: [], last: 0},
 ]
 
 const dataName = [
@@ -286,7 +286,7 @@ const subcategoryButtons = [
     ],
     [
         'Аналитика',
-        { id: 'analytics_reports', objectName: categoryInAnalytics, name: 'Прибыль по клиентам', class: 'field_with_modal' },
+        { id: 'analytics_reports', objectName: categoryInAnalytics, name: '', class: 'field_with_modal' },
     ]
 ];
 let filter_parameters = [ {name: 'Group_name', filter: ''}, {name: 'Name', filter: ''}, {name: 'stock_address', filter: ''} ];
