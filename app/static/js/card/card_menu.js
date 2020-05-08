@@ -334,7 +334,7 @@ function createCardMenu(element, index = 0) {
                 // Запрос для перевозчиков
                 // Такие же как и в доставке
                 // Можно привязывать их при makeRequest()
-                inputItems([])
+                inputItems([], 'carrier')
             }
             $.ajax({
                 url: '/getContacts',
@@ -414,6 +414,7 @@ function createCardMenu(element, index = 0) {
     });
     // Контентная часть Клиентов
     function clientContentCard(selectedLine) {
+        console.log(selectedLine);
         let content = $('<div>', { 
             class: 'row_card',
             append: $('<table>', {
@@ -572,30 +573,32 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                 </div>
-                <div class="area">
-                    <div class="history">
-                        <div class="title">
-                            <div>История обращений</div>
-                            <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
+                ${selectedLine.id != undefined ? `
+                    <div class="area">
+                        <div class="history">
+                            <div class="title">
+                                <div>История обращений</div>
+                                <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
+                            </div>
+                            <div class="messages">
+                                <table class="message">
+                                    <tbody id="messages"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="messages">
-                            <table class="message">
-                                <tbody id="messages"></tbody>
-                            </table>
+                        <div class="last_comment">
+                            <div class="title">
+                                <div>Последние комментарии</div>
+                                <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                            </div>
+                            <div class="messages">
+                                <table class="message">
+                                    <tbody id="comments"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="last_comment">
-                        <div class="title">
-                            <div>Последние комментарии</div>
-                            <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
-                        </div>
-                        <div class="messages">
-                            <table class="message">
-                                <tbody id="comments"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                ` : ''}
                 <div class="next">
                     <button class="btn btn-main" id="client" onclick="contractNext(this)">Выставить</button>
                 </div>`)
@@ -603,6 +606,8 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Поставщиков
     function providerContentCard(selectedLine) {
+        console.log(selectedLine);
+
         let content = $('<div>', {
             class: 'row_card',
             append: $('<table>', {
@@ -713,30 +718,32 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                 </div>
-                <div class="area">
-                    <div class="history">
-                        <div class="title">
-                            <div>История обращений</div>
-                            <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
+                ${selectedLine.id != undefined ? `
+                    <div class="area">
+                        <div class="history">
+                            <div class="title">
+                                <div>История обращений</div>
+                                <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
+                            </div>
+                            <div class="messages">
+                                <table class="message">
+                                    <tbody id="messages"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="messages">
-                            <table class="message">
-                                <tbody id="messages"></tbody>
-                            </table>
+                        <div class="last_comment">
+                            <div class="title">
+                                <div>Последние комментарии</div>
+                                <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                            </div>
+                            <div class="messages">
+                                <table class="message">
+                                    <tbody id="comments"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="last_comment">
-                        <div class="title">
-                            <div>Последние комментарии</div>
-                            <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
-                        </div>
-                        <div class="messages">
-                            <table class="message">
-                                <tbody id="comments"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                ` : ''}
                 <div class="next">
                     <button class="btn btn-main" id="provider" onclick="closeCardMenu(this.name)">Сохранить</button> 
                 </div>`)
@@ -744,6 +751,7 @@ function createCardMenu(element, index = 0) {
     }
     // Контентная часть Перевозчиков
     function carrierContentCard(selectedLine) {
+        console.log(selectedLine);
         function listView() {
             if (selectedLine.View == '') {
                 return `
@@ -899,30 +907,32 @@ function createCardMenu(element, index = 0) {
                         </div>
                     </div>
                 </div>
-                <div class="area">
-                    <div class="history">
-                        <div class="title">
-                            <div>История обращений</div>
-                            <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
+                ${selectedLine.id != undefined ? `
+                    <div class="area">
+                        <div class="history">
+                            <div class="title">
+                                <div>История обращений</div>
+                                <img id="add_new_comment" onclick="addComment()" class="add_something" src="static/images/add.png">
+                            </div>
+                            <div class="messages">
+                                <table class="message">
+                                    <tbody id="messages"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="messages">
-                            <table class="message">
-                                <tbody id="messages"></tbody>
-                            </table>
+                        <div class="last_comment">
+                            <div class="title">
+                                <div>Последние комментарии</div>
+                                <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                            </div>
+                            <div class="messages">
+                                <table class="message">
+                                    <tbody id="comments"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="last_comment">
-                        <div class="title">
-                            <div>Последние комментарии</div>
-                            <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
-                        </div>
-                        <div class="messages">
-                            <table class="message">
-                                <tbody id="comments"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                ` : ''}
                 <div class="next">
                     <button class="btn btn-main" id="carrier" onclick="contractNext(this)">Оформить Договор</button>
                 </div>`)
@@ -966,8 +976,12 @@ function createCardMenu(element, index = 0) {
                 edit = true;
             }
         }
-
-        if (selectedLine.account.Payment_history.length > 22) {
+        console.log(selectedLine.account)
+        let payment_history = selectedLine.account.Payment_history;
+        if (payment_history == null) {
+            payment_history = '';
+        }
+        if (payment_history.length > 22) {
             edit = true;
         }
 
@@ -1157,8 +1171,10 @@ function createCardMenu(element, index = 0) {
             let amount = deleteSpaces(selectedLine.account.Sum);
             let payment_amount = 0;
 
-            for (let i = 0; i < payment_list.length; i++) {
-                payment_amount += +deleteSpaces(payment_list[i].sum);
+            if (payment_list != null) {
+                for (let i = 0; i < payment_list.length; i++) {
+                    payment_amount += +deleteSpaces(payment_list[i].sum);
+                }
             }
             if (+amount <= +payment_amount) status_payment = true
             else if (+payment_amount == 0) status_payment = false

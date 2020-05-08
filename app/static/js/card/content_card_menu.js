@@ -1356,7 +1356,7 @@ function calculationIndicators() {
                     if ($(element).attr('id').split('_')[1] == data[j].items[k].Item_id) {
                         let totalSale       = ((+deleteSpaces($('#total_discount_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
                         let totalPrivet     = ((+deleteSpaces($('#total_privet_inv').val()) / +deleteSpaces($(`#invoiled_volume_${data[j].items[k].Item_id}`).val()) / count).toFixed(2));
-                        let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / all_volume / count).toFixed(2));
+                        let totalDelivery   = ((+deleteSpaces($('#total_delivery_inv').val()) / all_volume).toFixed(2));
                         let price_unit      = (+totalSale * -1 + +totalPrivet + +totalDelivery + +deleteSpaces($(`#product_cost_${data[j].items[k].Item_id}`).html())).toFixed(2);
 
                         $(`#calcSale_${data[j].items[k].Item_id}`).val(isNaN(totalSale) || totalSale == Infinity || totalSale == -Infinity ? '' : returnSpaces((+totalSale * -1).toFixed(2)));
@@ -1403,25 +1403,31 @@ function recountPrice(element) {
     } else {
         product = $(`#exposed_list #product_${dataProduct[1]}`);
     }
-
+    console.log(dataProduct, dataProductName)
     product.children().last().html(
         returnSpaces(Number((+deleteSpaces(product.children()[5].children[0].value) * +deleteSpaces(product.children()[6].innerHTML))
         + (+deleteSpaces(product.children()[7].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[8].children[0].value) * +deleteSpaces(product.children()[5].children[0].value) + +deleteSpaces(product.children()[9].children[0].value) * +deleteSpaces(product.children()[5].children[0].value))).toFixed(2))
     );
 
     let list = [
-        { id: 'total_discount_inv', type: 'calcSale' },
-        { id: 'total_privet_inv',   type: 'calcPrivet' },
-        { id: 'total_delivery_inv', type: 'calcDelivery' }
+        { number: 7, id: 'total_discount_inv', type: 'calcSale' },
+        { number: 8, id: 'total_privet_inv',   type: 'calcPrivet' },
+        { number: 9, id: 'total_delivery_inv', type: 'calcDelivery' }
     ]
 
     for (let i = 0; i < list.length; i++) {
-        if (dataProduct[0].includes(list[i].type)) {
+        if (dataProduct[0] == list[i].type) {
+            console.log(dataProduct[0], list[i].type)
             let other_total_sale = 0;
-            $('#exposed_list .invoiled').each(function(i, element) {
-                let first = +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val());
-                let second = +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val());
-                other_total_sale += (first * second);
+            $('#exposed_list .invoiled').toArray().forEach(function(element) {
+                let row = $(element).children();
+                let volume = +deleteSpaces(row[5].children[0].value);
+                let something = +deleteSpaces(row[list[i].number].children[0].value);
+                volume = volume == '' ? 0 : volume;
+                something = something == '' ? 0 : something;
+                // let first = +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#${dataProduct[0]}_${dataProduct[1]}`).val());
+                // let second = +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val()) == '' ? 0 : +deleteSpaces($(`#invoiled_volume_${dataProduct[1]}`).val());
+                other_total_sale += (volume * something);
             });
             if (list[i].id == 'total_discount_inv') {
                 other_total_sale *= -1;

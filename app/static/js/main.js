@@ -270,6 +270,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     let createOrSaveCard = (function() {
         return {
             getRequest: function (idData, request) {
+                console.log(idData, request)
                 $.ajax({
                     url: request,
                     type: 'GET',
@@ -602,17 +603,21 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             }
             if (count == array.length) items.pop();
         });
-        $.ajax({
-            url: '/addItems',
-            type: 'GET',
-            data: {category: data[0], id: card, item: JSON.stringify(items)},
-            dataType: 'html',
-            success: function() {}
-        });
+        console.log({category: data[0], id: card, item: JSON.stringify(items)})
+        if (data[0] != 'carrier') {
+            $.ajax({
+                url: '/addItems',
+                type: 'GET',
+                data: {category: data[0], id: card, item: JSON.stringify(items)},
+                dataType: 'html',
+                success: function() {}
+            });
+        }
     }
 
     let categ = data[0];
     function addMembersInfo(close) {
+        console.log(card);
         let members = [];
         if (card == 'new') {
             card = saveTableAndCard[1][1].length + 1;
@@ -649,6 +654,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
             }
             if (count == data.length - 1) members.pop();
         });
+        console.log({category: data[0], id: card, contacts: members})
         $.ajax({
             url: '/addContacts',
             type: 'GET',
@@ -717,7 +723,7 @@ let getCommentsInfo = (function() {
                 if (count == 2) {
                     return getComments();
                 }
-                console.log(list);
+                console.log({category: data[0], id: data[1], comments: JSON.stringify(list)});
                 $.ajax({
                     url: '/addMessages',
                     type: 'GET',
@@ -729,6 +735,7 @@ let getCommentsInfo = (function() {
                 });
             } else { getComments() }
             function getComments() {
+                if (data[1] == 'new') return;
                 $.ajax({
                     url: '/getMessages',
                     type: 'GET',
@@ -742,6 +749,7 @@ let getCommentsInfo = (function() {
         }
     }
     function inputComments(comments, data) {
+        console.log(comments, data);
         if (comments.length == 0) 
             addComment();
         else {
@@ -764,24 +772,18 @@ let getCommentsInfo = (function() {
             $(`[name="remove_last_comment"]`).fadeOut(0);
         }
         if (data[2] == 'search') {
-            if (data[0] == 'client') {
-                categoryInListClient[0].lastCard[0] = $('.card_menu');
-                categoryInListClient[0].active = true;
-                categoryInListProvider[0].active = false;
-                categoryInListCarrier[0].active = false;
-            } else if (data[0] == 'provider') {
-                categoryInListProvider[0].lastCard[0] = $('.card_menu');
-                categoryInListProvider[0].active = true;
-                categoryInListClient[0].active = false;
-                categoryInListCarrier[0].active = false;
-            } else if (data[0] == 'carrier') {
-                categoryInListCarrier[0].lastCard[0] = $('.card_menu');
-                categoryInListCarrier[0].active = true;
-                categoryInListClient[0].active = false;
-                categoryInListProvider[0].active = false;
-            } else {
-                alert('Что-то пошло не так!')
-            }
+            let list = [
+                {id: 'client', category: categoryInListClient},
+                {id: 'provider', category: categoryInListProvider},
+                {id: 'carrier', category: categoryInListCarrier},
+            ]
+            list.forEach(function (element) {
+                element.category[0].active = false;
+                if (element == data[0]) {
+                    element.category[0].lastCard[0] = $('.card_menu');
+                    element.category[0].active = true;
+                }
+            })
         
             linkCategory('category-0');
             linkField();
