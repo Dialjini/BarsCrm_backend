@@ -686,6 +686,13 @@ function contractContentCard(elem) {
                             let items_volume = JSON.parse(account_data.Item_ids);
                             let items = JSON.parse(account_data.Items_amount);
                             let items_name = [];
+                            let ids = JSON.parse(account_data.Item_ids).map(function(element) {
+                                return element.id;
+                            });
+                            let hello = JSON.parse(account_data.Hello);
+                            let sale = JSON.parse(account_data.Sale);
+                            let shipping = JSON.parse(account_data.Shipping);
+                            categoryInFinanceAccount[1][1]
                             for (let g = 0; g < items.length; g++) {
                                 for (t = 0; t < all_items.length; t++) {
                                     if (items[g].id === all_items[t].Item_id) {
@@ -693,7 +700,17 @@ function contractContentCard(elem) {
                                     }
                                 }
                             }
-                            console.log(account_data);
+                            let price_unit = [];
+                            accounts[i].items.forEach(function(item) {
+                                let index = 0;
+                                ids.forEach(function(id) {
+                                    if (item.Item_id == id) {
+                                        let cost = item.Cost;
+                                        price_unit.push((+deleteSpaces(cost) + +deleteSpaces(hello[index]) + +deleteSpaces(sale[index]) + +deleteSpaces(shipping[index])).toFixed(2));
+                                        index++;
+                                    }
+                                })
+                            })
                             tr += `
                             <tbody>
                                 <tr>
@@ -701,7 +718,7 @@ function contractContentCard(elem) {
                                     <td rowspan="${items.length}">${account_data.Date}</td>
                                     <td>${items_name[0]}</td>
                                     <td>${items_volume[0].volume}</td>
-                                    <td>${returnSpaces(items[0].amount)}</td>
+                                    <td>${returnSpaces(price_unit[0])}</td>
                                     <td rowspan="${items.length}">${returnSpaces(account_data.Sum)}</td>
                                     <td rowspan="${items.length}">${status}</td>
                                     <td rowspan="${items.length}">${returnSpaces(+hello_sum.toFixed(2))}</td>
@@ -714,7 +731,7 @@ function contractContentCard(elem) {
                                     <tr>
                                         <td>${items_name[k]}</td>
                                         <td>${items_volume[k].volume}</td>
-                                        <td>${returnSpaces(items[k].amount)}</td>
+                                        <td>${returnSpaces(price_unit[k])}</td>
                                     </tr>`
                             }
                             tbody += tr + '</tbody>';
