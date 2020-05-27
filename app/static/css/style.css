@@ -856,20 +856,20 @@ body {
   cursor: pointer;
 }
 
-.page .centerBlock .container .info .table #all_area, .page .centerBlock .container .info .table #cl_category, .page .centerBlock .container .info .table #pd_group, .page .centerBlock .container .info .table #pd_price, .page .centerBlock .container .info .table #pd_manager, .page .centerBlock .container .info .table #dl_customer, .page .centerBlock .container .info .table #dl_date, .page .centerBlock .container .info .table #dl_status, .page .centerBlock .container .info .table #an_status {
+.page .centerBlock .container .info .table #all_area, .page .centerBlock .container .info .table #all_name, .page .centerBlock .container .info .table #cl_category, .page .centerBlock .container .info .table #pd_group, .page .centerBlock .container .info .table #pd_price, .page .centerBlock .container .info .table #pd_manager, .page .centerBlock .container .info .table #dl_customer, .page .centerBlock .container .info .table #dl_date, .page .centerBlock .container .info .table #dl_status, .page .centerBlock .container .info .table #an_status {
   position: relative;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }
 
-.page .centerBlock .container .info .table #all_area .drop_arrow, .page .centerBlock .container .info .table #cl_category .drop_arrow, .page .centerBlock .container .info .table #pd_group .drop_arrow, .page .centerBlock .container .info .table #pd_price .drop_arrow, .page .centerBlock .container .info .table #pd_manager .drop_arrow, .page .centerBlock .container .info .table #dl_customer .drop_arrow, .page .centerBlock .container .info .table #dl_date .drop_arrow, .page .centerBlock .container .info .table #dl_status .drop_arrow, .page .centerBlock .container .info .table #an_status .drop_arrow {
+.page .centerBlock .container .info .table #all_area .drop_arrow, .page .centerBlock .container .info .table #all_name .drop_arrow, .page .centerBlock .container .info .table #cl_category .drop_arrow, .page .centerBlock .container .info .table #pd_group .drop_arrow, .page .centerBlock .container .info .table #pd_price .drop_arrow, .page .centerBlock .container .info .table #pd_manager .drop_arrow, .page .centerBlock .container .info .table #dl_customer .drop_arrow, .page .centerBlock .container .info .table #dl_date .drop_arrow, .page .centerBlock .container .info .table #dl_status .drop_arrow, .page .centerBlock .container .info .table #an_status .drop_arrow {
   -ms-flex-item-align: center;
       -ms-grid-row-align: center;
       align-self: center;
   margin-right: 10px;
 }
 
-.page .centerBlock .container .info .table #all_area .filter_list, .page .centerBlock .container .info .table #cl_category .filter_list, .page .centerBlock .container .info .table #pd_group .filter_list, .page .centerBlock .container .info .table #pd_price .filter_list, .page .centerBlock .container .info .table #pd_manager .filter_list, .page .centerBlock .container .info .table #dl_customer .filter_list, .page .centerBlock .container .info .table #dl_date .filter_list, .page .centerBlock .container .info .table #dl_status .filter_list, .page .centerBlock .container .info .table #an_status .filter_list {
+.page .centerBlock .container .info .table #all_area .filter_list, .page .centerBlock .container .info .table #all_name .filter_list, .page .centerBlock .container .info .table #cl_category .filter_list, .page .centerBlock .container .info .table #pd_group .filter_list, .page .centerBlock .container .info .table #pd_price .filter_list, .page .centerBlock .container .info .table #pd_manager .filter_list, .page .centerBlock .container .info .table #dl_customer .filter_list, .page .centerBlock .container .info .table #dl_date .filter_list, .page .centerBlock .container .info .table #dl_status .filter_list, .page .centerBlock .container .info .table #an_status .filter_list {
   display: none;
   position: absolute;
   width: 101%;
@@ -882,7 +882,7 @@ body {
   color: #26282f;
 }
 
-.page .centerBlock .container .info .table #all_area .filter_list .list li, .page .centerBlock .container .info .table #cl_category .filter_list .list li, .page .centerBlock .container .info .table #pd_group .filter_list .list li, .page .centerBlock .container .info .table #pd_price .filter_list .list li, .page .centerBlock .container .info .table #pd_manager .filter_list .list li, .page .centerBlock .container .info .table #dl_customer .filter_list .list li, .page .centerBlock .container .info .table #dl_date .filter_list .list li, .page .centerBlock .container .info .table #dl_status .filter_list .list li, .page .centerBlock .container .info .table #an_status .filter_list .list li {
+.page .centerBlock .container .info .table #all_area .filter_list .list li, .page .centerBlock .container .info .table #all_name .filter_list .list li, .page .centerBlock .container .info .table #cl_category .filter_list .list li, .page .centerBlock .container .info .table #pd_group .filter_list .list li, .page .centerBlock .container .info .table #pd_price .filter_list .list li, .page .centerBlock .container .info .table #pd_manager .filter_list .list li, .page .centerBlock .container .info .table #dl_customer .filter_list .list li, .page .centerBlock .container .info .table #dl_date .filter_list .list li, .page .centerBlock .container .info .table #dl_status .filter_list .list li, .page .centerBlock .container .info .table #an_status .filter_list .list li {
   font-weight: 500;
   padding: 5px;
   -webkit-transition: 0.3s all;
@@ -890,14 +890,14 @@ body {
   font-size: 12px;
 }
 
-.page .centerBlock .container .info .table #all_area .filter_list .list li:hover, .page .centerBlock .container .info .table #cl_category .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_group .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_price .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_manager .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_customer .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_date .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_status .filter_list .list li:hover, .page .centerBlock .container .info .table #an_status .filter_list .list li:hover {
+.page .centerBlock .container .info .table #all_area .filter_list .list li:hover, .page .centerBlock .container .info .table #all_name .filter_list .list li:hover, .page .centerBlock .container .info .table #cl_category .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_group .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_price .filter_list .list li:hover, .page .centerBlock .container .info .table #pd_manager .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_customer .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_date .filter_list .list li:hover, .page .centerBlock .container .info .table #dl_status .filter_list .list li:hover, .page .centerBlock .container .info .table #an_status .filter_list .list li:hover {
   cursor: pointer;
   -webkit-transition: 0.3s all;
   transition: 0.3s all;
   background-color: whitesmoke;
 }
 
-.page .centerBlock .container .info .table #all_area:hover, .page .centerBlock .container .info .table #cl_category:hover, .page .centerBlock .container .info .table #pd_group:hover, .page .centerBlock .container .info .table #pd_price:hover, .page .centerBlock .container .info .table #pd_manager:hover, .page .centerBlock .container .info .table #dl_customer:hover, .page .centerBlock .container .info .table #dl_date:hover, .page .centerBlock .container .info .table #dl_status:hover, .page .centerBlock .container .info .table #an_status:hover {
+.page .centerBlock .container .info .table #all_area:hover, .page .centerBlock .container .info .table #all_name:hover, .page .centerBlock .container .info .table #cl_category:hover, .page .centerBlock .container .info .table #pd_group:hover, .page .centerBlock .container .info .table #pd_price:hover, .page .centerBlock .container .info .table #pd_manager:hover, .page .centerBlock .container .info .table #dl_customer:hover, .page .centerBlock .container .info .table #dl_date:hover, .page .centerBlock .container .info .table #dl_status:hover, .page .centerBlock .container .info .table #an_status:hover {
   cursor: pointer;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;

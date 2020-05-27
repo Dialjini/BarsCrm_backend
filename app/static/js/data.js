@@ -6,7 +6,7 @@ const categoryInListClient = [
     [
         [
             { name: 'Код', width: 5 },
-            { name: 'Название', width: 20 },
+            { name: 'Наименование', width: 20 },
             { name: 'Область', width: 15 },
             { name: 'Район', width: 20 },
             { name: 'Категория', width: 15 },
@@ -156,7 +156,7 @@ const filterClient = [
     [
         [
             { name: 'Код', width: 5 },
-            { name: 'Название', width: 20 },
+            { name: 'Наименование', width: 20 },
             { name: 'Область', width: 15 },
             { name: 'Район', width: 20 },
             { name: 'Категория', width: 15 },

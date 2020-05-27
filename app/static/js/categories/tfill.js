@@ -61,6 +61,14 @@ let rowFilling = (object, id, table) => {
                         ${checkRole()}
                     </div>
                 </th>`;
+            } else if (i == 1 && id == 'client' || i == 1 && id == 'filter_client' || i == 2 && id == 'provider' || i == 2 && id == 'filter_provider') {
+                elementTr = `
+                <th id="all_name" onclick="selectFilterName(this)" width="${object[0][i].width}%">
+                    <div class="flex jc-sb">
+                        <span>${object[0][i].name}</span>
+                        <img src="static/images/dropmenu.svg" class="drop_down_img drop_arrow">
+                    </div>
+                </th>`
             } else if (i == 3 && id == 'client' || i == 1 && id == 'provider' || i == 1 && id == 'filter_provider' || i == 2 && id == 'carrier') {
                 elementTr = `
                 <th id="all_area" onclick="selectFilterArea(this)" width="${object[0][i].width}%">
@@ -1187,6 +1195,7 @@ let sortStatus = {
     product: {status: false, filter: null, last: null},
     price: {status: false, filter: null},
     area: {status: false, filter: null},
+    name: {status: false, filter: null},
     category: {status: false, filter: null, last: null},
     manager: {status: false, filter: null, last: null},
     customer: {status: false, filter: null, last: null},
@@ -1581,6 +1590,80 @@ function sortTableByManagersInAccount(element) {
         }
     }
 }
+function sortTableByName(filter, input = true) {
+    let newTableData;
+    if (saveTableAndCard[0].id == 'client') {
+        if (!sortStatus.manager.status && !sortStatus.category.status && !sortStatus.search_on_regions.status) {
+            if (filterClient[1][1] != undefined) filterClient[1].pop();
+            newTableData = categoryInListClient.slice();
+        } else {
+            newTableData = filterClient;
+        }
+    } else {
+        newTableData = saveTableAndCard.slice();
+    }
+    let filter_table = [];
+    let sort = filter.id == undefined ? filter : filter.id;
+
+    for (let i = 0; i < newTableData[1][1].length; i++) {
+        let oneName_data = [newTableData[1][1][i]]
+        for (let j = i + 1; j < newTableData[1][1].length; j++) {
+            if (newTableData[1][1][i].Name === newTableData[1][1][j].Name) {
+                oneName_data.push(newTableData[1][1][j]);
+                newTableData[1][1].splice(j, 1);
+                j--;
+            }
+        }
+        for (let k = 0; k < oneName_data.length; k++) {
+            filter_table.push(oneName_data[k]);
+        }
+    }
+    filter_table.sort(function (a, b) {
+        if (sort == 'max') {
+            if (a.Name < b.Name) return 1;
+            if (a.Name > b.Name) return -1;
+        } else {
+            if (a.Name > b.Name) return 1;
+            if (a.Name < b.Name) return -1;
+        }
+        return 0;
+    })
+    let filter_table_client = [];
+    for (let i = 0; i < filter_table.length; i++) {
+        if (filter_table[i].Category === 'Клиент') {
+            filter_table_client.push(filter_table[i]);
+            filter_table.splice(i, 1);
+            i--;
+        }
+    }
+    for (let i = 0; i < filter_table_client.length; i++) {
+        filter_table.unshift(filter_table_client[i]);
+    }
+    if (newTableData[1][1] != undefined) {
+        newTableData[1].pop();
+    }
+    newTableData[1].push(filter_table);
+
+    $('.table').remove();
+    $('.info').append(fillingTables(newTableData, true));
+
+    if (saveTableAndCard[0].id == 'client') {
+        sortStatus.name.status = true;
+        sortStatus.name.filter = sort;
+    }
+    
+    $('.centerBlock .header .cancel').remove();
+    if (input) {
+        $('.centerBlock .header').append(`
+            <div class="cancel">
+                <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
+            </div>
+        `)
+    }
+    setTimeout(function() {
+        $('#all_name .drop_arrow').removeClass('drop_active');
+    }, 150)
+}
 function sortTableByArea(filter, input = true) {
     let newTableData;
     if (saveTableAndCard[0].id == 'client') {
@@ -1962,6 +2045,37 @@ function selectFilterCategory(element) {
             class: 'filter_list',
             css: {'top': `${$(element).height() + 30}px`},
             append: listCategory()
+        }))
+        $('.filter_list').fadeIn(100);
+    }, 250);
+}
+function selectFilterName(element) {
+    let id = element.id;
+    function listArea() {
+        let ul = $('<ul>', { class: 'list'});
+        ul.append(`
+            <li id="min" onclick="sortTableByName(this)">От А до Я</li>
+            <li id="max" onclick="sortTableByName(this)">От Я до А</li>
+        `)
+        // получить список групп товаров
+        return ul;
+    }
+    $('.filter_list').fadeOut(200);
+    setTimeout(function() {
+        $('.filter_list').remove();
+    }, 200);
+    
+    if ($(`#${id} .drop_arrow`).hasClass('drop_active')) {
+        return $(`#${id} .drop_arrow`).removeClass('drop_active');
+    }
+
+    $(`.drop_arrow`).removeClass('drop_active');
+    $(`#${id} .drop_arrow`).addClass('drop_active');
+    setTimeout(function() {
+        $(element).append($('<div>', { 
+            class: 'filter_list',
+            css: {'top': `${$(element).height() + 30}px`},
+            append: listArea()
         }))
         $('.filter_list').fadeIn(100);
     }, 250);

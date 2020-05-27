@@ -401,6 +401,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
         getTableData(saveTableAndCard);
         return;
     }
+    console.log(id, close, elem, checkINN)
 
     for (let i = 0; i < idCardFields.length; i++) {
         if (data[0] == idCardFields[i].name) {
@@ -424,6 +425,86 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                 idData['provider_item_list'] = JSON.stringify(items);
             }
             additionalData(i);
+            console.log(idData);
+            if (id.includes('client_close_card_')) {
+                if (idData[`client_name`] == '' || idData[`client_name`] == null) {
+                    $('#preloader').remove();
+                    return $('.page').append($('<div>', { class: 'background' }).add(`
+                        <div class="modal_select">
+                            <div class="title">
+                                <span>Ошибка</span>
+                                <img onclick="closeModal()" src="static/images/cancel.png">
+                            </div>
+                            <div class="content">
+                                <div class="message">
+                                    <p style="font-size: 14px; color: #595959;">Наименование клиента должно быть указано!</p>
+                                </div>
+                            </div>
+                        </div>
+                    `));
+                }
+                if (idData[`client_region`] == '' || idData[`client_region`] == null) {
+                    $('#preloader').remove();
+                    return $('.page').append($('<div>', { class: 'background' }).add(`
+                        <div class="modal_select">
+                            <div class="title">
+                                <span>Ошибка</span>
+                                <img onclick="closeModal()" src="static/images/cancel.png">
+                            </div>
+                            <div class="content">
+                                <div class="message">
+                                    <p style="font-size: 14px; color: #595959;">Область/Край должен(а) быть выбран(а)!</p>
+                                </div>
+                            </div>
+                        </div>
+                    `));
+                }
+                if (idData[`client_area`] == '' || idData[`client_area`] == null) {
+                    $('#preloader').remove();
+                    return $('.page').append($('<div>', { class: 'background' }).add(`
+                        <div class="modal_select">
+                            <div class="title">
+                                <span>Ошибка</span>
+                                <img onclick="closeModal()" src="static/images/cancel.png">
+                            </div>
+                            <div class="content">
+                                <div class="message">
+                                    <p style="font-size: 14px; color: #595959;">Район должен быть выбран!</p>
+                                </div>
+                            </div>
+                        </div>
+                    `));
+                }
+                let clients = [];
+                $.ajax({
+                    url: '/getClients',
+                    type: 'GET',
+                    async: false,
+                    success: function(data) {
+                        clients = JSON.parse(data);
+                    }
+                })
+                let name = idData[`client_name`];
+                let region = idData[`client_region`];
+                for (let client of clients) {
+                    if (client.Oblast == region && client.Name == name && client.id != id.split('_')[3]) {
+                        $('#preloader').remove();
+                        return $('.page').append($('<div>', { class: 'background' }).add(`
+                            <div class="modal_select">
+                                <div class="title">
+                                    <span>Ошибка</span>
+                                    <img onclick="closeModal()" src="static/images/cancel.png">
+                                </div>
+                                <div class="content">
+                                    <div class="message">
+                                        <p style="font-size: 14px; color: #595959;">"${name}" уже есть в ${region}!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `));
+                    }
+                }   
+            }
             if (checkINN == 'check') {
                 for (let elem = 0; elem < categoryInListClient[1][1].length; elem++) {
                     if (categoryInListClient[1][1][elem].id == idData.client_data && (categoryInListClient[1][1][elem].Manager_id == null || categoryInListClient[1][1][elem].Manager_id == '')) {
@@ -443,6 +524,83 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     }
                 }
                 if (data[0] == 'client' || data[0] == 'carrier') {
+                    if (data[0] == 'client') {
+                        if (idData[`client_name`] == '' || idData[`client_name`] == null) {
+                            $('#preloader').remove();
+                            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px; color: #595959;">Наименование клиента должно быть указано!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                        }
+                        if (idData[`client_region`] == '' || idData[`client_region`] == null) {
+                            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px; color: #595959;">Область/Край должен(а) быть выбран(а)!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                        }
+                        if (idData[`client_area`] == '' || idData[`client_area`] == null) {
+                            return $('.page').append($('<div>', { class: 'background' }).add(`
+                                <div class="modal_select">
+                                    <div class="title">
+                                        <span>Ошибка</span>
+                                        <img onclick="closeModal()" src="static/images/cancel.png">
+                                    </div>
+                                    <div class="content">
+                                        <div class="message">
+                                            <p style="font-size: 14px; color: #595959;">Район должен быть выбран!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `));
+                        }
+                        let clients = [];
+                        $.ajax({
+                            url: '/getClients',
+                            type: 'GET',
+                            async: false,
+                            success: function(data) {
+                                clients = JSON.parse(data);
+                            }
+                        })
+                        let name = idData[`client_name`];
+                        let region = idData[`client_region`];
+                        for (let client of clients) {
+                            if (client.Oblast == region && client.Name == name && client.id != id.split('_')[3]) {
+                                $('#preloader').remove();
+                                return $('.page').append($('<div>', { class: 'background' }).add(`
+                                    <div class="modal_select">
+                                        <div class="title">
+                                            <span>Ошибка</span>
+                                            <img onclick="closeModal()" src="static/images/cancel.png">
+                                        </div>
+                                        <div class="content">
+                                            <div class="message">
+                                                <p style="font-size: 14px; color: #595959;">"${name}" уже есть в ${region}!</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `));
+                            }
+                        }
+                    }
                     if (isNaN(+idData[`${data[0]}_address`].slice(0, 6))) {
                         return $('.page').append($('<div>', { class: 'background' }).add(`
                                 <div class="modal_select">
@@ -827,6 +985,7 @@ function cancelSearch() {
         product: {status: false, filter: null, last: null},
         price: {status: false, filter: null},
         area: {status: false, filter: null},
+        name: {status: false, filter: null},
         category: {status: false, filter: null, last: null},
         manager: {status: false, filter: null, last: null},
         customer: {status: false, filter: null, last: null},

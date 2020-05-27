@@ -49,6 +49,7 @@ function createCardMenu(element, index = 0) {
         product: {status: false, filter: null, last: null},
         price: {status: false, filter: null},
         area: {status: false, filter: null},
+        name: {status: false, filter: null},
         category: {status: false, filter: null, last: null},
         manager: {status: false, filter: null, last: null},
         customer: {status: false, filter: null, last: null},
