@@ -278,7 +278,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     dataType: 'html',
                     success: function() {
                         addItemsInfo();
-                        addMembersInfo(close);
+                        addMembersInfo(close, idData);
                     }
                 });
             }
@@ -789,7 +789,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     }
 
     let categ = data[0];
-    function addMembersInfo(close) {
+    function addMembersInfo(close, idData) {
         let list = [
             {id: 'client', request: '/getClients'},
             {id: 'carrier', request: '/getCarriers'},
@@ -809,6 +809,16 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                 }
             })
         }
+        saveTableAndCard[1][1].forEach(function(element) {
+            if (current_request.id == 'carrier') {
+
+            } else {
+                if (element.Name == idData.client_name && element.Oblast == idData.client_region && element.Rayon == idData.client_area) {
+                    console.log(element)
+                    card = element.id;
+                }
+            }
+        })
         $('#member .member').each(function(i, element) {
             let current_id = $(element).attr('name').split('_')[1];
             let new_id = $(element).attr('id');
