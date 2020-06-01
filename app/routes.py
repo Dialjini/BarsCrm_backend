@@ -973,7 +973,7 @@ def getStocks():
 @app.route('/deleteContact', methods=['GET'])
 def deleteContact():
     if 'username' in session:
-        Contact = models.Contacts.query.filter_by(id=int(request.args['id'])).first()
+        Contact = models.Contacts.query.filter_by(Contact_id=int(request.args['id'])).first()
 
         db.session.delete(Contact)
         db.session.commit()
