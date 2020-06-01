@@ -331,3 +331,4 @@ const idCardFields = [
         'delivery_comment', 'delivery_contact_number', 'delivery_stock'], request: '/addDelivery'
     },
 ]
+let roles = [];

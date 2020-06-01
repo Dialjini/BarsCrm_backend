@@ -728,9 +728,24 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
     }
 
     function addItemsInfo() {
+        let list = [
+            {id: 'client', request: 'getClients'},
+            {id: 'carrier', request: 'getCarriers'},
+            {id: 'provider', request: 'getProviders'},
+        ]
+        let current_request = list.filter((element) => element.id == saveTableAndCard[0].id)[0];
         let items = [];
         if (card == 'new') {
-            card = saveTableAndCard[1][1].length + 1;
+            $.ajax({
+                url: current_request.request,
+                type: 'GET',
+                async: false,
+                success: function(data) {
+                    data = JSON.parse(data);
+                    saveTableAndCard[1][1] = data;
+                    card = saveTableAndCard[1][1].length;
+                }
+            })
         }
         $('#group tr').each(function(i, element) {
             if (data[0] == 'client') {
@@ -775,43 +790,53 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
 
     let categ = data[0];
     function addMembersInfo(close) {
-        console.log(card);
+        let list = [
+            {id: 'client', request: '/getClients'},
+            {id: 'carrier', request: '/getCarriers'},
+            {id: 'provider', request: '/getProviders'},
+        ]
+        let current_request = list.filter((element) => element.id == saveTableAndCard[0].id)[0];
         let members = [];
         if (card == 'new') {
-            card = saveTableAndCard[1][1].length + 1;
+            $.ajax({
+                url: current_request.request,
+                type: 'GET',
+                async: false,
+                success: function(data) {
+                    data = JSON.parse(data);
+                    saveTableAndCard[1][1] = data;
+                    card = saveTableAndCard[1][1].length;
+                }
+            })
         }
         $('#member .member').each(function(i, element) {
-            let visible_contact = $(element).children()[1].id.includes('visible') ? true : false;
-            if (categ == 'carrier') {
-                members.push({
-                    role: $(element).children()[0].children[0].children[0].value,
-                    last_name: $(element).children()[0].children[0].children[1].value,
-                    first_name: $(element).children()[0].children[0].children[2].value,
-                    car: $(element).children()[0].children[0].children[3].value,
-                    phone: $(element).children()[0].children[0].children[4].value,
-                    phone_two: $(element).children()[0].children[0].children[5].value,
-                    email: $(element).children()[0].children[0].children[6].value,
-                    visible: visible_contact
-                })
+            let current_id = $(element).attr('name').split('_')[1];
+            let new_id = $(element).attr('id');
+            let temp = {};
+            let visible = $(element).children()[1].id.includes('visible') ? true : false;
+            let variables = ['role', 'last_name', 'first_name', 'car', 'phone', 'phone_two', 'email'];
+            let type = current_id == 'new' ? `#${new_id}` : `[name="contact_${current_id}"]`
+            variables.forEach((element) => temp[element] = $(`${type} [name="${element}"]`).val());
+            temp['visible'] = visible;
+            temp['id'] = current_id;
+            if (temp.car == undefined) temp.car = 'null';
+            console.log(temp);
+            if (temp.id == 'new') {
+                members.push(temp)
             } else {
-                members.push({
-                    role: $(element).children()[0].children[0].children[0].value,
-                    last_name: $(element).children()[0].children[0].children[1].value,
-                    first_name: $(element).children()[0].children[0].children[2].value,
-                    car: 'null',
-                    phone: $(element).children()[0].children[0].children[3].value,
-                    phone_two: $(element).children()[0].children[0].children[4].value,
-                    email: $(element).children()[0].children[0].children[5].value,
-                    visible: visible_contact
-                })
+                $.ajax({
+                    url: '/editContact',
+                    type: 'GET',
+                    data: {id: temp.id, first_name: temp.first_name, last_name: temp.last_name, role: temp.role, car: temp.car,
+                           phone: temp.phone, phone_two: temp.phone_two, email: temp.email, visible: temp.visible},
+                    dataType: 'html',
+                    success: function(data) {
+                        console.log(data);
+                    }
+                });
             }
-            let data = Object.keys(members[0]);
-            let count = 0;
-            for (let i = 0; i < data.length - 1; i++) {
-                if (members[members.length - 1][data[i]] == '') count++;
-            }
-            if (count == data.length - 1) members.pop();
         });
+        
         console.log({category: data[0], id: card, contacts: members})
         $.ajax({
             url: '/addContacts',
@@ -1009,7 +1034,8 @@ function searchRegionFill(element) {
         if (listData[i].id == saveTableAndCard[0].id) {
             for (let j = 0; j < data.length; j++) {
                 let string = String(data[j][listData[i].list]).toLowerCase();
-                if (string.includes(search.toLowerCase())) {
+                console.log(string, search.toLowerCase())
+                if (string == search.toLowerCase()) {
                     searchCards.push(data[j]);
                 }
             }

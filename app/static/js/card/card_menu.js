@@ -337,6 +337,7 @@ function createCardMenu(element, index = 0) {
                 // Можно привязывать их при makeRequest()
                 inputItems([], 'carrier')
             }
+            console.log({category: category, id: idElement});
             $.ajax({
                 url: '/getContacts',
                 type: 'GET',

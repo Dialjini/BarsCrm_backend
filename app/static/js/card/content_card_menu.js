@@ -867,7 +867,24 @@ function downloadDocument(elem) {
     preloader = document.getElementById("preloader_preload");
 
     let data = $(elem).attr('name').split('_');
-    if (data[1] == 'new') data[1] = saveTableAndCard[1][1].length + 1;
+    let list = [
+        {id: 'client', request: '/getClients'},
+        {id: 'carrier', request: '/getCarriers'},
+        {id: 'provider', request: '/getProviders'},
+    ]
+    let current_request = list.filter((element) => element.id == saveTableAndCard[0].id);
+    if (data[1] == 'new') {
+        $.ajax({
+            url: current_request.request,
+            type: 'GET',
+            async: false,
+            success: function(data_) {
+                data_ = JSON.parse(data_);
+                saveTableAndCard[1][1] = data_;
+                data[1] = saveTableAndCard[1][1].length + 1;
+            }
+        })
+    }
     let select_cusmoter = $('#select_cusmoter').val()
     if (data[0] == 'client') {
         $.ajax({
@@ -1730,8 +1747,9 @@ function showOrHideInfo(id) {
 // Добавление контакта в карточках, мб переделать в одну функцию
 function addMember(id = 'client', selectedLine = '') {
     if (selectedLine == '') {
-        selectedLine = {role: '', Number: '', Phone_two: '', Last_name: '', Name: '', Email: '', Car: '', visible: true};
+        selectedLine = {role: '', Number: '', Phone_two: '', Last_name: '', Name: '', Email: '', Car: '', visible: true, Contact_id: 'new', Position: 'Не выбрана'};
     }
+    console.log(selectedLine);
     if (id === 'carrier') category = {class: 'car', member: 'delivery', placeholder: 'Транспорт', select: selectedLine.Car};
     else category = {class: 'phone', member: '', placeholder: 'Телефон #1', select: selectedLine.Number};
     let count_members = 0;
@@ -1739,17 +1757,18 @@ function addMember(id = 'client', selectedLine = '') {
         count_members++;
     });
     function fillListRole() {
-        let options = `<option disabled selected value="Не выбрана">Должность</option>`;
-        let roles;
-        $.ajax({
-            url: '/getRoles',
-            type: 'GET',
-            dataType: 'html',
-            async: false,
-            success: function(result) {
-                roles = JSON.parse(result);
-            }
-        });
+        let options = `<option value="Не выбрана">Должность</option>`;
+        if (roles.length == 0) {
+            $.ajax({
+                url: '/getRoles',
+                type: 'GET',
+                dataType: 'html',
+                async: false,
+                success: function(result) {
+                    roles = JSON.parse(result);
+                }
+            });
+        }
         for (let i = 0; i < roles.length; i++) {
             if (selectedLine.Position == roles[i].Name) {
                 options += `<option selected value="${roles[i].Name}">${roles[i].Name}</option>`
@@ -1761,31 +1780,33 @@ function addMember(id = 'client', selectedLine = '') {
     }
     function carrierPhone() {
         if (id === 'carrier') {
-            return `<input placeholder="Телефон #1" class="phone" id="phone" onchange="saveCard()" value="${selectedLine.Number}">
-                    <input placeholder="Телефон #2" class="phone" id="phone_two" onchange="saveCard()" value="${selectedLine.Phone_two}">`
+            return `<input placeholder="Телефон #1" class="phone" name="phone" onchange="saveCard()" value="${selectedLine.Number}">
+                    <input placeholder="Телефон #2" class="phone" name="phone_two" onchange="saveCard()" value="${selectedLine.Phone_two}">`
         } else {
-            return `<input placeholder="Телефон #2" class="phone" id="phone_two" onchange="saveCard()" value="${selectedLine.Phone_two}">`;
+            return `<input placeholder="Телефон #2" class="phone" name="phone_two" onchange="saveCard()" value="${selectedLine.Phone_two}">`;
         }
     }
     $('#member').prepend($('<div>', {
         class: `member ${category.member}`,
         id: `member_${count_members}`,
+        name: `contact_${selectedLine.Contact_id}`,
         append: $('<div>', {
             class: 'm_info',
             append: $('<div>', {
                 class: 'top',
                 append: $('<select>', {
+                    name: 'role',
                     css: {
                         'margin-top': '10px'
                     },
                     append: fillListRole()
                 }).add(
-                    `
-                     <input placeholder="Фамилия" class="last_name" id="last_name" onchange="saveCard()" value="${selectedLine.Last_name == null ? '' : selectedLine.Last_name}" type="text">
-                     <input placeholder="Имя Отчество" class="first_name" id="first_name" onchange="saveCard()" value="${selectedLine.Name == null ? '' : selectedLine.Name}" type="name">
-                     <input placeholder="${category.placeholder}" class="${category.class}" id="${category.class}" onchange="saveCard()" value="${category.select}">
-                     ${carrierPhone()}
-                     <input placeholder="Почта" class="email" id="email" onchange="saveCard()" onblur="checkEmail()" value="${selectedLine.Email == null ? '' : selectedLine.Email}" type="email">
+                    `   <input placeholder="Фамилия" class="last_name" name="last_name" onchange="saveCard()" value="${selectedLine.Last_name == null ? '' : selectedLine.Last_name}" type="text">
+                        <input placeholder="Имя Отчество" class="first_name" name="first_name" onchange="saveCard()" value="${selectedLine.Name == null ? '' : selectedLine.Name}" type="name">
+                        <input placeholder="${category.placeholder}" class="${category.class}" name="${category.class}" onchange="saveCard()" value="${category.select}">
+                        ${carrierPhone()}
+                        <input placeholder="Почта" class="email" name="email" onchange="saveCard()" onblur="checkEmail()" value="${selectedLine.Email == null ? '' : selectedLine.Email}" type="email">
+                        <img id="delete_${selectedLine.Contact_id}" onclick="deleteThisContact(this.id)" style="width: 14px; position: relative; top: 1px" src="../static/images/close.svg" alt="Удалить">
                     `)
             })
         }).add($('<div>', { class: 'visible', id: `visible_${count_members}`, onclick: 'visOrHidContact(this.id)', append:
@@ -1805,6 +1826,36 @@ function addMember(id = 'client', selectedLine = '') {
     }
     saveCard();
 }
+function deleteThisContact(id) {
+    let current_id = id.split('_')[1];
+    if (current_id != 'new')
+        $.ajax({
+            url: '/deleteContact',
+            type: 'GET',
+            data: {id: current_id},
+            success: function(data) {
+                if (data == 'OK') {
+                    $(`#${id}`).parent().parent().parent().remove();
+                } else {
+                    $('#preloader').remove();
+                    return $('.page').append($('<div>', { class: 'background' }).add(`
+                        <div class="modal_select">
+                            <div class="title">
+                                <span>Ошибка</span>
+                                <img onclick="closeModal()" src="static/images/cancel.png">
+                            </div>
+                            <div class="content">
+                                <div class="message">
+                                    <p style="font-size: 14px; color: #595959;">Что-то пошло не так!</p>
+                                </div>
+                            </div>
+                        </div>
+                    `));
+                }
+            }
+        })
+    else $(`#${id}`).parent().parent().parent().remove();
+}
 // Скрытие/Показ контакта
 function visOrHidContact(idElem) {
     let id = idElem.split('_');
@@ -1812,13 +1863,13 @@ function visOrHidContact(idElem) {
         $(`#${idElem}`).attr('id', `hidden_${id[1]}`);
         $(`#member_${id[1]}`).addClass('hidden');
 
-        $(`#member_${id[1]} #role`).attr('disabled', 'disabled')
-        $(`#member_${id[1]} #phone`).attr('disabled', 'disabled')
-        $(`#member_${id[1]} #phone_two`).attr('disabled', 'disabled')
-        $(`#member_${id[1]} #car`).attr('disabled', 'disabled')
-        $(`#member_${id[1]} #last_name`).attr('disabled', 'disabled')
-        $(`#member_${id[1]} #first_name`).attr('disabled', 'disabled')
-        $(`#member_${id[1]} #email`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="role"]`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="phone"]`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="phone_two"]`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="car"]`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="last_name"]`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="first_name"]`).attr('disabled', 'disabled')
+        $(`#member_${id[1]} [name="email"]`).attr('disabled', 'disabled')
         $(`#hidden_${id[1]}`).empty();
         $(`#hidden_${id[1]}`).append($('<img>', { src: '../static/images/hidden.png' }));
 
@@ -1828,13 +1879,13 @@ function visOrHidContact(idElem) {
         $(`#${idElem}`).attr('id', `visible_${id[1]}`);
         $(`#member_${id[1]}`).removeClass('hidden');
 
-        $(`#member_${id[1]} #role`).removeAttr('disabled')
-        $(`#member_${id[1]} #car`).removeAttr('disabled')
-        $(`#member_${id[1]} #phone`).removeAttr('disabled')
-        $(`#member_${id[1]} #phone_two`).removeAttr('disabled')
-        $(`#member_${id[1]} #last_name`).removeAttr('disabled')
-        $(`#member_${id[1]} #first_name`).removeAttr('disabled')
-        $(`#member_${id[1]} #email`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="role"]`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="car"]`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="phone"]`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="phone_two"]`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="last_name"]`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="first_name"]`).removeAttr('disabled')
+        $(`#member_${id[1]} [name="email"]`).removeAttr('disabled')
         $(`#visible_${id[1]}`).empty();
         $(`#visible_${id[1]}`).append($('<img>', { src: '../static/images/visible.png' }));
 
@@ -1846,12 +1897,13 @@ function visOrHidContact(idElem) {
 function checkEmail() {
     let listEmail = [];
     $('#member .member').each(function(i, element) {
-        let email = $(element).children().children().children().last()[0];
-        let value = email.value;
+        let current_id = $(element).attr('name').split('_')[1];
+        let value = $(`[name="contact_${current_id}"] [name="email"]`).val();
         if (value == '') {
             listEmail.push('true');
             return false;
         }
+        console.log(value);
         let check = value.match(/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/)
         if (check == null) {
             $(email).addClass('wrong_input');
