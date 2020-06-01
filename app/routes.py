@@ -659,16 +659,17 @@ def fixDelivery():
 def getContacts():
     if 'username' in session:
         if request.args['category'] == 'client':
-            client = request.args['id']
+            client = int(request.args['id'])
             Client = models.Client.query.filter_by(id=client).first()
             return table_to_json(models.Contacts.query.filter_by(Owner=Client).all())
         elif request.args['category'] == 'provider':
-            provider = request.args['id']
+            provider = int(request.args['id'])
             Provider = models.Provider.query.filter_by(id=provider).first()
             return table_to_json(models.Contacts.query.filter_by(Provider=Provider).all())
         elif request.args['category'] == 'carrier':
-            carrier = request.args['id']
+            carrier = int(request.args['id'])
             Carrier = models.Provider.query.filter_by(id=carrier).first()
+            print(Carrier)
             return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
         else:
             return 'ERROR 400 BAD REQUEST'
