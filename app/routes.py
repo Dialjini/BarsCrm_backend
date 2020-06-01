@@ -152,9 +152,9 @@ def index():
         print("Not logged in")
 
     if 'username' in session:
-        return render_template('index.html', last_update=4142)
+        return render_template('index.html', last_update=4162)
     else:
-        return render_template('login.html', last_update=3014)
+        return render_template('login.html', last_update=3019)
 
 
 @app.route('/getAllTasks')
@@ -970,25 +970,31 @@ def getStocks():
         return redirect('/', code=302)
 
 
+@app.route('/deleteContact', methods=['GET'])
+def deleteContact():
+    if 'username' in session:
+        Contact = models.Contacts.query.filter_by(id=int(request.args['id'])).first()
+
+        db.session.delete(Contact)
+        db.session.commit()
+
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
     if 'username' in session:
         if request.args['category'] == 'client':
             Owner = models.Client.query.filter_by(id=request.args['id']).first()
-            del_contacts = models.Contacts.query.filter_by(Client_id=request.args['id']).all()
         elif request.args['category'] == 'provider':
             Owner = models.Provider.query.filter_by(id=request.args['id']).first()
-            del_contacts = models.Contacts.query.filter_by(Provider_id=request.args['id']).all()
         elif request.args['category'] == 'carrier':
             Owner = models.Carrier.query.filter_by(id=request.args['id']).first()
-            del_contacts = models.Contacts.query.filter_by(Carrier_id=request.args['id']).all()
         else:
             return '400 Bad request'
 
-        for i in del_contacts:
-            db.session.delete(i)
-
-        Contacts = []
         args = json.loads(request.args['contacts'])
         for i in args:
             Contact = models.Contacts()
@@ -1006,8 +1012,7 @@ def addContacts():
                 Contact.Provider_id = Owner.id
             elif request.args['category'] == 'carrier':
                 Contact.Carrier_id = Owner.id
-            Contacts.append(Contact)
-        Owner.Contacts = Contacts
+            Owner.Contacts.append(Contact)
         db.session.commit()
 
         return 'OK'
