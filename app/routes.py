@@ -669,7 +669,6 @@ def getContacts():
         elif request.args['category'] == 'carrier':
             carrier = int(request.args['id'])
             Carrier = models.Carrier.query.filter_by(id=carrier).first()
-            print(Carrier)
             return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
         else:
             return 'ERROR 400 BAD REQUEST'
