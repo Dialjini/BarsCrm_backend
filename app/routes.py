@@ -994,7 +994,7 @@ def editContact():
         Contact.Phone_two = i['phone_two']
         Contact.Email = i['email']
         Contact.Position = i['role']
-        Contact.Visible = bool(i['visible'])
+        Contact.Visible = bool(json.loads(i['visible']))
         Contact.Car = i['car']
 
         db.session.commit()
