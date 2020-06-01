@@ -983,6 +983,27 @@ def deleteContact():
         return redirect('/', code=302)
 
 
+@app.route('/editContact', methods=['GET'])
+def editContact():
+    if 'username' in session:
+        i = request.args
+        Contact = models.Contacts.query.filter_by(Contact_id=int(i['id'])).first()
+        Contact.Name = i['first_name']
+        Contact.Last_name = i['last_name']
+        Contact.Number = i['phone']
+        Contact.Phone_two = i['phone_two']
+        Contact.Email = i['email']
+        Contact.Position = i['role']
+        Contact.Visible = i['visible']
+        Contact.Car = i['car']
+
+        db.session.commit()
+
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/addContacts', methods=['GET'])
 def addContacts():
     if 'username' in session:
