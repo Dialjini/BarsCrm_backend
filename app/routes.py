@@ -668,7 +668,7 @@ def getContacts():
             return table_to_json(models.Contacts.query.filter_by(Provider=Provider).all())
         elif request.args['category'] == 'carrier':
             carrier = int(request.args['id'])
-            Carrier = models.Provider.query.filter_by(id=carrier).first()
+            Carrier = models.Carrier.query.filter_by(id=carrier).first()
             print(Carrier)
             return table_to_json(models.Contacts.query.filter_by(Carrier=Carrier).all())
         else:
