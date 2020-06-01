@@ -1034,7 +1034,7 @@ def addContacts():
             elif request.args['category'] == 'carrier':
                 Contact.Carrier_id = Owner.id
             Owner.Contacts.append(Contact)
-            db.session.commit()
+        db.session.commit()
 
         return 'OK'
     else:
