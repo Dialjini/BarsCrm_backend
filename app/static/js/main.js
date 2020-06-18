@@ -485,9 +485,10 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                     }
                 })
                 let name = idData[`client_name`];
-                let region = idData[`client_region`];
+                console.log(idData);
+                let area = idData[`client_area`];
                 for (let client of clients) {
-                    if (client.Oblast == region && client.Name == name && client.id != id.split('_')[3]) {
+                    if (client.Rayon == area && client.Name == name && client.id != id.split('_')[3]) {
                         $('#preloader').remove();
                         return $('.page').append($('<div>', { class: 'background' }).add(`
                             <div class="modal_select">
@@ -497,7 +498,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                 </div>
                                 <div class="content">
                                     <div class="message">
-                                        <p style="font-size: 14px; color: #595959;">"${name}" уже есть в ${region}!</p>
+                                        <p style="font-size: 14px; color: #595959;">"${name}" уже есть в районе ${area}!</p>
                                     </div>
                                 </div>
                             </div>
@@ -581,9 +582,9 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                             }
                         })
                         let name = idData[`client_name`];
-                        let region = idData[`client_region`];
+                        let area = idData[`client_area`];
                         for (let client of clients) {
-                            if (client.Oblast == region && client.Name == name && client.id != id.split('_')[3]) {
+                            if (client.Rayon == area && client.Name == name && client.id != id.split('_')[3]) {
                                 $('#preloader').remove();
                                 return $('.page').append($('<div>', { class: 'background' }).add(`
                                     <div class="modal_select">
@@ -593,7 +594,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                                         </div>
                                         <div class="content">
                                             <div class="message">
-                                                <p style="font-size: 14px; color: #595959;">"${name}" уже есть в ${region}!</p>
+                                                <p style="font-size: 14px; color: #595959;">"${name}" уже есть в районе ${area}!</p>
                                             </div>
                                         </div>
                                     </div>
