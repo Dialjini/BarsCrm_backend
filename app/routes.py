@@ -5,7 +5,7 @@ from flask import render_template, redirect, session, request, send_from_directo
 from app import models, db, reqs, DocCreator, xlsx_creator
 from flask_socketio import SocketIO, emit
 import json
-import os
+import os, io
 from datetime import datetime
 
 socketio = SocketIO(app)
@@ -261,7 +261,7 @@ def getManagerStat():
 @app.route('/updateRegions', methods=['GET'])
 def updateRegions():
     js = request.args['json']
-    with open(os.path.abspath(os.path.dirname(__file__) + '/static/js/json/regions.json'), 'w', encoding='utf-8') as file:
+    with io.open(os.path.abspath(os.path.dirname(__file__) + '/static/js/json/regions.json'), 'w', encoding='utf8') as file:
         # json.dump(js, file)
         file.write(js)
 
