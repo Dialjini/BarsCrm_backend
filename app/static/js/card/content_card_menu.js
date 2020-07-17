@@ -1640,7 +1640,7 @@ function addComment(manager = '', data, last = false) {
                         <select onselect="saveCard()" id="comment_role" class="m_role">
                             <option value="Не указано" selected disabled>Не указано</option>
                             ${getRoleList()}
-                        <select>
+                        </select>
                     </td>`
             })
         );

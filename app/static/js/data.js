@@ -332,3 +332,6 @@ const idCardFields = [
     },
 ]
 let roles = [];
+let client_all_data = [];
+let provider_all_data = [];
+let carrier_all_data = [];

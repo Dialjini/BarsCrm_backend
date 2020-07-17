@@ -507,8 +507,120 @@ function persons() {
     $('#filter_admin').remove();
     adminPanel();
 }
+function add_regions() {
+    $('._block, .table, #addNewPerson, #filter_admin, .add_new_regions, .add_something_r').remove();
+
+    function readTextFile(file, callback) {
+        var rawFile = new XMLHttpRequest();
+        rawFile.overrideMimeType("application/json");
+        rawFile.open("GET", file, true);
+        rawFile.onreadystatechange = function() {
+            if (rawFile.readyState === 4 && rawFile.status == "200") {
+                callback(rawFile.responseText);
+            }
+        }
+        rawFile.send(null);
+    }
+
+    let promise = new Promise((resolve, reject) => {
+        $('body').append(`
+            <div id="preloader">
+                <div id="preloader_preload"></div>
+            </div>
+        `)
+        preloader = document.getElementById("preloader_preload");
+        readTextFile('../static/js/json/regions.json', function(text){ 
+            let data = JSON.parse(text);
+            resolve(data)
+        });
+    })
+
+    promise.then(result => {
+        $('#loading').remove();
+        setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+
+        console.log(result);
+        $('.info').append(`<div class="add_new_regions">
+            <button class="btn">Добавить область</button>
+            <button class="btn">Добавить район</button>
+        </div>`)
+
+        $('.add_new_regions button:nth-child(2)').click(function() {
+            $('.add_new_regions button').removeClass('btn-main');
+            $('.add_something_r').remove();
+
+            $(this).addClass('btn-main');
+
+            $('.info').append(`
+                <div class="add_something_r" style="margin-top: 30px">
+                    <select style="outline: none; border: 1px solid #d2d2d2; border-radius: 5px; color: #3a3a3a; padding: 5px 10px; font-family: 'Montserrat', sans-serif;">
+                        <option selected disabled>Выберите область</option>
+                        ${result.reduce((result, element) => result + `
+                            <option>${element.region}</option>
+                        `, '')}
+                    </select>
+                    <div style="margin-top: 30px;">
+                        <input type="text" style="width: 200px; border: 1px solid #d2d2d2; padding: 5px 10px; border-radius: 5px; outline: none; font-family: 'Montserrat', sans-serif; margin-right: 15px;" placeholder="Введите название района">
+                        <button class="btn btn-main">Добавить</button>
+                    </div>
+                </div>
+            `)
+            $('.add_something_r button.btn').click(function() {
+                const region = $('.add_something_r select').val();
+                const area = $('.add_something_r input[type="text"]').val();
+                if (region == '' || area == '') return;
+                console.log(region, area);
+                let c_region = result.find(element => element.region === region);
+                if (!c_region) return;
+                c_region.areas.push(area);
+                sort()
+                console.log(result);
+            })
+        })
+        $('.add_new_regions button:first-child').click(function() {
+            $('.add_new_regions button').removeClass('btn-main');
+            $('.add_something_r').remove();
+
+            $(this).addClass('btn-main');
+
+            $('.info').append(`
+                <div class="add_something_r" style="margin-top: 30px">
+                    <input type="text" style="width: 200px; border: 1px solid #d2d2d2; padding: 5px 10px; border-radius: 5px; outline: none; font-family: 'Montserrat', sans-serif; margin-right: 15px;" placeholder="Введите название области">
+                    <button class="btn btn-main">Добавить</button>
+                </div>
+            `)
+
+            $('.add_something_r button.btn').click(function() {
+                const value = $('.add_something_r input').val();
+                result.push({region: value, areas: []})
+                sort()
+                console.log(result);
+            })
+        })
+        function sort() {
+            result.sort((a, b) => {
+                if (a.region > b.region) return 1;
+                if (a.region < b.region) return -1;
+                return 0;
+            });
+            result.forEach(element => {
+                element.areas.sort((a, b) => {
+                    if (a > b) return 1;
+                    if (a < b) return -1;
+                    return 0;
+                });
+                console.log(element.areas);
+            })
+        }
+    })
+
+    activeThisField('add_new');
+    
+}
 function items() {
     $('._block').remove();
+    $('.add_new_regions, .add_something_r').remove();
+
     $.ajax({
         url: '/getStockTable',
         type: 'GET',
@@ -785,6 +897,7 @@ function activeAdmin() {
 }
 function positions() {
     $('._block').remove();
+    $('.add_new_regions, .add_something_r').remove();
     $('#filter_admin').remove();
     $.ajax({
         url: '/getRoles',
@@ -825,7 +938,7 @@ function positions() {
     });
 }
 function activeThisField(field) {
-    const fields = ['persons', 'positions', 'items'];
+    const fields = ['persons', 'positions', 'items', 'add_new'];
     for (let i = 0; i < fields.length; i++) {
         $(`#${fields[i]}`).removeClass('active');
         if (fields[i] == field) {
@@ -895,6 +1008,7 @@ function adminPanel(close = '') {
                             <div class="field active" id="persons" onclick="persons()">Сотрудники</div>
                             <div class="field" id="positions" onclick="positions()">Должности</div>
                             <div class="field" id="items" onclick="items()">Редактирование товаров</div>
+                            <div class="field" id="add_new" onclick="add_regions()">Добавление обл/районов</div>
                         </div>
                         <div class="category">АДМИН ПАНЕЛЬ</div>
                     </div>
@@ -918,6 +1032,8 @@ function adminPanel(close = '') {
 function addNewPerson() {
     $('#addNewPerson').remove();
     $('.table, .card_menu').remove();
+    $('.add_new_regions').remove();
+    
     $('.info').append(`
     <div class="card_menu persons" id="card_menu">
         <div class="title">

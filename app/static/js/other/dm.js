@@ -1,6 +1,15 @@
 function createRegionMenu() {
     let regions = [];
-    let data = saveTableAndCard[1][1];
+    let c_data;
+    if (saveTableAndCard[0].id == 'client') {
+        c_data = client_all_data
+    } else if (saveTableAndCard[0].id == 'provider') {
+        c_data = provider_all_data
+    } else if (saveTableAndCard[0].id == 'provider') {
+        c_data = carrier_all_data
+    }
+    let data = c_data.length > 0 ? c_data : saveTableAndCard[1][1];
+    console.log(c_data.length);
 
     for (let i = 0; i < data.length; i++) {
         if (saveTableAndCard[0].id == 'carrier') {

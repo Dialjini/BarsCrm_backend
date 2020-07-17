@@ -131,7 +131,16 @@ function createCardMenu(element, index = 0) {
             // Вытягиваем данные по Айди карточки и поставляем в поля
             if (getInfo[1] == 'add') break;
             if (getInfo[1] !== 'new') {
-                let data_list = dataName[i].link[1][1];
+                let c_data = [];
+                if (saveTableAndCard[0].id == 'client') {
+                    c_data = client_all_data
+                } else if (saveTableAndCard[0].id == 'provider') {
+                    c_data = provider_all_data
+                } else if (saveTableAndCard[0].id == 'provider') {
+                    c_data = carrier_all_data
+                }
+                let data_list = c_data.length > 0 ? c_data : dataName[i].link[1][1];
+                console.log(data_list, titleObject[i].status);
                 if (getInfo[0] === 'stock') {
                     for (let j = 0; j < data_list.length; j++) {
                         for (let k = 0; k < data_list[j].items.length; k++) {
@@ -157,6 +166,7 @@ function createCardMenu(element, index = 0) {
                 } else {
                     for (let l = 0; l < data_list.length; l++) {
                         if (data_list[l].id == titleObject[i].status) {
+
                             selectedLine = data_list[l];
                         }
                     }
@@ -3419,6 +3429,16 @@ function closeCardMenu(id = '') {
             </div>
         `)
         preloader = document.getElementById("preloader_preload");
+    }
+
+    if (id.includes('new')) {
+        if (saveTableAndCard[0].id == 'client') {
+            client_filter = ''
+        } else if (saveTableAndCard[0].id == 'provider') {
+            provider_filter = ''
+        } else if (saveTableAndCard[0].id == 'provider') {
+            carrier_filter = ''
+        }
     }
 
     // Сохраняет данные на сервер

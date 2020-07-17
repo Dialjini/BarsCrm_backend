@@ -520,6 +520,7 @@ $('#search_dropMenu').click(function() {
         $(`.drop-down, #search_dropMenu`).removeClass('active');
         $('.drop_down_search').remove();
     } else {
+        console.log('AYE');
         $(`.drop-down, #search_dropMenu`).addClass('active');
         createRegionMenu();
     }

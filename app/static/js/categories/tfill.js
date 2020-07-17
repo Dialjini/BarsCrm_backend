@@ -1763,7 +1763,7 @@ function sortTableByArea(filter, input = true) {
         sortStatus.area.filter = sort;
     }
     
-    $('.centerBlock .header .cancel').remove();
+    if (client_filter == '' && provider_filter == '' && carrier_filter == '') $('.centerBlock .header .cancel').remove();
     if (input) {
         $('.centerBlock .header').append(`
             <div class="cancel">
@@ -1846,6 +1846,8 @@ function sortTableByPrice(filter) {
     sortStatus.price.status = true;
     sortStatus.price.filter = filter.id;
     $('.centerBlock .header .cancel').remove();
+    
+
     $('.centerBlock .header').append(`
         <div class="cancel">
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -2329,6 +2331,16 @@ function selectManagerInAccount(element) {
 }
 // End
 function fillingTables(object, filter = false) {
+    if (client_filter != '' && object[0].id === 'client') {
+        object[1][1] = object[1][1].filter(element => element[client_filter.type].toLowerCase() === client_filter.value.toLowerCase());
+    }
+    if (provider_filter != '' && object[0].id === 'provider') {
+        object[1][1] = object[1][1].filter(element => element[provider_filter.type].toLowerCase() === provider_filter.value.toLowerCase());
+    }
+    if (carrier_filter != '' && object[0].id === 'carrier') {
+        object[1][1] = object[1][1].filter(element => element[carrier_filter.type].toLowerCase() === carrier_filter.value.toLowerCase());
+    }
+
     if (object[0].id !== 'filter_stock') {
         object[0].active = true;
         if (!filter) {

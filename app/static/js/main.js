@@ -1,5 +1,6 @@
 let socket = io();
 let preloader = document.getElementById("preloader_preload");
+let client_filter = '', provider_filter = '', carrier_filter = '';
 
 $(document).ready(function() {
     getUserInfo()
@@ -126,6 +127,7 @@ function getTableData(table, input = false, close = false) {
                             $('.card_menu, .overflow').remove();
                         }, 0);
                     }
+                    
                     if (table[0].id === 'debit') {
                         if (table[1][1] !== undefined) {
                             table[1].pop(data);
@@ -136,6 +138,15 @@ function getTableData(table, input = false, close = false) {
                         if (table[1][1] != undefined) table[1].pop();
                         table[1].push(data);
                     }
+                    if (table[0].id == 'client') {
+                        client_all_data = table[1][1];
+                    } 
+                    if (table[0].id == 'provider') {
+                        provider_all_data = table[1][1];
+                    } 
+                    if (table[0].id == 'carrier') {
+                        carrier_all_data = table[1][1];
+                    } 
                     if (!input) $('.info').append(fillingTables(table));
                     if (saveTableAndCard[0].id == 'analytics') {
                         if (user.role == 'manager') {
@@ -163,7 +174,9 @@ function getTableData(table, input = false, close = false) {
                     });
                     $('#find_competitor').remove();
                     $('#amount_cards').remove();
-                    if (saveTableAndCard[0].id == 'client')     $('.fields').append(`<div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>`)
+                    if (saveTableAndCard[0].id == 'client') {
+                        $('.fields').append(`<div class="btn btn-main btn-div" id="find_competitor" onclick="searchByCompetitor()">Поиск по конкурентам</div>`)
+                    }     
                     if (   saveTableAndCard[0].id == 'client' 
                         || saveTableAndCard[0].id == 'carrier'
                         || saveTableAndCard[0].id == 'account') $('#info_in_accounts').remove()
@@ -998,6 +1011,14 @@ $('#search_button').click(function() {
 })
 
 function cancelSearch() {
+    if (saveTableAndCard[0].id == 'client') {
+        client_filter = ''
+    } else if (saveTableAndCard[0].id == 'provider') {
+        provider_filter = ''
+    } else if (saveTableAndCard[0].id == 'provider') {
+        carrier_filter = ''
+    }
+
     for (let i = 0; i < dataName.length; i++) {
         if (saveTableAndCard[0].id == dataName[i].name) {
             if (saveTableAndCard[0].id == 'stock') {
@@ -1036,15 +1057,25 @@ function searchRegionFill(element) {
     $('.centerBlock .header .cancel').remove();
 
     let search = $(element).html();
-    let data = saveTableAndCard[1][1];
+    if (saveTableAndCard[0].id == 'client') {
+        client_filter = {type: 'Oblast', value: search};
+    } else if (saveTableAndCard[0].id == 'provider') {
+        provider_filter = {type: 'Oblast', value: search};
+    } else if (saveTableAndCard[0].id == 'provider') {
+        carrier_filter = {type: 'Region', value: search};
+    }
+
     let listData = [
-        { id: 'client', list: 'Oblast', filter: filterClient },
-        { id: 'provider', list: 'Oblast', filter: filterProvider },
-        { id: 'carrier', list: 'Region', filter: filterCarrier },
+        { data: client_all_data, id: 'client', list: 'Oblast', filter: filterClient },
+        { data: provider_all_data, id: 'provider', list: 'Oblast', filter: filterProvider },
+        { data: carrier_all_data, id: 'carrier', list: 'Region', filter: filterCarrier },
     ]
+    console.log(saveTableAndCard);
     let searchCards = [];
     for (let i = 0; i < listData.length; i++) {
         if (listData[i].id == saveTableAndCard[0].id) {
+            let data = listData[i].data.length > 0 ? listData[i].data : saveTableAndCard[1][1];
+            console.log(data);
             for (let j = 0; j < data.length; j++) {
                 let string = String(data[j][listData[i].list]).toLowerCase();
                 console.log(string, search.toLowerCase())
@@ -1081,18 +1112,27 @@ function searchFill(element) {
     $('.centerBlock .header .cancel').remove();
 
     let search = $(element).html();
-    let data = saveTableAndCard[1][1];
+    if (saveTableAndCard[0].id == 'client') {
+        client_filter = {type: 'Rayon', value: search};
+    } else if (saveTableAndCard[0].id == 'provider') {
+        provider_filter = {type: 'Rayon', value: search};
+    } else if (saveTableAndCard[0].id == 'provider') {
+        carrier_filter = {type: 'Area', value: search};
+    }
+
     let listData = [
-        { id: 'client', list: 'Rayon', filter: filterClient },
-        { id: 'provider', list: 'Rayon', filter: filterProvider },
-        { id: 'carrier', list: 'Area', filter: filterCarrier },
+        { data: client_all_data, id: 'client', list: 'Rayon', filter: filterClient },
+        { data: provider_all_data, id: 'provider', list: 'Rayon', filter: filterProvider },
+        { data: carrier_all_data, id: 'carrier', list: 'Area', filter: filterCarrier },
     ]
     let searchCards = [];
     for (let i = 0; i < listData.length; i++) {
         if (listData[i].id == saveTableAndCard[0].id) {
+            let data = listData[i].data.length > 0 ? listData[i].data : saveTableAndCard[1][1];
             for (let j = 0; j < data.length; j++) {
                 let string = String(data[j][listData[i].list]).toLowerCase();
-                if (string.includes(search.toLowerCase())) {
+                console.log(string, search)
+                if (string == search.toLowerCase()) {
                     searchCards.push(data[j]);
                 }
             }
