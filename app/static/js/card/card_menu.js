@@ -397,7 +397,8 @@ function createCardMenu(element, index = 0) {
     }
     function getListRegions(select, category) {
         $.ajax({
-            url: 'static/js/json/regions.json',
+            url: '../static/js/json/regions.json',
+            cache: false,
             async: false,
             success: function(json) {
                 let dbRegion = select.Oblast != undefined ? select.Oblast : select.Region;
@@ -2507,7 +2508,8 @@ function getListAreas(element, area = '') {
         category = element.id.split('_')[0];
     } catch {}
     $.ajax({
-        url: 'static/js/json/regions.json',
+        url: '../static/js/json/regions.json',
+        cache: false,
         async: false,
         success: function(json) {
             let options = '<option value="">Не выбран</option>';

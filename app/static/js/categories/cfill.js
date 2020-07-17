@@ -510,18 +510,6 @@ function persons() {
 function add_regions() {
     $('._block, .table, #addNewPerson, #filter_admin, .add_new_regions, .add_something_r').remove();
 
-    function readTextFile(file, callback) {
-        var rawFile = new XMLHttpRequest();
-        rawFile.overrideMimeType("application/json");
-        rawFile.open("GET", file, true);
-        rawFile.onreadystatechange = function() {
-            if (rawFile.readyState === 4 && rawFile.status == "200") {
-                callback(rawFile.responseText);
-            }
-        }
-        rawFile.send(null);
-    }
-
     let promise = new Promise((resolve, reject) => {
         $('body').append(`
             <div id="preloader">
@@ -529,10 +517,14 @@ function add_regions() {
             </div>
         `)
         preloader = document.getElementById("preloader_preload");
-        readTextFile('../static/js/json/regions.json', function(text){ 
-            let data = JSON.parse(text);
-            resolve(data)
-        });
+        $.ajax({
+            url: '../static/js/json/regions.json',
+            cache: false,
+            success: function(json) {
+                console.log(json);
+                resolve(json)
+            }
+        })
     })
 
     promise.then(result => {
@@ -574,7 +566,12 @@ function add_regions() {
                 if (!c_region) return;
                 c_region.areas.push(area);
                 sort()
-                console.log(result);
+                console.log({json: JSON.stringify(result)});
+                $.get('/updateRegions', {json: JSON.stringify(result)}, (data) => {
+                    if (data == 'OK') {
+                        add_regions();
+                    }
+                })
             })
         })
         $('.add_new_regions button:first-child').click(function() {
@@ -594,7 +591,12 @@ function add_regions() {
                 const value = $('.add_something_r input').val();
                 result.push({region: value, areas: []})
                 sort()
-                console.log(result);
+                console.log({json: JSON.stringify(result)});
+                $.get('/updateRegions', {json: JSON.stringify(result)}, (data) => {
+                    if (data == 'OK') {
+                        add_regions();
+                    }
+                })
             })
         })
         function sort() {
@@ -609,7 +611,6 @@ function add_regions() {
                     if (a < b) return -1;
                     return 0;
                 });
-                console.log(element.areas);
             })
         }
     })
