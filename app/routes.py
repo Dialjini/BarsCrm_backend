@@ -258,7 +258,7 @@ def getManagerStat():
         return redirect('/', code=302)
 
 
-@app.route('/updateRegions', methods=['POST'])
+@app.route('/updateRegions', methods=['GET'])
 def updateRegions():
     file = request.args['json']
 
