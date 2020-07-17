@@ -262,7 +262,7 @@ def getManagerStat():
 def updateRegions():
     file = request.args['json']
 
-    file.save(os.path.abspath(os.path.dirname(__file__) + '/regions.json'))
+    file.save(os.path.abspath(os.path.dirname(__file__) + 'static/js/json/regions.json'))
     return 'OK'
 
 
