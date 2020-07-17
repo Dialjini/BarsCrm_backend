@@ -258,6 +258,14 @@ def getManagerStat():
         return redirect('/', code=302)
 
 
+@app.route('/updateRegions', methods=['POST'])
+def updateRegions():
+    file = request.args['json']
+
+    file.save(os.path.abspath(os.path.dirname(__file__) + '/regions.json'))
+    return 'OK'
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     if 'username' in session:
