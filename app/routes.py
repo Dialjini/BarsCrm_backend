@@ -263,7 +263,7 @@ def updateRegions():
     js = request.args['json']
     with open(os.path.abspath(os.path.dirname(__file__) + '/static/js/json/regions.json'), 'w') as file:
         # json.dump(js, file)
-        file.writelines(js)
+        file.write(js)
     return 'OK'
 
 
