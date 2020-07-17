@@ -260,9 +260,9 @@ def getManagerStat():
 
 @app.route('/updateRegions', methods=['GET'])
 def updateRegions():
-    file = request.args['json']
-
-    file.save(os.path.abspath(os.path.dirname(__file__) + 'static/js/json/regions.json'))
+    js = json.loads(request.args['json'])
+    with open(os.path.abspath(os.path.dirname(__file__) + 'static/js/json/regions.json')) as file:
+        json.dump(js, file)
     return 'OK'
 
 
