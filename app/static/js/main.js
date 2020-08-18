@@ -69,7 +69,7 @@ function getUserInfo() {
 }
 
 // Отсылаем данные для получения данных по таблице
-function getTableData(table, input = false, close = false) {
+function getTableData(table, input = false, close = false, close_card = false) {
     let requestTableData = (function() {
         return {
             getRequest: function (table, input, close) {
@@ -171,7 +171,8 @@ function getTableData(table, input = false, close = false) {
                     }
                     
                     if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
-                        sortTableByArea('min', false);
+                        console.log(input, close);
+                        sortTableByArea('min', false, close_card);
                     }
                     
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
@@ -891,7 +892,7 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                 if (elem !== null) {
                     removeCard(elem);
                 }
-                getTableData(saveTableAndCard, false, close);
+                getTableData(saveTableAndCard, false, close, true);
             }
         });
         

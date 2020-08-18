@@ -46,18 +46,6 @@ function createCardMenu(element, index = 0) {
     `)
     preloader = document.getElementById("preloader_preload");
 
-    sortStatus = {
-        product: {status: false, filter: null, last: null},
-        price: {status: false, filter: null},
-        area: {status: false, filter: null},
-        name: {status: false, filter: null},
-        category: {status: false, filter: null, last: null},
-        manager: {status: false, filter: null, last: null},
-        customer: {status: false, filter: null, last: null},
-        status: {status: false, filter: null, last: null},
-        date: {status: false, filter: null, last: null},
-        search_on_regions: {status: false, filter: null, last: null}
-    }
     // Вывод обычной карточки или карточки-окна
     if (index == 0) {
         $('.table, .blockCreateEmptyCard').remove();

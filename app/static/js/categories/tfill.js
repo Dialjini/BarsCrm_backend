@@ -1290,6 +1290,8 @@ function sortTableByCategory(filter) {
     sortStatus.category.filter = currentCategory;
 
     $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
     $('.centerBlock .header').append(`
         <div class="cancel">
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1336,6 +1338,8 @@ function sortTableByStatus(element) {
         sortStatus.status.filter = value;
 
         $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
         $('.centerBlock .header').append(`
             <div class="cancel">
                 <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1377,6 +1381,8 @@ function sortTableByDate(element) {
         sortStatus.date.filter = value;
 
         $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
         $('.centerBlock .header').append(`
             <div class="cancel">
                 <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1415,6 +1421,8 @@ function sortTableByCustomer(element) {
         sortStatus.customer.filter = value;
 
         $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
         $('.centerBlock .header').append(`
             <div class="cancel">
                 <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1428,6 +1436,7 @@ function sortTableByCustomer(element) {
 function sortTableByManagers(element) {
     let searchWord = element.innerHTML;
     $('.centerBlock .header .cancel').remove();
+    console.log(123);
 
     let managers;
     $.ajax({
@@ -1496,6 +1505,7 @@ function sortTableByManagers(element) {
             }
             
             $('.centerBlock .header .cancel').remove();
+    console.log(123);
             $('.centerBlock .header').append(`
                 <div class="cancel">
                     <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1511,6 +1521,7 @@ function sortTableByManagers(element) {
 function sortTableByManagersInAccount(element) {
     let searchWord = element.innerHTML;
     $('.centerBlock .header .cancel').remove();
+    console.log(123);
 
     let managers;
     $.ajax({
@@ -1578,6 +1589,8 @@ function sortTableByManagersInAccount(element) {
             }
             
             $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
             $('.centerBlock .header').append(`
                 <div class="cancel">
                     <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1653,6 +1666,8 @@ function sortTableByName(filter, input = true) {
     }
     
     $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
     if (input) {
         $('.centerBlock .header').append(`
             <div class="cancel">
@@ -1664,7 +1679,7 @@ function sortTableByName(filter, input = true) {
         $('#all_name .drop_arrow').removeClass('drop_active');
     }, 150)
 }
-function sortTableByArea(filter, input = true) {
+function sortTableByArea(filter, input = true, close_card = false) {
     let newTableData;
     if (saveTableAndCard[0].id == 'client') {
         if (!sortStatus.manager.status && !sortStatus.category.status && !sortStatus.search_on_regions.status) {
@@ -1765,8 +1780,11 @@ function sortTableByArea(filter, input = true) {
         sortStatus.area.filter = sort;
     }
     
-    if (client_filter == '' && provider_filter == '' && carrier_filter == '') $('.centerBlock .header .cancel').remove();
-    if (input) {
+    if (client_filter == '' && provider_filter == '' && carrier_filter == '') {
+        console.log(input);
+        $('.centerBlock .header .cancel').remove()
+    };
+    if (input || close_card) {
         $('.centerBlock .header').append(`
             <div class="cancel">
                 <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
@@ -1848,6 +1866,7 @@ function sortTableByPrice(filter) {
     sortStatus.price.status = true;
     sortStatus.price.filter = filter.id;
     $('.centerBlock .header .cancel').remove();
+    console.log(123);
     
 
     $('.centerBlock .header').append(`
@@ -1902,6 +1921,8 @@ function sortTableByProduct(filter) {
     sortStatus.product.status = true;
     sortStatus.product.filter = filter.innerHTML;
     $('.centerBlock .header .cancel').remove();
+    console.log(123);
+
     $('.centerBlock .header').append(`
         <div class="cancel">
             <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>
