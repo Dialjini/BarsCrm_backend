@@ -38,6 +38,7 @@ function getCurrentDateNotComparison(year = 'none') {
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
+    console.log(client_all_data);
     $('body').append(`
         <div id="preloader">
             <div id="preloader_preload"></div>
@@ -164,9 +165,10 @@ function createCardMenu(element, index = 0) {
                         }
                     }
                 } else {
+                    console.log(data_list, titleObject[i].status)
+                    console.log(data_list.find(el => +el.id === +titleObject[i].status))
                     for (let l = 0; l < data_list.length; l++) {
-                        if (data_list[l].id == titleObject[i].status) {
-
+                        if (+data_list[l].id === +titleObject[i].status) {
                             selectedLine = data_list[l];
                         }
                     }
@@ -175,6 +177,7 @@ function createCardMenu(element, index = 0) {
                 // Передать данные счета в карточку доставки
                 
                 let list = Object.keys(selectedLine);
+                console.log(list);
                 for (let elem = 0; elem < list.length; elem++) {
                     if (selectedLine[list[elem]] == null || selectedLine[list[elem]] == 'null'){ 
                         selectedLine[list[elem]] = '';
@@ -278,6 +281,7 @@ function createCardMenu(element, index = 0) {
     // Получаем контент карточки
     function getContentInfo(infoElement) {
         let content = $('<div>', { class: 'content' });
+        console.log(selectedLine, element, infoElement);
         content.append(infoElement.link(selectedLine, element));
         return content;
     }

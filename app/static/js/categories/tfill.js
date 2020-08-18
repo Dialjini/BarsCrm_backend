@@ -1676,6 +1676,7 @@ function sortTableByArea(filter, input = true) {
     } else {
         newTableData = saveTableAndCard.slice();
     }
+    
     let filter_table = [];
     let sort = filter.id == undefined ? filter : filter.id;
 
@@ -1724,6 +1725,7 @@ function sortTableByArea(filter, input = true) {
             filter_table.push(oneRegion_data[k]);
         }
     }
+    
     filter_table.sort(function (a, b) {
         if (a.Oblast != undefined) {
             if (newTableData[0].id == 'provider') {

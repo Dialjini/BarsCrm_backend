@@ -151,7 +151,8 @@ function getTableData(table, input = false, close = false) {
                         table[1].push(data);
                     }
                     if (table[0].id == 'client') {
-                        client_all_data = table[1][1];
+                        client_all_data = table[1][1].slice();
+                        
                     } 
                     if (table[0].id == 'provider') {
                         provider_all_data = table[1][1];
@@ -159,16 +160,20 @@ function getTableData(table, input = false, close = false) {
                     if (table[0].id == 'carrier') {
                         carrier_all_data = table[1][1];
                     } 
+                    
                     if (!input) $('.info').append(fillingTables(table));
+                    
                     if (saveTableAndCard[0].id == 'analytics') {
                         if (user.role == 'manager') {
                             $('#analytics_reports .field_with_modal')[0].children[0].innerHTML = 'Сводный по объёмам';
                             $('.table').width('fit-content');
                         }
                     }
+                    
                     if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
                         sortTableByArea('min', false);
                     }
+                    
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
                     $('.drop_down_search').remove();
                     $.ajax({
@@ -201,6 +206,7 @@ function getTableData(table, input = false, close = false) {
                             }
                         });
                     }
+                    
                 }
             }
         }
