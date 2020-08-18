@@ -86,31 +86,43 @@ function getTableData(table, input = false, close = false) {
     
                 for (let i = 0; i < requests.length; i++) {
                     if (requests[i].table === table) {
-                        $.ajax({
-                            url: requests[i].request,
-                            type: 'GET',
-                            dataType: 'html',
-                            beforeSend: function() {
-                                function fillTable() {
-                                    return $('<div>', { class: 'table', id: 'loading' });
+                        let data = {};
+                        console.log($('#search').val());
+                        if ($('#search').val() != '') {
+                            searchCategoryInfo();
+                            setTimeout(() => {
+                                $('.card_menu, .overflow').remove();
+                            }, 0);
+                            $('#loading').remove();
+                            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                        } else {
+                            $.ajax({
+                                url: requests[i].request,
+                                type: 'GET',
+                                dataType: 'html',
+                                data: data,
+                                beforeSend: function() {
+                                    function fillTable() {
+                                        return $('<div>', { class: 'table', id: 'loading' });
+                                    }
+                                    $('.info').append(fillTable());
+                                    $('#loading').fadeIn(100);
+                                    if (!$('div').is('#preloader')) {
+                                        $('body').append(`
+                                            <div id="preloader">
+                                                <div id="preloader_preload"></div>
+                                            </div>
+                                        `)
+                                        preloader = document.getElementById("preloader_preload");
+                                    }
+                                },
+                                success: function(data) { gettingData(JSON.parse(data)); },
+                                complete: function() {
+                                    $('#loading').remove();
+                                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
                                 }
-                                $('.info').append(fillTable());
-                                $('#loading').fadeIn(100);
-                                if (!$('div').is('#preloader')) {
-                                    $('body').append(`
-                                        <div id="preloader">
-                                            <div id="preloader_preload"></div>
-                                        </div>
-                                    `)
-                                    preloader = document.getElementById("preloader_preload");
-                                }
-                            },
-                            success: function(data) { gettingData(JSON.parse(data)); },
-                            complete: function() {
-                                $('#loading').remove();
-                                setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
-                            }
-                        });
+                            });
+                        }
                     }
                 }
     
@@ -1019,6 +1031,8 @@ function cancelSearch() {
         carrier_filter = ''
     }
 
+    $('#search').val('');
+
     for (let i = 0; i < dataName.length; i++) {
         if (saveTableAndCard[0].id == dataName[i].name) {
             if (saveTableAndCard[0].id == 'stock') {
@@ -1031,7 +1045,6 @@ function cancelSearch() {
         }
     }
     $('.centerBlock .header .cancel').remove();
-    $('#search').val('');
     $('.modal_search').remove();
     $('.overflow').remove();
     lastData = {
