@@ -260,6 +260,7 @@ let lastData = {last_id: '', last_table: ''};
 
 // Нажатие на категорию
 function linkCategory(element) {
+    console.log(123);
     $('.info').empty();
     $('[name="linkCategory"], .mini_logo').removeClass('active');
     $(`#${element}`).addClass('active');

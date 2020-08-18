@@ -1011,8 +1011,10 @@ let getCommentsInfo = (function() {
                     element.category[0].active = true;
                 }
             })
-        
-            linkCategory('category-0');
+            
+            console.log(123);
+            $('#search').val('');
+            // linkCategory('category-0');
             linkField();
         }
     }
