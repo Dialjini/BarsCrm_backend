@@ -888,6 +888,23 @@ def editItem():
     else:
         return redirect('/', code=302)
 
+
+@app.route('/deleteStock', methods=['GET'])
+def deleteStock():
+    stock = models.Stock.query.filter_by(Name=request.args['name']).first()
+
+    db.session.delete(stock)
+    db.session.commit()
+
+
+@app.route('/deleteGroup', methods=['GET'])
+def deleteGroup():
+    group = models.Item_groups.query.filter_by(Group=request.args['name']).first()
+
+    db.session.delete(group)
+    db.session.commit()
+
+
 @app.route('/deleteItem', methods=['GET'])
 def deleteItem():
     item = models.Item.query.filter_by(Item_id=request.args['id']).first()
@@ -895,6 +912,7 @@ def deleteItem():
     db.session.delete(item)
     db.session.commit()
     return 'OK'
+
 
 @app.route('/addItemToStock', methods=['GET'])
 def addItemToStock():

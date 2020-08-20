@@ -263,7 +263,6 @@ class Provider(db.Model):
     Additional_address = db.Column(db.String)
 
 
-
 class Debt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
