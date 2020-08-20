@@ -896,6 +896,8 @@ def deleteStock():
     db.session.delete(stock)
     db.session.commit()
 
+    return 'OK'
+
 
 @app.route('/deleteGroup', methods=['GET'])
 def deleteGroup():
@@ -903,6 +905,8 @@ def deleteGroup():
 
     db.session.delete(group)
     db.session.commit()
+
+    return 'OK'
 
 
 @app.route('/deleteItem', methods=['GET'])
