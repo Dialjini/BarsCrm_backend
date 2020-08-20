@@ -222,9 +222,9 @@ def getManagerStat():
     if 'username' in session:
         managers = models.User.query.all()
         comments = models.Notes.query.all()
-        clients = models.Client.query.all()
-        providers = models.Provider.query.all()
-        carriers = models.Carrier.query.all()
+        clients = models.Client.query
+        providers = models.Provider.query
+        carriers = models.Carrier.query
         all_comments = 0
         result = []
         last_res = {}
@@ -240,13 +240,13 @@ def getManagerStat():
                         manager_info['id'] = j.id
                         manager_info['name'] = j.name + ' ' + j.second_name
                         if i.Client_id:
-                            manager_info['orgs'][clients[i.Client_id - 1].Name + '$$'
+                            manager_info['orgs'][clients.filter_by(id=i.Client_id).first().Name + '$$'
                                                  + str(i.Client_id) + '$$client'] = i.Date
                         elif i.Provider_id:
-                            manager_info['orgs'][providers[i.Provider_id - 1].Name + '$$'
+                            manager_info['orgs'][providers.filter_by(id=i.Provider_id).first().Name + '$$'
                                                  + str(i.Provider_id) + '$$provider'] = i.Date
                         elif i.Carrier_id:
-                            manager_info['orgs'][carriers[i.Carrier_id - 1].Name + '$$'
+                            manager_info['orgs'][carriers.filter_by(id=i.Carrier_id).first().Name + '$$'
                                                  + str(i.Carrier_id) + '$$Carrier_id'] = i.Date
                         else:
                             continue
