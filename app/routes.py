@@ -876,11 +876,12 @@ def editItem():
         item.Cost = data['item_price']
         item.Volume = data['item_volume']
         item.NDS = data['item_vat']
-        item.Group_id = data['group_id']
+        item.Group_id = int(data['group_id'])
         item.Prefix = data['item_prefix']
         item.Group_name = models.Item_groups.query.filter_by(id=data['group_id']).first().Group
         item.Purchase_price = data['item_purchase_price']
         item.Category = data['item_category']
+        item.Stock_id = int(data['stock_id'])
 
         db.session.commit()
         return 'OK'
