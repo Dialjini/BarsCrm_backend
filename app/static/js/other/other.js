@@ -118,7 +118,7 @@ function taskCreate(tasks = 'new') {
                         if (tasks[i].Type == 'email') return 'Письмо';
                         if (tasks[i].Type == 'other') return 'Другое';
                     }
-
+                    console.log(tasks[i]);
                     let taskDate = tasks[i].Date.split('.');
                     if (taskDate[2].length == 2) {
                         taskDate[2] = '20' + taskDate[2];
@@ -126,9 +126,13 @@ function taskCreate(tasks = 'new') {
 
                     let date = getCurrentDate('year').split('.');
                     date[2] = '20' + date[2];
-                    let firstDate = `${taskDate.join('.')} ${tasks[i].Time}`;
-                    let secondDate = `${date.join('.')} ${getCurrentTime()}`;
+                    let time = tasks[i].Time;
+                    if (time.split(':')[0].length == 1) {
+                        time = '0' + time;
+                    }
 
+                    let firstDate = `${taskDate.join('.')} ${time}`;
+                    let secondDate = `${date.join('.')} ${getCurrentTime()}`;
                     let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d\d\d)\s(\d\d):(\d\d)/;
 
                     let first_date_arr = datetime_regex.exec(firstDate);
