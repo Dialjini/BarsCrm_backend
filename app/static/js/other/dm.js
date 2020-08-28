@@ -44,12 +44,11 @@ function createRegionMenu() {
                 }
             }
         }
-    } 
-
+    }
     for (let k = 0; k < regions.length; k++) {
         for (let i = 0; i < regions[k].areas.length - 1; i++) {
             for (let j = i + 1; j < regions[k].areas.length; j++) {
-                if (regions[k].areas[i].includes(regions[k].areas[j]) || regions[k].areas[j].includes(regions[k].areas[i])) {
+                if (regions[k].areas[i] == regions[k].areas[j]) {
                     regions[k].areas.splice(j, 1);
                     j--;
                 }
