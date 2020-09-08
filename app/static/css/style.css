@@ -39,6 +39,9 @@ body {
 }
 
 .page .modal_select {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 90%;
   width: 500px;
   background-color: #f8f8f8;
   border-radius: 10px;
