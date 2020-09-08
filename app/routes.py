@@ -285,6 +285,7 @@ def addAccountPaymentHistory():
     else:
         return redirect('/', code=302)
 
+
 @app.route('/editAccount', methods=['GET'])
 def editAccount():
     if 'username' in session:

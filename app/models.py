@@ -358,6 +358,7 @@ class Carrier(db.Model):
     kpp = db.Column(db.String)
     Director = db.Column(db.String)
 
+
 class Stock(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String)
