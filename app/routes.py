@@ -770,9 +770,12 @@ def getAccounts():
         for i in models.Account.query.all():
             items = []
             for j in json.loads(i.Item_ids):
+                item = None
                 for m in Items:
                     if m.Item_id == int(j['id']):
                         item = m
+                if not item:
+                    continue
                 subres = json.loads(table_to_json([item]))[0]
                 subres['Transferred_volume'] = j['volume']
                 items.append(subres)
