@@ -1779,11 +1779,6 @@ function sortTableByArea(filter, input = true, close_card = false) {
         sortStatus.area.status = true;
         sortStatus.area.filter = sort;
     }
-    
-    if (client_filter == '' && provider_filter == '' && carrier_filter == '') {
-        console.log(input);
-        $('.centerBlock .header .cancel').remove()
-    };
     if (input || close_card) {
         $('.centerBlock .header').append(`
             <div class="cancel">
@@ -1791,6 +1786,9 @@ function sortTableByArea(filter, input = true, close_card = false) {
             </div>
         `)
     }
+    if (client_filter == '' && provider_filter == '' && carrier_filter == '') {
+        $('.centerBlock .header .cancel').remove()
+    };
     setTimeout(function() {
         $('#all_area .drop_arrow').removeClass('drop_active');
     }, 150)

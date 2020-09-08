@@ -155,10 +155,10 @@ function getTableData(table, input = false, close = false, close_card = false) {
                         
                     } 
                     if (table[0].id == 'provider') {
-                        provider_all_data = table[1][1];
+                        provider_all_data = table[1][1].slice();
                     } 
                     if (table[0].id == 'carrier') {
-                        carrier_all_data = table[1][1];
+                        carrier_all_data = table[1][1].slice();
                     } 
                     
                     if (!input) $('.info').append(fillingTables(table));

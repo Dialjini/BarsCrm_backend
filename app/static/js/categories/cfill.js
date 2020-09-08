@@ -1359,6 +1359,7 @@ function saveEditItem(id) {
     if (categoryInStock[1][1] != undefined) {
         categoryInStock[1].pop();
     }
+    console.log(data);
     $.ajax({
         url: '/editItem',
         type: 'GET',
@@ -2427,6 +2428,7 @@ function getValidationDate(date) {
                 },
                 success: function(data) {
                     result = JSON.parse(data);
+                    console.log(result);
                     let total_count = 0;
                     let unload_info = [];
                     for (let i = 0; i < result.data.length; i++) {

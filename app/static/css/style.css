@@ -397,9 +397,7 @@ body {
 }
 
 .page .centerBlock {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+  width: 78.86%;
   background-color: #fff;
   display: -webkit-box;
   display: -ms-flexbox;
