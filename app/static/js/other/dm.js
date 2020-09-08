@@ -63,12 +63,24 @@ function createRegionMenu() {
     function createLiList(i) {
         let liList = '';
 
+        regions[i].areas.sort((a, b) => {
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
+        })
+
         for (let j = 0; j < regions[i].areas.length; j++) {
             let liElement = `<li onclick="searchFill(this)">${regions[i].areas[j]}</li>`;
             liList = liList.concat(liElement);
         }
         return liList;
     }
+
+    regions.sort((a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+    })
 
     for (let i = 0; i < regions.length; i++) {
         $(element).append(() => {
