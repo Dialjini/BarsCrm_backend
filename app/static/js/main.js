@@ -520,8 +520,9 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                 console.log(idData);
                 let area = idData[`client_area`];
                 let region = idData[`client_region`];
+                console.log(clients);
                 for (let client of clients) {
-                    if (client.Oblast == region && client.Rayon == area && client.Name == name && client.id != id.split('_')[3]) {
+                    if (client.Oblast == region && client.Rayon == area && client.Name == name && client.id != id.split('_').pop()) {
                         $('#preloader').remove();
                         return $('.page').append($('<div>', { class: 'background' }).add(`
                             <div class="modal_select">
@@ -617,8 +618,10 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                         let name = idData[`client_name`];
                         let area = idData[`client_area`];
                         let region = idData[`client_region`];
+                        console.log(clients)
                         for (let client of clients) {
-                            if (client.Oblast == region && client.Rayon == area && client.Name == name && client.id != id.split('_')[3]) {
+                            if (client.Oblast == region && client.Rayon == area && client.Name == name && client.id != id.split('_').pop()) {
+                                console.log(client, id)
                                 $('#preloader').remove();
                                 return $('.page').append($('<div>', { class: 'background' }).add(`
                                     <div class="modal_select">
