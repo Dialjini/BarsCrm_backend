@@ -109,6 +109,12 @@ function taskCreate(tasks = 'new') {
             data = JSON.parse(data);
             if (tasks != 'new') {
                 tasks = JSON.parse(tasks);
+                console.log(tasks);
+                tasks = tasks.sort((a, b) => {
+                    if (a.Date + ' ' + a.Time > b.Date + ' ' + b.Time) return -1;
+                    if (a.Date + ' ' + a.Time < b.Date + ' ' + b.Time) return 1;
+                    return 0;
+                })
                 $('#tasks_list .empty').remove();
                 $('#current_tasks').empty();
                 $('#expired_tasks').empty();

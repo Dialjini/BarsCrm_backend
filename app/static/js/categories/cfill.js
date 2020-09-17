@@ -2855,6 +2855,11 @@ function getValidationDate(date) {
             {id: 'client', request: '/getClients', table: categoryInListClient},
             {id: 'provider', request: '/getProviders', table: categoryInListProvider},
         ]
+        if ($('#subcategories .category').html() == 'АНАЛИТИКА') {
+            $('#subcategories').empty();
+            addButtonsSubcategory(0);
+            $('#clientButton').addClass('active');
+        }
 
         for (let i = 0; i < list.length; i++) {
             if (list[i].id == element.id.split('_')[0]) {
