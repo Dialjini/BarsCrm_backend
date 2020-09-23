@@ -220,7 +220,6 @@ class BadItems(db.Model):
 class Tasks(db.Model):
     Task_id = db.Column(db.Integer, primary_key=True)
     User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    card_id = db.Column(db.String)
     Task = db.Column(db.String)
     Type = db.Column(db.String)
     Date = db.Column(db.String)
