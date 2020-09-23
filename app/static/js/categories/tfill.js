@@ -1282,6 +1282,7 @@ function sortTableByCategory(filter) {
     if (filterClient[1][1] != undefined) {
         filterClient[1].pop();
     }
+    $('#amount_cards span').html(filter_table.length)
     filterClient[1][1] = filter_table;
     $('.table').remove();
     $('.info').append(fillingTables(filterClient));
@@ -1331,6 +1332,7 @@ function sortTableByStatus(element) {
             if (element.id == 2 && amount_sum != payment_sum) filter_table.push(data[i]);
         }
         filterDelivery[1][1] = filter_table;
+        $('#amount_cards span').html(filter_table.length)
         $('.table').remove();
         $('.info').append(fillingTables(filterDelivery));
 
@@ -1374,6 +1376,7 @@ function sortTableByDate(element) {
             }
         }
         filterDelivery[1][1] = filter_table;
+        $('#amount_cards span').html(filter_table.length)
         $('.table').remove();
         $('.info').append(fillingTables(filterDelivery));
 
@@ -1414,6 +1417,7 @@ function sortTableByCustomer(element) {
             }
         }
         filterDelivery[1][1] = filter_table;
+        $('#amount_cards span').html(filter_table.length)
         $('.table').remove();
         $('.info').append(fillingTables(filterDelivery));
 
@@ -1493,6 +1497,7 @@ function sortTableByManagers(element) {
                     for (let j = 0; j < clientCards.length; j++) {
                         searchCards.push(clientCards[j]);
                     }
+                    $('#amount_cards span').html(searchCards.length)
                     listData[i].filter[1][1] = searchCards.reverse();
                     $('.table').remove();
                     $('.info').append(fillingTables(listData[i].filter));
@@ -1578,6 +1583,7 @@ function sortTableByManagersInAccount(element) {
                         searchCards.push(clientCards[j]);
                     }
                     listData[i].filter[1][1] = searchCards.reverse();
+                    $('#amount_cards span').html(searchCards.length)
                     $('.table').remove();
                     $('.info').append(fillingTables(listData[i].filter));
                     break;
@@ -1858,6 +1864,7 @@ function sortTableByPrice(filter) {
     if (filterProvider[1][1] != undefined) filterProvider[1].pop();
 
     filterProvider[1].push(table_data)
+    $('#amount_cards span').html(table_data.length)
     $('.table').remove();
     $('.info').append(fillingTables(filterProvider, true));
 
@@ -1913,6 +1920,7 @@ function sortTableByProduct(filter) {
 
     if (filterProvider[1][1] != undefined) filterProvider[1].pop();
     filterProvider[1].push(table_data)
+    $('#amount_cards span').html(table_data.length)
     $('.table').remove();
     $('.info').append(fillingTables(filterProvider, true));
 

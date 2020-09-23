@@ -76,6 +76,7 @@ def addTask(message):
     task.Visibility = json.dumps(message['data']['task_whom'])
     task.User_id = int(message['data']['task_who'])
     task.Type = message['data']['task_type']
+    task.card_id = message['data']['card_id']
     task.Date = message['data']['task_date']
     task.Time = message['data']['task_time']
     task.Comment = message['data']['task_comment']

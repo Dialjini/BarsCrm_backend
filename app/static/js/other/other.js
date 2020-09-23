@@ -17,6 +17,7 @@ function createContactsFormTask(values) {
     ]
 
     function createInputs() {
+        console.log(values);
         let content = $('<table>', { class: 'inputs' })
         for (let i = 0; i < elementsInfo.length; i++) {
             content.append($('<tr>', {
@@ -28,7 +29,8 @@ function createContactsFormTask(values) {
                         class: 'task_input',
                         id: elementsInfo[i].id,
                         type: elementsInfo[i].type,
-                        value: values[elementsInfo[i].id]
+                        value: values[elementsInfo[i].id],
+                        'data-card': values.task_card ? values.task_card : ''
                     })
                 }))
             }))
@@ -169,12 +171,14 @@ function taskCreate(tasks = 'new') {
                                             html: tasks[i].Time
                                         }))
                                     }).add($('<div>', {
-                                        class: 'row',
+                                        style: 'display: flex; justify-content: space-between;',
                                         append: $('<div>', {
                                             class: 'descr',
+                                            style: 'width: 160px; word-break: break-word; font-size: 10px;',
                                             html: tasks[i].Comment
                                         }).add($('<div>', {
                                             class: 'time',
+                                            style: 'font-size: 10px; align-self: flex-end;',
                                             append: $('<span>', {
                                                 class: 'bold',
                                                 html: tasks[i].Date
@@ -184,6 +188,11 @@ function taskCreate(tasks = 'new') {
                                 }))
                             })
                         )
+                        // if (tasks[i].Admin) {
+                        //     const $item = $(`.item[name="task_${tasks[i].Task_id}"]`).append(`
+                        //         <button>Открыть КК</button>
+                        //     `)
+                        // }
                     } else {
                         $('#tasks_list_e .empty').remove();
                         $('#expired_tasks').prepend(
@@ -224,10 +233,12 @@ function taskCreate(tasks = 'new') {
                     }
                 }
             } else {
+                const card_id = $('#task_date').attr('data-card');
                 taskInfo = {
                     task_type: $('#task_type').val(),
                     task_whom: [$('#task_whom').val()],
                     task_who: data.id,
+                    task_card: card_id ? card_id : '',
                     task_date: $('#task_date').val(),
                     task_time: $('#task_time').val(),
                     task_comment: $('#task_comment').val() == '' ? 'Без комментария' : $('#task_comment').val(),
@@ -461,7 +472,7 @@ function removeTask(id) {
 }
 
 // Создание кнопок Отменить и Добавить
-function createCT(id, values = 'empty') {
+function createCT(id, values = 'empty', card_id) {
     // id - id кнопки
     $('#createCT').empty();
     if (id == 'addContact') {
@@ -469,6 +480,11 @@ function createCT(id, values = 'empty') {
         $('#client_new').prop('checked', true);
     } else if (id == 'addTask') {
         if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: ''}
+        $('#createCT').append(createContactsFormTask(values));
+        $('#task_date').datepicker({position: 'left top', autoClose: true})
+        $('#task_time').mask('99:99');
+    } else if (id == 'addCardTask') {
+        if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: '', task_card: card_id}
         $('#createCT').append(createContactsFormTask(values));
         $('#task_date').datepicker({position: 'left top', autoClose: true})
         $('#task_time').mask('99:99');

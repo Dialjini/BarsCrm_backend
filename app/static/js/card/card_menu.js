@@ -552,7 +552,7 @@ function createCardMenu(element, index = 0) {
                             </tbody>
                         </table>
                     </div>`)
-        }).add(`<div class="row_card" id="media">
+        }).add(`<div class="row_card" id="media" style="position: relative">
                     <div class="left_side">
                         <div class="hmax" id="member"></div>
                         <div class="events">
@@ -576,6 +576,9 @@ function createCardMenu(element, index = 0) {
                             <img class="add_something" id="client-group" src="static/images/add.png" onclick="addRow(this.id)">
                             <img name="remove_last_group" class="add_something" src="static/images/remove.png" onclick="removeMemberOrRow(this.name)">
                         </div>
+                    </div>
+                    <div style="position: absolute; right: 0px; bottom: 50px;">
+                        <button class="btn" onclick="createCT(this.id, 'empty', ${selectedLine.id})" id="addCardTask">Создать задачу</button>
                     </div>
                 </div>
                 ${selectedLine.id != undefined ? `

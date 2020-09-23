@@ -84,19 +84,19 @@ function createRegionMenu() {
 
     for (let i = 0; i < regions.length; i++) {
         $(element).append(() => {
-            let region = $('<div />', {
-                class: 'region',
-                append: $('<div>', {
-                    class: 'region_name',
-                    html: regions[i].name,
-                    onclick: 'searchRegionFill(this)' // Фильтровать по области
-                }).add($('<ul>', {
-                    class: 'list_regions',
-                    html: createLiList(i)
-                }))
-            });
-
-            return region;
+            return `
+                <div class="region">
+                    <div class="region_name" style="display: flex; position: relative">
+                        <span onclick="searchRegionFill(this)">${regions[i].name}</span>
+                        <div onclick="showRegionList(this)" style="position: absolute; top: 6px; right: 0px; width: 25px; display: flex; justify-content: center; align-items: center; height: 25px; cursor: pointer;">
+                            <img style="width: 12px; transform: rotate(90deg); transition: 0.3s all" src="static/images/dropmenu_black.svg">
+                        </div>
+                    </div>
+                    <ul class="list_regions d_none">
+                        ${createLiList(i)}
+                    </ul>
+                </div>
+            `
         })
     }
 

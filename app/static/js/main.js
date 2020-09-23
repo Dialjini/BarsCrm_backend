@@ -1078,6 +1078,13 @@ function cancelSearch() {
         search_on_regions: {status: false, filter: null, last: null}
     }
 }
+function showRegionList(element) {
+    const $ul = $(element).closest('div.region').children('ul.list_regions');
+    const $img = $(element).children('img');
+
+    $img.toggleClass('active');
+    $ul.toggleClass('d_none');
+}
 function searchRegionFill(element) {
     $('.centerBlock .header .cancel').remove();
 
@@ -1120,6 +1127,7 @@ function searchRegionFill(element) {
                 searchCards.push(clientCards[j]);
             }
             sortStatus.search_on_regions.status = true;
+            $('#amount_cards span').html(searchCards.length)
             listData[i].filter[1][1] = searchCards;
             $('.table').remove();
             $('.info').append(fillingTables(listData[i].filter, true));
