@@ -532,6 +532,19 @@ def getMessages():
         return redirect('/', code=302)
 
 
+@app.route('/editMessages', methods=['GET'])
+def editMessages():
+    if 'username' in session:
+        Message = models.Notes.query.filter_by(NoteId=request.args['note_id']).first()
+        Message.Note = request.args['value']
+
+        db.session.commit()
+
+        return 'OK'
+    else:
+        return redirect('/', code=302)
+
+
 @app.route('/addMessages', methods=['GET'])
 def addMessages():
     if 'username' in session:

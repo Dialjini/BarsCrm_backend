@@ -1684,14 +1684,16 @@ function addComment(manager = '', data, last = false) {
             })
         );
         if (last) {
+            console.log(data, manager)
+            $('#edit_comment').attr('data-id', `edit_${data[0]}_${data[1]}_${manager.id}`);
             $('#comments').prepend(
                 $('<tr>', {
                     id: 'comment',
                     append: `
-                        <td>
+                        <td id="commentContent_${data[0]}_${data[1]}_${manager.id}">
                             <div class="done"><p style="width: 95%;">${manager.note}</p></div>
                         </td>
-                        <td style="font-weight: 500;" width="100">${manager.creator == null ? 'Не определен' : manager.creator}</td>
+                        <td style="font-weight: 500; vertical-align: top;" width="100">${manager.creator == null ? 'Не определен' : manager.creator}</td>
                     `
                 })
             )
@@ -1717,14 +1719,15 @@ function showThisComment(element) {
                     comment: result[i].Note,
                     creator: result[i].Creator == null ? 'Не определен' : result[i].Creator
                 }
+                $('#edit_comment').attr('data-id', `edit_${data[1]}_${data[2]}_${result[i].NoteId}`);
                 $('#comments').prepend(
                     $('<tr>', {
                         id: 'comment',
                         append: `
-                            <td>
+                            <td id="commentContent_${data[1]}_${data[2]}_${result[i].NoteId}">
                                 <div class="done"><p style="width: 95%;">${comments.comment}</p></div>
                             </td>
-                            <td style="font-weight: 500;" width="100">${comments.creator}</td>
+                            <td style="font-weight: 500; vertical-align: top;" width="100">${comments.creator}</td>
                         `
                     })
                 )

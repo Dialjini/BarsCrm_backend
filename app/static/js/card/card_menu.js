@@ -419,7 +419,10 @@ function createCardMenu(element, index = 0) {
         }
     });
     // Контентная часть Клиентов
+
     function clientContentCard(selectedLine) {
+        let data_role = $('[name="offtop__load"').attr('id').split('::');
+        let data_user = {role: data_role[0], id: data_role[1]};
         console.log(selectedLine);
         let content = $('<div>', { 
             class: 'row_card',
@@ -598,7 +601,10 @@ function createCardMenu(element, index = 0) {
                         <div class="last_comment">
                             <div class="title">
                                 <div>Последние комментарии</div>
-                                <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                                <div>
+                                    ${data_user.role == 'admin' ? `<img id="edit_comment" onclick="editComment()" class="save" style="margin-right: 15px; cursor: pointer" src="static/images/pencil.svg">` : ''}
+                                    <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
+                                </div>
                             </div>
                             <div class="messages">
                                 <table class="message">

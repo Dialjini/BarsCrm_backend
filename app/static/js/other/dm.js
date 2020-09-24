@@ -102,3 +102,27 @@ function createRegionMenu() {
 
     $('.infoblock:first-child').append(element);
 }
+function editComment() {
+    $('.last_comment #edit_comment').addClass('event_none');
+    $('.last_comment #save_new_comment').attr('onclick', 'saveEditComment()')
+
+    const comment_arr = $('.last_comment #edit_comment').attr('data-id').split('_');
+    const comment_content = $(`#comment #commentContent_${comment_arr[1]}_${comment_arr[2]}_${comment_arr[3]} .done p`).html();
+    $(`#comment #commentContent_${comment_arr[1]}_${comment_arr[2]}_${comment_arr[3]} .done`).empty().append(`
+        <textarea style="resize: none; height: 100px; border-radius: 5px; width: 95%; font-family: 'Montserrat', sans-serif">${comment_content}</textarea>
+    `);
+}
+function saveEditComment() {
+    const value = $('#comment .done textarea').val();
+    const note = $('#comment td').attr('id').split('_');
+    $.get('/editMessages', {value, note_id: note[3]}, (data) => {
+        console.log(data);
+        if (data == 'OK') {
+            $('.last_comment #edit_comment').removeClass('event_none');
+            $('.last_comment #save_new_comment').attr('onclick', 'getCommentsInfo.getRequest(this.name)')
+            $(`#comment #commentContent_${note[1]}_${note[2]}_${note[3]} .done`).empty().append(`
+                <p">${value}</p>
+            `);
+        }
+    })
+}
