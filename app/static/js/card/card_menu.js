@@ -14,8 +14,8 @@ function getCurrentTime() {
     return `${hour}:${minute}`
 }
 // Получение текущей даты в формате dd.mm или dd.mm.yy
-function getCurrentDate(year = 'none') {
-    let time = new Date();
+function getCurrentDate(year = 'none', date) {
+    let time = date || new Date();
     let month = +time.getMonth() < 10 ? '0' + (+time.getMonth()) : +time.getMonth();
     let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
     if (year !== 'none') {
@@ -55,6 +55,7 @@ function createCardMenu(element, index = 0) {
     }
 
     $('.card_menu').remove();
+    console.log(element)
     let getInfo = element.id.split('_');
     let selectedLine = new Object();
     let accountInfoInDelivery = null;

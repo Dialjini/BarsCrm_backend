@@ -1553,12 +1553,31 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                        </div>
+                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                     </div>
                     <div id="analytics_0" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                $('#select_period').datepicker({
+                    maxDate: new Date(),
+                    dateFormat: 'dd.mm.yyyy',
+                    range: true,
+                    toggleSelected: false,
+                    multipleDatesSeparator: ' - ',
+                    onSelect: (formattedDate, date, inst) => {
+                        const date_range = [];
+                        if (date.length == 2) {
+                            console.log(date)
+
+                            selectPeriodInAnalytics(date)
+
+                            let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                myDatepicker.hide();
+                        }
+                    }
+                })
+                // <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
+                //             <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
+                //         </div>
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
                 $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
@@ -1763,12 +1782,28 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                        </div>
+                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                     </div>
                     <div id="analytics_1" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                $('#select_period').datepicker({
+                    maxDate: new Date(),
+                    dateFormat: 'dd.mm.yyyy',
+                    range: true,
+                    toggleSelected: false,
+                    multipleDatesSeparator: ' - ',
+                    onSelect: (formattedDate, date, inst) => {
+                        const date_range = [];
+                        if (date.length == 2) {
+                            console.log(date)
+
+                            selectPeriodInAnalytics(date)
+
+                            let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                myDatepicker.hide();
+                        }
+                    }
+                })
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
                 $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
@@ -1936,12 +1971,28 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                        </div>
+                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                     </div>
                     <div id="analytics_2" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                $('#select_period').datepicker({
+                    maxDate: new Date(),
+                    dateFormat: 'dd.mm.yyyy',
+                    range: true,
+                    toggleSelected: false,
+                    multipleDatesSeparator: ' - ',
+                    onSelect: (formattedDate, date, inst) => {
+                        const date_range = [];
+                        if (date.length == 2) {
+                            console.log(date)
+
+                            selectPeriodInAnalytics(date)
+
+                            let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                myDatepicker.hide();
+                        }
+                    }
+                })
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
                 $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
@@ -2031,12 +2082,28 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                        </div>
+                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                     </div>
                     <div id="analytics_3" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                $('#select_period').datepicker({
+                    maxDate: new Date(),
+                    dateFormat: 'dd.mm.yyyy',
+                    range: true,
+                    toggleSelected: false,
+                    multipleDatesSeparator: ' - ',
+                    onSelect: (formattedDate, date, inst) => {
+                        const date_range = [];
+                        if (date.length == 2) {
+                            console.log(date)
+
+                            selectPeriodInAnalytics(date)
+
+                            let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                myDatepicker.hide();
+                        }
+                    }
+                })
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
                 $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'счет', 1)}`);
@@ -2365,12 +2432,29 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'менеджер', 1)}</span> 
-                        <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                            <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                        </div>
+                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+
                     </div>
                     <div id="analytics_4" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                $('#select_period').datepicker({
+                    maxDate: new Date(),
+                    dateFormat: 'dd.mm.yyyy',
+                    range: true,
+                    toggleSelected: false,
+                    multipleDatesSeparator: ' - ',
+                    onSelect: (formattedDate, date, inst) => {
+                        const date_range = [];
+                        if (date.length == 2) {
+                            console.log(date)
+
+                            selectPeriodInAnalytics(date)
+
+                            let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                myDatepicker.hide();
+                        }
+                    }
+                })
                 $('body').append(`<div id="analytics_block_hidden"></div>`)
             } else {
                 $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'менеджер', 1)}`);
@@ -2480,12 +2564,29 @@ function getValidationDate(date) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
                                 <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'комментари', 3)}</span> 
-                                <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                                    <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                                </div>
+                                <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+
                             </div>
                             <div id="analytics_5" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                         `)
+                        $('#select_period').datepicker({
+                            maxDate: new Date(),
+                            dateFormat: 'dd.mm.yyyy',
+                            range: true,
+                            toggleSelected: false,
+                            multipleDatesSeparator: ' - ',
+                            onSelect: (formattedDate, date, inst) => {
+                                const date_range = [];
+                                if (date.length == 2) {
+                                    console.log(date)
+        
+                                    selectPeriodInAnalytics(date)
+        
+                                    let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                        myDatepicker.hide();
+                                }
+                            }
+                        })
                         $('body').append(`<div id="analytics_block_hidden"></div>`)
                     } else {
                         $('#info_in_accounts_count').html(`${total_count} ${current_count_accounts(total_count, 'комментари', 3)}`);
@@ -2812,12 +2913,29 @@ function getValidationDate(date) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
                                 <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count}</span> 
-                                <div id="select_period_info_accounts" onclick="visibleSelectPeriodInAnalytics()">
-                                    <span id="period_accounts">за последний месяц</span> <img src="static/images/dropmenu_black.svg" class="drop_down_img">
-                                </div>
+                                <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+
                             </div>
                             <div id="analytics_6" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                         `)
+                        $('#select_period').datepicker({
+                            maxDate: new Date(),
+                            dateFormat: 'dd.mm.yyyy',
+                            range: true,
+                            toggleSelected: false,
+                            multipleDatesSeparator: ' - ',
+                            onSelect: (formattedDate, date, inst) => {
+                                const date_range = [];
+                                if (date.length == 2) {
+                                    console.log(date)
+        
+                                    selectPeriodInAnalytics(date)
+        
+                                    let myDatepicker = $(`#select_period`).datepicker().data('datepicker');
+                                        myDatepicker.hide();
+                                }
+                            }
+                        })
                         $('body').append(`<div id="analytics_block_hidden"></div>`)
                     } else {
                         $('#info_in_accounts_count').html(`${total_count}`);
@@ -2983,25 +3101,24 @@ function getValidationDate(date) {
             $('#pd_manager .drop_arrow').removeClass('drop_active');
         }, 150)
     }
-    function visibleSelectPeriodInAnalytics() {
-        if ($('div').is('.period_info_accounts')) {
-            $('.period_info_accounts').remove();
-        } else {
-            $('#select_period_info_accounts').append(`
-                <div class="period_info_accounts">
-                    <ul>
-                        <li id="day" onclick="selectPeriodInAnalytics(this.id)">за последний день</li>
-                        <li id="weak" onclick="selectPeriodInAnalytics(this.id)">за последнюю неделю</li>
-                        <li id="month" onclick="selectPeriodInAnalytics(this.id)">за последний месяц</li>
-                        <li id="year" onclick="selectPeriodInAnalytics(this.id)">за последний год</li>
-                        <li id="all" onclick="selectPeriodInAnalytics(this.id)">за все время</li>
-                    </ul>
-                </div>
-            `) 
-        }
-    }
-    function selectPeriodInAnalytics(period) {
-        let date_period = datePeriod(period);
+    // function visibleSelectPeriodInAnalytics() {
+    //     if ($('div').is('.period_info_accounts')) {
+    //         $('.period_info_accounts').remove();
+    //     } else {
+    //         $('#select_period_info_accounts').append(`
+    //             <div class="period_info_accounts">
+    //                 <ul>
+    //                     <li id="day" onclick="selectPeriodInAnalytics(this.id)">за последний день</li>
+    //                     <li id="weak" onclick="selectPeriodInAnalytics(this.id)">за последнюю неделю</li>
+    //                     <li id="month" onclick="selectPeriodInAnalytics(this.id)">за последний месяц</li>
+    //                     <li id="year" onclick="selectPeriodInAnalytics(this.id)">за последний год</li>
+    //                     <li id="all" onclick="selectPeriodInAnalytics(this.id)">за все время</li>
+    //                 </ul>
+    //             </div>
+    //         `) 
+    //     }
+    // }
+    function selectPeriodInAnalytics(date) {
         let list = [
             {function: analyticsFilterTable_0, name: 'Прибыль по клиентам'},
             {function: analyticsFilterTable_1, name: 'Сводный по объёмам'},
@@ -3015,7 +3132,7 @@ function getValidationDate(date) {
         for (let i = 0; i < list.length; i++) {
             if (list[i].name == $('#analytics_reports #active_field').html()) {
                 $('.table').remove();
-                $('.info').append(list[i].function(date_period));
+                $('.info').append(list[i].function(date));
                 break;
             }
         }

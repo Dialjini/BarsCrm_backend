@@ -1786,6 +1786,8 @@ function sortTableByArea(filter, input = true, close_card = false) {
         sortStatus.area.filter = sort;
     }
     if (input || close_card) {
+        $('.centerBlock .header .cancel').remove();
+        
         $('.centerBlock .header').append(`
             <div class="cancel">
                 <button class="btn btn-main" onclick="cancelSearch()">Отменить поиск</button>

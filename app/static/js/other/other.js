@@ -30,7 +30,8 @@ function createContactsFormTask(values) {
                         id: elementsInfo[i].id,
                         type: elementsInfo[i].type,
                         value: values[elementsInfo[i].id],
-                        'data-card': values.task_card ? values.task_card : ''
+                        'data-card': values.task_card ? values.task_card : '',
+                        placeholder: elementsInfo[i].id == 'task_comment' ? values.task_card_name : ''
                     })
                 }))
             }))
@@ -148,6 +149,8 @@ function taskCreate(tasks = 'new') {
 
                     let second_date_arr = datetime_regex.exec(secondDate);
                     let second_datetime = new Date(second_date_arr[3], second_date_arr[2], second_date_arr[1], second_date_arr[4], second_date_arr[5]);
+
+                    const card_task = tasks[i].Comment.split('<br>');
                     if (first_datetime.getTime() > second_datetime.getTime()) {
                         let mark = tasks[i].Admin ? 'mark' : '';
                         $('#tasks_list .empty').remove();
@@ -161,6 +164,7 @@ function taskCreate(tasks = 'new') {
                                     class: 'importance'
                                 }).add($('<div>', {
                                     class: 'fieldInfo',
+                                    style: `${card_task.length > 1 ? 'width: 75%' : ''}`,
                                     append: $('<div>', {
                                         class: 'row',
                                         append: $('<div>', {
@@ -188,6 +192,18 @@ function taskCreate(tasks = 'new') {
                                 }))
                             })
                         )
+                        if (card_task.length > 1) {
+                            $(`[name="task_${tasks[i].Task_id}"]`).append(`
+                                <button style="font-size: 10px; transform: rotate(90deg); position: relative; top: 14px; right: -5px; margin: 0; height: 25px; border: none; color: white; cursor: pointer; background: #7764CA; border-radius: 5px;">Открыть КК</button>
+                            `)
+                            $(`[name="task_${tasks[i].Task_id}"] button`).click(function() {
+                                event.stopPropagation();
+                                let tr = $('<tr>', {
+                                    id: `client_${tasks[i].Task_id}`
+                                });
+                                createCardMenu(tr[0])
+                            })
+                        }
                         // if (tasks[i].Admin) {
                         //     const $item = $(`.item[name="task_${tasks[i].Task_id}"]`).append(`
                         //         <button>Открыть КК</button>
@@ -234,14 +250,15 @@ function taskCreate(tasks = 'new') {
                 }
             } else {
                 const card_id = $('#task_date').attr('data-card');
+                const card_name = card_id != '' ? $('#task_comment').attr('placeholder') : '';
+                const comment = $('#task_comment').val() == '' ? 'Без комментария' : $('#task_comment').val();
                 taskInfo = {
                     task_type: $('#task_type').val(),
                     task_whom: [$('#task_whom').val()],
                     task_who: data.id,
-                    task_card: card_id ? card_id : '',
                     task_date: $('#task_date').val(),
                     task_time: $('#task_time').val(),
-                    task_comment: $('#task_comment').val() == '' ? 'Без комментария' : $('#task_comment').val(),
+                    task_comment: card_name == '' ? comment : comment + '<br>' + card_name,
                 }
                 let date = $('#task_date').val();
                 let time = $('#task_time').val();
@@ -484,7 +501,7 @@ function createCT(id, values = 'empty', card_id) {
         $('#task_date').datepicker({position: 'left top', autoClose: true})
         $('#task_time').mask('99:99');
     } else if (id == 'addCardTask') {
-        if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: '', task_card: card_id}
+        if (values === 'empty') values = {task_type: '', task_whom: '', task_who: '', task_date: '', task_time: '', task_comment: '', task_card: card_id, task_card_name: $('#client_name').val()}
         $('#createCT').append(createContactsFormTask(values));
         $('#task_date').datepicker({position: 'left top', autoClose: true})
         $('#task_time').mask('99:99');
