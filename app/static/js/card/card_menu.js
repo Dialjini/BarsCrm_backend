@@ -602,7 +602,7 @@ function createCardMenu(element, index = 0) {
                             <div class="title">
                                 <div>Последние комментарии</div>
                                 <div>
-                                    ${data_user.role == 'admin' ? `<img id="edit_comment" onclick="editComment()" class="save" style="margin-right: 15px; cursor: pointer" src="static/images/pencil.svg">` : ''}
+                                    ${data_user.role == 'admin' ? `<img id="edit_comment" onclick="editComment()" class="save" style="margin-right: 15px; cursor: pointer; width: 17px;" src="static/images/pencil.svg">` : ''}
                                     <img id="save_new_comment" onclick="getCommentsInfo.getRequest(this.name)" class="add_something save" src="static/images/save_comment.png">
                                 </div>
                             </div>

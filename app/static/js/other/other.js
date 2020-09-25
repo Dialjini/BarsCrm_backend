@@ -194,7 +194,7 @@ function taskCreate(tasks = 'new') {
                         )
                         if (card_task.length > 1) {
                             $(`[name="task_${tasks[i].Task_id}"]`).append(`
-                                <button style="font-size: 10px; transform: rotate(90deg); position: relative; top: 14px; right: -5px; margin: 0; height: 25px; border: none; color: white; cursor: pointer; background: #7764CA; border-radius: 5px;">Открыть КК</button>
+                                <button style="width: 34px; position: relative; top: 0px; font-size: 14px; padding: 0; right: -5px; margin: 0; border: none; cursor: pointer; background: #fff; box-shadow: 0px 0px 2px #9c9c9c; border-radius: 2px;">КК</button>
                             `)
                             $(`[name="task_${tasks[i].Task_id}"] button`).click(function() {
                                 event.stopPropagation();

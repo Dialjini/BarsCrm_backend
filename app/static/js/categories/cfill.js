@@ -1553,10 +1553,12 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input placeholder="Выберите период" type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
-                    <div id="analytics_0" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                // <div id="analytics_0" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                 $('#select_period').datepicker({
                     maxDate: new Date(),
                     dateFormat: 'dd.mm.yyyy',
@@ -1782,10 +1784,12 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
-                    <div id="analytics_1" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                // <div id="analytics_1" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                 $('#select_period').datepicker({
                     maxDate: new Date(),
                     dateFormat: 'dd.mm.yyyy',
@@ -1971,10 +1975,12 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
-                    <div id="analytics_2" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                // <div id="analytics_2" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                 $('#select_period').datepicker({
                     maxDate: new Date(),
                     dateFormat: 'dd.mm.yyyy',
@@ -2082,10 +2088,12 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
-                    <div id="analytics_3" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                // <div id="analytics_3" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                 $('#select_period').datepicker({
                     maxDate: new Date(),
                     dateFormat: 'dd.mm.yyyy',
@@ -2432,11 +2440,13 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'менеджер', 1)}</span> 
-                        <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
 
                     </div>
-                    <div id="analytics_4" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                 `)
+                // <div id="analytics_4" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                 $('#select_period').datepicker({
                     maxDate: new Date(),
                     dateFormat: 'dd.mm.yyyy',
@@ -2564,11 +2574,13 @@ function getValidationDate(date) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
                                 <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'комментари', 3)}</span> 
-                                <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                                <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                                <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
 
                             </div>
-                            <div id="analytics_5" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                         `)
+                        // <div id="analytics_5" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                         $('#select_period').datepicker({
                             maxDate: new Date(),
                             dateFormat: 'dd.mm.yyyy',
@@ -2913,11 +2925,13 @@ function getValidationDate(date) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
                                 <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count}</span> 
-                                <input type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                                <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                                <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
 
                             </div>
-                            <div id="analytics_6" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
                         `)
+                        // <div id="analytics_6" name="unload_table" class="btn btn-main btn-div" onclick="unloadThisTable(this.id)" style="width: 90px; margin-left: 30px;">Выгрузить</div>
+
                         $('#select_period').datepicker({
                             maxDate: new Date(),
                             dateFormat: 'dd.mm.yyyy',
