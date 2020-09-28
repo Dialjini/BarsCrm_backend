@@ -16,17 +16,20 @@ function getCurrentTime() {
 // Получение текущей даты в формате dd.mm или dd.mm.yy
 function getCurrentDate(year = 'none', date) {
     let time = date || new Date();
+    const dd = String(time.getDate()).padStart(2, '0');
+    const mm = String(time.getMonth()).padStart(2, '0');
+
     let month = +time.getMonth() < 10 ? '0' + (+time.getMonth()) : +time.getMonth();
     let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
+
     if (year !== 'none') {
-        let year = time.getFullYear();
-        year = String(year).substring(2, 4);
-        return `${day}.${month}.${year}`;
+        const year = String(time.getFullYear()).substring(2, 4);
+        return `${dd}.${mm}.${year}`;
     }
-    return `${day}.${month}`;
+    return `${dd}.${mm}`;
 }
-function getCurrentDateNotComparison(year = 'none') {
-    let time = new Date();
+function getCurrentDateNotComparison(year = 'none', date) {
+    let time = date || new Date();
     let month = +time.getMonth() < 9 ? '0' + (+time.getMonth() + 1) : +time.getMonth() + 1;
     let day = time.getDate() < 10 ? '0' + time.getDate() : time.getDate();
     if (year !== 'none') {

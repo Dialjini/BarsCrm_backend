@@ -33,6 +33,7 @@ function linkField() {
             for (let j = 1; j < subcategoryButtons[i].length; j++) {
                 if (this.id == subcategoryButtons[i][j].id) {
                     activityReassignment(subcategoryButtons[i]);
+                    console.log(123);
                     getTableData(subcategoryButtons[i][j].objectName);
                     break;
                 }
@@ -1553,7 +1554,7 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input placeholder="Выберите период" type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" type="text" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                         <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
                 `)
@@ -1561,7 +1562,7 @@ function getValidationDate(date) {
 
                 $('#select_period').datepicker({
                     maxDate: new Date(),
-                    dateFormat: 'dd.mm.yyyy',
+                    dateFormat: 'dd.mm.yy',
                     range: true,
                     toggleSelected: false,
                     multipleDatesSeparator: ' - ',
@@ -1784,7 +1785,7 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                         <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
                 `)
@@ -1792,7 +1793,7 @@ function getValidationDate(date) {
 
                 $('#select_period').datepicker({
                     maxDate: new Date(),
-                    dateFormat: 'dd.mm.yyyy',
+                    dateFormat: 'dd.mm.yy',
                     range: true,
                     toggleSelected: false,
                     multipleDatesSeparator: ' - ',
@@ -1975,7 +1976,7 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                         <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
                 `)
@@ -1983,7 +1984,7 @@ function getValidationDate(date) {
 
                 $('#select_period').datepicker({
                     maxDate: new Date(),
-                    dateFormat: 'dd.mm.yyyy',
+                    dateFormat: 'dd.mm.yy',
                     range: true,
                     toggleSelected: false,
                     multipleDatesSeparator: ' - ',
@@ -2088,7 +2089,7 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'счет', 1)}</span> 
-                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                         <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
                     </div>
                 `)
@@ -2096,7 +2097,7 @@ function getValidationDate(date) {
 
                 $('#select_period').datepicker({
                     maxDate: new Date(),
-                    dateFormat: 'dd.mm.yyyy',
+                    dateFormat: 'dd.mm.yy',
                     range: true,
                     toggleSelected: false,
                     multipleDatesSeparator: ' - ',
@@ -2440,7 +2441,7 @@ function getValidationDate(date) {
                 $('.fields').append(`
                     <div id="info_in_accounts">
                         <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'менеджер', 1)}</span> 
-                        <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                        <input type="text" placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                         <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
 
                     </div>
@@ -2449,7 +2450,7 @@ function getValidationDate(date) {
 
                 $('#select_period').datepicker({
                     maxDate: new Date(),
-                    dateFormat: 'dd.mm.yyyy',
+                    dateFormat: 'dd.mm.yy',
                     range: true,
                     toggleSelected: false,
                     multipleDatesSeparator: ' - ',
@@ -2543,14 +2544,14 @@ function getValidationDate(date) {
                                         table += `
                                             <tr>
                                                 <td name="username_analytics" rowspan="${length}">${result.data[i].name}</td>
-                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
+                                                <td onclick="openClientCard(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
                                                 <td>${result.data[i].orgs[key]}</td>
                                             </tr>
                                         `
                                     } else {
                                         table += `
                                             <tr>
-                                                <td onclick="openThisCardMenu(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
+                                                <td onclick="openClientCard(this)" id="${data_one[2]}_${data_one[1]}_search">${data_one[0]}</td>
                                                 <td>${result.data[i].orgs[key]}</td>
                                             </tr>
                                         `
@@ -2574,7 +2575,7 @@ function getValidationDate(date) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
                                 <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count} ${current_count_accounts(total_count, 'комментари', 3)}</span> 
-                                <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                                <input type="text" placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                                 <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
 
                             </div>
@@ -2583,7 +2584,7 @@ function getValidationDate(date) {
 
                         $('#select_period').datepicker({
                             maxDate: new Date(),
-                            dateFormat: 'dd.mm.yyyy',
+                            dateFormat: 'dd.mm.yy',
                             range: true,
                             toggleSelected: false,
                             multipleDatesSeparator: ' - ',
@@ -2925,7 +2926,7 @@ function getValidationDate(date) {
                         $('.fields').append(`
                             <div id="info_in_accounts">
                                 <span id="info_in_accounts_count" style="margin-right: 5px;">${total_count}</span> 
-                                <input type="text" placeholder="Выберите период" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
+                                <input type="text" placeholder="Выберите период" value="${getCurrentDateNotComparison('year', date_period[0])} - ${getCurrentDateNotComparison('year', date_period[1])}" style="outline: none; border: none; font-family: 'Montserrat', sans-serif; width: 150px; font-size: 13px; border-radius: 5px; color: #595959; position: relative; top: -2px; left: 6px;" id="select_period">
                                 <img style="width: 22px; position: relative; top: -2px; left: 10px;" src="/static/images/calendar.svg">
 
                             </div>
@@ -2934,7 +2935,7 @@ function getValidationDate(date) {
 
                         $('#select_period').datepicker({
                             maxDate: new Date(),
-                            dateFormat: 'dd.mm.yyyy',
+                            dateFormat: 'dd.mm.yy',
                             range: true,
                             toggleSelected: false,
                             multipleDatesSeparator: ' - ',

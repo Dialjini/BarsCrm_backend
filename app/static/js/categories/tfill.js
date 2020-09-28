@@ -2386,9 +2386,38 @@ function fillingTables(object, filter = false) {
     }
 
     if (object[0].id === 'analytics') {
-        let current_period_month = datePeriod('month');
+        let current_period_month = analytics_filter.filter.period && analytics_filter.filter.period != '' ? getPeriod() : datePeriod('month');
+        function datePeriod(period) {
+            let date_filter = [
+                {id: 'day', period: 0, text: 'за последний день'},
+                {id: 'weak', period: 7, text: 'за последнюю неделю'},
+                {id: 'month', period: 30, text: 'за последний месяц'},
+                {id: 'half_year', period: 180},
+                {id: 'year', period: 365, text: 'за последний год'},
+                {id: 'all', period: 5475, text: 'за все время'},
+            ]
+            for (let i = 0; i < date_filter.length; i++) {
+                if (period == date_filter[i].id) {
+                    let today = getCurrentDate('year');
+                    let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d)/;
+        
+                    let date_arr = datetime_regex.exec(today);
+                    let first_datetime = new Date('20' + +date_arr[3], +date_arr[2], date_arr[1]);
+                    let second_datetime = new Date('20' + +date_arr[3], +date_arr[2], date_arr[1]);
+                    second_datetime.setDate(first_datetime.getDate() - date_filter[i].period);
+                    if (period != 'half_year') $('#period_accounts').html(date_filter[i].text);
+                    return [second_datetime, first_datetime];
+                }
+            }
+        }
+        function getPeriod() {
+            const period = analytics_filter.filter.period.split(' - ');
+            return period.map(date => {
+                return getValidationDate(date)
+            })
+        }
+        console.log(current_period_month);
         $('#analytics_block_hidden').remove();
-        console.log(object[0])
         if (user.role == 'admin') {
             let list = [
                 {function: analyticsFilterTable_0, id: 0, name: 'Прибыль по клиентам'},

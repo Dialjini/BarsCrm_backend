@@ -895,7 +895,16 @@ function saveInfoCard(id, close = false, elem = null, checkINN = 'none') {
                 if (elem !== null) {
                     removeCard(elem);
                 }
-                getTableData(saveTableAndCard, false, close, true);
+                console.log(analytics_filter.filter);
+                console.log(analytics_filter.filter.period)
+                if (analytics_filter.filter.period && analytics_filter.filter.status) {
+                    analytics_filter.filter.status = false;
+                    categoryInListClient[0].lastCard = [null, null]
+                    linkCategoryInfo[0].subcategories[0][0].active = true
+                    $('#category-4').click();
+                } else {
+                    getTableData(saveTableAndCard, false, close, true);
+                }
             }
         });
         

@@ -556,7 +556,20 @@ function createCategoryMenu() {
         );
     }
 }
-
+const analytics_filter = {
+    filter: {},
+    remove() {
+        this.filter = {}
+    }
+}
+function openClientCard(element) {
+    analytics_filter.filter.period = $('#select_period').val()
+    analytics_filter.filter.status = true;
+    openThisCardMenu(element)
+    setTimeout(function() {
+        linkCategoryInfo[0].subcategories[0][0].active = true;
+    }, 1000)
+}
 // Выпадающее меню "Поиска по региону"
 $('#search_dropMenu').click(function() {
     if (this.classList.contains('active')) {
