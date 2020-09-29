@@ -86,15 +86,17 @@ function createRegionMenu() {
         $(element).append(() => {
             return `
                 <div class="region">
-                    <div class="region_name" style="display: flex; position: relative">
-                        <span onclick="searchRegionFill(this)">${regions[i].name}</span>
-                        <div onclick="showRegionList(this)" style="position: absolute; top: 6px; right: 0px; width: 25px; display: flex; justify-content: center; align-items: center; height: 25px; cursor: pointer;">
-                            <img style="width: 12px; transform: rotate(90deg); transition: 0.3s all" src="static/images/dropmenu_black.svg">
+                    ${regions[i].name ? `
+                        <div class="region_name" style="display: flex; position: relative">
+                            <span onclick="searchRegionFill(this)">${regions[i].name}</span>
+                            <div onclick="showRegionList(this)" style="position: absolute; top: 6px; right: 0px; width: 25px; display: flex; justify-content: center; align-items: center; height: 25px; cursor: pointer;">
+                                <img style="width: 12px; transform: rotate(90deg); transition: 0.3s all" src="static/images/dropmenu_black.svg">
+                            </div>
                         </div>
-                    </div>
-                    <ul class="list_regions d_none">
-                        ${createLiList(i)}
-                    </ul>
+                        <ul class="list_regions d_none">
+                            ${createLiList(i)}
+                        </ul>
+                    ` : ''}
                 </div>
             `
         })
