@@ -1173,7 +1173,6 @@ function searchFill(element) {
             let data = listData[i].data.length > 0 ? listData[i].data : saveTableAndCard[1][1];
             for (let j = 0; j < data.length; j++) {
                 let string = String(data[j][listData[i].list]).toLowerCase();
-                console.log(string, search)
                 if (string == search.toLowerCase()) {
                     searchCards.push(data[j]);
                 }
@@ -1189,6 +1188,7 @@ function searchFill(element) {
             for (let j = 0; j < clientCards.length; j++) {
                 searchCards.push(clientCards[j]);
             }
+            $('#amount_cards span').html(searchCards.length)
             listData[i].filter[1][1] = searchCards.reverse();
             $('.table').remove();
             $('.info').append(fillingTables(listData[i].filter, true));

@@ -2988,11 +2988,6 @@ function getValidationDate(date) {
             {id: 'client', request: '/getClients', table: categoryInListClient},
             {id: 'provider', request: '/getProviders', table: categoryInListProvider},
         ]
-        if ($('#subcategories .category').html() == 'АНАЛИТИКА') {
-            $('#subcategories').empty();
-            addButtonsSubcategory(0);
-            $('#clientButton').addClass('active');
-        }
 
         for (let i = 0; i < list.length; i++) {
             if (list[i].id == element.id.split('_')[0]) {
@@ -3003,6 +2998,13 @@ function getValidationDate(date) {
                     success: function(result) {
                         result = JSON.parse(result);
                         if (list[i].table[1][1] == undefined) list[i].table[1].push(result);
+                        
+                        if ($('#subcategories .category').html() == 'АНАЛИТИКА') {
+                            $('#subcategories').empty();
+                            addButtonsSubcategory(0);
+                            $('#clientButton').addClass('active');
+                        }
+
                         openCardMenu(element);
                     }
                 });
