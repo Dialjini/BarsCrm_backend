@@ -1,4 +1,5 @@
 let saveTableAndCard;
+let position_scroll = 0;
 // Отслеживание нажатия для всплывающей карточки "Открепить менеджера..."
 $(document).mouseup(function(e) {
     let container = $('.drop_menu');
@@ -41,6 +42,7 @@ function getCurrentDateNotComparison(year = 'none', date) {
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
+    position_scroll = element.offsetTop;
     console.log(client_all_data);
     $('body').append(`
         <div id="preloader">

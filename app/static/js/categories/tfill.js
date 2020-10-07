@@ -1286,6 +1286,7 @@ function sortTableByCategory(filter) {
     filterClient[1][1] = filter_table;
     $('.table').remove();
     $('.info').append(fillingTables(filterClient));
+    windows.
 
     sortStatus.category.status = true;
     sortStatus.category.filter = currentCategory;

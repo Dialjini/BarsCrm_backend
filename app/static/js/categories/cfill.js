@@ -2499,7 +2499,7 @@ function getValidationDate(date) {
         }
     }
     // Проделанная работа
-    function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '') {
+    function analyticsFilterTable_6(date_period, unload_status = false, filter_manager = '', click) {
         $('#all_amount_hello').remove();
         $('#all_amount_profit').remove();
         categoryInAnalytics[0].last = 6;
@@ -2515,7 +2515,7 @@ function getValidationDate(date) {
                         <div id="preloader">
                             <div id="preloader_preload"></div>
                         </div>
-                    `)
+                    `);
                     preloader = document.getElementById("preloader_preload");
                 },
                 complete: function() {
@@ -2524,6 +2524,14 @@ function getValidationDate(date) {
                 success: function(data) {
                     result = JSON.parse(data);
                     console.log(result);
+                    console.log(manager_works);
+                    if (manager_works) {
+                        result.data = result.data.filter(el => el.name == manager_works);
+                    }
+                    if (!click) {
+                        manager_works = null;
+                    }
+
                     let total_count = 0;
                     let unload_info = [];
                     for (let i = 0; i < result.data.length; i++) {
@@ -2592,6 +2600,8 @@ function getValidationDate(date) {
                                 const date_range = [];
                                 if (date.length == 2) {
                                     console.log(date)
+                                    managers_filter = [];
+                                    manager_works = null;
         
                                     selectPeriodInAnalytics(date)
         
@@ -3027,26 +3037,42 @@ function getValidationDate(date) {
                     data = JSON.parse(result);
                 }
             });
-            for (let i = 0; i < data.length; i++) {
-                for (let name of $('[name="username_analytics"]')) {
-                    console.log($(name).html(), data[i].second_name);
-                    if ($('table').is('#bonus_table')) {
-                        if (data[i].second_name == $(name).html()) {
-                            filter_table.push({ name: $(name).html(), id: data[i].id});
+            if (managers_filter.length != 0) {
+                for (let i = 0; i < data.length; i++) {
+                    managers_filter.forEach((manager) => {
+                        if ($('table').is('#bonus_table')) {
+                            if (data[i].second_name == manager) {
+                                filter_table.push({ name: manager, id: data[i].id});
+                            }
+                        } else {
+                            if (data[i].second_name == manager.split(' ')[1] && data[i].name == manager.split(' ')[0]) {
+                                filter_table.push({ name: manager, id: data[i].id});
+                            }
                         }
-                    } else {
-                        if (data[i].second_name == $(name).html().split(' ')[1] && data[i].name == $(name).html().split(' ')[0]) {
-                            filter_table.push({ name: $(name).html(), id: data[i].id});
+                    })
+                }
+            } else {
+                for (let i = 0; i < data.length; i++) {
+                    for (let name of $('[name="username_analytics"]')) {
+                        console.log($(name).html(), data[i].second_name);
+                        if ($('table').is('#bonus_table')) {
+                            if (data[i].second_name == $(name).html()) {
+                                filter_table.push({ name: $(name).html(), id: data[i].id});
+                            }
+                        } else {
+                            if (data[i].second_name == $(name).html().split(' ')[1] && data[i].name == $(name).html().split(' ')[0]) {
+                                filter_table.push({ name: $(name).html(), id: data[i].id});
+                            }
                         }
                     }
                 }
-            }
 
-            for (let i = 0; i < filter_table.length - 1; i++) {
-                for (let j = i + 1; j < filter_table.length; j++) {
-                    if (filter_table[i].id == filter_table[j].id) {
-                        filter_table.splice(j, 1);
-                        j--;
+                for (let i = 0; i < filter_table.length - 1; i++) {
+                    for (let j = i + 1; j < filter_table.length; j++) {
+                        if (filter_table[i].id == filter_table[j].id) {
+                            filter_table.splice(j, 1);
+                            j--;
+                        }
                     }
                 }
             }
@@ -3055,7 +3081,7 @@ function getValidationDate(date) {
                 ul.append($('<li>', {
                     html: filter_table[i].name,
                     id: filter_table[i].id,
-                    onclick: 'sortTableByManagersAn(this)'
+                    onclick: 'sortTableByManagersAn(this, true)'
                 }))
             }
             return ul;
@@ -3080,8 +3106,12 @@ function getValidationDate(date) {
             $('.filter_list').fadeIn(100);
         }, 250);
     }
-    function sortTableByManagersAn(element) {
+    function sortTableByManagersAn(element, click = false) {
+        managers_filter = $('#pd_manager .filter_list .list li').toArray().map(el => el.innerHTML);
         let searchWord = element.innerHTML;
+        manager_works = searchWord;
+
+        console.log(element);
         $('.centerBlock .header .cancel').remove();
     
         let managers;
@@ -3094,25 +3124,15 @@ function getValidationDate(date) {
                 managers = JSON.parse(result);
             }
         });
-        let date = $('#period_accounts').html();
-        let date_filter = [
-            {id: 'day', text: 'за последний день'},
-            {id: 'weak', text: 'за последнюю неделю'},
-            {id: 'month', text: 'за последний месяц'},
-            {id: 'year', text: 'за последний год'},
-            {id: 'all', text: 'за все время'},
-        ]
-        for (let i = 0; i < date_filter.length; i++) {
-            if (date_filter[i].text == date) {
-                if ($('table').is('#bonus_table')) {
-                    $('.table').remove();
-                    $('.info').append(analyticsFilterTable_5(datePeriod(date_filter[i].id), false, searchWord));
-                } else {
-                    $('.table').remove();
-                    $('.info').append(analyticsFilterTable_6(datePeriod(date_filter[i].id), false, searchWord));
-                }
-                break;
-            }
+        let date = $('#select_period').val().split(' - ');
+        console.log(date);
+        date = date.map(el => getValidationDate(el))
+        if ($('table').is('#bonus_table')) {
+            $('.table').remove();
+            $('.info').append(analyticsFilterTable_5(date, false, searchWord, true, click));
+        } else {
+            $('.table').remove();
+            $('.info').append(analyticsFilterTable_6(date, false, searchWord, true, click));
         }
         setTimeout(function() {
             $('#pd_manager .drop_arrow').removeClass('drop_active');

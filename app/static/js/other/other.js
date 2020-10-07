@@ -7,6 +7,8 @@ function profileMenu() {
         $('.profile_menu_l').addClass('active');
     }
 }
+let manager_works = false;
+let managers_filter = [];
 function createContactsFormTask(values) {
     const elementsInfo = [
         { id: 'task_type', html: 'Тип задачи', type: 'text', element: 'select' },
@@ -103,6 +105,13 @@ function createContactsFormTask(values) {
 }
 // Создание задачи
 function taskCreate(tasks = 'new') {
+    function getValidationDateFull(date) {
+        console.log(date);
+        let datetime_regex = /(\d\d)\.(\d\d)\.(\d\d\d\d) (\d\d)\:(\d\d)/;
+        let date_arr = datetime_regex.exec(date);
+        let datetime = new Date(+date_arr[3], +date_arr[2] - 1, date_arr[1], +date_arr[4], +date_arr[5]);
+        return datetime;
+    }
     let taskInfo;
     $.ajax({
         url: '/getThisUser',
@@ -114,8 +123,10 @@ function taskCreate(tasks = 'new') {
                 tasks = JSON.parse(tasks);
                 console.log(tasks);
                 tasks = tasks.sort((a, b) => {
-                    if (a.Date + ' ' + a.Time > b.Date + ' ' + b.Time) return -1;
-                    if (a.Date + ' ' + a.Time < b.Date + ' ' + b.Time) return 1;
+                    const a_time = a.Time.length == 4 ? 0 + a.Time : a.Time.length == 1 || a.Time.length == 2 ? '00:00' : a.Time;
+                    const b_time = b.Time.length == 4 ? 0 + b.Time : b.Time.length == 1 || b.Time.length == 2 ? '00:00' : b.Time;
+                    if (getValidationDateFull(a.Date + ' ' + a_time) > getValidationDateFull(b.Date + ' ' + b_time)) return -1;
+                    if (getValidationDateFull(a.Date + ' ' + a_time) < getValidationDateFull(b.Date + ' ' + b_time)) return 1;
                     return 0;
                 })
                 $('#tasks_list .empty').remove();
@@ -138,6 +149,9 @@ function taskCreate(tasks = 'new') {
                     let time = tasks[i].Time;
                     if (time.split(':')[0].length == 1) {
                         time = '0' + time;
+                    }
+                    if (time.length == 1 || time.length == 2 || time.length == 3 || time.length == 4) {
+                        time = '00:00';
                     }
 
                     let firstDate = `${taskDate.join('.')} ${time}`;
@@ -198,8 +212,9 @@ function taskCreate(tasks = 'new') {
                             `)
                             $(`[name="task_${tasks[i].Task_id}"] button`).click(function() {
                                 event.stopPropagation();
+                                const client = saveTableAndCard[1][1].find(el => el.Name === card_task[1]);
                                 let tr = $('<tr>', {
-                                    id: `client_${tasks[i].Task_id}`
+                                    id: `client_${client.id}`
                                 });
                                 createCardMenu(tr[0])
                             })
@@ -262,6 +277,15 @@ function taskCreate(tasks = 'new') {
                 }
                 let date = $('#task_date').val();
                 let time = $('#task_time').val();
+                time = time.split(':');
+                if (time[0].length == 1) {
+                    time[0] = 0 + time[0];
+                }
+                if (time[1].length == 1) {
+                    time[1] = 0 + time[1];
+                }
+                time = time.join(':');
+                taskInfo.task_time = time;
 
                 try {
                     if (date.split('.').length != 3) {
@@ -317,6 +341,7 @@ function taskCreate(tasks = 'new') {
                 $('#tasks_list .empty').remove();
                 $('#current_tasks').empty();
                 $('#expired_tasks').empty();
+                console.log(taskInfo);
                 socket.emit('addTask', {data: taskInfo});
                 function typeTask() {
                     if (taskInfo.task_type == 'phone') return 'Звонок';
