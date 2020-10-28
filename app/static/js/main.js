@@ -89,12 +89,49 @@ function getTableData(table, input = false, close = false, close_card = false) {
                         let data = {};
                         console.log($('#search').val());
                         if ($('#search').val() != '') {
-                            searchCategoryInfo();
-                            setTimeout(() => {
-                                $('.card_menu, .overflow').remove();
-                            }, 0);
-                            $('#loading').remove();
-                            setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                            $.ajax({
+                                url: requests[i].request,
+                                type: 'GET',
+                                dataType: 'html',
+                                data: data,
+                                beforeSend: function() {
+                                    function fillTable() {
+                                        return $('<div>', { class: 'table', id: 'loading' });
+                                    }
+                                    $('.info').append(fillTable());
+                                    $('#loading').fadeIn(100);
+                                    if (!$('div').is('#preloader')) {
+                                        $('body').append(`
+                                            <div id="preloader">
+                                                <div id="preloader_preload"></div>
+                                            </div>
+                                        `)
+                                        preloader = document.getElementById("preloader_preload");
+                                    }
+                                },
+                                success: function(data) { 
+                                    data = JSON.parse(data);
+                                    if (requests[i].request == '/getClients') {
+                                        client_all_data = data;
+                                    }
+                                    if (requests[i].request == '/getProviders') {
+                                        provider_all_data = data;
+                                    }
+                                    if (requests[i].request == '/getCarriers') {
+                                        carrier_all_data = data;
+                                    }
+                                    searchCategoryInfo();
+                                    setTimeout(() => {
+                                        $('.card_menu, .overflow').remove();
+                                    }, 0);
+                                    $('#loading').remove();
+                                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                                },
+                                complete: function() {
+                                    $('#loading').remove();
+                                    setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                                }
+                            });
                         } else {
                             $.ajax({
                                 url: requests[i].request,
@@ -151,6 +188,7 @@ function getTableData(table, input = false, close = false, close_card = false) {
                         table[1].push(data);
                     }
                     if (table[0].id == 'client') {
+                        console.log(table[1][1].find(el => el.id === 1409));
                         client_all_data = table[1][1].slice();
                         
                     } 

@@ -3451,6 +3451,7 @@ function closeCardMenu(id = '') {
     }
 
     // Сохраняет данные на сервер
+    console.log(id)
     if (id[1] == 'user') {
         getTableData(saveTableAndCard);
         return;
