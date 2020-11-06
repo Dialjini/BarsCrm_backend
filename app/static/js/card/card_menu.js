@@ -42,7 +42,7 @@ function getCurrentDateNotComparison(year = 'none', date) {
 }
 // Создание карточки
 function createCardMenu(element, index = 0) {
-    position_scroll = element.offsetTop;
+    position_scroll = $('.container').scrollTop();
     console.log(client_all_data);
     $('body').append(`
         <div id="preloader">

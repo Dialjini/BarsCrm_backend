@@ -126,6 +126,8 @@ function getTableData(table, input = false, close = false, close_card = false) {
                                     }, 0);
                                     $('#loading').remove();
                                     setTimeout(function(){ fadeOutPreloader(preloader) }, 0);
+                                    console.log('DONE');
+                                    $('.container').scrollTop(position_scroll);
                                 },
                                 complete: function() {
                                     $('#loading').remove();
@@ -211,6 +213,7 @@ function getTableData(table, input = false, close = false, close_card = false) {
                     if (table[0].id == 'client' || table[0].id == 'carrier' || table[0].id == 'provider') {
                         console.log(input, close);
                         sortTableByArea('min', false, close_card);
+                        $('.container').scrollTop(position_scroll + 900);
                     }
                     
                     $(`.drop-down, #search_dropMenu`).removeClass('active');
